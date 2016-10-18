@@ -1,4 +1,6 @@
-#BKRCast: the BKR (Bellevue Kirkland Redmond) Activity-Based Model
+#BKRCast
+
+The BKR (Bellevue Kirkland Redmond) Activity-Based Model
 
 BKRCast is based on PSRC's (Puget Sound Regional Council) [SoundCast](https://github.com/psrc/soundcast) activity-based regional transportation model.  
 Both BKRCast and SoundCast use the same EMME-based network procedures, Daysim for resident demand, and supplemental
