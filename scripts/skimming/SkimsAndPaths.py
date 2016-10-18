@@ -1,4 +1,4 @@
-﻿
+
 import array as _array
 import inro.emme.desktop.app as app
 import inro.modeller as _m
@@ -46,7 +46,6 @@ else:
     survey_seed_trips = False
     daysim_seed_trips= False
 
-
 if survey_seed_trips:
 	print 'Using SURVEY SEED TRIPS.'
 	hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
@@ -57,33 +56,36 @@ else:
 	print 'Using DAYSIM OUTPUTS'
 	hdf5_file_path = 'outputs/daysim_outputs.h5'
 
-# Input values
-transit_submodes = ['b', 'c', 'f', 'p', 'r']
-transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
-                           'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
-                           'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
-transit_node_constants = {'am':{'0888':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'}, 
-                          '0889':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'},
-                          '0892':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'}}}
-transit_network_tod_dict = {'6to7' : 'am', '7to8' : 'am', '8to9' : 'am',
-                            '9to10' : 'md', '10to14' : 'md', '14to15' : 'md'}                  
+## Input values
+#transit_submodes = ['b', 'c', 'f', 'p', 'r']
+#transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
+#                           'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
+#                           'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
+#transit_node_constants = {'am':{'0888':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'}, 
+#                          '0889':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'},
+#                          '0892':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.60'}}}
+#transit_network_tod_dict = {'6to7' : 'am', '7to8' : 'am', '8to9' : 'am',
+#                            '9to10' : 'md', '10to14' : 'md', '14to15' : 'md',
+#                            '15to16' : 'pm', '16to17' : 'pm', '17to18' : 'pm',
+#                            '18to20' : 'ev'}                  
+                 
 
-# Transit Fare:
-zone_file = 'inputs/Fares/transit_fare_zones.grt'
-peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
-peak_monthly_pass = 'inputs/Fares/am_fares_monthly_pass.in'
-offpeak_fare_box = 'inputs/Fares/md_fares_farebox.in'
-offpeak_monthly_pass = 'inputs/Fares/md_fares_monthly_pass.in'
-fare_matrices_tod = ['6to7', '9to10']
+## Transit Fare:
+#zone_file = 'inputs/Fares/transit_fare_zones.grt'
+#peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
+#peak_monthly_pass = 'inputs/Fares/am_fares_monthly_pass.in'
+#offpeak_fare_box = 'inputs/Fares/md_fares_farebox.in'
+#offpeak_monthly_pass = 'inputs/Fares/md_fares_monthly_pass.in'
+#fare_matrices_tod = ['6to7', '9to10']
 
-# Intrazonals
-intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 'izbtim', 'time walk' : 'izwtim'}
-taz_area_file = 'inputs/intrazonals/taz_acres.in'
-origin_tt_file = 'inputs/intrazonals/origin_tt.in'
-destination_tt_file = 'inputs/intrazonals/destination_tt.in'
+## Intrazonals
+#intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 'izbtim', 'time walk' : 'izwtim'}
+#taz_area_file = 'inputs/intrazonals/taz_acres.in'
+#origin_tt_file = 'inputs/intrazonals/origin_tt.in'
+#destination_tt_file = 'inputs/intrazonals/destination_tt.in'
 
-# Zone Index
-tazIndexFile = '/inputs/TAZIndex_5_28_14.txt'
+## Zone Index
+#tazIndexFile = '/inputs/TAZIndex_5_28_14.txt'
 
 def parse_args():
     """Parse command line arguments for max number of assignment iterations"""
@@ -251,9 +253,11 @@ def populate_intrazonals(my_project):
     my_project.matrix_transaction(taz_area_file)
     
     #origin terminal times
+    print origin_tt_file
     my_project.matrix_transaction(origin_tt_file)
     
     #destination terminal times
+    print destination_tt_file
     my_project.matrix_transaction(destination_tt_file)
     
     taz_area_matrix = my_project.bank.matrix('tazacr').id
@@ -300,6 +304,11 @@ def intitial_extra_attributes(my_project):
 
     end_extra_attr = time.time()
 
+def calc_bus_pce(my_project):
+     total_hours = transit_tod[my_project.tod]['num_of_hours']
+     my_expression = str(total_hours) + ' * vauteq * (60/hdw)'
+     print my_expression
+     my_project.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
 def arterial_delay_calc(my_project):
 
@@ -391,7 +400,7 @@ def traffic_assignment(my_project):
     logging.debug(text)
 
 def transit_assignment(my_project):
-
+    print "transit assignment here 1"
     start_transit_assignment = time.time()
 
     #Define the Emme Tools used in this function
@@ -399,7 +408,7 @@ def transit_assignment(my_project):
 
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("extended_transit_assignment")
-    
+    print "modify constant for certain nodes"
     #modify constants for certain nodes:
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
     assignment_specification["waiting_time"]["perception_factor"] = transit_node_attributes['wait_time_perception']['name'] 
@@ -407,10 +416,11 @@ def transit_assignment(my_project):
     assign_transit(assignment_specification)
 
     end_transit_assignment = time.time()
-    print 'It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the assignment.'
+    print 'It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the transit assignment.'
 
 
 def transit_skims(my_project):
+    print "transit skims here 1"
 
     skim_transit = my_project.tool("inro.emme.transit_assignment.extended.matrix_results")
     #specs are stored in a dictionary where "spec1" is the key and a list of specs for each skim is the value
@@ -531,7 +541,7 @@ def attribute_based_toll_cost_skims(my_project, toll_attribute):
             mod_skim["classes"][x]["analysis"]["results"]["od_values"] = matrix_id
             mod_skim["path_analysis"]["link_component"] = my_extra
      skim_traffic(mod_skim)
-
+     print "finished attribute based tool cost skim for " + toll_attribute
 
 
 def cost_skims(my_project):
@@ -874,9 +884,12 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
         #get the matrix name from matrix_dict. Throw out school bus (8) for now.
             if mode[x] <= 0: 
                  print x, mode[x]
-            if mode[x]<8:
+            if mode[x]<8 and mode[x]>0:
                 #Only want drivers, transit trips.
-                if dorp[x] <= 1:
+                # to do: this should probably be in the emme_configuration file, in case the ids change
+                auto_mode_ids = [3, 4, 5]
+                # using dorp to select out driver trips only for car trips; for non-auto trips, put all trips in the matrix                              
+                if dorp[x] <= 1 or mode[x] not in auto_mode_ids:
                     mat_name = matrix_dict[(int(mode[x]),int(vot[x]),int(toll_path[x]))]
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
@@ -1050,23 +1063,41 @@ def start_delete_matrices_pool(project_list):
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
     #instance of modeler issue. Will change code to be more generalized later.
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[1:2])
+    pool = Pool(processes=11)
+    pool.map(run_transit,project_list[0:11])
 
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[2:3])
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[0:1])
+    
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[1:2])
 
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[3:4])
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[2:3])
 
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[4:5])
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[3:4])
 
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[5:6])
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[4:5])
 
-    pool = Pool(processes=1)
-    pool.map(run_transit,project_list[6:7])
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[5:6])
+
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[6:7])
+
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[7:8])
+
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[8:9])
+
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[9:10])
+
+    #pool = Pool(processes=1)
+    #pool.map(run_transit,project_list[10:11])
 
     pool.close()
 
@@ -1083,8 +1114,11 @@ def run_transit(project_name):
     my_bank = m.emmebank
 
     create_node_attributes(transit_node_attributes, m)
+    print "starting transit assignment..."
     transit_assignment(m)
+    print "starting transit skimming..."
     transit_skims(m)
+    print "finished transit skimming"
 
     #Calc Wait Times
     app.App.refresh_data
@@ -1101,12 +1135,18 @@ def run_transit(project_name):
     mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
     matrix_calc(mod_calc)
     my_bank.dispose()
+    print "finished run_transit"
 
 def export_to_hdf5_pool(project_list):
-
+    
+    #debug-nagendra.dhakar@rsginc.com
     pool = Pool(processes=parallel_instances)
     pool.map(start_export_to_hdf5, project_list[0:parallel_instances])
     pool.close()
+    
+    #pool = Pool(processes=1)
+    #pool.map(start_export_to_hdf5,project_list[0:1])
+    #pool.close()
 
 def start_export_to_hdf5(test):
 
@@ -1289,6 +1329,7 @@ def create_node_attributes(node_attribute_dict, my_project):
         tod = my_bank.title
         NAMESPACE = "inro.emme.data.extra_attribute.create_extra_attribute"
         create_extra = my_project.tool(NAMESPACE)
+        print tod
         for key, value in node_attribute_dict.iteritems():
             print key, value
             new_att = create_extra(extra_attribute_type="NODE",
@@ -1302,12 +1343,12 @@ def create_node_attributes(node_attribute_dict, my_project):
         node_calculator_spec = json_to_dictionary("node_calculation")
         transit_tod = transit_network_tod_dict[tod]
         
-        print 'here'
+        print 'here 1'
         if transit_tod in transit_node_constants.keys():
             for line_id, attribute_dict in transit_node_constants[transit_tod].iteritems():
-                print 'here'
+                print 'here 2'
                 for attribute_name, value in attribute_dict.iteritems():
-                    print attribute_name, value
+                    print line_id, attribute_name, value
                 #Load in the necessary Dictionarie
                 #node_calculator_spec = json_to_dictionary("node_calculation")
                     mod_calc = node_calculator_spec
@@ -1315,7 +1356,7 @@ def create_node_attributes(node_attribute_dict, my_project):
                     mod_calc["expression"] = value
                     mod_calc["selections"]["node"] = "Line = " + line_id
                     network_calc(mod_calc)
-
+        print 'finished create node attributes for ' + tod
 
 def delete_matrices_parallel(project_name):
     my_project = EmmeProject(project_name)
@@ -1325,9 +1366,19 @@ def delete_matrices_parallel(project_name):
     delete_matrices(my_project, "ORIGIN")
     delete_matrices(my_project, "DESTINATION")
 
+#temp definition - by nagendra.dhakar@rsginc.com
+def temp_assign_sppeds(project_name):
+
+    link_speed = {'25':'30','40':'60','45':'30','50':'3','98':'30','99':'30'} # type: speed
+    for type, speed in link_speed.iteritems():
+        #print type, speed
+        project_name.network_calculator("link_calculation", result = "ul2", expression = speed, selections_by_link = "type=" + type + " & ul2=0")
+
 def run_assignments_parallel(project_name):
 
     start_of_run = time.time()
+    
+    print project_name #debug
 
     my_project = EmmeProject(project_name)
    
@@ -1341,10 +1392,10 @@ def run_assignments_parallel(project_name):
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
     hdf5_trips_to_Emme(my_project, hdf5_file_path)
     matrix_controlled_rounding(my_project)
-
+    print "finished here 1 " + project_name #debug
     ##tod = m.emmebank.title
     populate_intrazonals(my_project)
-    
+    print "finished here 2 " + project_name #debug    
     ##create transit fare matrices:
     if my_project.tod in fare_matrices_tod:
         fare_dict = json_to_dictionary('transit_fare_dictionary')
@@ -1354,25 +1405,27 @@ def run_assignments_parallel(project_name):
         #monthly:
         fare_file = fare_dict[my_project.tod]['Files']['monthly_pass_file']
         create_fare_zones(my_project, zone_file, fare_file)
-
+    print "finished here 3" + project_name #debug 
     ##set up for assignments
     intitial_extra_attributes(my_project)
-
+    if my_project.tod in transit_tod:
+        calc_bus_pce(my_project)
+    temp_assign_sppeds(my_project) #added by nagendra.dhakar
     # ************arterial delay is being handled in network_importer for now. Leave commented!!!!!!!!!!!!!
     #arterial_delay_calc(my_project)
-
+    print "finished here 4" + project_name #debug 
     vdf_initial(my_project)
     ##run auto assignment/skims
     traffic_assignment(my_project)
-    
+    print "finished here 5" + project_name #debug     
     attribute_based_skims(my_project, "Time")
-
+    print "finished here 6" + project_name #debug 
     ###bike/walk:
     bike_walk_assignment(my_project, 'false')
     ###Only skim for distance if in global distance_skim_tod list
     if my_project.tod in distance_skim_tod:
        attribute_based_skims(my_project,"Distance")
-
+    print "finished here 7" + project_name #debug 
     ####Toll skims
     attribute_based_toll_cost_skims(my_project, "@toll1")
     attribute_based_toll_cost_skims(my_project, "@toll2")
@@ -1401,10 +1454,11 @@ def main():
             start_pool(l)
 
         
-        #want pooled processes finished before executing more code in main:
-        #run_assignments_parallel('projects/7to8/7to8.emp')
+        ##want pooled processes finished before executing more code in main:
+        #run_assignments_parallel('projects/5to6/5to6.emp')
         
         start_transit_pool(project_list)
+        #run_transit('projects/20to5/20to5.emp')
        
         f = open('inputs/converge.txt', 'w')
        
@@ -1424,8 +1478,9 @@ def main():
         #export skims even if skims converged
         for i in range (0, 12, parallel_instances):
                 l = project_list[i:i+parallel_instances]
-                export_to_hdf5_pool(l)
-        
+                export_to_hdf5_pool(l) #debug - nagendra.dhakar@rsginc.com
+
+        #export_to_hdf5_pool("projects/5to6/5to6.emp") #debug - nagendra.dhakar@rsginc.com
         #delete emme matrices to save space:
         #start_delete_matrices_pool(project_list)
            

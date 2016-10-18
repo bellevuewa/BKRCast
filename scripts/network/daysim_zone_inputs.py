@@ -21,7 +21,7 @@ df['Cost'] = 0
 
 # column for non park & rides, internal zones
 df['Dest_eligible'] = 0
-df.ix[df.Scen_Node <= 3700, 'Dest_eligible'] = 1
+df.ix[df.Scen_Node <= 1230, 'Dest_eligible'] = 1
 
 # rename some columns for the taz file
 df = df.rename(columns={'Scen_Node': 'Zone_id', 'P_RStalls': 'Capacity', 'Processing' : 'External'})

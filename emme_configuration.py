@@ -2,11 +2,11 @@
 project = 'Projects/LoadTripTables/LoadTripTables.emp'
 network_summary_project = 'Projects/LoadTripTables/LoadTripTables.emp'
 tod_networks = ['am', 'md', 'pm', 'ev', 'ni']
-sound_cast_net_dict = {'5to6' : 'ni', '6to7' : 'am', '7to8' : 'am', '8to9' : 'am', 
+sound_cast_net_dict = {'5to6' : 'am', '6to7' : 'am', '7to8' : 'am', '8to9' : 'am', 
                        '9to10' : 'md', '10to14' : 'md', '14to15' : 'md', 
                        '15to16' : 'pm', '16to17' : 'pm', '17to18' : 'pm', 
                        '18to20' : 'ev', '20to5' : 'ni'}
-load_transit_tod = ['6to7', '7to8', '8to9', '9to10', '10to14', '14to15']
+load_transit_tod = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20']
 
 mode_crosswalk_dict = {'b': 'bp', 'bwl' : 'bpwl', 'aijb' : 'aimjbp', 'ahijb' : 'ahdimjbp', 
                       'ashijtuvb': 'asehdimjvutbp', 'r' : 'rc', 'br' : 'bprc', 
@@ -22,6 +22,7 @@ shape_name = '_link_shape_1002.txt'
 no_toll_modes = ['s', 'h', 'i', 'j']
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
+headway_file = 'sc_headways.csv'
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'
@@ -32,13 +33,13 @@ best_relative_gap = 0.01  # Assignment Convergence Criteria
 relative_gap = .0001
 normalized_gap = 0.01
 
-MIN_EXTERNAL = 3733      #zone of externals (subtract 1 because numpy is zero-based)
-MAX_EXTERNAL = 3750      #zone of externals (subtract 1 because numpy is zero-based)
-HIGH_TAZ = 3700
-LOW_PNR = 3751
-HIGH_PNR = 4000
+MIN_EXTERNAL = 1510      #zone of externals (subtract 1 because numpy is zero-based)
+MAX_EXTERNAL = 1527      #zone of externals (subtract 1 because numpy is zero-based) - 
+HIGH_TAZ = 1359
+LOW_PNR = 1360 #external dummy is also included
+HIGH_PNR = 1511
 
-SPECIAL_GENERATORS = {"SeaTac":983,"Tacoma Dome":3110,"exhibition center":631, "Seattle Center":438}
+SPECIAL_GENERATORS = {"SeaTac":1356,"Tacoma Dome":1357,"exhibition center":1359, "Seattle Center":1358}
 feedback_list = ['Banks/7to8/emmebank','Banks/17to18/emmebank']
 
 # Time of day periods
@@ -66,17 +67,39 @@ gc_skims = {'light_trucks' : 'lttrk', 'medium_trucks' : 'metrk', 'heavy_trucks' 
 bike_walk_skim_tod = ['5to6']
 
 # Transit Inputs:
-transit_skim_tod = ['6to7', '7to8', '8to9', '9to10', '10to14', '14to15']
+transit_skim_tod = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20']
 transit_submodes = ['b', 'c', 'f', 'p', 'r']
 transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
                            'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
                            'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
-transit_node_constants = {'am':{'0888':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '0889':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '0892':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '0897':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}}}
-transit_network_tod_dict = {'6to7' : 'am', '7to8' : 'am', '8to9' : 'am',
-                            '9to10' : 'md', '10to14' : 'md', '14to15' : 'md'}                  
+transit_node_constants = {'am':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
+                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
+                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
+                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
+                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}},
+                          'pm':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
+                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
+                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
+                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
+                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}}}
+
+transit_network_tod_dict = {'5to6' : 'am', '6to7' : 'am', '7to8' : 'am', '8to9' : 'am',
+                            '9to10' : 'md', '10to14' : 'md', '14to15' : 'md',
+                            '15to16' : 'pm', '16to17' : 'pm', '17to18' : 'pm',
+                            '18to20' : 'ev'}                  
+
+transit_tod = {'5to6' : {'4k_tp' : 'am', 'num_of_hours' : 1},
+               '6to7' : {'4k_tp' : 'am', 'num_of_hours' : 1}, 
+               '7to8' :  {'4k_tp' : 'am', 'num_of_hours' : 1}, 
+               '8to9' :  {'4k_tp' : 'am', 'num_of_hours' : 1}, 
+               '9to10' : {'4k_tp' : 'md', 'num_of_hours' : 1}, 
+               '10to14' : {'4k_tp' : 'md', 'num_of_hours' : 4}, 
+               '14to15' : {'4k_tp' : 'md', 'num_of_hours' : 1},
+               '15to16' : {'4k_tp' : 'pm', 'num_of_hours' : 1},
+               '16to17' : {'4k_tp' : 'pm', 'num_of_hours' : 1},
+               '17to18' : {'4k_tp' : 'pm', 'num_of_hours' : 1},
+               '18to20' : {'4k_tp' : 'ev', 'num_of_hours' : 2}}
+                
 
 # Transit Fare:
 zone_file = 'inputs/Fares/transit_fare_zones.grt'
@@ -93,7 +116,7 @@ origin_tt_file = 'inputs/intrazonals/origin_tt.in'
 destination_tt_file = 'inputs/intrazonals/destination_tt.in'
 
 # Zone Index
-tazIndexFile = '/inputs/TAZIndex_5_28_14.txt'
+#tazIndexFile = '/inputs/TAZIndex_5_28_14.txt'
 
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
@@ -110,10 +133,10 @@ taz_data_loc = '/supplemental/generation/landuse/tazdata.in'
 pums_data_loc = '/supplemental/generation/pums/' 
 externals_loc = '/supplemental/generation/externals.csv'
 # Special generator zones and demand (dictionary key is TAZ, value is demand)
-spg_general = {3110: 1682,    
-               631: 7567, 
-               438: 14013}    
-spg_airport = {983: 101838}
+spg_general = {1357: 1682,
+               1359: 7567,
+               1358: 14013}    
+spg_airport = {1356: 101838}
 
 # Using one AM and one PM time period to represent AM and PM skims
 am_skim_file_loc = 'inputs/7to8.h5'

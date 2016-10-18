@@ -123,14 +123,15 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
                   
 def balance_matrices(trip_purps, my_project):
     ''' Balances productions and attractions by purpose for all internal zones '''
+    #HIGH_STATION changed to HIGH_TAZ - nagendra.dhakar@rsginc.com
     for purpose in trip_purps:
         print "Balancing trips for purpose: " + str(purpose)
         my_project.matrix_balancing(results_od_balanced_values = 'mf' + purpose + 'dis', 
                                     od_values_to_balance = 'mf' + purpose + 'fri', 
                                     origin_totals = 'mo' + purpose + 'pro', 
                                     destination_totals = 'md' + purpose + 'att', 
-                                    constraint_by_zone_destinations = '1-' + str(HIGH_STATION), 
-                                    constraint_by_zone_origins = '1-' + str(HIGH_STATION))
+                                    constraint_by_zone_destinations = '1-' + str(HIGH_TAZ), 
+                                    constraint_by_zone_origins = '1-' + str(HIGH_TAZ))
 
 def calculate_daily_trips(trip_purps, my_project):
     # Accounting for out- and in-bound trips.
@@ -240,8 +241,8 @@ def summarize_all_by_purp(ext_spg_summary, gq_summary, trip_purps):
             if purpose not in ['hw2', 'hw3', 'hw4']:
                 filtered += gq_summary[purpose]
         # Add only external rows and columns
-        filtered[3700:,:] = ext_spg_summary[purpose][3700:,:]
-        filtered[:,3700:] = ext_spg_summary[purpose][:,3700:]
+        filtered[MIN_EXTERNAL:,:] = ext_spg_summary[purpose][MIN_EXTERNAL:,:]
+        filtered[:,MIN_EXTERNAL:] = ext_spg_summary[purpose][:,MIN_EXTERNAL:]
         total_sum_by_purp[purpose] = filtered
     return total_sum_by_purp
 
@@ -270,8 +271,8 @@ def ext_spg_selected(trip_purps):
             #filtered[:,[loc_zone - 1]] = emme_data[:,[loc_zone - 1]]
             filtered[:,[dictZoneLookup[loc_zone]]] = emme_data[:,[dictZoneLookup[loc_zone]]]
         # Add only external rows and columns
-        filtered[3700:,:] = emme_data[3700:,:]
-        filtered[:,3700:] = emme_data[:,3700:]
+        filtered[MIN_EXTERNAL:,:] = emme_data[MIN_EXTERNAL:,:]
+        filtered[:,MIN_EXTERNAL:] = emme_data[:,MIN_EXTERNAL:]
 
         total_sum_by_purp[purpose] = filtered
     return total_sum_by_purp
@@ -301,10 +302,10 @@ def supplementals_report(ext_spg_trimmed, gq_summary, combined, split_by_mode_to
 def main():
     global dictZoneLookup
     dictZoneLookup = dict((value,index) for index,value in enumerate(my_project.current_scenario.zone_numbers))
-    
+    print len(dictZoneLookup)
     # Overwrite previous trip tables 
     init_dir(supplemental_loc)
-
+    print "loading skim data..."
     # Load skim data
     am_cost_skim = load_skims(r'inputs\7to8.h5', mode_name='svtl2g')
     am_dist_skim = load_skims(r'inputs\7to8.h5', mode_name='svtl1d', divide_by_100=True)
@@ -316,14 +317,24 @@ def main():
     # Compute friction factors by trip purpose
     fric_facs = calc_fric_fac(cost_skim, dist_skim)
 
+    print "distributing ext. and sp. gen. trips..."
+    print(trip_table.shape)
     # Create trip table for externals and special generators by purpose and summarize
-    distribute_trips(trip_table, ext_spg_dir, trip_purp_full, fric_facs, my_project)
-    ext_spg_trimmed = ext_spg_selected(trip_purp_full)    # Include only external and special gen. zones
 
+    distribute_trips(trip_table, ext_spg_dir, trip_purp_full, fric_facs, my_project)
+    print("finished distributing")
+    print(trip_table.describe())
+    ext_spg_trimmed = ext_spg_selected(trip_purp_full)    # Include only external and special gen. zones
+    temp = [[ext_spg_trimmed[purpose].sum() for purpose in trip_purp_full]] #debug - nagendra.dhakar@rsginc.com
+    print(temp)
+    print "distributing gp trips..."
+    print(gq_trip_table.shape)
     # Distribute group quarters trips by purpose and summarize results
     distribute_trips(gq_trip_table, gq_directory, trip_purp_gq, fric_facs, my_project)
     gq_summary = sum_by_purp(trip_purp_gq, my_project)
-
+    temp = [[gq_summary[purpose].sum() for purpose in trip_purp_gq]] #debug - nagendra.dhakar@rsginc.com
+    print(temp)
+    print "combining trips..."
     # Combine external, special gen., and group quarters trips
     combined = {}
     for purp in trip_purp_full:

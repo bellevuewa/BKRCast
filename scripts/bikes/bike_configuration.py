@@ -1,6 +1,6 @@
 
 #################################### BIKE MODEL ####################################
-bike_assignment_tod = ['6to7', '7to8','8to9','9to10', '10to14', '14to15']
+bike_assignment_tod = ['7to8','8to9']
 
 # Distance perception penalties for link AADT from Broach et al., 2012
 # 1 is AADT 10k-20k, 2 is 20k-30k, 3 is 30k+
@@ -17,9 +17,15 @@ aadt_labels = [0,1,2,3] # Corresponding "bucket" labels for AADT segmentation fo
 # Crosswalk of bicycle facilities from geodatabase to a 2-tier typology - premium, standard (and none)
 # "Premium" represents trails and fully separated bike facilities
 # "Standard" represents painted bike lanes only
-bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'standard', 2:'premium', 
-                                        3:'none', 4:'none', 5:'none', 6:'none', 
-                                        7:'none', 8:'standard', 9:'none'}}  ## need to confirm these
+#bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'standard', 2:'premium', 
+#                                        3:'none', 4:'none', 5:'none', 6:'none', 
+#                                        7:'none', 8:'standard', 9:'none'}}  ## need to confirm these
+
+# following classification for BKR - by nagendra.dhakar@rsginc.com
+# premium (@biketype=1) - Trail/Separated bike lane
+# standard (@biketype=2,3,4) - bike lane striped, Bike shoulder, and Wider lane/shared shoulder (Redmond does not have this category)
+bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'premium', 2:'standard', 
+                                        3:'standard', 4:'standard'}}
 
 # Perception factor values corresponding to these tiers, from Broch et al., 2012
 facility_dict = {'facility_wt': {	'premium': -0.160,
@@ -40,7 +46,7 @@ avg_bike_speed = 10 # miles per hour
 # Outputs directory
 bike_link_vol = 'outputs/bike_volumes.csv'
 bike_count_data = 'inputs/bikes/bike_counts.csv'
-edges_file = 'inputs/bikes/edges_0.txt'
+#edges_file = 'inputs/bikes/edges_0.txt'
 
 # Multiplier for storing skim results
 bike_skim_mult = 100    # divide by 100 to store as int

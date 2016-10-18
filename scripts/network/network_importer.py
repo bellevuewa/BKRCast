@@ -1,3 +1,4 @@
+import pandas as pd
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import inro.emme.matrix as ematrix
@@ -13,21 +14,21 @@ sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from emme_configuration import *
 from input_configuration import *
 
-project = 'Projects/LoadTripTables/LoadTripTables.emp'
-tod_networks = ['am', 'md', 'pm', 'ev', 'ni']
-sound_cast_net_dict = {'5to6' : 'ni', '6to7' : 'am', '7to8' : 'am', '8to9' : 'am', 
-                       '9to10' : 'md', '10to14' : 'md', '14to15' : 'md', 
-                       '15to16' : 'pm', '16to17' : 'pm', '17to18' : 'pm', 
-                       '18to20' : 'ev', '20to5' : 'ni'}
-load_transit_tod = ['6to7', '7to8', '8to9', '9to10', '10to14', '14to15']
+#project = 'Projects/LoadTripTables/LoadTripTables.emp'
+#tod_networks = ['am', 'md', 'pm', 'ev', 'ni']
+#sound_cast_net_dict = {'5to6' : 'ni', '6to7' : 'am', '7to8' : 'am', '8to9' : 'am', 
+#                       '9to10' : 'md', '10to14' : 'md', '14to15' : 'md', 
+#                       '15to16' : 'pm', '16to17' : 'pm', '17to18' : 'pm', 
+#                       '18to20' : 'ev', '20to5' : 'ni'}
+#load_transit_tod = ['6to7', '7to8', '8to9', '9to10', '10to14', '14to15']
 
-mode_file = 'modes.txt'
-transit_vehicle_file = 'vehicles.txt' 
-base_net_name = '_roadway.in'
-turns_name = '_turns.in'
-transit_name = '_transit.in'
-shape_name = '_link_shape_1002.txt'
-no_toll_modes = ['s', 'h', 'i', 'j']
+#mode_file = 'modes.txt'
+#transit_vehicle_file = 'vehicles.txt' 
+#base_net_name = '_roadway.in'
+#turns_name = '_turns.in'
+#transit_name = '_transit.in'
+#shape_name = '_link_shape_1002.txt'
+#no_toll_modes = ['s', 'h', 'i', 'j']
 
 class EmmeProject:
     def __init__(self, filepath):
@@ -194,12 +195,12 @@ def import_tolls(emmeProject):
 
 # set bridge/ferry flags
 
-    bridge_ferry_flag__file = function_file = 'inputs/tolls/bridge_ferry_flags.in'
-    import_attributes(bridge_ferry_flag__file, scenario = emmeProject.current_scenario,
-              column_labels={0: "inode",
-                             1: "jnode",
-                             2: "@brfer"},
-              revert_on_error=True)
+    #bridge_ferry_flag__file = function_file = 'inputs/tolls/bridge_ferry_flags.in'
+    #import_attributes(bridge_ferry_flag__file, scenario = emmeProject.current_scenario,
+    #          column_labels={0: "inode",
+    #                         1: "jnode",
+    #                         2: "@brfer"},
+    #          revert_on_error=True)
 
     
     # change modes on tolled network, but exclude some bridges/ferries
@@ -218,8 +219,20 @@ def multiwordReplace(text, replace_dict):
         return replace_dict.get(word, word)
     return rc.sub(translate, text)
 
+def update_headways(emmeProject, headways_df):
+    network = emmeProject.current_scenario.get_network()
+    for transit_line in network.transit_lines():
+        row = headways_df.loc[(headways_df.id == int(transit_line.id))]
+        if int(row['hdw_' + emmeProject.tod]) > 0:
+            transit_line.headway = int(row['hdw_' + emmeProject.tod])
+        else:
+            network.delete_transit_line(transit_line.id)
+    emmeProject.current_scenario.publish_network(network)
+
+
 def run_importer(project_name):
     my_project = EmmeProject(project_name)
+    headway_df = pd.DataFrame.from_csv('inputs/networks/' + headway_file)
     for key, value in sound_cast_net_dict.iteritems():
         my_project.change_active_database(key)
         for scenario in list(my_project.bank.scenarios()):
@@ -234,7 +247,7 @@ def run_importer(project_name):
         my_project.process_modes('inputs/networks/' + mode_file)
         
         my_project.process_base_network('inputs/networks/' + value + base_net_name)
-        my_project.process_base_network('inputs/networks/fixes/ferries/' + value + base_net_name)
+       # my_project.process_base_network('inputs/networks/fixes/ferries/' + value + base_net_name)
 
         my_project.process_turn('inputs/networks/' + value + turns_name)
     #my_project.process_shape('/inputs/network' + tod_network + shape_name)
@@ -242,16 +255,19 @@ def run_importer(project_name):
         if my_project.tod in load_transit_tod:
            my_project.process_vehicles('inputs/networks/' + transit_vehicle_file)
            my_project.process_transit('inputs/networks/' + value + transit_name)
-
+           update_headways(my_project, headway_df)
         #import tolls
         import_tolls(my_project)
+        #time_period_headway_df = headeway_df.loc[(headway_df['hdw_' + my_project.tod])]
+        #print len(time_period_headway_df)
         
 
 def main():
     print network_summary_project
     run_importer(network_summary_project)
-    
-    returncode = subprocess.call([sys.executable,'scripts/network/daysim_zone_inputs.py'])
+    # comment out for now - nagendra.dhakar@rsginc.com
+    #returncode = subprocess.call([sys.executable,'scripts/network/daysim_zone_inputs.py'])
+    returncode=0
     if returncode != 0:
         sys.exit(1)
     
