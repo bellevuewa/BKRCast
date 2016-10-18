@@ -1,0 +1,1 @@
+Copy the inputs\supplemental\trips*.* files to outputs\supplemental since they are required in this location as well.

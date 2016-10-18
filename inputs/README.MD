@@ -1,0 +1,1 @@
+Get inputs folder from the [BKRCastInputs](https://github.com/RSGInc/BKRCastInputs) invitation only repository
