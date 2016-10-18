@@ -22,7 +22,7 @@ Software:
   - Windows 7+, 64-bit only
   - Anaconda Python 2.7
   - Emme 4.2.3+
-  - Git for Window and Git LFS 
+  - Git for Windows and Git LFS for downloading the model setup only; not for running it
 
 The system setup steps are as follows:
 
