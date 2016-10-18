@@ -49,7 +49,7 @@ The system setup steps are as follows:
   - Clone this repository, which contain the programs and configuration files:
     - Open a DOS command window and 'cd' into a folder to house the model run
     - Run 'git clone https://github.com/RSGInc/BKRCast.git' to download this repository.
-  - Clone the private (limited access) inputs folder repository:
+  - Clone the private (limited access) inputs folder repository - https://github.com/RSGInc/BKRCastInputs:
     - Open a DOS command window and 'cd' into a folder to house the model run inputs folder
     - Run 'git clone https://github.com/RSGInc/BKRCastInputs.git' to download this repository.  This will take some time.   
   - Copy the inputs\supplemental\trips\*.* files to outputs\supplemental since they are required in this location as well.
