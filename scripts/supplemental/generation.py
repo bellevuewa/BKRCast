@@ -200,74 +200,65 @@ def balance_trips(trip_table, bal_to_attractions, include_ext):
             # Balance attractions to productions for most trip purposes
             if key not in bal_to_attractions:
                 #prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                #print("before, production: " + str(prod) + " and attraction: " + str(att))
+                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+                print("before, production: " + str(prod) + " and attraction: " + str(att))
                 if include_ext:
                     #ext = trip_table[value].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
                     #ext = trip_table[value].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]+1].sum() #added 1 to include the MAX_EXTERNAL - nagendra.dhakar@rsginc.com
-                    ext = trip_table[value].iloc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
+                    ext = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
                     #dictZoneLookup
                 else:
                     ext = 0
                 #ext = trip_table[value].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
                 #ext = trip_table[value].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]].sum()
                 #bal_factor = (prod - ext)/(att - ext)
+                bal_factor = (prod)/(att)
 
                 #balance internal trips
-                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+                #prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
 
-                if (att>0):
-                    bal_factor = (prod)/(att)
-                else:
-                    bal_factor = 0
-                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor#nagendra.dhakar@rsginc.com - 'ext' is calculated with numpy index and this by taz, why?
-                #balance external trips
-                #prod = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() ; att = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
+#                if (att>0):
+#                    bal_factor = (prod)/(att)
+#                else:
+#                    bal_factor = 0
 
-                #if (att>0):
-                #    bal_factor = (prod)/(att)
-                #else:
-                #    bal_factor = 0
-                #trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL] *= bal_factor#nagendra.dhakar@rsginc.com - 'ext' is calculated with numpy index and this by taz, why?
+                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor #nagendra.dhakar@rsginc.com - 'ext' is calculated with numpy index and this by taz, why?
 
                 print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
-                print("internal prod: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
+                print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
                 print("external attr: " + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-                print("external prod:" + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
+                print("external prod:" + str(trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
 
                 print "key " + key + ", " + value + ' ' + str(bal_factor)
 
             # Balance productions to attractions for college trips
             else:
                 #prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                #print("before, production: " + str(prod) + " and attraction: " + str(att))
+                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+                print("before, production: " + str(prod) + " and attraction: " + str(att))
                 if include_ext:
                     #ext = trip_table[key].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
                     #ext = trip_table[key].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]].sum()
-                    ext = trip_table[key].iloc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
+                    ext = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
                 else:
                     ext = 0
                 #bal_factor = (att - ext)/(prod - ext)
-                #trip_table[key].loc[0:HIGH_TAZ-1] *= bal_factor
-                #trip_table[key].loc[1:HIGH_TAZ] *= bal_factor
+                bal_factor = (prod)/(att)
+
+
                 #balance internal trips
-                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
-                if (att>0):
-                    bal_factor = (prod)/(att)
-                else:
-                    bal_factor = 0
-                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor#nagendra.dhakar@rsginc.com - 'ext' is calculated with numpy index and this by taz, why?
-                #balance external trips
-                #prod = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() ; att = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
-                #if (att>0):
-                #    bal_factor = (prod)/(att)
-                #else:
-                #    bal_factor = 0
-                #trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL] *= bal_factor
+#                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+#                if (att>0):
+#                    bal_factor = (prod)/(att)
+#                else:
+#                    bal_factor = 0
+
+                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor
 
                 print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
-                print("internal prod: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
+                print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
                 print("external attr: " + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-                print("external prod: " + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
+                print("external prod: " + str(trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
                 print "value " + value + ", " +key + ' ' + str(bal_factor)
 
 
@@ -396,7 +387,9 @@ def main():
     trip_table = add_special_gen(trip_table)
     #debug
     #trip_table.to_csv(r"E:\Projects\Clients\bkr\model\bkrcast\outputs\trip_table.csv")
+    print("balance trips - excluding colpro")
     balance_trips(trip_table, bal_to_attractions = ['colpro'], include_ext=True)
+    print("balance group quarter trips - all")
     balance_trips(gq_append, bal_to_attractions = [], include_ext=False)
 
     # set zonal nhb work-other productions equal to zonal nhb work-other attractions

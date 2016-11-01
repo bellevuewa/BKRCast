@@ -194,7 +194,7 @@ def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_proje
     delete_matrices(my_project, "FULL")
 
     # Load data into fresh Emme matrices
-    load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project)
+    load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project) #debug - commented out
 
     # Balance matrices
     balance_matrices(trip_purps, my_project)
@@ -241,8 +241,8 @@ def summarize_all_by_purp(ext_spg_summary, gq_summary, trip_purps):
             if purpose not in ['hw2', 'hw3', 'hw4']:
                 filtered += gq_summary[purpose]
         # Add only external rows and columns
-        filtered[MIN_EXTERNAL:,:] = ext_spg_summary[purpose][MIN_EXTERNAL:,:]
-        filtered[:,MIN_EXTERNAL:] = ext_spg_summary[purpose][:,MIN_EXTERNAL:]
+        filtered[MIN_EXTERNAL-1:,:] = ext_spg_summary[purpose][MIN_EXTERNAL-1:,:]
+        filtered[:,MIN_EXTERNAL-1:] = ext_spg_summary[purpose][:,MIN_EXTERNAL-1:]
         total_sum_by_purp[purpose] = filtered
     return total_sum_by_purp
 
@@ -271,8 +271,8 @@ def ext_spg_selected(trip_purps):
             #filtered[:,[loc_zone - 1]] = emme_data[:,[loc_zone - 1]]
             filtered[:,[dictZoneLookup[loc_zone]]] = emme_data[:,[dictZoneLookup[loc_zone]]]
         # Add only external rows and columns
-        filtered[MIN_EXTERNAL:,:] = emme_data[MIN_EXTERNAL:,:]
-        filtered[:,MIN_EXTERNAL:] = emme_data[:,MIN_EXTERNAL:]
+        filtered[MIN_EXTERNAL-1:,:] = emme_data[MIN_EXTERNAL-1:,:]
+        filtered[:,MIN_EXTERNAL-1:] = emme_data[:,MIN_EXTERNAL-1:]
 
         total_sum_by_purp[purpose] = filtered
     return total_sum_by_purp
@@ -303,14 +303,14 @@ def main():
     global dictZoneLookup
     dictZoneLookup = dict((value,index) for index,value in enumerate(my_project.current_scenario.zone_numbers))
     print len(dictZoneLookup)
-    # Overwrite previous trip tables 
+    # Overwrite previous trip tables
     init_dir(supplemental_loc)
     print "loading skim data..."
     # Load skim data
-    am_cost_skim = load_skims(r'inputs\7to8.h5', mode_name='svtl2g')
-    am_dist_skim = load_skims(r'inputs\7to8.h5', mode_name='svtl1d', divide_by_100=True)
-    pm_cost_skim = load_skims(r'inputs\17to18.h5', mode_name='svtl2g')
-    pm_dist_skim = load_skims(r'inputs\17to18.h5', mode_name='svtl1d', divide_by_100=True)
+    am_cost_skim = load_skims(r'inputs\5to9.h5', mode_name='svtl2g')
+    am_dist_skim = load_skims(r'inputs\5to9.h5', mode_name='svtl1d', divide_by_100=True)
+    pm_cost_skim = load_skims(r'inputs\15to18.h5', mode_name='svtl2g')
+    pm_dist_skim = load_skims(r'inputs\15to18.h5', mode_name='svtl1d', divide_by_100=True)
     cost_skim = (am_cost_skim + pm_cost_skim) * .5
     dist_skim = (am_cost_skim + pm_dist_skim) * .5
    
@@ -343,7 +343,7 @@ def main():
         else:
             combined[purp] = ext_spg_trimmed[purp]
 
-     # Split by mode and TOD
+    # Split by mode and TOD
     split_by_mode_tod = split_trips(combined, trip_purp_full, my_project)
 
     # Export results to H5

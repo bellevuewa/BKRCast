@@ -88,7 +88,7 @@ def modify_config(config_vals):
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0] #<-- absolute dir the script is in
     config_template_path = "daysim_configuration_template.properties"
-    config_path = "daysim_2016/daysim_configuration.properties"
+    config_path = "daysim/daysim_configuration.properties"
 
     abs_config_path_template = os.path.join(script_dir, config_template_path)
     abs_config_path_out =os.path.join(script_dir, config_path)
@@ -117,7 +117,7 @@ def build_shadow_only():
      for shad_iter in range(0, len(shadow_work)):
         modify_config([("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")])
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
-        returncode = subprocess.call('daysim_2016/Daysim.exe -c daysim_2016/daysim_configuration.properties')
+        returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
         logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
         if returncode != 0:
             #send_error_email(recipients, returncode)
@@ -160,7 +160,7 @@ def daysim_assignment(iteration):
      ### RUN DAYSIM ################################################################
      if run_daysim:
          logger.info("Start of %s iteration of Daysim", str(iteration))
-         returncode = subprocess.call('daysim_2016/Daysim.exe -c daysim_2016/daysim_configuration.properties')
+         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
          logger.info("End of %s iteration of Daysim", str(iteration))
          if returncode != 0:
              #send_error_email(recipients, returncode)

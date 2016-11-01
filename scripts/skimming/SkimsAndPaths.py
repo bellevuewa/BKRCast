@@ -1392,10 +1392,10 @@ def run_assignments_parallel(project_name):
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
     hdf5_trips_to_Emme(my_project, hdf5_file_path)
     matrix_controlled_rounding(my_project)
-    print "finished here 1 " + project_name #debug
+
     ##tod = m.emmebank.title
     populate_intrazonals(my_project)
-    print "finished here 2 " + project_name #debug    
+   
     ##create transit fare matrices:
     if my_project.tod in fare_matrices_tod:
         fare_dict = json_to_dictionary('transit_fare_dictionary')
@@ -1405,7 +1405,7 @@ def run_assignments_parallel(project_name):
         #monthly:
         fare_file = fare_dict[my_project.tod]['Files']['monthly_pass_file']
         create_fare_zones(my_project, zone_file, fare_file)
-    print "finished here 3" + project_name #debug 
+
     ##set up for assignments
     intitial_extra_attributes(my_project)
     if my_project.tod in transit_tod:
@@ -1413,19 +1413,19 @@ def run_assignments_parallel(project_name):
     temp_assign_sppeds(my_project) #added by nagendra.dhakar
     # ************arterial delay is being handled in network_importer for now. Leave commented!!!!!!!!!!!!!
     #arterial_delay_calc(my_project)
-    print "finished here 4" + project_name #debug 
+
     vdf_initial(my_project)
     ##run auto assignment/skims
     traffic_assignment(my_project)
-    print "finished here 5" + project_name #debug     
+   
     attribute_based_skims(my_project, "Time")
-    print "finished here 6" + project_name #debug 
+
     ###bike/walk:
     bike_walk_assignment(my_project, 'false')
     ###Only skim for distance if in global distance_skim_tod list
     if my_project.tod in distance_skim_tod:
        attribute_based_skims(my_project,"Distance")
-    print "finished here 7" + project_name #debug 
+
     ####Toll skims
     attribute_based_toll_cost_skims(my_project, "@toll1")
     attribute_based_toll_cost_skims(my_project, "@toll2")
@@ -1449,7 +1449,7 @@ def main():
     #represent a Time of Day string, such as 6to7, 7to8, 9to10, etc.
         start_of_run = time.time()
 
-        for i in range (0, 12, parallel_instances):
+        for i in range (0, 4, parallel_instances):
             l = project_list[i:i+parallel_instances]
             start_pool(l)
 
@@ -1476,7 +1476,7 @@ def main():
             json.dump(go, f)
 
         #export skims even if skims converged
-        for i in range (0, 12, parallel_instances):
+        for i in range (0, 4, parallel_instances):
                 l = project_list[i:i+parallel_instances]
                 export_to_hdf5_pool(l) #debug - nagendra.dhakar@rsginc.com
 

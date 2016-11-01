@@ -1,11 +1,11 @@
 from input_configuration_simple import *
 
-# This file contains model input parameters imported by BkrCast scripts.   
+# This file contains model input parameters imported by SoundCast scripts.   
 
 # If you are using the simple configuration, in the file input_configuration_simple, you will set use_simple_configuration = True, and
 # the values of variables to run will be set in that file.  Otherwise the values can be over-ridden below.
 
-# CONFIGURATION TO RUN BKRCAST
+# CONFIGURATION TO RUN SOUNDCAST
 # Note there are many other configuration files for specific model steps in their respective directories, such as Daysim, or skimming.
 
 
@@ -17,16 +17,16 @@ if not(use_simple_configuration):
     # Scenario and input paths
     base_year = '2014'  # This should always be 2010 unless the base year changes
     scenario_name = '2014'
-    daysim_code = 'E:/Projects/Clients/bkr/setup101016/daysim_2016' 
-    main_inputs_folder =  'E:/Projects/Clients/bkr/setup101016/Inputs/'
+    daysim_code = 'E:/Projects/Clients/bkr/model/bkrcast_tod/daysim_2016' 
     master_project = 'LoadTripTables'
+    main_inputs_folder =  'E:/Projects/Clients/bkr/model/bkrcast_tod/Inputs/'
     base_inputs = main_inputs_folder + scenario_name
     # For Overriding the simple configuration, when you want to run things in more detail:
     ###### Only update parking for future-year analysis!
     run_update_parking = False
     run_convert_hhinc_2000_2010 = False
     run_accessibility_calcs = False
-    run_copy_daysim_code = False
+    run_copy_daysim_code = True
     run_setup_emme_project_folders = True
     run_setup_emme_bank_folders = True
     run_copy_large_inputs = False
@@ -44,7 +44,7 @@ if not(use_simple_configuration):
     run_daysim = True
     run_accessibility_summary = True
     run_network_summary = True
-    run_bkrcast_summary =  True
+    run_soundcast_summary =  True
     run_create_daily_bank = False
     run_ben_cost = False
     run_truck_summary = False
@@ -56,14 +56,21 @@ if not(use_simple_configuration):
     run_dest_choice_report = True
     run_long_term_report = True
     run_time_choice_report = True
-    run_district_summary_report = False
+    run_district_summary_report = True
 
-    run_landuse_summary = False
+    run_landuse_summary = True
 
     # Model iterations, population sampling, log files, etc.
-    pop_sample = [50, 100, 100]
+    pop_sample = [10, 2, 1]
+    pop_sample_district = {'BKR':{1,4,4,2,2},
+                        'Seatle':{1,0.50,0.25,0.50,0.25}, 
+                        'Rest of King':{1,0.20,0.10,0.20,0.10}, 
+                        'Pierce':{1,0.10,0.05,0.10,0.05}, 
+                        'Snohomish':{1,0.10,0.05,0.10,0.05}, 
+                        'Kitsap':{1,0.10,0.05,0.10,0.05}} #population sampling by districts for sensitiviy tests - 5 options
+    zone_region_file = 'TAZ_District_CrossWalk.csv'
     # Assignment Iterations:
-    max_iterations_list = [100, 100, 100]
+    max_iterations_list = [10, 100, 100]
     min_pop_sample_convergence_test = 10
     # start building shadow prices - only run work locations
     shadow_work = [2, 1, 1]
@@ -108,7 +115,7 @@ else:
 
         
     if run_daysim:
-        run_bkrcast_summary = True
+        run_soundcast_summary = True
         run_daysim_report = True
         run_day_pattern_report = True
         run_mode_choice_report = True
@@ -117,7 +124,7 @@ else:
         run_time_choice_report = True
         run_district_summary_report = False
     else:
-        run_bkrcast_summary = False
+        run_soundcast_summary = False
         run_daysim_report = False
         run_day_pattern_report = False
         run_mode_choice_report = False
@@ -185,7 +192,7 @@ parcel_decay_file = 'inputs/buffered_parcels.dat' #File with parcel data to be c
 # run daysim and assignment in feedback until convergence
 
 main_log_file = 'bkrcast_log.txt'
-network_summary_files = ['6to7_transit', '7to8_transit', '8to9_transit', '9to10_transit',
+network_summary_files = ['5to9_transit', '9to15_transit',
                          'counts_output', 'network_summary']
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]

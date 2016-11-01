@@ -24,7 +24,7 @@ def start_pool(project_list):
 def main():
 	'''Shrink Soundcast output files for all times of day.'''
 
-	for i in range (0, 12, parallel_instances):
+	for i in range (0, 4, parallel_instances):
 	    l = project_list[i:i+parallel_instances]
 	    start_pool(l)
 
