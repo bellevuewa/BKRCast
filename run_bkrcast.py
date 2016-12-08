@@ -1,4 +1,4 @@
-﻿#Copyright [2014] [Puget Sound Regional Council]
+#Copyright [2014] [Puget Sound Regional Council]
 
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 #limitations under the License.
 
 #!python.exe
-# PSRC SoundCast Model Runner
+# BKRCast Model Runner
 # ===========================
 
 
@@ -79,7 +79,7 @@ def build_seed_skims(max_iterations):
         '-use_daysim_output_seed_trips'])
     if returncode != 0:
         sys.exit(1)
-                  
+         
     time_skims = datetime.datetime.now()
     print '###### Finished skimbuilding:', str(time_skims - time_copy)
  
@@ -92,7 +92,7 @@ def modify_config(config_vals):
 
     abs_config_path_template = os.path.join(script_dir, config_template_path)
     abs_config_path_out =os.path.join(script_dir, config_path)
-    print abs_config_path_template
+    
     config_template = open(abs_config_path_template,'r')
     config = open(abs_config_path_out,'w')
   
@@ -133,7 +133,7 @@ def build_shadow_only():
             return
 
 def run_truck_supplemental(iteration):
-     #run_truck_model = False #debug - nagendra.dhakar@rsginc.com
+     run_truck_model = False #debug - nagendra.dhakar@rsginc.com
       ### RUN Truck Model ################################################################
      if run_truck_model:
          returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
@@ -156,25 +156,35 @@ def run_truck_supplemental(iteration):
            sys.exit(1)
 @timed
 def daysim_assignment(iteration):
-     #run_daysim = False #debug - nagendra.dhakar@rsginc.com
+
      ### RUN DAYSIM ################################################################
      if run_daysim:
          logger.info("Start of %s iteration of Daysim", str(iteration))
+
+         #run popsampler
+         daysim_popsampler(sampling_option)
+
+         #run daysim
          returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
          logger.info("End of %s iteration of Daysim", str(iteration))
          if returncode != 0:
              #send_error_email(recipients, returncode)
              sys.exit(1)
-     
+    
      ### ADD SUPPLEMENTAL TRIPS
      ### ####################################################
      run_truck_supplemental(iteration)
+
+     #debug - nagendra.dhaakr@rsginc.com
+     #sys.exit(1)
+    
      #### ASSIGNMENTS
      #### ###############################################################
      if run_skims_and_paths:
          logger.info("Start of %s iteration of Skims and Paths", str(iteration))
          num_iterations = str(max_iterations_list[iteration])
          returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', num_iterations])
+         
          logger.info("End of %s iteration of Skims and Paths", str(iteration))
          print 'return code from skims and paths is ' + str(returncode)
          if returncode != 0:
@@ -183,6 +193,94 @@ def daysim_assignment(iteration):
          returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
          if returncode != 0:
             sys.exit(1)
+
+'''
+
+Purpose:
+-inclusion of population sampler
+-performs daysim sampling by district
+
+Input:
+-zone_district_file
+-popsyn_file
+-daysim configuration files (template and config to run)
+
+Output:
+-popsyn_out_file
+-taz_sample_rate_file (intermediate)
+
+Other scripts used:
+-scripts/popsampler.py
+
+Steps:
+-reads zone to district file
+-assigns sample rates to zones using user inputs (input_configuration: pop_sample_district and option)
+-writes out taz_sample_rate_file
+-finds popsyn file name in daysim properties
+-runs popsampler
+-updates daysim properties file with new popsyn file output by popsampler
+
+'''
+def daysim_popsampler(option):
+    #read zone district cross file
+    zone_district = pd.read_csv(os.path.join(main_inputs_folder,zone_district_file))
+    zone_district['sample_rate'] = 0 #initialize
+
+    #get districts for sampling population
+    districts = pop_sample_district.keys()
+
+    #assign sampling rate
+    for district in districts:
+        #print district
+        zone_district.ix[zone_district['district'] == district, 'sample_rate'] = pop_sample_district[district][option-1] #option-1, as index starts from 0
+
+    #output a text file for popsampler to use
+    zone_district[['zone_id','sample_rate']].to_csv(os.path.join(main_inputs_folder, taz_sample_rate_file), index = False, sep = '\t')
+
+    #find sythetic population filename
+    config_template_path = "daysim_configuration_template.properties"
+    
+    #read daysim properties
+    abs_config_template_path = os.path.join(os.getcwd(), config_template_path)
+    with open(abs_config_template_path, 'r') as config:
+        for line in config:
+            #print line
+            settings = line.split('=')
+            #don't process setting headers
+            if len(settings)> 1:
+                variable = settings[0].strip()
+                value = settings[1].strip()
+                #popsyn file setting
+                if variable == 'HDF5Filename':
+                    popsyn_file = value
+                    
+
+    #run popsampler
+    popsyn_out_file = os.path.splitext(popsyn_file)[0] + '_sampled.h5'
+    returncode = subprocess.call([sys.executable,'scripts/popsampler.py',taz_sample_rate_file, popsyn_file, popsyn_out_file])
+        
+    if returncode != 0:
+        print('population sampler did not work')
+        #sys.exit(1)
+    else:
+        print('Created new popsyn file')
+        
+    #update properties file with new popsyn file
+    config_path = "daysim/daysim_configuration.properties"
+    abs_config_path = os.path.join(os.getcwd(), config_path)
+
+    #read config file
+    filedata=None
+    with open(abs_config_path, 'r') as config:
+        filedata = config.read()
+
+    #replace popsyn file name
+    if filedata.find(popsyn_file) >= 0:
+        filedata = filedata.replace(popsyn_file, popsyn_out_file)
+
+    #write the file out again
+    with open(abs_config_path, 'w') as config:
+        config.write(filedata)
 
 
 @timed
@@ -220,7 +318,7 @@ def run_all_summaries():
 # Main Script:
 def main():
 ## SET UP INPUTS ##########################################################
-
+    
     if run_accessibility_calcs:
         accessibility_calcs()
 
@@ -268,7 +366,8 @@ def main():
         copy_seed_skims()
     # Check all inputs have been created or copied
     check_inputs()
-    
+
+
 ### RUN DAYSIM AND ASSIGNMENT TO CONVERGENCE-- MAIN LOOP
 ### ##########################################
     
@@ -282,11 +381,10 @@ def main():
 
             # Copy shadow pricing? Need to know what the sample size of the previous iteration was:
             if not should_build_shadow_price:
-                print 'here'
+                
                 if iteration == 0 or pop_sample[iteration-1] > 2:
-                    print 'here'
-                    try:
-                                                        
+                    
+                    try:                                
                             if not os.path.exists('working'):
                                 os.makedirs('working')
                             shcopy(base_inputs+'/shadow_pricing/shadow_prices.txt','working/shadow_prices.txt')
@@ -312,6 +410,7 @@ def main():
                 print "System converged!"
                 break
             print 'The system is not yet converged. Daysim and Assignment will be re-run.'
+            
 
 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES USING CONVERGED SKIMS FROM CURRENT RUN, THEN DAYSIM + ASSIGNMENT ############################
     if should_build_shadow_price:
@@ -327,6 +426,7 @@ def main():
 #### ALL DONE
 #### ##################################################################
     clean_up()
+
     print '###### OH HAPPY DAY!  ALL DONE. GO GET A ' + random.choice(good_thing)
 ##print '    Total run time:',time_assign_summ - time_start
 

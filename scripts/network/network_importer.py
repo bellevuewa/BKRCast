@@ -189,6 +189,10 @@ def import_tolls(emmeProject):
     #@rdly:
     import_attributes(attr_file[2], scenario = emmeProject.current_scenario,
              revert_on_error=True)
+
+    print('update capacity for period: ' + tod_4k) #capacities in the original network are per hour
+    cap_period = str(hwy_tod[tod_4k]) + ' * ul1' 
+    emmeProject.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "all")
     
     #We are using the same rdly has 4k. No need to factor. 
     #emmeProject.network_calculator("link_calculation", result = "@rdly", expression = "@rdly * .50")

@@ -5,11 +5,11 @@ tod_networks = ['am', 'md', 'pm', 'ni']
 sound_cast_net_dict = {'5to9' : 'am', '9to15' : 'md', '15to18' : 'pm', '18to5' : 'ni'}
 load_transit_tod = ['5to9', '9to15', '15to18', '18to5']
 
-mode_crosswalk_dict = {'b': 'bp', 'bwl' : 'bpwl', 'aijb' : 'aimjbp', 'ahijb' : 'ahdimjbp', 
-                      'ashijtuvb': 'asehdimjvutbp', 'r' : 'rc', 'br' : 'bprc', 
-                      'ashijtuvbwl' : 'asehdimjvutbpwl', 'ashijtuvbfl' : 'asehdimjvutbpfl', 
-                      'asbw' : 'asehdimjvutbpwl', 'ashijtuvbxl' : 'asehdimjvutbpxl', 
-                      'ahijstuvbw' : 'asehdimjvutbpw'}
+#mode_crosswalk_dict = {'b': 'bp', 'bwl' : 'bpwl', 'aijb' : 'aimjbp', 'ahijb' : 'ahdimjbp', 
+#                      'ashijtuvb': 'asehdimjvutbp', 'r' : 'rc', 'br' : 'bprc', 
+#                      'ashijtuvbwl' : 'asehdimjvutbpwl', 'ashijtuvbfl' : 'asehdimjvutbpfl', 
+#                      'asbw' : 'asehdimjvutbpwl', 'ashijtuvbxl' : 'asehdimjvutbpxl', 
+#                      'ahijstuvbw' : 'asehdimjvutbpw'}
 mode_file = 'modes.txt'
 transit_vehicle_file = 'vehicles.txt' 
 base_net_name = '_roadway.in'
@@ -30,16 +30,17 @@ best_relative_gap = 0.01  # Assignment Convergence Criteria
 relative_gap = .0001
 normalized_gap = 0.01
 
-MIN_EXTERNAL = 1511      #zone of externals (subtract 1 because numpy is zero-based)
-MAX_EXTERNAL = 1528      #zone of externals (subtract 1 because numpy is zero-based) - 
+MIN_EXTERNAL = 1511      #zone of externals 
+MAX_EXTERNAL = 1528      #zone of externals 
 HIGH_TAZ = 1359
 LOW_PNR = 1360 #external dummy is also included
-HIGH_PNR = 1511
+HIGH_PNR = 1510
 
 SPECIAL_GENERATORS = {"SeaTac":1356,"Tacoma Dome":1357,"exhibition center":1359, "Seattle Center":1358}
 feedback_list = ['Banks/5to9/emmebank','Banks/15to18/emmebank']
 
 # Time of day periods
+hwy_tod = {'am':4,'md':6,'pm':3,'ni':11}
 tods = ['5to9', '9to15', '15to18', '18to5']
 project_list = ['Projects/' + tod + '/' + tod + '.emp' for tod in tods]
 
@@ -85,7 +86,7 @@ transit_network_tod_dict = sound_cast_net_dict
 transit_tod = {'5to9' : {'4k_tp' : 'am', 'num_of_hours' : 4},
                '9to15' : {'4k_tp' : 'md', 'num_of_hours' : 6}, 
                '15to18' : {'4k_tp' : 'pm', 'num_of_hours' : 3},
-               '18to5' : {'4k_tp' : 'ni', 'num_of_hours' : 11}}
+               '18to5' : {'4k_tp' : 'ni', 'num_of_hours' : 2}} #trying 2 hours of service instead of 11
                 
 # Transit Fare:
 zone_file = 'inputs/Fares/transit_fare_zones.grt'

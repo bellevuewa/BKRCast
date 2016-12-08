@@ -19,21 +19,21 @@ if not(use_simple_configuration):
     scenario_name = '2014'
     daysim_code = 'E:/Projects/Clients/bkr/model/bkrcast_tod/daysim_2016' 
     master_project = 'LoadTripTables'
-    main_inputs_folder =  'E:/Projects/Clients/bkr/model/bkrcast_tod/Inputs/'
+    main_inputs_folder =  'E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/'
     base_inputs = main_inputs_folder + scenario_name
     # For Overriding the simple configuration, when you want to run things in more detail:
     ###### Only update parking for future-year analysis!
     run_update_parking = False
     run_convert_hhinc_2000_2010 = False
     run_accessibility_calcs = False
-    run_copy_daysim_code = True
+    run_copy_daysim_code = False
     run_setup_emme_project_folders = True
     run_setup_emme_bank_folders = True
     run_copy_large_inputs = False
     run_import_networks = True
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True
+    run_copy_seed_skims = False
     create_no_toll_network = True
     run_skims_and_paths_seed_trips = True
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
@@ -43,8 +43,8 @@ if not(use_simple_configuration):
     run_supplemental_trips = True
     run_daysim = True
     run_accessibility_summary = True
-    run_network_summary = True
-    run_soundcast_summary =  True
+    run_network_summary = False
+    run_bkrcast_summary =  True
     run_create_daily_bank = False
     run_ben_cost = False
     run_truck_summary = False
@@ -60,23 +60,27 @@ if not(use_simple_configuration):
 
     run_landuse_summary = True
 
-    # Model iterations, population sampling, log files, etc.
+    # DaySim - household sampling rate input
     pop_sample = [10, 2, 1]
-    pop_sample_district = {'BKR':{1,4,4,2,2},
-                        'Seatle':{1,0.50,0.25,0.50,0.25}, 
-                        'Rest of King':{1,0.20,0.10,0.20,0.10}, 
-                        'Pierce':{1,0.10,0.05,0.10,0.05}, 
-                        'Snohomish':{1,0.10,0.05,0.10,0.05}, 
-                        'Kitsap':{1,0.10,0.05,0.10,0.05}} #population sampling by districts for sensitiviy tests - 5 options
-    zone_region_file = 'TAZ_District_CrossWalk.csv'
+
+    # Popsampler - super/sub-sampling in population synthesis
+    sampling_option = 1 #1-5: five options available - each option is a column in pop_sample_district below
+    pop_sample_district = {'BKR':[1,4,4,2,2],
+                        'Seattle':[1,0.50,0.25,0.50,0.25], 
+                        'Rest of King':[1,0.20,0.10,0.20,0.10], 
+                        'Pierce':[1,0.10,0.05,0.10,0.05], 
+                        'Snohomish':[1,0.10,0.05,0.10,0.05], 
+                        'Kitsap':[1,0.10,0.05,0.10,0.05]} #population sampling by districts - 5 options to choose from (each option is a column)
+    zone_district_file = 'TAZ_District_CrossWalk.csv' #input to generate taz_sample_rate_file below
+    taz_sample_rate_file = 'taz_sample_rate.txt' #intermediate output, input to popsampler script
+    
     # Assignment Iterations:
     max_iterations_list = [10, 100, 100]
     min_pop_sample_convergence_test = 10
+    
     # start building shadow prices - only run work locations
     shadow_work = [2, 1, 1]
     shadow_con = 30 #%RMSE for shadow pricing to consider being converged
-
- 
 
 else:
 

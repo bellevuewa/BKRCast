@@ -13,7 +13,7 @@ tod_list = ['am','md', 'pm', 'ni']
 # External Magic Numbers
 LOW_STATION = 1511
 HIGH_STATION = 1528
-EXTERNAL_DISTRICT = 'ga20'
+EXTERNAL_DISTRICT = 'ga08'
 
 truck_adjustment_factor = {'ltpro': 0.544,
 							'mtpro': 0.545,

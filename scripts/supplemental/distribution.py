@@ -64,10 +64,10 @@ def calc_fric_fac(cost_skim, dist_skim):
     ''' Calculate friction factors for all trip purposes '''
     friction_fac_dic = {}
     for purpose, coeff_val in coeff.iteritems():
-        friction_fac_dic[purpose] = np.exp((coeff[purpose])*(cost_skim + (dist_skim * autoop * avotda)))
-        ## Set external zones to zero to prevent external-external trips
-        friction_fac_dic[purpose][LOW_STATION:] = 0
-        friction_fac_dic[purpose][:,[x for x in range(LOW_STATION, len(cost_skim))]] = 0
+        friction_fac_dic[purpose] = np.exp((coeff[purpose])*(cost_skim + (dist_skim * autoop * avotda)))        
+                    
+        ## Set external zones to zero to prevent external-external trips - minus 1 as numpy array starts with index 0
+        friction_fac_dic[purpose][LOW_STATION-1:,[x for x in range(LOW_STATION-1, len(cost_skim))]] = 0
 
     return friction_fac_dic
 
@@ -85,6 +85,8 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
     matrix_name_list = [matrix.name for matrix in my_project.bank.matrices()]
     zonesDim = len(my_project.current_scenario.zone_numbers)
     zones = my_project.current_scenario.zone_numbers
+
+    print(zonesDim)
 
     # Create Emme matrices if they don't already exist
     for purpose in trip_purps:
@@ -104,8 +106,8 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
             # Load zonal production and attractions from CSV (output from trip generation)
             trips = np.array(trip_table_in[purpose + p_a])
             trips.resize(zonesDim)
-            #code below does not work for GQs because there are only 3700 records in the csv file. Not sure if code above is ideal.
-            #trips = np.array(trip_table_in.loc[0:zonesDim - 1][purpose + p_a])    # Less 1 because NumPy is 0-based\
+
+            #code below does not work for GQs because there are only 3359 records in the csv file. Not sure if code above is ideal.
             matrix_id = my_project.bank.matrix(purpose + p_a).id    
             emme_matrix = my_project.bank.matrix(matrix_id)  
             emme_matrix = ematrix.MatrixData(indices=[zones],type='f')    # Access Matrix API
@@ -116,22 +118,27 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
 
         # Load friction factors by trip purpose
         fri_fac = fric_facs[purpose][0:zonesDim,0:zonesDim]
+            
         emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')    # Access Matrix API
         emme_matrix.raw_data = [_array.array('f',row) for row in fri_fac]
         matrix_id = my_project.bank.matrix(purpose + "fri").id    
         my_project.bank.matrix(matrix_id).set_data(emme_matrix, my_project.current_scenario)
                   
-def balance_matrices(trip_purps, my_project):
+def balance_matrices(trip_purps, my_project, constraint_taz):
     ''' Balances productions and attractions by purpose for all internal zones '''
-    #HIGH_STATION changed to HIGH_TAZ - nagendra.dhakar@rsginc.com
     for purpose in trip_purps:
+        # For friction factors, have to make sure 0s in Externals are actually 0, otherwise you will get intrazonal trips - added by stefan coe
+        my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = '0', 
+                                 constraint_by_zone_destinations = str(LOW_STATION) + '-' + str(HIGH_STATION), 
+                                 constraint_by_zone_origins = str(LOW_STATION) + '-' + str(HIGH_STATION))
+        
         print "Balancing trips for purpose: " + str(purpose)
         my_project.matrix_balancing(results_od_balanced_values = 'mf' + purpose + 'dis', 
                                     od_values_to_balance = 'mf' + purpose + 'fri', 
                                     origin_totals = 'mo' + purpose + 'pro', 
                                     destination_totals = 'md' + purpose + 'att', 
-                                    constraint_by_zone_destinations = '1-' + str(HIGH_TAZ), 
-                                    constraint_by_zone_origins = '1-' + str(HIGH_TAZ))
+                                    constraint_by_zone_destinations = '1-' + str(constraint_taz), 
+                                    constraint_by_zone_origins = '1-' + str(constraint_taz))
 
 def calculate_daily_trips(trip_purps, my_project):
     # Accounting for out- and in-bound trips.
@@ -185,7 +192,7 @@ def trips_by_tod(trips_by_mode, trip_purps):
         print mode
     return trips_by_tod
 
-def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_project):
+def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_project, constraint_taz):
     ''' Load data in Emme, balance trips by purpose, and produce O-D trip tables '''
 
     # Clear all existing matrices
@@ -194,10 +201,10 @@ def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_proje
     delete_matrices(my_project, "FULL")
 
     # Load data into fresh Emme matrices
-    load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project) #debug - commented out
+    load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project)
 
     # Balance matrices
-    balance_matrices(trip_purps, my_project)
+    balance_matrices(trip_purps, my_project, constraint_taz)
 
     # Calculate daily trips
     calculate_daily_trips(trip_purps, my_project)
@@ -231,11 +238,9 @@ def summarize_all_by_purp(ext_spg_summary, gq_summary, trip_purps):
         filtered = np.zeros_like(ext_spg_summary[purpose])
         # Add only special generator rows
         for loc_name, loc_zone in SPECIAL_GENERATORS.iteritems():
-            # Add rows (minus 1 for zero-based NumPy index)
-            #filtered[[loc_zone - 1],:] = ext_spg_summary[purpose][[loc_zone - 1],:]
+            # Add rows 
             filtered[[dictZoneLookup[loc_zone]],:] = ext_spg_summary[purpose][[dictZoneLookup[loc_zone]],:]
-            # Add columns (minus 1 for zero-based NumPy index)
-            #filtered[:,[loc_zone - 1]] = ext_spg_summary[purpose][:,[loc_zone - 1]]
+            # Add columns 
             filtered[:,[dictZoneLookup[loc_zone]]] = ext_spg_summary[purpose][:,[dictZoneLookup[loc_zone]]]
             # Combine with group quarters array
             if purpose not in ['hw2', 'hw3', 'hw4']:
@@ -265,10 +270,8 @@ def ext_spg_selected(trip_purps):
         # Add only special generator rows
         for loc_name, loc_zone in SPECIAL_GENERATORS.iteritems():
             # Add rows (minus 1 for zero-based NumPy index)
-            #filtered[[loc_zone - 1],:] = emme_data[[loc_zone - 1],:]
             filtered[[dictZoneLookup[loc_zone]],:] = emme_data[[dictZoneLookup[loc_zone]],:]
             # Add columns (minus 1 for zero-based NumPy index)
-            #filtered[:,[loc_zone - 1]] = emme_data[:,[loc_zone - 1]]
             filtered[:,[dictZoneLookup[loc_zone]]] = emme_data[:,[dictZoneLookup[loc_zone]]]
         # Add only external rows and columns
         filtered[MIN_EXTERNAL-1:,:] = emme_data[MIN_EXTERNAL-1:,:]
@@ -302,15 +305,17 @@ def supplementals_report(ext_spg_trimmed, gq_summary, combined, split_by_mode_to
 def main():
     global dictZoneLookup
     dictZoneLookup = dict((value,index) for index,value in enumerate(my_project.current_scenario.zone_numbers))
-    print len(dictZoneLookup)
+    
     # Overwrite previous trip tables
     init_dir(supplemental_loc)
     print "loading skim data..."
     # Load skim data
-    am_cost_skim = load_skims(r'inputs\5to9.h5', mode_name='svtl2g')
-    am_dist_skim = load_skims(r'inputs\5to9.h5', mode_name='svtl1d', divide_by_100=True)
-    pm_cost_skim = load_skims(r'inputs\15to18.h5', mode_name='svtl2g')
-    pm_dist_skim = load_skims(r'inputs\15to18.h5', mode_name='svtl1d', divide_by_100=True)
+    path_am_skim = r'inputs\5to9.h5'
+    path_pm_skim = r'inputs\15to18.h5'
+    am_cost_skim = load_skims(path_am_skim, mode_name='svtl2g')
+    am_dist_skim = load_skims(path_am_skim, mode_name='svtl1d', divide_by_100=True)
+    pm_cost_skim = load_skims(path_pm_skim, mode_name='svtl2g')
+    pm_dist_skim = load_skims(path_pm_skim, mode_name='svtl1d', divide_by_100=True)
     cost_skim = (am_cost_skim + pm_cost_skim) * .5
     dist_skim = (am_cost_skim + pm_dist_skim) * .5
    
@@ -321,19 +326,20 @@ def main():
     print(trip_table.shape)
     # Create trip table for externals and special generators by purpose and summarize
 
-    distribute_trips(trip_table, ext_spg_dir, trip_purp_full, fric_facs, my_project)
+    distribute_trips(trip_table, ext_spg_dir, trip_purp_full, fric_facs, my_project, constraint_taz = HIGH_STATION)
     print("finished distributing")
-    print(trip_table.describe())
+
     ext_spg_trimmed = ext_spg_selected(trip_purp_full)    # Include only external and special gen. zones
-    temp = [[ext_spg_trimmed[purpose].sum() for purpose in trip_purp_full]] #debug - nagendra.dhakar@rsginc.com
+    temp = [[ext_spg_trimmed[purpose].sum() for purpose in trip_purp_full]] #for debug - nagendra.dhakar@rsginc.com
     print(temp)
+    
     print "distributing gp trips..."
-    print(gq_trip_table.shape)
     # Distribute group quarters trips by purpose and summarize results
-    distribute_trips(gq_trip_table, gq_directory, trip_purp_gq, fric_facs, my_project)
+    distribute_trips(gq_trip_table, gq_directory, trip_purp_gq, fric_facs, my_project, constraint_taz = HIGH_STATION)
     gq_summary = sum_by_purp(trip_purp_gq, my_project)
-    temp = [[gq_summary[purpose].sum() for purpose in trip_purp_gq]] #debug - nagendra.dhakar@rsginc.com
+    temp = [[gq_summary[purpose].sum() for purpose in trip_purp_gq]] #for debug - nagendra.dhakar@rsginc.com
     print(temp)
+    
     print "combining trips..."
     # Combine external, special gen., and group quarters trips
     combined = {}

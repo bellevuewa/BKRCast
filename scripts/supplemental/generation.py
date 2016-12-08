@@ -104,7 +104,7 @@ def process_inputs(file_loc, start_row, col_names, clean_column, pivot_fields, r
 def puma_taz_lookup(puma_taz):
     ''' Create PUMS-TAZ lookup table '''
     # Correct PUMS formatting to match cross-class data (add extra '0' in field name) - hard coded
-    #nagendr.dhakar - range below is hard coded. represents number of rows in the puma00.ens with puma zones for internal zones (till 1355 for bkr - 1307 lines)
+    
     for x in xrange(1,len(puma_taz)):
         puma_taz["puma"].loc[x] = puma_taz["puma"].loc[x].replace('gp', 'gp0')
 
@@ -168,19 +168,16 @@ def add_special_gen(trip_table):
 
     # Add special generator home-based (spghbo) other and 75% of airport (spgapt) trips
     # to general home-based attractions (hboatt)
+    
     for key, value in spg_general.iteritems():
-        #trip_table.iloc[key - 1]["hboatt"] += value
-        trip_table.iloc[dictZoneLookup[key]]["hboatt"] += value
+        trip_table.loc[key]["hboatt"] += value
 
     # Add 25% of airport trips to work-based attractions
-    #trip_table.iloc[spg_airport.keys()[0] - 1]["hboatt"] += airport_hb_share * spg_airport.values()[0]
-    trip_table.iloc[dictZoneLookup[spg_airport.keys()[0]]]["hboatt"] += airport_hb_share * spg_airport.values()[0]
-    #trip_table.iloc[spg_airport.keys()[0] - 1]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
-    trip_table.iloc[dictZoneLookup[spg_airport.keys()[0]]]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
-
+    trip_table.loc[spg_airport.keys()[0]]["hboatt"] += airport_hb_share * spg_airport.values()[0]
+    trip_table.loc[spg_airport.keys()[0]]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
+    
     # Add (unbalanced) externals
     externals = pd.DataFrame(pd.read_csv(externals_loc, index_col="taz"))
-    #externals.index = [taz_num-1 for taz_num in externals.index]    # convert to index from TAZ?
     externals.columns = trip_col
     trip_table = trip_table.append(externals)
 
@@ -199,30 +196,17 @@ def balance_trips(trip_table, bal_to_attractions, include_ext):
 
             # Balance attractions to productions for most trip purposes
             if key not in bal_to_attractions:
-                #prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+                prod = trip_table[key].sum() ; att = trip_table[value].sum()
                 print("before, production: " + str(prod) + " and attraction: " + str(att))
                 if include_ext:
-                    #ext = trip_table[value].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
-                    #ext = trip_table[value].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]+1].sum() #added 1 to include the MAX_EXTERNAL - nagendra.dhakar@rsginc.com
-                    ext = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
+                    ext = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
                     #dictZoneLookup
                 else:
                     ext = 0
-                #ext = trip_table[value].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
-                #ext = trip_table[value].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]].sum()
-                #bal_factor = (prod - ext)/(att - ext)
-                bal_factor = (prod)/(att)
+                bal_factor = (prod - ext)/(att - ext)
 
-                #balance internal trips
-                #prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
 
-#                if (att>0):
-#                    bal_factor = (prod)/(att)
-#                else:
-#                    bal_factor = 0
-
-                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor #nagendra.dhakar@rsginc.com - 'ext' is calculated with numpy index and this by taz, why?
+                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor
 
                 print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
                 print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
@@ -233,27 +217,15 @@ def balance_trips(trip_table, bal_to_attractions, include_ext):
 
             # Balance productions to attractions for college trips
             else:
-                #prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
+                prod = trip_table[key].sum() ; att = trip_table[value].sum()
                 print("before, production: " + str(prod) + " and attraction: " + str(att))
                 if include_ext:
-                    #ext = trip_table[key].iloc[HIGH_TAZ:MAX_EXTERNAL-1].sum()
-                    #ext = trip_table[key].iloc[dictZoneLookup[MIN_EXTERNAL]:dictZoneLookup[MAX_EXTERNAL]].sum()
-                    ext = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum() #added by nagendra.dhakar@rsginc.com
+                    ext = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
                 else:
                     ext = 0
-                #bal_factor = (att - ext)/(prod - ext)
-                bal_factor = (prod)/(att)
+                bal_factor = (att - ext)/(prod - ext)
 
-
-                #balance internal trips
-#                prod = trip_table[key].loc[1:HIGH_TAZ].sum() ; att = trip_table[value].loc[1:HIGH_TAZ].sum()
-#                if (att>0):
-#                    bal_factor = (prod)/(att)
-#                else:
-#                    bal_factor = 0
-
-                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor
+                trip_table[key].loc[1:HIGH_TAZ] *= bal_factor
 
                 print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
                 print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
@@ -292,6 +264,7 @@ def main():
     puma_taz = process_inputs(puma_taz_loc, start_row=0, col_names=['scrap', 'puma', 'taz'],
                               clean_column="puma", pivot_fields=False, reorder=False)
     puma_taz = pd.DataFrame(puma_taz[["puma", "taz"]])
+
     puma_taz=puma_taz.dropna()
 
     # Join PUMA data to TAZ data
@@ -303,9 +276,6 @@ def main():
 
     pums_df = load_pums()
     master_taz = master_taz.join(pums_df,"puma")
-    
-    print(taz_data.shape)
-    print(master_taz.shape)
     
     # Calculate households by taz
     master_taz = calc_hhs(master_taz)
@@ -343,13 +313,12 @@ def main():
         gq_trip_rate.index = [str(i) for i in xrange(122, 124 + 1)]
         gq_trip_rate.columns = ['col']
         for zone in xrange(1,HIGH_TAZ + 1):
-            #print 'zone ' + str(zone)
-            #hhs1 = pd.DataFrame(hhs.iloc[zone-1])
+
             hhs1 = pd.DataFrame(hhs.loc[zone])
-            #nonhhs1 = pd.DataFrame(nonhhs.iloc[zone-1])
+            
             nonhhs1 = pd.DataFrame(nonhhs.loc[zone])
-            #gq1 = pd.DataFrame(gq.iloc[zone-1])
             gq1 = pd.DataFrame(gq.loc[zone])
+                
             hhs1.index = [str(i) for i in xrange(hh_cols[0], hh_cols[1])]
             nonhhs1.index = [str(i) for i in xrange(emp_cols[0], emp_cols[1])]
             gq1.index = [str(i) for i in xrange(122, 124 + 1)]
@@ -360,17 +329,14 @@ def main():
             dot1 = trip_rate['col'].dot(hhs1['col'])
             dot2 = nh_trip_rate['col'].dot(nonhhs1['col'])
             dot3 = gq_trip_rate['col'].dot(gq1['col'])
-            #trips_by_purpose[str(purpose)].loc[zone-1] = dot1
+            
             trips_by_purpose[str(purpose)].loc[zone] = dot1
-            #nonhh_trips_by_purp[str(purpose)].loc[zone-1] = dot2
             nonhh_trips_by_purp[str(purpose)].loc[zone] = dot2
-            #gq_trips[str(purpose)].loc[zone-1] = dot3
             gq_trips[str(purpose)].loc[zone] = dot3
+            
             trip_table = trips_by_purpose + nonhh_trips_by_purp
 
-    print(trip_table.shape)
-    print(gq_trips.shape)
-
+    
     # Rename columns
     trip_table.columns = trip_col
     gq_trips.columns = trip_col
@@ -385,8 +351,7 @@ def main():
     gq_append = pd.DataFrame(gq_prod.join(all_trips_att))
 
     trip_table = add_special_gen(trip_table)
-    #debug
-    #trip_table.to_csv(r"E:\Projects\Clients\bkr\model\bkrcast\outputs\trip_table.csv")
+    
     print("balance trips - excluding colpro")
     balance_trips(trip_table, bal_to_attractions = ['colpro'], include_ext=True)
     print("balance group quarter trips - all")
@@ -400,13 +365,22 @@ def main():
 
     # Fill empty rows with placeholder zeros
     externals = trip_table.loc[MIN_EXTERNAL:MAX_EXTERNAL] #slicing the trip table for external zones only
+
+    #assemble a trip table for all BKR zones - start with internal and special generator zones
     base = trip_table.loc[:HIGH_TAZ] #slicing the trip table to internal zones only (including special generators)
-    placeholder_index = [str(i) for i in xrange(LOW_PNR,HIGH_PNR)]
+
+    #add placeholders - PNR
+    placeholder_index = [str(i) for i in xrange(LOW_PNR,HIGH_PNR+1)]
     placeholder_rows = pd.DataFrame(index=placeholder_index,columns=trip_col)
-    dummystations_index = [str(i) for i in xrange(MAX_EXTERNAL+1,1530+1)] #added for last two dummy stations - nagendra.dhakar@rsginc.com
+    trip_table = base.append(placeholder_rows)
+
+    #add externals
+    trip_table = trip_table.append(externals)
+
+    #add two dummy external stations
+    dummystations_index = [str(i) for i in xrange(MAX_EXTERNAL+1,1530+1)] #added for last two dummy stations
     dummystations_rows = pd.DataFrame(index=dummystations_index,columns=trip_col)
-    trip_table = base.append([placeholder_rows, externals, dummystations_rows])
-    trip_table = trip_table.sort_index(axis=0)
+    trip_table = trip_table.append(dummystations_rows)
 
     # Replace "NaN" values with zeros
     gq_append = gq_append.fillna(0)
