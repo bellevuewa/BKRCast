@@ -27,8 +27,8 @@ counts_file = 'TrafficCounts_Mid.txt'
 net_summary_file = 'network_summary.csv'
 counts_output_file = 'counts_output.csv'
 screenlines_file = 'screenline_volumes.csv'
-uc_list = ['@svtl1', '@svtl2', '@svtl3', '@svnt1', '@svnt2', '@svnt3', '@h2tl1', '@h2tl2', '@h2tl3',
-           '@h2nt1', '@h2nt2', '@h2nt3', '@h3tl1', '@h3tl2', '@h3tl3', '@h3nt1', '@h3nt2', '@h3nt3', '@lttrk', '@mveh', '@hveh', '@bveh']
+uc_list = ['@svtl1', '@svtl2', '@svtl3', '@h2tl1', '@h2tl2', '@h2tl3', 
+           '@h3tl1', '@h3tl2', '@h3tl3', '@lttrk', '@mveh', '@hveh', '@bveh']
 
 output_list = ['prod_att.csv', 'gq_prod_att.csv', 'network_summary.csv', 'counts_output.csv', 'daysim_outputs.h5',
                'screenline_volumes']
@@ -43,4 +43,7 @@ out_lu_summary = r'outputs/landuse_summary.xlsx'
 households_persons_file = r'inputs\hh_and_persons.h5'
 
 ######## Truck Counts ########################################################
-truck_counts_file ='scripts/summarize/inputs/network_summary/truck_counts_2014.xlsx'
+truck_counts_file = r'scripts/summarize/inputs/network_summary/truck_counts_2014.csv' 
+
+######## Observed Transit Boardings############################################
+observed_boardings_file = 'scripts/summarize/inputs/network_summary/transit_boardings_2014.csv'

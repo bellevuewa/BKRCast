@@ -27,7 +27,7 @@ def readSynPopTables(fileName):
     perFields = map(lambda x: x[0], popsyn.get("Person").items())
     
     #build pandas data frames
-    hhFields.remove('incomeconverted') #not a column attribute
+    #hhFields.remove('incomeconverted') #not a column attribute
     hhTable = pd.DataFrame()
     for hhField in hhFields:
         hhTable[hhField] = popsyn.get("Household").get(hhField)[:]

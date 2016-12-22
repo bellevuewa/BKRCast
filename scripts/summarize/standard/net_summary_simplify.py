@@ -47,7 +47,7 @@ md_transit_key_df = pd.io.excel.read_excel('scripts/summarize/inputs/network_sum
 md_observed_df = pd.io.excel.read_excel('scripts/summarize/inputs/network_summary/ObservedBoardings.xlsx', 'MD')
 
 transit_df = pd.io.excel.read_excel(input_file, sheetname = 'Transit Summaries')
-
+observed_df = pd.read_csv(observed_boardings_file)
 
 summary_by_tp_4k = net_summary_df.groupby('TP_4k').sum() #Group by 4k time
 totals = net_summary_df.sum()
@@ -55,7 +55,7 @@ totals = net_summary_df.sum()
 
 #Create lists to iterate over
 variables = ['vmt', 'vht', 'delay']
-times = ['am', 'md', 'pm', 'ev', 'ni', 'Total']
+times = ['am', 'md', 'pm', 'ni', 'Total']
 facilities = ['Freeways', 'Arterials', 'Connectors', 'Total']
 title_rows = {'vmt': 0, 'vht': 14, 'delay': 28} #Says which row to start at for each variable
 
@@ -74,7 +74,7 @@ global cond_format
 global colors
 
 font = 'Times New Roman'
-title_format = net_summary.add_format({'bold': True, 'font_name': font, 'font_size': 14})
+title_format = net_summary.add_format({'bold': True, 'font_name': font, 'font_size': 12})
 header_format = net_summary.add_format({'bold': True, 'font_name': font, 'font_size': 11, 'align': 'center',    'bottom': True})
 index_format = net_summary.add_format({'bold': True, 'font_name': font, 'font_size': 11, 'align': 'left'})
 number_format = net_summary.add_format({'font_name': font, 'num_format': '#,##0', 'align': 'right'})
@@ -131,31 +131,31 @@ screenline_dict = {'Primary': {
                                     71: 'Woodinville'}}
 
 #Create a dictionary to map from screenline names to the observed daily volumes
-observed_screenline_volumes = {'Tacoma - East of CBD': 271777,
-                                'Auburn': 534811,
-                                'Tukwila': 239527,
-                                'Renton': 81758,
-                                'Seattle - South of CBD': 490806,
-                                'Bellevue/Redmond': 354612,
-                                'TransLake': 250220,
-                                'Ship Canal': 521155,
-                                'Kirkland/Redmond': 381331,
-                                'Seattle - North': 327021,
-                                'Lynnwood/Bothell': 231368,
-                                'Bothell': 255590,
-                                'Mill Creek': 350492,
-                                'Parkland': 285859,
-                                'Puyallup': 118726,
-                                'Tacoma Narrows': 79000,
-                                'Maple Valley': 61921,
-                                'SeaTac': 71364,
-                                'Kent': 504607,
-                                'Gig Harbor': 58503,
-                                'Kitsap - North': 97177,
+observed_screenline_volumes = {'Tacoma - East of CBD': 283164,
+                                'Auburn': 540866,
+                                'Tukwila': 245433,
+                                'Renton': 85258,
+                                'Seattle - South of CBD': 469433,
+                                'Bellevue/Redmond': 362151,
+                                'TransLake': 234150,
+                                'Ship Canal': 507450,
+                                'Kirkland/Redmond': 375697,
+                                'Seattle - North': 338825,
+                                'Lynnwood/Bothell': 255467,
+                                'Bothell': 268625,
+                                'Mill Creek': 365342,
+                                'Parkland': 275733,
+                                'Puyallup': 119401,
+                                'Tacoma Narrows': 80000,
+                                'Maple Valley': 75982,
+                                'SeaTac': 72335,
+                                'Kent': 557842 ,
+                                'Gig Harbor': 61503,
+                                'Kitsap - North': 100890,
                                 'Agate Pass': 21000,
-                                'Cross-Sound': 17466,
-                                'Preston, Issaquah': 93227,
-                                'Woodinville': 98331}
+                                'Cross-Sound': 17412,
+                                'Preston, Issaquah': 91451,
+                                'Woodinville': 87944}
 
 transit_agency_dict = {'ET': 'Everett Transit',
                            'KT': 'Kitsap Transit',
@@ -295,11 +295,9 @@ def write_transit_boarding_tables(worksheet, transit_df, start_row, time_abbr):
                 except TypeError:
                     worksheet.write_string(start_row + rownum + 2, colnum + 1, 'NA')
 
-    worksheet.conditional_format('E3:E13', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': cond_format})
-    worksheet.conditional_format('E3:E13', {'type': 'cell', 'criteria': '<=', 'value': -0.5, 'format': cond_format})
-    worksheet.conditional_format('E17:E27', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': cond_format})
-    worksheet.conditional_format('E17:E27', {'type': 'cell', 'criteria': '<=', 'value': -0.5, 'format': cond_format})
-
+    worksheet.conditional_format('E1:E100', {'type': 'cell', 'criteria': '>=', 'value': 1, 'format': cond_format})
+    worksheet.conditional_format('E1:E100', {'type': 'cell', 'criteria': '<=', 'value': -0.5, 'format': cond_format})
+    
 def write_net_sum_tables(network, variable, tables, format_sheet): #Function to write a table to the file
         start_row = title_rows[variable]
         time_df = tables[variable]['time']
@@ -354,7 +352,167 @@ def write_net_sum_tables(network, variable, tables, format_sheet): #Function to 
         network.insert_chart(start_row + 1, 6, time_chart)
         network.insert_chart(start_row + 8, 6, facility_chart)
 
-def transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall):
+def transit_summary(transit_df, observed, net_summary, transit, amtransitall, mdtransitall):
+    modeled = transit_df
+    #Generating a new column with transit-type keys
+    modeled['key'] = (modeled['route_code']/1000).astype(int)
+    modeled.fillna(value=0, inplace=True)
+    observed['key'] = (observed['PSRC_Rte_ID']/1000).astype(int)
+    observed.fillna(value=0, inplace=True)
+
+    cols = ['Modeled Boardings','Observed Boardings','Diff','%Diff']
+    rows = ['Metro','Pierce','CT','Kitsap','WSF','ET','ST Express','ST LightRail - Tacoma', 
+    'ST LightRail - CentralLink','ST CommuterRail South (Sea-LKW)','ST CommuterRail North (Sea-EV)',
+    'Total','Rapid Ride A','Rapid Ride B','Rapid Ride C','Rapid Ride D','Rapid Ride E']
+    tot_mdlEA=0 ; tot_mdlAM=0 ; tot_mdlMD=0 ; tot_mdlPM=0; tot_mdlEV=0
+    tot_obsEA=0 ; tot_obsAM=0 ; tot_obsMD=0 ; tot_obsPM=0; tot_obsEV=0
+    AM = pd.DataFrame(); MD = pd.DataFrame(); PM = pd.DataFrame(); EA = pd.DataFrame(); EV = pd.DataFrame()
+
+    #Metro,Pierce,CT,Kitsap,WSF,ET
+    mdl = modeled.groupby(['key']).sum()
+    obs = observed.groupby(['key']).sum()
+    for i in [1,2,3,4,5,7]:
+        if i in mdl.index:
+            
+            mdlAM = mdl.loc[i,'5to9_board']
+            mdlMD = mdl.loc[i,'9to15_board'] 
+            mdlPM = mdl.loc[i,'15to18_board'] 
+            mdlEV = mdl.loc[i,'18to5_board']
+            tot_mdlAM += mdlAM; tot_mdlMD += mdlMD; tot_mdlPM += mdlPM; tot_mdlEV += mdlEV
+        else:
+            mdlAM=0; mdlMD=0; mdlPM=0; mdlEV=0
+
+        if i in obs.index:
+            obsAM = obs.loc[i,'hour_5'] + obs.loc[i,'hour_6'] + obs.loc[i,'hour_7'] + obs.loc[i,'hour_8']
+            obsMD = obs.loc[i,'hour_9'] + obs.loc[i,'hour_10'] + obs.loc[i,'hour_11'] + obs.loc[i,'hour_12'] + obs.loc[i,'hour_13'] + obs.loc[i,'hour_14']
+            obsPM = obs.loc[i,'hour_15'] + obs.loc[i,'hour_16'] + obs.loc[i,'hour_17']
+            obsEV = obs.loc[i,'hour_18'] + obs.loc[i,'hour_19']
+            tot_obsAM += obsAM; tot_obsMD += obsMD; tot_obsPM += obsPM; tot_obsEV += obsEV
+
+            str_AM = [(mdlAM, obsAM, mdlAM-obsAM, ((mdlAM-obsAM)*100)/obsAM)]
+            str_MD = [(mdlMD, obsMD, mdlMD-obsMD, ((mdlMD-obsMD)*100)/obsMD)]
+            str_PM = [(mdlPM, obsPM, mdlAM-obsPM, ((mdlAM-obsPM)*100)/obsPM)]
+            str_EV = [(mdlEV, obsEV, mdlEV-obsEV, ((mdlEV-obsEV)*100)/obsEV)]
+        else:
+            str_AM = [(mdlAM,0,'NA','NA')]
+            str_MD = [(mdlMD,0,'NA','NA')]
+            str_PM = [(mdlPM,0,'NA','NA')]
+            str_EV = [(mdlEV,0,'NA','NA')]
+        AM = AM.append(str_AM); MD = MD.append(str_MD); PM = PM.append(str_PM); EV = EV.append(str_EV)
+
+    #ST Express	
+    mdl = modeled.groupby(['key','mode']).sum()
+    obs = observed.groupby(['key']).sum()
+    mdlAM=0; mdlMD=0; mdlPM=0; mdlEV=0
+    if 6 in mdl.index:
+        for j in ['b','p']:
+            if j in mdl.loc[6,].index:
+                mdlAM += mdl.loc[(6,j),'5to9_board']
+                mdlMD += mdl.loc[(6,j),'9to15_board']
+                mdlPM += mdl.loc[(6,j),'15to18_board']
+                mdlEV += mdl.loc[(6,j),'18to5_board']
+        tot_mdlAM += mdlAM; tot_mdlMD += mdlMD; tot_mdlPM += mdlPM; tot_mdlEV += mdlEV
+
+    if 6 in obs.index:
+        obsAM = obs.loc[6,'hour_5'] + obs.loc[6,'hour_6'] + obs.loc[6,'hour_7'] + obs.loc[6,'hour_8']
+        obsMD = obs.loc[6,'hour_9'] + obs.loc[6,'hour_10'] + obs.loc[6,'hour_11'] + obs.loc[6,'hour_12'] + obs.loc[6,'hour_13'] + obs.loc[6,'hour_14']
+        obsPM = obs.loc[6,'hour_15'] + obs.loc[6,'hour_16'] + obs.loc[(6,'hour_17')]
+        obsEV = obs.loc[6,'hour_18'] + obs.loc[6,'hour_19']
+        tot_obsAM += obsAM; tot_obsMD += obsMD; tot_obsPM += obsPM; tot_obsEV += obsEV
+
+        str_AM = [(mdlAM, obsAM, mdlAM-obsAM, ((mdlAM-obsAM)*100)/obsAM)]
+        str_MD = [(mdlMD, obsMD, mdlMD-obsMD, ((mdlMD-obsMD)*100)/obsMD)]
+        str_PM = [(mdlPM, obsPM, mdlAM-obsPM, ((mdlAM-obsPM)*100)/obsPM)]
+        str_EV = [(mdlEV, obsEV, mdlEV-obsEV, ((mdlEV-obsEV)*100)/obsEV)]
+    else:
+        str_AM = [(mdlAM,0,'NA','NA')]
+        str_MD = [(mdlMD,0,'NA','NA')]
+        str_PM = [(mdlPM,0,'NA','NA')]
+        str_EV = [(mdlEV,0,'NA','NA')]
+    AM = AM.append(str_AM); MD = MD.append(str_MD); PM = PM.append(str_PM); EV = EV.append(str_EV)
+
+    #ST LightRail - Tacoma, ST LightRail - CentralLink, ST CommuterRail South (Sea-LKW), ST CommuterRail North (Sea-EV)
+    mdl = modeled.groupby(['route_code']).sum()
+    obs = observed.groupby(['PSRC_Rte_ID']).sum()
+    for i in [6995,6996,6998,6999]:
+        if i in mdl.index:
+            mdlAM = mdl.loc[i,'5to9_board']
+            mdlMD = mdl.loc[i,'9to15_board']
+            mdlPM = mdl.loc[i,'15to18_board']
+            mdlEV = mdl.loc[i,'18to5_board']
+            tot_mdlAM += mdlAM; tot_mdlMD += mdlMD; tot_mdlPM += mdlPM; tot_mdlEV += mdlEV
+        else:
+            mdlAM=0; mdlMD=0; mdlPM=0; mdlEV=0
+
+        if i in obs.index:
+            obsAM = obs.loc[i,'hour_5'] + obs.loc[i,'hour_6'] + obs.loc[i,'hour_7'] + obs.loc[i,'hour_8']
+            obsMD = obs.loc[i,'hour_9'] + obs.loc[i,'hour_10'] + obs.loc[i,'hour_11'] + obs.loc[i,'hour_12'] + obs.loc[i,'hour_13'] + obs.loc[i,'hour_14']
+            obsPM = obs.loc[i,'hour_15'] + obs.loc[i,'hour_16'] + obs.loc[i,'hour_17']
+            obsEV = obs.loc[i,'hour_18'] + obs.loc[i,'hour_19']
+            tot_obsAM += obsAM; tot_obsMD += obsMD; tot_obsPM += obsPM; tot_obsEV += obsEV
+           
+            str_AM = [(mdlAM, obsAM, mdlAM-obsAM, ((mdlAM-obsAM)*100)/obsAM)]
+            str_MD = [(mdlMD, obsMD, mdlMD-obsMD, ((mdlMD-obsMD)*100)/obsMD)]
+            str_PM = [(mdlPM, obsPM, mdlAM-obsPM, ((mdlAM-obsPM)*100)/obsPM)]
+            str_EV = [(mdlEV, obsEV, mdlEV-obsEV, ((mdlEV-obsEV)*100)/obsEV)]
+        else:
+
+            str_AM = [(mdlAM,0,'NA','NA')]
+            str_MD = [(mdlMD,0,'NA','NA')]
+            str_PM = [(mdlPM,0,'NA','NA')]
+            str_EV = [(mdlEV,0,'NA','NA')]
+        AM = AM.append(str_AM); MD = MD.append(str_MD); PM = PM.append(str_PM); EV = EV.append(str_EV)
+
+    #Total
+    str_AM = [(tot_mdlAM, tot_obsAM, tot_mdlAM-tot_obsAM, ((tot_mdlAM-tot_obsAM)*100)/tot_obsAM)]
+    AM = AM.append(str_AM)
+    str_MD = [(tot_mdlMD, tot_obsMD, tot_mdlMD-tot_obsMD, ((tot_mdlMD-tot_obsMD)*100)/tot_obsMD)]
+    MD = MD.append(str_MD)
+    str_PM = [(tot_mdlPM, tot_obsPM, tot_mdlPM-tot_obsPM, ((tot_mdlPM-tot_obsPM)*100)/tot_obsPM)]
+    PM = PM.append(str_PM)
+    str_EV = [(tot_mdlEV, tot_obsEV, tot_mdlEV-tot_obsEV, ((tot_mdlEV-tot_obsEV)*100)/tot_obsEV)]
+    EV = EV.append(str_EV)
+
+    #Rapid Ride A,B,C,D,E
+    for i in [1671,1672,1673,1674,1675]:
+        if i in mdl.index:
+            mdlAM = mdl.loc[i,'5to9_board']
+            mdlMD = mdl.loc[i,'9to15_board']
+            mdlPM = mdl.loc[i,'15to18_board']
+            mdlEV = mdl.loc[i,'18to5_board']
+        else:
+            mdlAM=0; mdlMD=0; mdlPM=0; mdlEV=0
+
+        if i in obs.index:
+            obsAM = obs.loc[i,'hour_5'] + obs.loc[i,'hour_6'] + obs.loc[i,'hour_7'] + obs.loc[i,'hour_8']
+            obsMD = obs.loc[i,'hour_9'] + obs.loc[i,'hour_10'] + obs.loc[i,'hour_11'] + obs.loc[i,'hour_12'] + obs.loc[i,'hour_13'] + obs.loc[i,'hour_14']
+            obsPM = obs.loc[i,'hour_15'] + obs.loc[i,'hour_16'] + obs.loc[i,'hour_17']
+            obsEV = obs.loc[i,'hour_18'] + obs.loc[i,'hour_19']
+
+            str_AM = [(mdlAM, obsAM, mdlAM-obsAM, ((mdlAM-obsAM)*100)/obsAM)]
+            str_MD = [(mdlMD, obsMD, mdlMD-obsMD, ((mdlMD-obsMD)*100)/obsMD)]
+            str_PM = [(mdlPM, obsPM, mdlAM-obsPM, ((mdlAM-obsPM)*100)/obsPM)]
+            str_EV = [(mdlEV, obsEV, mdlEV-obsEV, ((mdlEV-obsEV)*100)/obsEV)]
+        else:
+
+            str_AM = [(mdlAM,0,'NA','NA')]
+            str_MD = [(mdlMD,0,'NA','NA')]
+            str_PM = [(mdlPM,0,'NA','NA')]
+            str_EV = [(mdlEV,0,'NA','NA')]
+        AM = AM.append(str_AM); MD = MD.append(str_MD); PM = PM.append(str_PM); EV = EV.append(str_EV)
+
+    AM.index = rows; MD.index = rows; PM.index = rows; EV.index = rows
+    AM.columns = cols; MD.columns = cols; PM.columns = cols; EV.columns = cols
+    
+    # Write the results and format
+    write_transit_boarding_tables(transit, AM, 0, 'AM')
+    write_transit_boarding_tables(transit, MD, 20, 'MD')
+    write_transit_boarding_tables(transit, PM, 40, 'PM')
+    write_transit_boarding_tables(transit, EV, 80, 'EV (18-20pm)')
+
+    
+    
+    # AMTransitAll, MDTransitAll
     am_line_id_map = {}
     am_agency_map = {}
     am_route_to_agency = {}
@@ -383,12 +541,12 @@ def transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall
             md_observed_map.update({md_observed_df.loc[item, 'RDCode']: md_observed_df.loc[item, 'MD Observed']})
 
      
-     # Group and Aggregate Model Results
+    # Group and Aggregate Model Results
         
-     #transit_df = transit_df.drop('id')
-     # first get the model data group by RDCode and Agency
-    transit_df = transit_df[transit_df.index != 'id'].fillna(0)
-    transit_df['id'] = transit_df.index.astype('float')
+    #transit_df = transit_df.drop('id')
+    # first get the model data group by RDCode and Agency
+    # transit_df = transit_df[transit_df.index != 'id'].fillna(0)
+    transit_df['id'] = transit_df.index
     transit_df['AM Code'] = transit_df['id'].map(am_agency_map)
     transit_df['MD Code'] = transit_df['id'].map(md_agency_map)
     transit_df['AM Agency'] = transit_df['AM Code'].map(transit_agency_dict)
@@ -396,8 +554,8 @@ def transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall
     transit_df['AM Route'] = transit_df['id'].map(am_line_id_map)
     transit_df['MD Route'] = transit_df['id'].map(md_line_id_map)
 
-    transit_df['Modeled AM Boardings'] = transit_df['6to7_board'] + transit_df['7to8_board'] + transit_df['8to9_board']
-    transit_df['Modeled MD Boardings'] = transit_df['9to10_board'] + transit_df['10to14_board'] + transit_df['14to15_board']
+    transit_df['Modeled AM Boardings'] = transit_df['5to9_board']
+    transit_df['Modeled MD Boardings'] = transit_df['9to15_board']
 
     #Now Combine the Observed and Modeled--- This should be a function!!!!!!!!!!!!!!!!!!!
     am_boardings_by_route = transit_df[['AM Route', 'Modeled AM Boardings']].groupby('AM Route').sum()
@@ -419,13 +577,8 @@ def transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall
     md_boardings_by_agency.loc['Total'] = [md_boardings_by_agency['Modeled MD Boardings'].sum(), md_boardings_by_agency['Observed MD Boardings'].sum()]
     md_boardings_by_agency = md_boardings_by_agency.fillna(0)
     md_boardings_by_agency = scf.get_differences(md_boardings_by_agency, 'Modeled MD Boardings', 'Observed MD Boardings', 0)
-
-
-    # Write the results and format
-    write_transit_boarding_tables(transit, am_boardings_by_agency, 0, 'Ante Meridian')
-    write_transit_boarding_tables(transit, md_boardings_by_agency, 14, 'Mid-Day')
-
-    # Workbook Creation AM -- This should be a function!!!!!!!!!!!!!!!!!
+	
+	# Workbook Creation AM -- This should be a function!!!!!!!!!!!!!!!!!
     
     am_transit_all = am_boardings_by_route[['AM Route', 'Modeled AM Boardings', 'Observed AM Boardings']]
     am_transit_all['Code'] = am_transit_all['AM Route'].map(am_route_to_agency)
@@ -497,10 +650,6 @@ def transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall
     get_boarding_plots(md_transit_all, 'MD', net_summary, mdtransitall, md_codes, transit_agency_dict)
 
 
-
-
-
-
 #######################HIGHWAY #################################################################################
 
 
@@ -516,6 +665,8 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
                 time_df = pd.DataFrame.from_items([(model_run_name, time_df)])
                 time_df[comparison_name] = np.nan
                 comparison_dict = {}
+
+                print(time_df)
             
                 for i in range(len(times)):
                     if times[i] == 'Total':
@@ -573,15 +724,15 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
 
         counts_output = pd.io.excel.read_excel(input_file, sheetname = 'Counts Output')
         counts_by_tod = pd.DataFrame(columns = ['Counts (' + model_run_name + ')', 'Counts (Observed)'],
-                                 index = ['5 to 6', '6 to 7', '7 to 8', '8 to 9',
-                                          '9 to 10', '10 to 14', '14 to 15', '15 to 16',
-                                          '16 to 17', '17 to 18', '18 to 20', '20 to 5'])
+                                 index = ['5 to 9',
+                                          '9 to 15', '15 to 18',
+                                          '18 to 5'])
         for tod in counts_by_tod.index:
             
             counts_by_tod.loc[tod, 'Counts (Observed)'] = scf.get_counts(counts_output, tod)
             # hack to fix double counting of 5 to 6 period in 20 to 5
-            if tod == '20 to 5':
-                counts_by_tod.loc[tod, 'Counts (Observed)'] =  counts_by_tod.loc[tod, 'Counts (Observed)'] - counts_by_tod.loc['5 to 6', 'Counts (Observed)']
+            #if tod == '18 to 5':
+            #    counts_by_tod.loc[tod, 'Counts (Observed)'] =  counts_by_tod.loc[tod, 'Counts (Observed)'] - counts_by_tod.loc['5 to 6', 'Counts (Observed)']
             counts_by_tod.loc[tod, 'Counts (' + model_run_name + ')'] = counts_output['vol' + tod.replace(' ', '')].sum()
 
         countstime.write_string(0, 0, 'Time Period', header_format)
@@ -631,7 +782,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
         counts_all = pd.io.excel.read_excel(input_file, sheetname = 'Counts Output')
         counts_all = counts_all.reset_index()
         counts_all = counts_all.fillna(0)
-        counts_all['Total'] = counts_all['vol5to6'] + counts_all['vol6to7'] + counts_all['vol7to8'] + counts_all['vol8to9'] + counts_all['vol9to10'] + counts_all['vol10to14'] + counts_all['vol14to15'] + counts_all['vol15to16'] + counts_all['vol16to17'] + counts_all['vol17to18'] + counts_all['vol18to20'] + counts_all['vol20to5']
+        counts_all['Total'] = counts_all['vol5to9'] + counts_all['vol9to15'] + counts_all['vol15to18'] + counts_all['vol18to5']
         r2 = (counts_all[['Vol_Daily', 'Total']].corr() ** 2).loc['Vol_Daily', 'Total']
         slope = (counts_all[['Vol_Daily', 'Total']].cov()).loc['Vol_Daily', 'Total'] / counts_all['Vol_Daily'].var()
         intercept = counts_all['Total'].mean() - slope * counts_all['Vol_Daily'].mean()
@@ -682,7 +833,7 @@ def main():
             amtransitall = net_summary.add_worksheet('AMTransitAll')
             mdtransitall = net_summary.add_worksheet('MDTransitAll')
 
-        #transit_summary(transit_df, net_summary, transit, amtransitall, mdtransitall)
+        transit_summary(transit_df, observed_df, net_summary, transit, amtransitall, mdtransitall)
 
         highway_summary(network, net_summary, format_sheet, times, screenlines, countstime, countsall)
 

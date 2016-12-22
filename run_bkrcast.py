@@ -43,12 +43,15 @@ from data_wrangling import *
 @timed
 def accessibility_calcs():
     copy_accessibility_files()
-    print 'adding military jobs to regular jobs'
-    returncode=subprocess.call([sys.executable, 'scripts/supplemental/military_parcel_loading.py'])
-    if returncode != 0:
-        print 'Military Job loading failed'
-        sys.exit(1)
-    print 'military jobs loaded'
+
+    #not needed for now as the parcels_urbansim.txt already after this - nagendra.dhakar@rsginc.com
+    if(False):
+        print 'adding military jobs to regular jobs'
+        returncode=subprocess.call([sys.executable, 'scripts/supplemental/military_parcel_loading.py'])
+        if returncode != 0:
+            print 'Military Job loading failed'
+            sys.exit(1)
+        print 'military jobs loaded'
 
     if run_update_parking:
         if base_year == scenario_name:

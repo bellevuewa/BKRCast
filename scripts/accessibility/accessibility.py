@@ -5,7 +5,9 @@ import pandas as pd
 import numpy as np
 import os
 import re
+import sys
 from pyproj import Proj, transform
+
 
 def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
     """Adds an attribute node_ids to the given dataset."""
@@ -139,6 +141,17 @@ def clean_up(parcels):
 
 # read in data
 parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
+# read in data
+parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
+
+#check for missing data!
+for col_name in parcels.columns:
+    # daysim does not use EMPRSC_P
+	if col_name <> 'EMPRSC_P':
+		if parcels[col_name].sum() == 0:
+			print col_name + ' column sum is zero! Exiting program.'
+			sys.exit(1)
+
 # nodes must be indexed by node_id column, which is the first column
 nodes = pd.DataFrame.from_csv(nodes_file_name)
 links = pd.DataFrame.from_csv(links_file_name, index_col = None )
@@ -164,7 +177,8 @@ transit_df['tstops'] = 1
 all_nodes = pd.DataFrame(net.edges_df['from'].append(net.edges_df.to), columns = ['node_id'])
 
 # get the frequency of each node, which is the number of intersecting ways
-intersections_df = pd.DataFrame(all_nodes.node_id.value_counts(), columns = ['edge_count'])
+intersections_df = pd.DataFrame(all_nodes.node_id.value_counts())
+intersections_df = intersections_df.rename(columns = {'node_id' : 'edge_count'})
 intersections_df.reset_index(0, inplace = True)
 intersections_df = intersections_df.rename(columns = {'index' : 'node_ids'})
 

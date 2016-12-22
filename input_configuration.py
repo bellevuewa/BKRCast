@@ -25,8 +25,8 @@ if not(use_simple_configuration):
     ###### Only update parking for future-year analysis!
     run_update_parking = False
     run_convert_hhinc_2000_2010 = False
-    run_accessibility_calcs = False
-    run_copy_daysim_code = False
+    run_accessibility_calcs = True
+    run_copy_daysim_code = True
     run_setup_emme_project_folders = True
     run_setup_emme_bank_folders = True
     run_copy_large_inputs = False

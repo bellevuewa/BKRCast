@@ -1,6 +1,7 @@
 ﻿
 #Convert PSRC matrices to BKR matrices
 #Ben Stabler, ben.stabler@rsginc.com, 08/29/16
+#updated for 2014 popsyn file
 
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -20,12 +21,13 @@ import h5py
 import numpy as np
 
 def readSynPopTables(fileName):
+    print('read synpop file')
     popsyn = h5py.File(fileName)
     hhFields = map(lambda x: x[0], popsyn.get("Household").items())
     perFields = map(lambda x: x[0], popsyn.get("Person").items())
     
     #build pandas data frames
-    hhFields.remove('incomeconverted') #not a column attribute
+    #hhFields.remove('incomeconverted') #not a column attribute
     hhTable = pd.DataFrame()
     for hhField in hhFields:
         hhTable[hhField] = popsyn.get("Household").get(hhField)[:]
@@ -37,41 +39,38 @@ def readSynPopTables(fileName):
     return(hhTable, perTable)
 
 def writeSynPopTables(fileName, households, persons):
-    
+    print('write synpop file')
     #delete columns first and then write
     popsyn = h5py.File(fileName, "a")
     for hhField in households.columns:
         dataset = "Household/" + hhField
+        print(dataset)
         del popsyn[dataset]
         popsyn.create_dataset(dataset, data = households[hhField],compression="gzip")
     for perField in persons.columns:
         dataset = "Person/" + perField
+        print(dataset)
         del popsyn[dataset]
         popsyn.create_dataset(dataset, data = persons[perField], compression="gzip")
     popsyn.close()
-
-def pickHomeTaz(table, zoneWeights):
-    psrcZone = table.hhtaz.tolist()[0]
-    print("sampling home tazs for PSRC zone " + str(psrcZone))
-    bkrZones = zoneWeights[zoneWeights["psrc_zone_id"]==psrcZone]
-    return(bkrZones.sample(len(table), replace=True, weights="percent"))
     
 def runSynPopPSRCtoBKRZones():
 
     #read popsyn file
-    wd = "E:/Projects/Clients/bkr/model/soundcast/inputs/"
+    wd = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
     popsynFileName = "hh_and_persons.h5"
     popsynFileName = os.path.join(wd, popsynFileName)
     households, persons = readSynPopTables(popsynFileName)
 
     #get parcle-taz correspondence
     parcelFileName = "buffered_parcels.dat"
-    wd_new = "E:/Projects/Clients/bkr/model/soundcast/inputs/"
+    wd_new = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
     parcelFileName = os.path.join(wd_new, parcelFileName)
     parcels = pd.read_table(parcelFileName, sep=" ")
     parcels = parcels[["parcelid","taz_p"]]
 
     #merge to households
+    print('assign bkr tazs')
     households = pd.merge(households, parcels, left_on = "hhparcel", right_on = "parcelid")
     
     households["hhtaz"] = households["taz_p"].astype(np.int32)
@@ -80,15 +79,15 @@ def runSynPopPSRCtoBKRZones():
     households = households.sort_values("hhno")
 
     # set person fields to default - pwpcl, pwtaz, pspcl, pstaz, pwautime, pwaudist, psautime, psaudist
-    persons["pwpcl"] = -1
-    persons["pwtaz"] = -1
-    persons["pspcl"] = -1
-    persons["pstaz"] = -1
-    persons["pwautime"] = -1
-    persons["pwaudist"] = -1
-    persons["psautime"] = -1
-    persons["psaudist"] = -1
-    persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]] = persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]].astype(np.int32)
+    #persons["pwpcl"] = -1
+    #persons["pwtaz"] = -1
+    #persons["pspcl"] = -1
+    #persons["pstaz"] = -1
+    #persons["pwautime"] = -1
+    #persons["pwaudist"] = -1
+    #persons["psautime"] = -1
+    #persons["psaudist"] = -1
+    #persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]] = persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]].astype(np.int32)
 
     #write result file by copying input file and writing over arrays
     popsynOutFileName = "hh_and_persons_bkr.h5"
