@@ -54,7 +54,7 @@ def writeSynPopTables(fileName, households, persons):
 
 def sample_hhs(group):
     #sample using the taz sample rate with replacement and a stable group seed
-    seed = group.hhtaz.min()*100 + group.hhincbin.min()*10 + group.hhsizebin.min()
+    seed = int(group.hhtaz.min()*100 + group.hhincbin.min()*10 + group.hhsizebin.min())
     sample = group.sample(frac=group.sample_rate.min(), replace=True, random_state=seed)
         
     if len(sample)==0:
