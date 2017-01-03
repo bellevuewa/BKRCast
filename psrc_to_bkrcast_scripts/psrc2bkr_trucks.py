@@ -20,10 +20,13 @@ import numpy as np
 import csv
 
 # inputs
-wd = r"E:\Projects\Clients\bkr\model\bkrcast\inputs\trucks"
+wd = r"E:\Projects\Clients\bkr\model\soundcast\inputs\trucks"
 files_truck = ["trucks.in"]
 files_spclgen = ["special_gen_light_trucks.in", "special_gen_medium_trucks.in", "special_gen_heavy_trucks.in"] #special generator truck input files
 files_ext = [ "medium_trucks_ei.in", "medium_trucks_ie.in", "medium_trucks_ee.in", "heavy_trucks_ei.in", "heavy_trucks_ie.in", "heavy_trucks_ee.in"]#external truck input files
+files_manu_shares = ["agshar.in","minshar.in","prodshar.in","equipshar.in"]
+file_wtcu_shares = ["tcushar.in","whlsshar.in"]
+files_emp = ["hhemp","const.in"]
 
 # read correspondence file
 tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
@@ -185,8 +188,123 @@ def runExtPSRCtoBKRZones():
         with open(outfile, 'a') as file:
             tazGroups_bkr.to_csv(file, sep = " " , header = False, index = False)
 
+def runSharesPSRCToBKRZones():
+    #list of two lists
+    files_shares = [files_manu_shares, file_wtcu_shares]
+    header_rows = 3 #number of rows at the begining of a file with header information
+
+    headers = {} #dictionary to save header information
+    for files_group in files_shares:
+        for file in files_group:
+            print("working on file: " + file)
+            file_path = os.path.join(wd, file)
+
+            #read header - use "#" as seperator as it is less likely to present in the file
+            headers[file] = pd.read_table(file_path, delimiter = "#", header = None, nrows = header_rows) 
+        
+            # skip first few rows, as they contain general information - also ignore rows starting with 'c' (comment lines)
+            shares_psrc = pd.read_table(file_path, delimiter = " ", names = ["o","d",file], comment = "c", skiprows = header_rows)
+
+            if file == files_group[0]:
+                #if first file in the group, set to the file shares
+                truck_shares_psrc = shares_psrc
+            else:
+                #add a new column for a new file
+                truck_shares_psrc = pd.merge(truck_shares_psrc, shares_psrc, on = ["o","d"])
+
+        # merge psrc to bkr correspondence with percent
+        tazGroups = pd.merge(truck_shares_psrc, tazShares, left_on = "o", right_on = "psrc_zone_id")
+        tazGroups[file] = tazGroups[file] * tazGroups["percent"]
+
+        # group by unique pair of bkr zone and group
+        tazGroups_grouped = tazGroups.groupby(["bkr_zone_id"])
+
+        # calculate sum of percent by unique pair
+        tazGroups_sum = tazGroups_grouped[files_group].sum()
+        tazGroups_sum['sum'] = tazGroups_sum[files_group].sum(axis=1)
+
+        for file in files_group:
+            tazGroups_sum[file] *= 1/tazGroups_sum['sum'] 
+
+        tazGroups_sum['sum'] = tazGroups_sum[files_group].sum(axis=1)
+        tazGroups_sum =  tazGroups_sum.round(4) #round values to 4 decimal
+
+        #temp = tazGroups_sum.ix[tazGroups_sum["sum"]>1.0] #debug: to find out rows that have sum value more than 1
+
+        tazGroups_sum = tazGroups_sum[files_group].reset_index() # makes object a data frame by setting the current index to a column
+        tazGroups_sum["c"] = "all:"
+
+        for file in files_group:
+            tazGroups_bkr = tazGroups_sum[["bkr_zone_id", "c", file]]
+            tazGroups_bkr = tazGroups_bkr.sort_values(by = ['bkr_zone_id'], ascending=[True])
+
+            # write - first header and then append the updated data
+            outfile = file.split(".")[0]
+            outfile = os.path.join(wd, outfile + "_bkr.in")
+
+            #first write header
+            headers[file].to_csv(outfile, sep = " ", header = False, index = False, quoting=csv.QUOTE_NONE, escapechar = " ") #had to add space as escapechar otherwise throws an error - not sure if that would cause any issue in the mdoel
+
+            #write data
+            with open(outfile, 'a') as wfile:
+                tazGroups_bkr.to_csv(wfile, sep = " " , header = False, index = False)
+
+def runEmpPSRCToBKRZones():
+    #list of two lists
+    header_rows = [5,3] #number of rows at the begining of a file with header information
+    #files_emp = ["hhemp"] #debug
+    headers = {} #dictionary to save header information
+    i=0
+    for file in files_emp:
+        print("working on file: " + file)
+        file_path = os.path.join(wd, file)
+
+        #read header - use "#" as seperator as it is less likely to present in the file
+        headers[file] = pd.read_table(file_path, delimiter = "#", header = None, nrows = header_rows[i])
+             
+        # skip first few rows, as they contain general information - also ignore rows starting with 'c' (comment lines)
+        truck_emp_psrc = pd.read_table(file_path, sep='\s+', names = ["o","d",file], comment = "c", skiprows = header_rows[i])
+
+        # merge psrc to bkr correspondence with percent
+        tazGroups = pd.merge(truck_emp_psrc, tazShares, left_on = "o", right_on = "psrc_zone_id", how = 'left')
+        tazGroups[file] = tazGroups[file] * tazGroups["percent"]
+
+        tazGroups_grouped = tazGroups.groupby(["bkr_zone_id", "d"])
+
+        # group by unique pair of bkr zone and group
+        #if file == "hhemp":
+        #    tazGroups_grouped = tazGroups.groupby(["bkr_zone_id", "d"])
+        #else:
+        #    tazGroups_grouped = tazGroups.groupby(["bkr_zone_id"])
+
+        # calculate sum of percent by unique pair
+        tazGroups_sum = tazGroups_grouped[file].sum()
+
+        tazGroups_sum = tazGroups_sum.reset_index() # makes object a data frame by setting the current index to a column
+        if file == "const.in":
+            tazGroups_sum["d"] = "all:"
+
+        tazGroups_bkr = tazGroups_sum[["bkr_zone_id", "d", file]]
+        
+        tazGroups_bkr = tazGroups_bkr.sort_values(by = ['bkr_zone_id','d'], ascending=[True, True])
+
+        # write - first header and then append the updated data
+        outfile = file.split(".")[0]
+        outfile = os.path.join(wd, outfile + "_bkr.in")
+
+        #first write header
+        headers[file].to_csv(outfile, sep = " ", header = False, index = False, quoting=csv.QUOTE_NONE, escapechar = " ") #had to add space as escapechar otherwise throws an error - not sure if that would cause any issue in the mdoel
+
+        #write data
+        with open(outfile, 'a') as wfile:
+            tazGroups_bkr.to_csv(wfile, sep = " " , header = False, index = False)
+
+        i += 1
+
 if __name__== "__main__":
     #runSpclGenPSRCtoBKRZones()
     #runExtPSRCtoBKRZones()
-    runTruckPSRCtoBKRZones()
+    #runTruckPSRCtoBKRZones()
+    runSharesPSRCToBKRZones()
+    runEmpPSRCToBKRZones()
 
