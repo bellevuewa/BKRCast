@@ -8,7 +8,7 @@ demand models for externals, trucks, etc.  BKRCast is different from SoundCast i
   
   - BKRCast uses a BKR specific zone system and networks.  This zone system has more zones in the BKR region and less zones in the rest of the PSRC region
   - BKRCast has four time periods for networks (AM, MD, PM, NT) in order to reduce runtimes and data needs.
-  - BKRCast has a population sampling procedure that oversamples households in the BKR region, while undersampling households outside the region in order to increase model stability and decrease runtime
+  - BKRCast has a population sampling procedure that oversamples households in the BKR region, while undersampling households outside the region, in order to increase model stability and decrease runtime
   - (Still To Do) BKRCast was locally calibrated/validated.
 
 ## System Setup
