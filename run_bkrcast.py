@@ -263,10 +263,12 @@ def daysim_popsampler(option):
     returncode = subprocess.call([sys.executable,'scripts/popsampler.py',taz_sample_rate_file, popsyn_file, popsyn_out_file])
         
     if returncode != 0:
-        print('population sampler did not work')
-        #sys.exit(1)
+        print('ERROR: population sampler did not work')
+        logger.info(("ERROR: population sampler did not work"))
+        sys.exit(1)
     else:
         print('Created new popsyn file')
+        logger.info(("Created new popsyn file"))
         
     #update properties file with new popsyn file
     config_path = "daysim/daysim_configuration.properties"

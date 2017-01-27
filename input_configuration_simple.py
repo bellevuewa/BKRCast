@@ -1,4 +1,4 @@
-﻿
+
 # This is a simple configuration to do a run. If you need a more detailed configuration, set use_simple_configuration to False
 # and manually change input_configuration_detail
 
@@ -6,8 +6,9 @@ use_simple_configuration = False
 
 base_year = '2014'
 scenario_name = '2014'
-daysim_code = 'E:/Projects/Clients/bkr/model/bkrcast/daysim_2016' 
-main_inputs_folder =  'E:/Projects/Clients/bkr/model/bkrcast/Inputs/'
+project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod'
+daysim_code = project_folder + '/daysim_2016'
+main_inputs_folder =  project_folder + '/inputs/'
 master_project = 'LoadTripTables'
 base_inputs = main_inputs_folder + scenario_name
 

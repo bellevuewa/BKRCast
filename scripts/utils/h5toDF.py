@@ -19,6 +19,7 @@ import xlrd
 import time
 import json
 import sys, os
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
 def negative_check(array,variable):

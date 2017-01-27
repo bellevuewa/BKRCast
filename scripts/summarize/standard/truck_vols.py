@@ -1,7 +1,8 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 import os, sys
 import h5py
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
 from input_configuration import *

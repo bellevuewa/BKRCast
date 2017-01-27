@@ -1,4 +1,4 @@
-﻿#Copyright [2014] [Puget Sound Regional Council]
+#Copyright [2014] [Puget Sound Regional Council]
 
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ from datetime import datetime
 from EmmeProject import *
 from multiprocessing import Pool
 import pandas as pd
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from standard_summary_configuration import *

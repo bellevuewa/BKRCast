@@ -1,11 +1,11 @@
 import pandana as pdna
+import os, sys
+sys.path.append(os.getcwd())
 from accessibility_configuration import *
 from emme_configuration import *
 import pandas as pd
 import numpy as np
-import os
 import re
-import sys
 from pyproj import Proj, transform
 
 

@@ -13,11 +13,12 @@
 #limitations under the License.
 
 import logging
+import os, sys
+sys.path.append(os.getcwd())
 from input_configuration import *
 from functools import wraps
 from time import time
 import datetime
-import os
 
 def setup_custom_logger(name):
     logging.basicConfig(filename=main_log_file,format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')

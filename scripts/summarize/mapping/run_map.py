@@ -12,12 +12,13 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import os
+import os, sys
 import h5py
 import numpy as np
 import pandas as pd
 import socket
 import dframe_explorer
+sys.path.append(os.getcwd())
 from map_configuration import *
 
 # set working directory to soundcast root 

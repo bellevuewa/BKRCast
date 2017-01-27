@@ -14,6 +14,7 @@
 
 import xlrd
 import sys, os
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
 def run(file): #This function "autofits" all of the columns in the workbook. However, it removes all charts and images

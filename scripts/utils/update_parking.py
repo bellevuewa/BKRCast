@@ -11,6 +11,8 @@
 import pandas as pd
 import h5py
 import numpy as np
+import os, sys
+sys.path.append(os.getcwd())
 from input_configuration import *
 
 

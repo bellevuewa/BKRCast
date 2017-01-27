@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import os,sys
 import h5py
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 from emme_configuration import *

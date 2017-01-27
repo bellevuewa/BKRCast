@@ -1,6 +1,7 @@
 import pandas as pd
 import sys
 import os
+sys.path.append(os.getcwd())
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 

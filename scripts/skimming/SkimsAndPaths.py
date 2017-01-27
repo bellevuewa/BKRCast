@@ -17,6 +17,7 @@ from multiprocessing import Pool
 import logging
 import datetime
 import argparse
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from emme_configuration import *

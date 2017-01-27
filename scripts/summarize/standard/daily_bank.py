@@ -1,6 +1,7 @@
 import inro.emme.database.emmebank as _emmebank
-import os
+import os, sys
 import numpy as np
+sys.path.append(os.getcwd())
 from input_configuration import *
 from emme_configuration import *
 import json

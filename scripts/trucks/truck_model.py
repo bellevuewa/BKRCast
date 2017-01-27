@@ -14,6 +14,7 @@ import multiprocessing as mp
 import subprocess
 from multiprocessing import Pool
 import h5py
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 #from truck_model import *

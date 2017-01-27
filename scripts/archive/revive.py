@@ -1,3 +1,5 @@
+import os, sys
+sys.path.append(os.getcwd())
 from scripts.skimming.SkimsAndPaths import *
 from scripts.EmmeProject import *
 

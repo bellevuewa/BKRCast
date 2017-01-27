@@ -1,4 +1,4 @@
-﻿#Copyright [2014] [Puget Sound Regional Council]
+#Copyright [2014] [Puget Sound Regional Council]
 
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 import os
 import sys
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))
 import numpy as np
 import pandas as pd
@@ -1735,8 +1736,8 @@ def report_compile(h5_results_file,h5_results_name,
     timerstart=time.time()
     data1 = convert(h5_results_file,guidefile,h5_results_name)
     data2 = convert(h5_comparison_file,guidefile,h5_comparison_name)
-    data1=hhmm_to_min(data1)
-    data2=hhmm_to_min(data2)
+    #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
+    #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
         DaysimReport(data1,data2,h5_results_name,h5_comparison_name,report_output_location,zone_district)

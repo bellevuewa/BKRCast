@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(CURRENT_DIR))
@@ -10,6 +10,7 @@ import itertools
 import collections
 import xlsxwriter
 import numpy as np
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import input_configuration

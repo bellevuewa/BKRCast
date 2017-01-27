@@ -15,9 +15,10 @@
 import pandas as pd
 import h5toDF
 import math
+import os, sys
 import os.path
+sys.path.append(os.getcwd())
 from input_configuration import *
-import sys
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
 def get_percent_rmse(urbansim_file, daysim_file, guide_file):

@@ -17,9 +17,10 @@ if not(use_simple_configuration):
     # Scenario and input paths
     base_year = '2014'  # This should always be 2010 unless the base year changes
     scenario_name = '2014'
-    daysim_code = 'E:/Projects/Clients/bkr/model/bkrcast_tod/daysim_2016' 
+    project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod'
+    daysim_code = project_folder + '/daysim_2016' 
     master_project = 'LoadTripTables'
-    main_inputs_folder =  'E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/'
+    main_inputs_folder =  project_folder + '/inputs/'
     base_inputs = main_inputs_folder + scenario_name
     # For Overriding the simple configuration, when you want to run things in more detail:
     ###### Only update parking for future-year analysis!

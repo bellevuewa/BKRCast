@@ -10,6 +10,7 @@ import multiprocessing as mp
 import subprocess
 import json
 from multiprocessing import Pool, pool
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from emme_configuration import *
 from input_configuration import *

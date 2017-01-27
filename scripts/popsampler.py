@@ -18,6 +18,7 @@ import os, sys, shutil
 import pandas as pd
 import h5py
 import numpy as np
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from input_configuration import *
 

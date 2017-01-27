@@ -1,10 +1,11 @@
-﻿import pandas as pd
+import pandas as pd
 import h5py
 import itertools
 import collections
 import xlsxwriter
 import os, sys
 import numpy as np
+sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))

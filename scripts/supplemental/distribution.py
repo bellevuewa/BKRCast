@@ -1,13 +1,13 @@
 import array as _array
-import os
+import os, sys
 import shutil
 import json
 import csv
 import pandas as pd
 import h5py
 import numpy as np
+sys.path.append(os.getcwd())
 from emme_configuration import *
-import sys
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 from EmmeProject import *
