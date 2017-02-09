@@ -17,7 +17,7 @@ if not(use_simple_configuration):
     # Scenario and input paths
     base_year = '2014'  # This should always be 2010 unless the base year changes
     scenario_name = '2014'
-    project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod'
+    project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new'
     daysim_code = project_folder + '/daysim_2016' 
     master_project = 'LoadTripTables'
     main_inputs_folder =  project_folder + '/inputs/'
@@ -197,7 +197,7 @@ parcel_decay_file = 'inputs/buffered_parcels.dat' #File with parcel data to be c
 # run daysim and assignment in feedback until convergence
 
 main_log_file = 'bkrcast_log.txt'
-network_summary_files = ['5to9_transit', '9to15_transit',
+network_summary_files = ['6to9_transit', '9to1530_transit',
                          'counts_output', 'network_summary']
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]

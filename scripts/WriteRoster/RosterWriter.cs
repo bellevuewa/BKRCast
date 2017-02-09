@@ -9,7 +9,7 @@ namespace DaysimTool {
 	class RosterWriter {
 		public static void Main() {
 
-			StreamWriter writeRoster = new StreamWriter("E:/Projects/Clients/bkr/model/bkrcast_tod/scripts/WriteRoster/bkr_roster_more_no_toll.csv");
+			StreamWriter writeRoster = new StreamWriter("E:/Projects/Clients/bkr/model/bkrcast_tod_new/scripts/WriteRoster/bkr_roster_more_no_toll.csv");
 			writeRoster.WriteLine("#variable,mode,path-type,vot-group,start-minute,end-minute,length,file-type, name, field, transpose, blend-variable,blend-path-type,factor,scaling");
 
 			// the field "name" now needs to include the name of the hdf5 file 
@@ -53,10 +53,10 @@ namespace DaysimTool {
 
 								RosterRecord record = new RosterRecord(skim.variable_name_roster, mode.mode_name, pt.path_type_name, vot.vot_name, tod.start_time, tod.end_time, fullpathtoskim, skim.blend_variable, mode.factor);
 								// we only need one distance skim for all day- let 5 to 9 stand in
-								if ((skim.variable_name_in_file == "Distance") && (tod.time_name != "5to9")) {
+								if ((skim.variable_name_in_file == "Distance") && (tod.time_name != "6to9")) {
 
 								}
-								else if ((skim.variable_name_in_file == "Distance") && (tod.time_name == "5to9")) {
+								else if ((skim.variable_name_in_file == "Distance") && (tod.time_name == "6to9")) {
 									record.start_minute = 0;
 									record.end_minute = 1439;
 
@@ -92,10 +92,10 @@ namespace DaysimTool {
 
 								RosterRecord record = new RosterRecord(skim.variable_name_roster, mode.mode_name, pt.path_type_name, vot.vot_name, tod.start_time, tod.end_time, fullpathtoskim, skim.blend_variable, mode.factor);
 								// we only need one distance skim for all day- let 5 to 6 stand in
-								if ((skim.variable_name_in_file == "Distance") && (tod.time_name != "5to9")) {
+								if ((skim.variable_name_in_file == "Distance") && (tod.time_name != "6to9")) {
 
 								}
-								else if ((skim.variable_name_in_file == "Distance") && (tod.time_name == "5to9")) {
+								else if ((skim.variable_name_in_file == "Distance") && (tod.time_name == "6to9")) {
 									record.start_minute = 0;
 									record.end_minute = 1439;
 
@@ -137,11 +137,11 @@ namespace DaysimTool {
 								RosterRecord record = new RosterRecord(skim.variable_name_roster, mode.mode_name, pt.path_type_name, vot.vot_name, tod.start_time, tod.end_time, fullpathtoskim, skim.blend_variable, mode.factor);
 
 								// pick up fare for all times from the 9to15 file for now
-								if (record.start_minute == 300 && skim.variable_name_roster == "fare") {
+								if (record.start_minute == 360 && skim.variable_name_roster == "fare") {
 									record.start_minute = 0;
 									record.end_minute = 1439;
 
-									tod.time_name = "9to10";
+									tod.time_name = "9to1530";
 
 									skimpath = string.Format(@"{0}.{1}/", tod.time_name, "h5");
 									specificskim ="Skims/"+ mode.emme_code + skim.variable_emme_code;
@@ -161,7 +161,7 @@ namespace DaysimTool {
 										record.length + ',' + "null,null,1,FALSE,null,null,null,TRUE");
 									}
 									// PM as transpose of AM
-									else if (record.start_minute == 900 && skim.variable_name_roster != "fare") {
+									else if (record.start_minute == 930 && skim.variable_name_roster != "fare") {
 										writeRoster.WriteLine(record.variable + ',' + record.mode + ',' + record.path_type + ','
 										+ record.value_of_time_group + ',' + record.start_minute.ToString() + ',' + record.end_minute.ToString() + ',' +
 										record.length + ',' + record.file_type + ',' + record.name + ',' + record.field + ',' + "TRUE" + ',' +
@@ -241,16 +241,16 @@ namespace DaysimTool {
 			public static List<TimeOfDay> DefineTimesOfDay() {
 				List<TimeOfDay> transit_times_of_day = new List<TimeOfDay>();
 				//AM
-				transit_times_of_day.Add(new TimeOfDay("5to9", 300, 539));
+				transit_times_of_day.Add(new TimeOfDay("6to9", 360, 539));
 				//MD
 				//for now have MD point to AM because we are not finished with the MD network yet
-				transit_times_of_day.Add(new TimeOfDay("5to9", 540, 899));
+				transit_times_of_day.Add(new TimeOfDay("6to9", 540, 929));
 				//PM
-				transit_times_of_day.Add(new TimeOfDay("5to9", 900, 1079));
+				transit_times_of_day.Add(new TimeOfDay("6to9", 930, 1109));
 				//night
 				//for now have night point to am because of an issue with the skims
-				transit_times_of_day.Add(new TimeOfDay("5to9", 1080, 1319));
-				transit_times_of_day.Add(new TimeOfDay("9to15", 1320, 299));
+				transit_times_of_day.Add(new TimeOfDay("6to9", 1110, 1319));
+				transit_times_of_day.Add(new TimeOfDay("9to1530", 1320, 359));
 
 				return transit_times_of_day;
 			}
@@ -294,10 +294,10 @@ namespace DaysimTool {
 
 			public static List<TimeOfDay> DefineTimeOfDay() {
 				List<TimeOfDay> highway_times_of_day = new List<TimeOfDay>();
-				highway_times_of_day.Add(new TimeOfDay("5to9", 300, 539));
-				highway_times_of_day.Add(new TimeOfDay("9to15", 540, 899));
-				highway_times_of_day.Add(new TimeOfDay("15to18", 900, 1079));
-				highway_times_of_day.Add(new TimeOfDay("18to5", 1080, 299));
+				highway_times_of_day.Add(new TimeOfDay("6to9", 360, 539));
+				highway_times_of_day.Add(new TimeOfDay("9to1530", 540, 929));
+				highway_times_of_day.Add(new TimeOfDay("1530to1830", 930, 1109));
+				highway_times_of_day.Add(new TimeOfDay("1830to6", 1110, 359));
 				return highway_times_of_day;
 			}
 
@@ -356,7 +356,7 @@ namespace DaysimTool {
 			public static List<TimeOfDay> DefineTimesOfDay() {
 				List<TimeOfDay> nonmotorized_times_of_day = new List<TimeOfDay>();
 				//label 5 to 6 standing in for all day
-				nonmotorized_times_of_day.Add(new TimeOfDay("5to9", 0, 1439));
+				nonmotorized_times_of_day.Add(new TimeOfDay("6to9", 0, 1439));
 				return nonmotorized_times_of_day;
 			}
 

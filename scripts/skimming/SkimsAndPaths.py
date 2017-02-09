@@ -965,7 +965,8 @@ def create_trip_tod_indices(tod):
      #convert to hours
      deptm = deptm.astype('float')
      deptm = deptm/60
-     deptm = deptm.astype('int')
+     deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
+     #deptm = deptm.astype('int') #commented out after converting time periods to half hours, replaced with the above line - nagendra.dhakar@rsginc.com
      
      #Get the list of hours for this tod
      todValues = todIDListdict[tod]
@@ -1272,8 +1273,8 @@ def delete_matrices_parallel(project_name):
 #temp definition - by nagendra.dhakar@rsginc.com
 def temp_assign_capacity(project_name):
     print('assign temp speeds')
-    cap_period = str(transit_tod[project_name.tod]['num_of_hours']) + ' * ul1' 
-    project_name.network_calculator("link_calculation", result = "ul1", expression = '100', selections_by_link = "ul1=0")
+    cap_period = str(transit_tod[project_name.tod]['num_of_hours']) + ' * 100' 
+    project_name.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "ul1=0")
 
 def run_assignments_parallel(project_name):
 

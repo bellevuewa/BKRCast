@@ -169,7 +169,7 @@ for dist in distances:
             net.precompute(dist)
 
 # get transit stops
-transit_df = pd.DataFrame.from_csv(transit_stops_name,  index_col = False)
+transit_df = pd.DataFrame.from_csv(transit_stops_name,  index_col = None)
 transit_df['tstops'] = 1
 
 # intersections:

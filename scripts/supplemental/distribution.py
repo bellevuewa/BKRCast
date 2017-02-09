@@ -310,8 +310,8 @@ def main():
     init_dir(supplemental_loc)
     print "loading skim data..."
     # Load skim data
-    path_am_skim = r'inputs\5to9.h5'
-    path_pm_skim = r'inputs\15to18.h5'
+    path_am_skim = r'inputs\6to9.h5'
+    path_pm_skim = r'inputs\1530to1830.h5'
     am_cost_skim = load_skims(path_am_skim, mode_name='svtl2g')
     am_dist_skim = load_skims(path_am_skim, mode_name='svtl1d', divide_by_100=True)
     pm_cost_skim = load_skims(path_pm_skim, mode_name='svtl2g')

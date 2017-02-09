@@ -2,20 +2,15 @@
 project = 'Projects/LoadTripTables/LoadTripTables.emp'
 network_summary_project = 'Projects/LoadTripTables/LoadTripTables.emp'
 tod_networks = ['am', 'md', 'pm', 'ni']
-sound_cast_net_dict = {'5to9' : 'am', '9to15' : 'md', '15to18' : 'pm', '18to5' : 'ni'}
-load_transit_tod = ['5to9', '9to15', '15to18', '18to5']
+sound_cast_net_dict = {'6to9' : 'am', '9to1530' : 'md', '1530to1830' : 'pm', '1830to6' : 'ni'}
+load_transit_tod = ['6to9', '9to1530', '1530to1830', '1830to6']
 
-#mode_crosswalk_dict = {'b': 'bp', 'bwl' : 'bpwl', 'aijb' : 'aimjbp', 'ahijb' : 'ahdimjbp', 
-#                      'ashijtuvb': 'asehdimjvutbp', 'r' : 'rc', 'br' : 'bprc', 
-#                      'ashijtuvbwl' : 'asehdimjvutbpwl', 'ashijtuvbfl' : 'asehdimjvutbpfl', 
-#                      'asbw' : 'asehdimjvutbpwl', 'ashijtuvbxl' : 'asehdimjvutbpxl', 
-#                      'ahijstuvbw' : 'asehdimjvutbpw'}
 mode_file = 'modes.txt'
 transit_vehicle_file = 'vehicles.txt' 
 base_net_name = '_roadway.in'
 turns_name = '_turns.in'
 transit_name = '_transit.in'
-shape_name = '_link_shape_1002.txt'
+shape_name = '_link_shape_1002.txt' #is it needed?
 no_toll_modes = ['s', 'h', 'i', 'j']
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
@@ -37,11 +32,11 @@ LOW_PNR = 1360 #external dummy is also included
 HIGH_PNR = 1510
 
 SPECIAL_GENERATORS = {"SeaTac":1356,"Tacoma Dome":1357,"exhibition center":1359, "Seattle Center":1358}
-feedback_list = ['Banks/5to9/emmebank','Banks/15to18/emmebank']
+feedback_list = ['Banks/6to9/emmebank','Banks/1530to1830/emmebank']
 
 # Time of day periods
-hwy_tod = {'am':4,'md':6,'pm':3,'ni':11}
-tods = ['5to9', '9to15', '15to18', '18to5']
+hwy_tod = {'am':3,'md':6.5,'pm':3,'ni':11.5} #time period duration
+tods = ['6to9', '9to1530', '1530to1830', '1830to6']
 project_list = ['Projects/' + tod + '/' + tod + '.emp' for tod in tods]
 
 ## HDF5 Groups and Subgroups
@@ -57,12 +52,12 @@ skim_matrix_designation_all_tods = ['t','c']  # Time (t) and direct cost (c) ski
 skim_matrix_designation_limited = ['d']    # Distance skim
 
 # Skim for distance for only these time periods
-distance_skim_tod = ['5to9', '15to18']
-generalized_cost_tod = ['5to9', '15to18']
+distance_skim_tod = ['6to9', '1530to1830']
+generalized_cost_tod = ['6to9', '1530to1830']
 gc_skims = {'light_trucks' : 'lttrk', 'medium_trucks' : 'metrk', 'heavy_trucks' : 'hvtrk', 'sov' : 'svtl2'}
 
 # Bike/Walk Skims
-bike_walk_skim_tod = ['5to9']
+bike_walk_skim_tod = ['6to9']
 
 # Transit Inputs:
 transit_skim_tod = load_transit_tod
@@ -83,10 +78,10 @@ transit_node_constants = {'am':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' :
 
 transit_network_tod_dict = sound_cast_net_dict                
 
-transit_tod = {'5to9' : {'4k_tp' : 'am', 'num_of_hours' : 4},
-               '9to15' : {'4k_tp' : 'md', 'num_of_hours' : 6}, 
-               '15to18' : {'4k_tp' : 'pm', 'num_of_hours' : 3},
-               '18to5' : {'4k_tp' : 'ni', 'num_of_hours' : 2}} #trying 2 hours of service instead of 11
+transit_tod = {'6to9' : {'4k_tp' : 'am', 'num_of_hours' : 3},
+               '9to1530' : {'4k_tp' : 'md', 'num_of_hours' : 6.5}, 
+               '1530to1830' : {'4k_tp' : 'pm', 'num_of_hours' : 3},
+               '1830to6' : {'4k_tp' : 'ni', 'num_of_hours' : 3.5}} #2 hours of service in PSRC - trying 3.5 hours in BKR, assuming service till 10pm
                 
 # Transit Fare:
 zone_file = 'inputs/Fares/transit_fare_zones.grt'
@@ -94,16 +89,13 @@ peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
 peak_monthly_pass = 'inputs/Fares/am_fares_monthly_pass.in'
 offpeak_fare_box = 'inputs/Fares/md_fares_farebox.in'
 offpeak_monthly_pass = 'inputs/Fares/md_fares_monthly_pass.in'
-fare_matrices_tod = ['5to9', '9to15']
+fare_matrices_tod = ['6to9', '9to1530']
 
 # Intrazonals
 intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 'izbtim', 'time walk' : 'izwtim'}
 taz_area_file = 'inputs/intrazonals/taz_acres.in'
 origin_tt_file = 'inputs/intrazonals/origin_tt.in'
 destination_tt_file = 'inputs/intrazonals/destination_tt.in'
-
-# Zone Index
-#tazIndexFile = '/inputs/TAZIndex_5_28_14.txt'
 
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
@@ -126,8 +118,8 @@ spg_general = {1357: 1682,
 spg_airport = {1356: 101838}
 
 # Using one AM and one PM time period to represent AM and PM skims
-am_skim_file_loc = 'inputs/5to9.h5'
-pm_skim_file_loc = 'inputs/15to18.h5'
+am_skim_file_loc = 'inputs/6to9.h5'
+pm_skim_file_loc = 'inputs/1530to1830.h5'
 trip_table_loc = 'outputs/prod_att.csv'
 output_dir = 'outputs/supplemental/'
 ext_spg_dir = 'outputs/supplemental/ext_spg'
