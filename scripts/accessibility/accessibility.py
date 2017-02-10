@@ -143,7 +143,8 @@ def clean_up(parcels):
 parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
 # read in data
 parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
-
+#capitalize field names to avoid errors
+parcels.columns = [i.upper() for i in parcels.columns]
 #check for missing data!
 for col_name in parcels.columns:
     # daysim does not use EMPRSC_P
