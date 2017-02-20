@@ -4,11 +4,13 @@
 import h5py
 import numpy as np
 import os, sys
+sys.path.append(os.getcwd())
+from input_configuration import *
 
 print 'Converting synthetic population income from 2000$ to 2010$'
 INCOME_FACTOR_00_10 = 1.26
 
-hh_file_loc = 'inputs/hh_and_persons.h5'
+hh_file_loc = households_persons_file
 
 if not os.path.exists(hh_file_loc):
         print 'Oops you cannot convert the synthetic population income to 2010 dollars because you are missing the household file that should be at ' + hh_file_loc

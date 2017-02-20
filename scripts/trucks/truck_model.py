@@ -17,9 +17,9 @@ import h5py
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-#from truck_model import *
+
 from EmmeProject import * 
-from truck_configuration import *
+from input_configuration import *
 from emme_configuration import *
 
 # Temp log file for de-bugging
@@ -48,7 +48,7 @@ def skims_to_hdf5(EmmeProject):
   
     #open h5 container, delete existing truck trip matrices:
     my_store = h5py.File(truck_trips_h5_filename, "r+")
-    for tod in tod_list:
+    for tod in tod_networks:
         for name in truck_od_matrices:
             matrix_name = tod[0] + name       
             #delete if matrix exists
@@ -338,7 +338,7 @@ def calculate_daily_trips():
     #apply time of day factors:
     
     truck_tod_factor_dict = json_to_dictionary('truck_tod_factor_dict')
-    for tod in tod_list:
+    for tod in tod_networks:
         for key, value in truck_tod_factor_dict.iteritems():
             my_project.matrix_calculator(result = 'mf' + tod[0] + key, 
                                          expression = value['daily_trips'] + '*' + value[tod])

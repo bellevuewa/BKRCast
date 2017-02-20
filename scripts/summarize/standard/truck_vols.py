@@ -7,16 +7,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
-from standard_summary_configuration import *
-
-extra_attributes_dict = {'@tveh' : 'total vehicles', 
-                         '@mveh' : 'medium trucks', 
-                         '@hveh' : 'heavy trucks', 
-                         '@vmt' : 'vmt',\
-                         '@vht' : 'vht', 
-                         '@trnv' : 'buses in auto equivalents',
-                         '@ovol' : 'observed volume', 
-                         '@bveh' : 'number of buses'}
+#from standard_summary_configuration import *
 
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''

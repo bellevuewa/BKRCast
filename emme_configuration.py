@@ -1,5 +1,7 @@
 ﻿##################################### NETWORK IMPORTER ####################################
-project = 'Projects/LoadTripTables/LoadTripTables.emp'
+master_project = 'LoadTripTables'
+project = r'projects/' + master_project + r'/' + master_project + '.emp'
+#project = 'Projects/LoadTripTables/LoadTripTables.emp'
 network_summary_project = 'Projects/LoadTripTables/LoadTripTables.emp'
 tod_networks = ['am', 'md', 'pm', 'ni']
 sound_cast_net_dict = {'6to9' : 'am', '9to1530' : 'md', '1530to1830' : 'pm', '1830to6' : 'ni'}

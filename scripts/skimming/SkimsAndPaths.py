@@ -20,6 +20,7 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
+from input_configuration import *
 from emme_configuration import *
 from EmmeProject import *
 

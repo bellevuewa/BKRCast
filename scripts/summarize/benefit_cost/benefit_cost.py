@@ -13,12 +13,11 @@ import numpy as np
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-import input_configuration
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 from EmmeProject import *
 import datetime
-from benefit_cost_configuration import *
+#from benefit_cost_configuration import *
 from input_configuration import *
 from emme_configuration import *
 from h5toDF import *
@@ -249,8 +248,8 @@ def main():
     ##Find this by joining the trips with the buffered parcel data and getting parking cost value
     # Reasonability check - In 2010, number of hourly parking spaces in the region = 90,000
     # Mean Cost per space per hour $8.22, Assume that occupied 10 hours per day -would be a cost of 7.4 million per day
-    bc_costs['Parking Costs'] = calculate_park_costs(parcel_decay_file, trips, MAX_INC)
-    bc_costs['Parking Costs Low Income'] = calculate_park_costs(parcel_decay_file, trips, LOW_INC_MAX)
+    bc_costs['Parking Costs'] = calculate_park_costs(output_parcels, trips, MAX_INC)
+    bc_costs['Parking Costs Low Income'] = calculate_park_costs(output_parcels, trips, LOW_INC_MAX)
 
     # Calculate Auto Ownership and Operating Costs
     # Auto Ownership Cost = Number of Autos Owned * Average Ownership Cost

@@ -4,14 +4,6 @@
 
 use_simple_configuration = False
 
-base_year = '2014'
-scenario_name = '2014'
-project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod'
-daysim_code = project_folder + '/daysim_2016'
-main_inputs_folder =  project_folder + '/inputs/'
-master_project = 'LoadTripTables'
-base_inputs = main_inputs_folder + scenario_name
-
 run_setup = False
 run_daysim = False
 # By not creating shadow prices, 3 hours of shadow price building are saved

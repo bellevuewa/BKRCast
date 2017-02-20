@@ -323,7 +323,7 @@ def run_all_summaries():
 # Main Script:
 def main():
 ## SET UP INPUTS ##########################################################
-    
+
     if run_accessibility_calcs:
         accessibility_calcs()
 
@@ -332,6 +332,9 @@ def main():
 
     if not os.path.exists('outputs'):
         os.makedirs('outputs')
+
+    if run_copy_seed_supplemental_trips:
+        copy_seed_supplemental_trips()
 
     if run_copy_daysim_code:
         copy_daysim_code()

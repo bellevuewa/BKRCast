@@ -29,9 +29,7 @@ from logcontroller import *
 from input_configuration import *
 from emme_configuration import *
 import pandas as pd
-import input_configuration # Import as a module to access inputs as a dictionary
-from emme_configuration import *
-import emme_configuration
+
 import glob
 
 
@@ -53,7 +51,6 @@ def copy_daysim_code():
         print message
         sys.exit(1)
 
-
 @timed
 def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
@@ -61,13 +58,13 @@ def copy_accessibility_files():
     
     print 'Copying UrbanSim parcel file'
     try:
-        if os.path.isfile(base_inputs+'/landuse/parcels_urbansim.txt'):
-            shcopy(base_inputs+'/landuse/parcels_urbansim.txt','inputs/accessibility')
+        if os.path.isfile(os.path.join(parcels_file_folder,parcels_file_name)):
+            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accessibility')
         # the file may need to be reformatted- like this coming right out of urbansim
-        elif os.path.isfile(base_inputs+'/landuse/parcels.dat'):
-            print 'the file is ' + base_inputs +'/landuse/parcels.dat'
+        elif os.path.isfile(os.path.join(parcels_file_folder,'parcels.dat')):
+            print 'the file is ' + os.path.join(parcels_file_folder,'parcels.dat')
             print "Parcels file is being reformatted to Daysim format"
-            parcels = pd.DataFrame.from_csv(base_inputs+'/landuse/parcels.dat',sep=" " )
+            parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
             print 'Read in unformatted parcels file'
             for col in parcels.columns:
                 print col
@@ -75,8 +72,8 @@ def copy_accessibility_files():
                 new_col = ''.join(new_col)
                 parcels=parcels.rename(columns = {col:new_col})
                 print new_col
-            parcels.to_csv(base_inputs+'/landuse/parcels_urbansim.txt', sep = " ")
-            shcopy(base_inputs+'/landuse/parcels_urbansim.txt','inputs/accesibility')
+            parcels.to_csv(os.path.join(parcels_file_folder,parcels_file_name), sep = " ")
+            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accesibility')
 
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
@@ -183,7 +180,7 @@ def setup_emme_project_folders():
     # Create master project, associate with all tod emmebanks
     project = app.create_project('projects', master_project)
     desktop = app.start_dedicated(False, "cth", project)
-    data_explorer = desktop.data_explorer()   
+    data_explorer = desktop.data_explorer()
     for tod in tod_list:
         database = data_explorer.add_database('Banks/' + tod + '/emmebank')
     #open the last database added so that there is an active one
@@ -235,6 +232,14 @@ def copy_shadow_price_file():
 
 
 @timed
+def copy_seed_supplemental_trips():
+    print('Copying seed supplemental trips')
+    if not os.path.exists('outputs/supplemental'):
+       os.makedirs('outputs/supplemental')
+    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
+        shutil.copy(filename, project_folder+'/outputs/supplemental')
+    
+@timed
 def rename_network_outs(iter):
     for summary_name in network_summary_files:
         csv_output = os.path.join(os.getcwd(), 'outputs',summary_name+'.csv')
@@ -248,13 +253,14 @@ def clean_up():
     delete_files = ['working\\household.bin', 'working\\household.pk', 'working\\parcel.bin',
                    'working\\parcel.pk', 'working\\parcel_node.bin', 'working\\parcel_node.pk', 'working\\park_and_ride.bin',
                    'working\\park_and_ride_node.pk', 'working\\person.bin', 'working\\person.pk', 'working\\zone.bin',
-                   'working\\zone.pk']
+                   'working\\zone.pk', 'inputs\\accessibility\\'+parcels_file_name, output_parcels]
 
     for file in delete_files: 
         if(os.path.isfile(os.path.join(os.getcwd(), file))):
             os.remove(os.path.join(os.getcwd(), file))
         else:
             print file
+
 
 def find_inputs(base_directory, save_list):
     for root, dirs, files in os.walk(base_directory):

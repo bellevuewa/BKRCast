@@ -54,7 +54,7 @@ def convergence_check(rmse_list, convergence_criterion, iteration): #Function no
 def main():
     if not os.path.isfile('inputs/shadow_rmse.txt'):
         open('inputs/shadow_rmse.txt', 'a').close()
-    current_percent_rmse = get_percent_rmse(parcel_decay_file, h5_results_file, guidefile)
+    current_percent_rmse = get_percent_rmse(output_parcels, h5_results_file, guidefile)
     shadow_rmse = open('inputs/shadow_rmse.txt', 'a')
     shadow_rmse.writelines(str(current_percent_rmse) + '\n')
     shadow_rmse.close()

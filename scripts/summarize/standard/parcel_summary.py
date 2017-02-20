@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 import os, sys
 sys.path.append(os.getcwd())
-from standard_summary_configuration import *
-import input_configuration # Import as a module to access inputs as a dictionary
+#from standard_summary_configuration import *
+from input_configuration import *# Import as a module to access inputs as a dictionary
 
 print "running parcel summary"
 
-buffered_parcels = 'buffered_parcels.dat'   # Parcel data
+#buffered_parcels = 'buffered_parcels.dat'   # Parcel data
 parcel_urbcen_map = 'parcels_in_urbcens.csv'    # lookup for parcel to RGC
 file_out = 'parcel_summary.xlsx'    # summary output file name
 

@@ -1,7 +1,8 @@
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
-from accessibility_configuration import *
+#from accessibility_configuration import *
+from input_configuration import *
 from emme_configuration import *
 import pandas as pd
 import numpy as np
@@ -140,9 +141,8 @@ def clean_up(parcels):
 
 
 # read in data
-parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
-# read in data
-parcels = pd.DataFrame.from_csv(parcels_file_name, sep = " ", index_col = None )
+parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
+
 #capitalize field names to avoid errors
 parcels.columns = [i.upper() for i in parcels.columns]
 #check for missing data!

@@ -6,21 +6,7 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
 from input_configuration import *
-from bike_configuration import *
 from emme_configuration import *
-#from standard_summary_configuration import *
-
-# Get the auto time and length of each link
-
-# To Do: Cant import standard_summary_configuration so putting this here for now. 
-extra_attributes_dict = {'@tveh' : 'total vehicles', 
-                         '@mveh' : 'medium trucks', 
-                         '@hveh' : 'heavy trucks', 
-                         '@vmt' : 'vmt',\
-                         '@vht' : 'vht', 
-                         '@trnv' : 'buses in auto equivalents',
-                         '@ovol' : 'observed volume', 
-                         '@bveh' : 'number of buses'}
 
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''

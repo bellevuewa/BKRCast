@@ -1,7 +1,7 @@
 import os, sys
 sys.path.append(os.getcwd())
 from input_configuration import *
-from standard_summary_configuration import *
+#from standard_summary_configuration import *
 import pandas as pd
 import h5py
 import numpy as np
@@ -10,7 +10,7 @@ writer = pd.ExcelWriter(out_lu_summary, engine= 'xlsxwriter')
 print 'Summarizing parcels and synthetic population'
 
 # Summarize parcel inputs
-parcels = pd.read_csv(parcel_decay_file, sep = ' ')
+parcels = pd.read_csv(output_parcels, sep = ' ')
 
 
 parcel_totals = parcels.sum().to_frame()

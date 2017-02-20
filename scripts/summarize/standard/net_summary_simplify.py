@@ -24,11 +24,9 @@ import numpy as np
 import xlrd
 import time
 import summary_functions as scf
-from standard_summary_configuration import *
+#from standard_summary_configuration import *
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-
-
 
 input_file = report_output_location+'/network_summary_detailed.xlsx'
 output_file= report_output_location+'/network_summary.xlsx'
