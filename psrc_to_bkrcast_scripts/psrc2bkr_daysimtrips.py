@@ -1,4 +1,4 @@
-﻿
+
 #Convert PSRC matrices to BKR matrices
 #Ben Stabler, ben.stabler@rsginc.com, 08/29/16
 
@@ -18,6 +18,15 @@ import os, shutil
 import pandas as pd
 import h5py
 import numpy as np
+
+#inputs
+wd = "E:/Projects/Clients/bkr/model/soundcast/inputs/"
+seedTripsFileName = "daysim_outputs_seed_trips.h5"
+tazSharesFileName = "psrc_to_bkr.txt"
+
+#get taz shares
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
 
 def readDaysimTripFields(fileName):
     daysimFile = h5py.File(fileName)
@@ -49,17 +58,11 @@ def pickTaz(table, tazField, zoneWeights):
     else:
         return(bkrZones.sample(len(table), replace=True, weights="percent"))
     
-def runDaysimTripsPSRCtoBKRZones():
+def runDaysimTripsPSRCtoBKRZones(daysimFileName):
 
     #read daysim trips file
-    daysimFileName = "daysim_outputs_seed_trips.h5"
-    daysimFileName = os.path.join(os.getcwd(), daysimFileName)
+    daysimFileName = os.path.join(wd, daysimFileName)
     trips = readDaysimTripFields(daysimFileName)
-
-    #get taz shares
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
     
     #pick a BKR otaz instead
     tripsByPSRCTAZ = trips.groupby("otaz").apply(pickTaz, tazField="otaz", zoneWeights=tazShares)
@@ -88,10 +91,10 @@ def runDaysimTripsPSRCtoBKRZones():
     trips = trips.sort_values("id")
 
     #write result file by copying input file and writing over arrays
-    daysimOutFileName = "daysim_outputs_seed_trips_bkr.h5"
-    daysimOutFileName = os.path.join(os.getcwd(), daysimOutFileName)
+    daysimOutFileName = daysimFileName.split(".")[0]+ "_bkr.csv"
+    daysimOutFileName = os.path.join(wd, daysimOutFileName)
     shutil.copy2(daysimFileName, daysimOutFileName)
     writeDaysimTripFields(daysimOutFileName, trips)
 
 if __name__== "__main__":
-    runDaysimTripsPSRCtoBKRZones()
+    runDaysimTripsPSRCtoBKRZones(seedTripsFileName)

@@ -1,4 +1,4 @@
-﻿
+
 #Convert PSRC matrices to BKR matrices
 #Ben Stabler, ben.stabler@rsginc.com, 08/29/16
 #updated for 2014 popsyn file
@@ -19,6 +19,12 @@ import os, shutil
 import pandas as pd
 import h5py
 import numpy as np
+
+#input settings
+wd = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
+popsynFileName = "hh_and_persons.h5"
+parcel_dir = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
+parcelFileName = "buffered_parcels.dat"
 
 def readSynPopTables(fileName):
     print('read synpop file')
@@ -57,16 +63,12 @@ def writeSynPopTables(fileName, households, persons):
 def runSynPopPSRCtoBKRZones():
 
     #read popsyn file
-    wd = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
-    popsynFileName = "hh_and_persons.h5"
-    popsynFileName = os.path.join(wd, popsynFileName)
-    households, persons = readSynPopTables(popsynFileName)
+    popsynFile = os.path.join(wd, popsynFileName)
+    households, persons = readSynPopTables(popsynFile)
 
     #get parcle-taz correspondence
-    parcelFileName = "buffered_parcels.dat"
-    wd_new = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
-    parcelFileName = os.path.join(wd_new, parcelFileName)
-    parcels = pd.read_table(parcelFileName, sep=" ")
+    parcelFile = os.path.join(parcel_dir, parcelFileName)
+    parcels = pd.read_table(parcelFile, sep=" ")
     parcels = parcels[["parcelid","taz_p"]]
 
     #merge to households
@@ -90,11 +92,10 @@ def runSynPopPSRCtoBKRZones():
     #persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]] = persons[["pwpcl","pwtaz","pspcl","pstaz","pwautime","pwaudist","psautime","psaudist"]].astype(np.int32)
 
     #write result file by copying input file and writing over arrays
-    popsynOutFileName = "hh_and_persons_bkr.h5"
+    popsynOutFileName = popsynFileName.split(".")[0]+ "_bkr.h5"
     popsynOutFileName = os.path.join(wd, popsynOutFileName)
-    shutil.copy2(popsynFileName, popsynOutFileName)
+    shutil.copy2(popsynFile, popsynOutFileName)
     writeSynPopTables(popsynOutFileName, households, persons)
-
 
 if __name__== "__main__":
     runSynPopPSRCtoBKRZones()

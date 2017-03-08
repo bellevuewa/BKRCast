@@ -13,30 +13,35 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+
+# NOTE:
+# Added special generator data manually
+# copy pasted thecorresponding zone data in soundacast
+
 import os, shutil
 import pandas as pd
 import h5py
 import numpy as np
+import csv
 
+#inputs
+transit_dir = r'E:\Projects\Clients\bkr\model\soundcast\inputs\Fares'
+puma_dir = r'E:\Projects\Clients\bkr\model\soundcast\inputs\supplemental\generation\ensembles'
+transitFileName = "transit_fare_zones.grt"
+pumaFileName = "puma00.ens"
+tazSharesFileName = "psrc_to_bkr.txt"
 
-def runGroupsPSRCtoBKRZones():
-
-    # read file
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
-
-    # read zone groups file (transit or puma)
-    #zoneGroupsFileName = "transit_fare_zones.grt"
-    #zoneGroupsFileName = "puma00.ens"
-    zoneGroupsFileName = "districts19_ga.ens"
-
-    #path = r'E:\Projects\Clients\bkr\model\bkrcast\inputs\Fares'
-    #transitZoneGroupsFileName = os.path.join(path, zoneGroupsFileName)
+# read file
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
+    
+def runGroupsPSRCtoBKRZones(wd, zoneGroupsFileName, header_rows):
+    print('processing: ' + zoneGroupsFileName )
 
     # read psrc zone group file
-    zoneGroupsFileName = os.path.join(os.getcwd(), zoneGroupsFileName)
-    zoneGroups = pd.read_table(zoneGroupsFileName, delimiter = " ")
+    zoneGroupsFileName = os.path.join(wd, zoneGroupsFileName)
+    zoneGroups = pd.read_table(zoneGroupsFileName, delimiter = " ", skiprows = header_rows, names = ["t","groups","zone"])
+    print(zoneGroups.head())
 
     # merge psrc 2 bkr correspondence with percent
     tazGroups = pd.merge(tazShares,zoneGroups, left_on = "psrc_zone_id", right_on = "zone")
@@ -54,10 +59,18 @@ def runGroupsPSRCtoBKRZones():
     #if one bkr in multiple groups, assign to the one with max percent value
     tazGroups_bkr = temp.loc[temp.groupby(["bkr_zone_id"])['percent'].idxmax()]
 
-    outfile = zoneGroupsFileName.split(".")[0]
-    tazGroups_bkr[["t","groups","bkr_zone_id"]].to_csv(outfile + "_bkr.txt", index = False)
+    extension = zoneGroupsFileName.split(".")[1]
+    outfile = os.path.join(wd,zoneGroupsFileName.split(".")[0] + "_bkr." + extension)
 
+    if (header_rows > 0):
+        print('here')
+        header = pd.read_table(zoneGroupsFileName, delimiter = "#", header = None, nrows = header_rows)
+        header.to_csv(outfile, sep = " ", header = False, index = False, quoting=csv.QUOTE_NONE, escapechar = " ")
+
+    with open(outfile, 'a') as file:
+        tazGroups_bkr[["t","groups","bkr_zone_id"]].to_csv(file, sep = " ", header = False, index = False)
 
 if __name__== "__main__":
-    runGroupsPSRCtoBKRZones()
+    runGroupsPSRCtoBKRZones(transit_dir, transitFileName, header_rows = 10)
+    runGroupsPSRCtoBKRZones(puma_dir, pumaFileName, header_rows = 1)
 

@@ -1,5 +1,5 @@
 #BKR Sensitivity Tests
-#Nagendra Dhakar, nagendra.dhakar@rsginc.com, 12/01/16
+#Nagendra Dhakar, nagendra.dhakar@rsginc.com, 02/20/17
 
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -19,8 +19,17 @@ import numpy as np
 import h5py
 import subprocess
 
-#Sensitivity Tests - when all is false then a test setup is run
-first_round = False          # effects of super/sub-sampling in population synthesis
+model_directory = r'E:\Projects\Clients\bkr\model\bkrcast_tod_new'
+os.chdir(model_directory)
+sys.path.append(model_directory)
+sys.path.append(os.path.join(model_directory,"scripts"))
+
+from emme_configuration import *
+from input_configuration import *
+from EmmeProject import *
+
+#Sensitivity Tests - when all are false then a test setup is run
+first_round = True          # effects of super/sub-sampling in population synthesis
 second_round = False        # tests of number of sampled destinations
 third_round = False         # tests of global iteration strategies
 
@@ -52,6 +61,7 @@ periods = {'am': [5*60, 9*60],
 
 #10 random seeds
 random_seeds = [1,2,3,4,5,6,7,8,9,10]
+#random_seeds = [1,2] #test
 
 #ROUND 1
 if (first_round):
@@ -109,7 +119,11 @@ elif (third_round):
                   '1C':[1,1,1,1,1],
                   '2A':[4,2,1,1],
                   '2B':[4,2,1,1,1],
-                  '3':[10,4,2,1,1]}
+                  '3':[10,4,2,1,1]} #1=100%; 2=50%; 4=25%; 10=10%
+
+    #save results after every feedback iteration
+    #open time dependant emme tables
+    #export table
 
 #TEST
 else:
@@ -117,12 +131,19 @@ else:
     random_seeds = [1234,5678]
 
     #popsampler
-    pop_sample_district = {'BKR':[1],
-                        'Seattle':[1], 
-                        'Rest of King':[1], 
-                        'Pierce':[1], 
-                        'Snohomish':[1], 
-                        'Kitsap':[1]} #population sampling by districts - each option is a column
+    pop_sample_district = {'BKR':[1,4],
+                        'Seattle':[1,0.50], 
+                        'Rest of King':[1,0.20], 
+                        'Pierce':[1,0.10], 
+                        'Snohomish':[1,0.10], 
+                        'Kitsap':[1,0.10]} #population sampling by districts - each option is a column
+
+    #pop_sample_district = {'BKR':[1],
+    #                    'Seattle':[1], 
+    #                    'Rest of King':[1], 
+    #                    'Pierce':[1], 
+    #                    'Snohomish':[1], 
+    #                    'Kitsap':[1]} #population sampling by districts - each option is a column
 
     #sampled destinations
     sampled_destination = {'work_location':[50],
@@ -454,7 +475,7 @@ def weighted_avg(group, field):
 '''
 add a chart
 '''
-def add_chart(writer, sheet_name, chart_type, chart_name, x_axis_name, y_axis_name, data_length, colors, chart_position):
+def add_chart(writer, sheet_name, chart_type, chart_name, x_axis_name, y_axis_name, data_length, num_options, colors, chart_position):
     #get worksheet
     workbook = writer.book
     worksheet = writer.sheets[sheet_name]
@@ -469,7 +490,7 @@ def add_chart(writer, sheet_name, chart_type, chart_name, x_axis_name, y_axis_na
     #'categories': [sheet_name, start_row_num, start_col_num, last_row_num, last_col_num]
     #'values': [sheet_name, start_row_num, start_col_num, last_row_num, last_col_num]
 
-    for col_num in range(1,3):
+    for col_num in range(1,num_options+1):
 
         series_options = {'name':[sheet, 0, col_num],
                           'categories':[sheet, 1, 0, data_length, 0],
@@ -482,9 +503,10 @@ def add_chart(writer, sheet_name, chart_type, chart_name, x_axis_name, y_axis_na
         chart.add_series(series_options)
 
     #set legend and axis names
-    chart.set_legend({'position':'top'})
+    chart.set_legend({'position':'bottom'})
     chart.set_x_axis({'name':x_axis_name})
     chart.set_y_axis({'name':y_axis_name})
+    chart.set_title({'name': chart_name})
 
     #add chart to worksheet
     worksheet.insert_chart(chart_position, chart)
@@ -500,7 +522,7 @@ def calculate_variation_summaries():
     #for each of the five options - variation across 10 random seed runs
     for sampling_option_pop in range(1,len(pop_sample_district['BKR']) + 1):
         for sampling_option_dest in range(0,len(sampled_destination['work_location'])):
-            #1. calculate summaries
+            #1. calculate summaries for a run
             file_path = os.path.join(dir_store, 'summaries_seed_' + str(sampling_option_pop) + '_' + str(sampling_option_dest) + '.xlsx')
             excel_writer = pd.ExcelWriter(file_path, engine = 'xlsxwriter')
             for seed in random_seeds:
@@ -516,90 +538,200 @@ def calculate_variation_summaries():
             excel_writer.save()
 
             #2. calculate variation across 10 random seed runs
-            #read the excel file
-            summary_all = pd.read_excel(file_path, sheetname = None)
-            sheet_names = summary_all.keys()
+            calculate_summaries_random_seed_runs(sampling_option_pop, sampling_option_dest, file_path, taz_corr)
 
-            df_list = []
-            for sheet in sheet_names:
-                summary = summary_all[sheet]
-                df_list.append(summary)
+    #3. compare summaries across different options
+    compare_summaries_options()
 
-            #concate all dataframes into one
-            alldata = pd.concat(df_list)
+def excelize(n):
+    """
+    Returns excel formated column number for n
+    
+    Expects an int value greater than 0.
+    """
+    n-=1
+    div = n/26
+    if div==0:
+        return chr(65+n)
+    else:
+        return excelize(div)+chr(65+n%26)
 
-            #debug
-            #sampling_option_pop=1
-            #sampling_option_dest=0
+'''
+compare summaries across different options
+'''
+def compare_summaries_options():
+    #std_per_mean_taz_bkr
+    #std_per_mean_districts_bkr
+    #std_per_mean_total
 
+    data_by_options_taz = {}
+    data_by_options_district = {}
+    #data_by_options_total = {}
+
+    num_options = 0
+    for sampling_option_pop in range(1,len(pop_sample_district['BKR']) + 1):
+        for sampling_option_dest in range(0,len(sampled_destination['work_location'])):
+            #open summary file
             file_path = os.path.join(dir_store, 'summaries_std_' + str(sampling_option_pop) + '_' + str(sampling_option_dest) + '.xlsx')
-            excel_writer = pd.ExcelWriter(file_path, engine = 'xlsxwriter')
+            summary_all = pd.read_excel(file_path, sheetname = None)
 
-            #all tazs
-            alldata_std = alldata.groupby('hhtaz').std().reset_index() #standard deviation
-            alldata_mean = alldata.groupby('hhtaz').mean().reset_index() #mean
-            alldata_std.to_excel(excel_writer, sheet_name = 'std_tazs_all', index = False)
-            alldata_mean.to_excel(excel_writer, sheet_name = 'mean_tazs_all', index = False)
+            #std_tazs_bkr
+            summary_taz = summary_all['std_tazs_bkr']
+            summary_district = summary_all['std_districts_bkr']
+            summary_total = summary_all['std_total']
 
-            #change column names
-            for column in columns:
-                if (column != columns[0]):
-                    #print(column)
-                    alldata_std = alldata_std.rename(columns = {column: column + '_std'})
-                    alldata_mean = alldata_mean.rename(columns = {column: column + '_mean'})
-                        
-            #merge the two data together
-            alldata_std_per_mean = pd.merge(alldata_std, alldata_mean, on = columns[0])
-            #print(alldata_std_per_mean.columns)
-            for column in columns:
-                if (column != columns[0]):
-                    #print(column)
-                    alldata_std_per_mean[column] = alldata_std_per_mean[column + '_std']/alldata_std_per_mean[column + '_mean']
-
-            alldata_std_per_mean = alldata_std_per_mean[columns]
-            alldata_std_per_mean.to_excel(excel_writer, sheet_name = 'std_per_mean_tazs_all', index = False)
+            #save summaries by column names
+            for column in columns[1:]:
+                
+                if (sampling_option_pop == 1):
+                    data_by_options_taz[column] = summary_taz[['hhtaz', column]]
+                    data_by_options_district[column] = summary_district[['district', column]]      
+                else:
+                    data_by_options_taz[column] = pd.merge(data_by_options_taz[column], summary_taz[['hhtaz', column]], on = 'hhtaz', how = 'left')
+                    data_by_options_district[column] = pd.merge(data_by_options_district[column], summary_district[['district', column]], on = 'district', how = 'left')
+                
+                #rename the column
+                data_by_options_taz[column] = data_by_options_taz[column].rename(columns = {column: 'option_'+str(sampling_option_pop)+'_'+str(sampling_option_dest)})
+                data_by_options_district[column] = data_by_options_district[column].rename(columns = {column: 'option_'+str(sampling_option_pop)+'_'+str(sampling_option_dest)})
             
-            #join region and districts
-            alldata_std_per_mean = pd.merge(alldata_std_per_mean, taz_corr, left_on = 'hhtaz', right_on = 'taz', how = 'left')
+            if (sampling_option_pop == 1):
+                data_by_options_total_regional = summary_total[['measure', 'regional_total']]
+                data_by_options_total_bkr = summary_total[['measure', 'bkr_total']]
+            else:
+                data_by_options_total_regional = pd.merge(data_by_options_total_regional, summary_total[['measure', 'regional_total']], on = 'measure')
+                data_by_options_total_bkr = pd.merge(data_by_options_total_bkr, summary_total[['measure', 'bkr_total']], on = 'measure')
 
-            #bkr taz (region <= 6)
-            alldata_std_per_mean_bkr = alldata_std_per_mean[alldata_std_per_mean['region']<=6]
-            alldata_std_per_mean_bkr[columns].to_excel(excel_writer, sheet_name = 'std_tazs_bkr', index = False)
+            data_by_options_total_regional = data_by_options_total_regional.rename(columns = {'regional_total': 'regional_option_'+str(sampling_option_pop)+'_'+str(sampling_option_dest)})
+            data_by_options_total_bkr = data_by_options_total_bkr.rename(columns = {'bkr_total': 'bkr_option_'+str(sampling_option_pop)+'_'+str(sampling_option_dest)})
 
-            #add scatter chart
-            colors = ['#004488', '#00C0C0']
-            add_chart(excel_writer, 'std_tazs_bkr', 'scatter', 'Title', 'tazs', 
-                      'avg. std. per mean', len(alldata_std_per_mean_bkr), colors, 'O1')
+            num_options += 1
 
-            #within BKR Districts
-            summary_bkr_districts = alldata_std_per_mean_bkr.groupby('district').mean().reset_index()
-            summary_bkr_districts[['district']+columns[1:]].to_excel(excel_writer, sheet_name = 'std_districts_bkr', index = False)
+    #excel writer
+    file_path = os.path.join(dir_store, 'summaries_all_options.xlsx')
+    excel_writer = pd.ExcelWriter(file_path, engine = 'xlsxwriter')
+    colors = ['#228b22', '#8b4513', '#004488', '#00C0C0', '#9400d3']
 
-            #add scatter chart
-            colors = ['#004488', '#00C0C0']
-            add_chart(excel_writer, 'std_districts_bkr', 'scatter', 'Title', 'districts', 
-                      'avg. std. per mean', len(summary_bkr_districts), colors, 'O1')
+    #write regional and bkr totals
+    data_by_options_total = pd.merge(data_by_options_total_regional, data_by_options_total_bkr, on = 'measure')
+    data_by_options_total.to_excel(excel_writer, sheet_name = 'total', index = False)
 
-            #regional total
-            summary_regional = alldata_std_per_mean.mean().reset_index()
-            summary_regional = summary_regional.rename(columns = {'index' : 'measure', 0 : 'regional_total'})
+    #add line chart
+    add_chart(excel_writer, 'total', 'line', 'total', 'measure', 
+                'avg. std. per mean', len(data_by_options_total), 2*num_options, colors, str(excelize(2*num_options+3))+'1')
 
-            #bkr total
-            summary_bkr = alldata_std_per_mean_bkr.mean().reset_index()
-            summary_bkr = summary_bkr.rename(columns = {'index' : 'measure', 0 : 'bkr_total'})
+    #write taz and district level summaries
+    for column in columns[1:]:
+        #write data - by taz and by district
+        data_by_options_taz[column].to_excel(excel_writer, sheet_name = column+'_taz', index = False)
+        data_by_options_district[column].to_excel(excel_writer, sheet_name = column+'_district', index = False)
+        #add scatter chart
+        add_chart(excel_writer, column+'_taz', 'scatter', column+'_taz', 'tazs', 
+                    'avg. std. per mean', len(data_by_options_taz[column]), num_options, colors, str(excelize(num_options+3))+'1')
 
-            #merge the two summaries
-            summary_both = pd.merge(summary_regional, summary_bkr, on = 'measure')
-            summary_both = summary_both[summary_both['measure'].isin(columns[1:])]
-            summary_both.to_excel(excel_writer, sheet_name = 'std_total', index = False)
+        add_chart(excel_writer, column+'_district', 'scatter', column+'_district', 'districts', 
+                    'avg. std. per mean', len(data_by_options_district[column]), num_options, colors, str(excelize(num_options+3))+'1')
 
-            #add column chart
-            colors = ['#004488', '#00C0C0']
-            add_chart(excel_writer, 'std_total', 'column', 'Title', 'measure', 
-                      'avg. std. per mean', len(summary_both), colors, 'E1')
+    excel_writer.save()
 
-            #close excel file
-            excel_writer.save()
+'''
+calculate summaries of different random seed runs of a sampling option
+'''
+def calculate_summaries_random_seed_runs(sampling_option_pop, sampling_option_dest, file_path, taz_corr):
+    #read the excel file
+    summary_all = pd.read_excel(file_path, sheetname = None)
+    sheet_names = summary_all.keys()
+
+    df_list = []
+    for sheet in sheet_names:
+        summary = summary_all[sheet]
+        df_list.append(summary)
+
+    #concate all dataframes into one
+    alldata = pd.concat(df_list)
+
+    #debug
+    #sampling_option_pop=1
+    #sampling_option_dest=0
+
+    file_path = os.path.join(dir_store, 'summaries_std_' + str(sampling_option_pop) + '_' + str(sampling_option_dest) + '.xlsx')
+    excel_writer = pd.ExcelWriter(file_path, engine = 'xlsxwriter')
+
+    #all tazs
+    alldata_std = alldata.groupby('hhtaz').std().reset_index() #standard deviation
+    alldata_mean = alldata.groupby('hhtaz').mean().reset_index() #mean
+    alldata_std.to_excel(excel_writer, sheet_name = 'std_tazs_all', index = False)
+    alldata_mean.to_excel(excel_writer, sheet_name = 'mean_tazs_all', index = False)
+
+    #change column names
+    for column in columns:
+        if (column != columns[0]):
+            #print(column)
+            alldata_std = alldata_std.rename(columns = {column: column + '_std'})
+            alldata_mean = alldata_mean.rename(columns = {column: column + '_mean'})
+                        
+    #merge the two data together
+    alldata_std_per_mean = pd.merge(alldata_std, alldata_mean, on = columns[0])
+    #print(alldata_std_per_mean.columns)
+    for column in columns:
+        if (column != columns[0]):
+            #print(column)
+            alldata_std_per_mean[column] = alldata_std_per_mean[column + '_std']/alldata_std_per_mean[column + '_mean']
+
+    alldata_std_per_mean = alldata_std_per_mean[columns]
+    alldata_std_per_mean.to_excel(excel_writer, sheet_name = 'std_per_mean_tazs_all', index = False)
+            
+    #join region and districts
+    alldata_std_per_mean = pd.merge(alldata_std_per_mean, taz_corr, left_on = 'hhtaz', right_on = 'taz', how = 'left')
+
+    #bkr taz (region <= 6)
+    alldata_std_per_mean_bkr = alldata_std_per_mean[alldata_std_per_mean['region']<=6]
+    alldata_std_per_mean_bkr[columns].to_excel(excel_writer, sheet_name = 'std_tazs_bkr', index = False)
+
+    #within BKR Districts
+    summary_bkr_districts = alldata_std_per_mean_bkr.groupby('district').mean().reset_index()
+    summary_bkr_districts[['district']+columns[1:]].to_excel(excel_writer, sheet_name = 'std_districts_bkr', index = False)
+
+    #regional total
+    summary_regional = alldata_std_per_mean.mean().reset_index()
+    summary_regional = summary_regional.rename(columns = {'index' : 'measure', 0 : 'regional_total'})
+
+    #bkr total
+    summary_bkr = alldata_std_per_mean_bkr.mean().reset_index()
+    summary_bkr = summary_bkr.rename(columns = {'index' : 'measure', 0 : 'bkr_total'})
+
+    #merge the two summaries
+    summary_both = pd.merge(summary_regional, summary_bkr, on = 'measure')
+    summary_both = summary_both[summary_both['measure'].isin(columns[1:])]
+    summary_both.to_excel(excel_writer, sheet_name = 'std_total', index = False)
+
+    #add column chart
+    colors = ['#004488', '#00C0C0']
+    add_chart(excel_writer, 'std_total', 'column', 'std_total', 'measure', 
+                'avg. std. per mean', len(summary_both), 2, colors, 'E1')
+
+    #close excel file
+    excel_writer.save()
+
+def save_assignment_results():
+    #project_list = ['Projects/6to9/6to9.emp'] #test
+    for project in project_list:
+        print(project)
+        tod = project.split('/')[1]
+        my_project = EmmeProject(project)
+        network = my_project.current_scenario.get_network()
+        link_data = []
+        for link in network.links():
+            print(link.id)
+            link_data.append({'link_id': link.id,
+                              'length': link.length,
+                              'from_node': link.i_node,
+                              'to_node': link.j_node,
+                              'vol_auto': link.auto_volume,
+                              'time_auto': link.auto_time})
+
+        link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
+        file_path = os.path.join(dir_store, 'hwyload_' + tod + '_' + str(1) +'.csv')
+        link_data_df.to_csv(file_path, index = False)
 
 '''
 main function
@@ -622,7 +754,7 @@ def main():
                 #update the configuration file
                 print('updating configuration file...')
                 os.chdir(working_directory)
-                update_config_file(config_template_path,{"$RUN_ALL":"true", "$SAMPLE":"1000", "$SHADOW_PRICE":"false", 
+                update_config_file(config_template_path,{"$RUN_ALL":"true", "$SAMPLE":"1", "$SHADOW_PRICE":"true", 
                                                          '$POPSYN_FILE':popsyn_file_new, 
                                                          '$SEED':str(seed),
                                                          '$WORK_LOCATION':str(sampled_destination['work_location'][sampling_option_dest]), 
@@ -649,6 +781,8 @@ def main():
 
                 print('FINISHED')
 
-if __name__== "__main__":
-    #main()
+    #calculate summaries
     calculate_variation_summaries()
+
+if __name__== "__main__":
+    main()

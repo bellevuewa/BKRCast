@@ -1,4 +1,4 @@
-﻿
+
 #Convert PSRC matrices to BKR matrices
 #Ben Stabler, ben.stabler@rsginc.com, 08/29/16
 
@@ -19,6 +19,16 @@ import pandas as pd
 import h5py
 import numpy as np
 
+#input settings
+wd = "E:/Projects/Clients/bkr/model/soundcast/inputs/4k/"
+tazSharesFileName = "psrc_to_bkr.txt"
+auto_file = "auto.h5"
+num_bkr_zones = 1530
+
+#get taz shares
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
+    
 def expandTazShares(table):
     
     print("expand PSRC to BKR zone crosswalk to full OD percents table")
@@ -41,17 +51,10 @@ def expandTazShares(table):
 
 def runMatrixAdjustment():
 
-    #get taz shares
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
     odShares = expandTazShares(tazShares)
 
     #get matrix names
-    num_bkr_zones = 1530 #user input
-
-    wd = "E:/Projects/Clients/bkr/model/soundcast/inputs/4k/"
-    matFile = h5py.File(wd + "auto.h5")
+    matFile = h5py.File(wd + auto_file)
     todFolders = map(lambda x: x[0], matFile.items())
     for tod in todFolders:
         matrices = map(lambda x: x[0], matFile.get(tod).items())

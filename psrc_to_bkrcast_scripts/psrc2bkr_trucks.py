@@ -19,17 +19,26 @@ import h5py
 import numpy as np
 import csv
 
-# inputs
+# working directory
 wd = r"E:\Projects\Clients\bkr\model\soundcast\inputs\trucks"
+
+# flags to convert specific inputs
+runSpclGen = True
+runExt = True
+runTruck = True
+runShares = True
+runEmp = True
+
+#input files
 files_truck = ["trucks.in"]
 files_spclgen = ["special_gen_light_trucks.in", "special_gen_medium_trucks.in", "special_gen_heavy_trucks.in"] #special generator truck input files
 files_ext = [ "medium_trucks_ei.in", "medium_trucks_ie.in", "medium_trucks_ee.in", "heavy_trucks_ei.in", "heavy_trucks_ie.in", "heavy_trucks_ee.in"]#external truck input files
 files_manu_shares = ["agshar.in","minshar.in","prodshar.in","equipshar.in"]
 file_wtcu_shares = ["tcushar.in","whlsshar.in"]
 files_emp = ["hhemp","const.in"]
+tazSharesFileName = "psrc_to_bkr.txt" #format: psrc_zone_id,bkr_zone_id,percent(1.0=100%)
 
 # read correspondence file
-tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
 tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
 tazShares = pd.read_table(tazSharesFileName)
 
@@ -302,9 +311,14 @@ def runEmpPSRCToBKRZones():
         i += 1
 
 if __name__== "__main__":
-    #runSpclGenPSRCtoBKRZones()
-    #runExtPSRCtoBKRZones()
-    #runTruckPSRCtoBKRZones()
-    runSharesPSRCToBKRZones()
-    runEmpPSRCToBKRZones()
+    if(runSpclGen):
+        runSpclGenPSRCtoBKRZones()
+    if(runExt):
+        runExtPSRCtoBKRZones()
+    if(runTruck):
+        runTruckPSRCtoBKRZones()
+    if(runShares):
+        runSharesPSRCToBKRZones()
+    if(runEmp):
+        runEmpPSRCToBKRZones()
 

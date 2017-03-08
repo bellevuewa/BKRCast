@@ -19,20 +19,35 @@ import h5py
 import numpy as np
 
 #inputs
+calibration_dir = r'E:\Projects\Clients\bkr\model\soundcast\scripts\summarize\inputs\calibration'
 zonefiles = ["TAZ_TAD_County.csv","FAZ_TAZ.xlsx"]
-calibration_dir = r'E:\Projects\Clients\bkr\model\bkrcast_tod\scripts\summarize\inputs\calibration'
+survey_file = "survey_psrc.h5"
 inputs_dir = r'E:\Projects\Clients\bkr\model\bkrcast_tod\inputs'
-survey_file = "survey.h5"
 parcel_file = "buffered_parcels.dat"
+survey_file_new = "survey.h5" #this is required only when runDaySimFormat is run indepently (with runSurveyFile = False)
+tazSharesFileName = "psrc_to_bkr.txt"
+zone_file = "TAZ_TAD_County.csv"
+faz_file = "FAZ_TAZ.xlsx"
+district_lookup_file = "district_lookup.csv"
+zoneLatLongFileName = 'bkr_zone_lat_long.csv'
 
-def readSurveyFields(fileName, group, field_otaz, field_dtaz):
+#flags
+runSurveyFile = True
+runDaySimFormat = True
+
+# read file
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
+    
+def readSurveyData(fileName, group, group_fields):
     daysimFile = h5py.File(fileName)
     
     #build pandas data frames
-    tripTable = pd.DataFrame()
-    tripTable[field_otaz] = daysimFile.get(group).get(field_otaz)[:]
-    tripTable[field_dtaz] = daysimFile.get(group).get(field_dtaz)[:]
-    return(tripTable)
+    dataTable = pd.DataFrame()
+    for field in group_fields:
+        dataTable[field] = daysimFile.get(group).get(field)[:]
+
+    return(dataTable)
 
 def writeSurveyFields(fileName, tripFields, group):
     
@@ -55,21 +70,16 @@ def pickTaz(table, tazField, zoneWeights):
         return(bkrZones.sample(len(table), replace=True, weights="percent"))
     else:
         return(bkrZones.sample(len(table), replace=True, weights="percent"))
-    
+'''
+updates trips data in survey file
+otaz - trip origina taz
+dtaz - trip destination taz
+'''    
 def runSurveyTripsPSRCtoBKRZones(surveyFileName):
 
     #read daysim trips file
-    #surveyFileName = "survey.h5"
     surveyFilePath = os.path.join(calibration_dir, surveyFileName)
-    trips = readSurveyFields(surveyFilePath, "Trip", "otaz", "dtaz")
-    
-    #for debug - set current working directory
-    os.chdir(r'E:\Projects\Clients\bkr\tasks\scripts')
-
-    #get taz shares
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
+    trips = readSurveyData(surveyFilePath, "Trip", ["otaz", "dtaz"])
     
     #pick a BKR otaz instead
     tripsByPSRCTAZ = trips.groupby("otaz").apply(pickTaz, tazField="otaz", zoneWeights=tazShares)
@@ -104,19 +114,15 @@ def runSurveyTripsPSRCtoBKRZones(surveyFileName):
     writeSurveyFields(surveyOutFilePath, trips, "Trip")
 
     return(surveyOutFileName)
-
+'''
+updates tours data in survey file
+totaz - tour origina taz
+tdtaz - tour destination taz
+'''
 def runSurveyToursPSRCtoBKRZones(surveyFileName):
 
-    #read daysim trips file
-    #surveyFileName = "survey_bkr.h5"
-    calibration_dir = r'E:\Projects\Clients\bkr\model\bkrcast_tod\scripts\summarize\inputs\calibration'
     surveyFilePath = os.path.join(calibration_dir, surveyFileName)
-    tours = readSurveyFields(surveyFilePath, "Tour", "totaz", "tdtaz")
-
-    #get taz shares
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
+    tours = readSurveyData(surveyFilePath, "Tour", ["totaz", "tdtaz"])
     
     #pick a BKR otaz instead
     toursByPSRCTAZ = tours.groupby("totaz").apply(pickTaz, tazField="totaz", zoneWeights=tazShares)
@@ -152,22 +158,12 @@ def runSurveyToursPSRCtoBKRZones(surveyFileName):
 
     return(surveyOutFileName)
 
-def runDistrictsPSRCtoBKRZones():
-
-    # read file
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
-
-    # read zone districts file
-    wd = r"E:\Projects\Clients\bkr\model\bkrcast\scripts\summarize\inputs\calibration"
-    zoneFileName = "TAZ_TAD_County.csv"
+def runDistrictsPSRCtoBKRZones(zoneFileName):
 
     # read psrc zone group file
-    zoneFileName = os.path.join(wd, zoneFileName)
+    zoneFileName = os.path.join(calibration_dir, zoneFileName)
     zoneDistricts = pd.read_csv(zoneFileName)
     colnames = list(zoneDistricts.columns.values)
-    #zoneDistricts = zoneDistricts[["TAZ","District","New DistrictName"]]
 
     # merge psrc 2 bkr correspondence with percent
     tazGroups = pd.merge(tazShares,zoneDistricts, left_on = "psrc_zone_id", right_on = "TAZ")
@@ -191,19 +187,10 @@ def runDistrictsPSRCtoBKRZones():
     tazdata_bkr = tazdata_bkr.rename(columns = {"bkr_zone_id":"TAZ"})
     tazdata_bkr.to_csv(outfile, sep = "," , header = True, index = False)
 
-def runPSRCtoBKRFAZ():
-
-    # read file
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
-
-    # read zone districts file
-    wd = r"E:\Projects\Clients\bkr\model\bkrcast\scripts\summarize\inputs\calibration"
-    zoneFileName = "FAZ_TAZ.xlsx"
+def runPSRCtoBKRFAZ(zoneFileName):
 
     # read psrc zone group file
-    zoneFileName = os.path.join(wd, zoneFileName)
+    zoneFileName = os.path.join(calibration_dir, zoneFileName)
     zoneDistricts = pd.read_excel(zoneFileName)
     zoneDistricts = zoneDistricts[["zone_id","large_area_id","large_area_name"]]
 
@@ -228,20 +215,8 @@ def runPSRCtoBKRFAZ():
     tazdata_bkr = tazGroups_bkr[["bkr_zone_id","large_area_id","large_area_name"]]
     tazdata_bkr = tazdata_bkr.rename(columns = {"bkr_zone_id":"zone_id"})
     tazdata_bkr.to_excel(outfile, 'taz4k_to_fazlarge_area', index=False)
-    writer.save()
-
-def runPSRCtoBKRDistrictLookup():
-
-    #for debug - set current working directory
-    os.chdir(r'E:\Projects\Clients\bkr\tasks\scripts')
-
-    # read file
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
-
-    # read zone districts file
-    zoneFileName = "district_lookup.csv"
+    
+def runPSRCtoBKRDistrictLookup(zoneFileName):
 
     # read psrc zone group file
     zoneFileName = os.path.join(calibration_dir, zoneFileName)
@@ -265,9 +240,8 @@ def runPSRCtoBKRDistrictLookup():
     tazGroups_bkr = temp.loc[temp.groupby(["bkr_zone_id"])['percent'].idxmax()]
 
     #add taz lat long
-    zoneLatLongFileName = 'bkr_zone_lat_long.csv'
-    zoneLatLongFileName = os.path.join(os.getcwd(), zoneLatLongFileName)
-    zoneLatLong = pd.read_csv(zoneLatLongFileName)
+    zoneLatLongFile = os.path.join(os.getcwd(), zoneLatLongFileName)
+    zoneLatLong = pd.read_csv(zoneLatLongFile)
     tazGroups_bkr = pd.merge(tazGroups_bkr, zoneLatLong, left_on = "bkr_zone_id", right_on = "TAZNUM")
 
     #write
@@ -311,7 +285,18 @@ def writeSynPopTables(fileName, households, persons):
         popsyn.create_dataset(dataset, data = persons[perField], compression="gzip")
     popsyn.close()
     
-def runSynPopPSRCtoBKRZones(surveyFileName, parcelFileName):
+'''
+updates household and person data in survey file
+
+household
+-hhtaz
+
+person
+-pwtaz
+-pstaz
+'''
+
+def runSurveyPopPSRCtoBKRZones(surveyFileName, parcelFileName):
 
     #read popsyn file
     surveyFilePath = os.path.join(calibration_dir, surveyFileName)
@@ -373,13 +358,14 @@ def convertSurveyToDaysimFormat(surveyFileName):
     print("finished converting to daysim format")
 
 if __name__== "__main__":
-    #runDistrictsPSRCtoBKRZones()
-    #runPSRCtoBKRFAZ()
-    #runPSRCtoBKRDistrictLookup()
-    #survey_file_new = runSurveyTripsPSRCtoBKRZones(survey_file)
-    #survey_file_new = runSurveyToursPSRCtoBKRZones(survey_file_new)
-    #survey_file_new = runSynPopPSRCtoBKRZones(survey_file_new, parcel_file)
+    if(runSurveyFile):
+        runDistrictsPSRCtoBKRZones(zone_file)
+        runPSRCtoBKRFAZ(faz_file)
+        runPSRCtoBKRDistrictLookup(district_lookup_file)
+        survey_file_new = runSurveyTripsPSRCtoBKRZones(survey_file)
+        survey_file_new = runSurveyToursPSRCtoBKRZones(survey_file_new)
+        survey_file_new = runSurveyPopPSRCtoBKRZones(survey_file_new, parcel_file)
 
-    survey_file_new = "survey.h5"
-    convertSurveyToDaysimFormat(survey_file_new)
+    if(runDaySimFormat):
+        convertSurveyToDaysimFormat(survey_file_new)
 

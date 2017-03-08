@@ -1,4 +1,4 @@
-﻿
+
 #Convert PSRC matrices to BKR matrices
 #Ben Stabler, ben.stabler@rsginc.com, 08/29/16
 
@@ -18,6 +18,15 @@ import os, shutil
 import pandas as pd
 import h5py
 import numpy as np
+
+#input settings
+wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs/supplemental/trips/"
+tods = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20', '20to5' ]
+tazSharesFileName = "psrc_to_bkr.txt"
+
+#get taz shares
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
 
 def expandTazShares(table):
     
@@ -41,18 +50,12 @@ def expandTazShares(table):
 
 def runMatrixAdjustment():
 
-    #get taz shares
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
     odShares = expandTazShares(tazShares)
     psrc_zones = tazShares.psrc_zone_id.unique()
 
     #loop by tod and aggregate matrix
     num_bkr_zones = 1530 #user input
    
-    wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs/supplemental/trips/"
-    tods = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20', '20to5' ]
     #tods = ['6to7']
     for tod in tods:
         

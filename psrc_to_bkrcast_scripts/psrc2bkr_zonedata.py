@@ -19,12 +19,17 @@ import h5py
 import numpy as np
 import csv
 
+
+# NOTE:
+# Added special generator data manually
+# copy pasted thecorresponding zone data in soundacast
+
 # inputs
 wd = r"E:\Projects\Clients\bkr\model\soundcast\inputs\supplemental\generation\landuse"
 files_zone = ["tazdata.in"]
+tazSharesFileName = "psrc_to_bkr.txt"
 
 # read correspondence file
-tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
 tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
 tazShares = pd.read_table(tazSharesFileName)
 

@@ -18,20 +18,20 @@ import pandas as pd
 import h5py
 import numpy as np
 
+#input settings
+wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs"
+zoneFileName = "TAZIndex.txt"
+tazSharesFileName = "psrc_to_bkr.txt"
+
+# read file
+tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
+tazShares = pd.read_table(tazSharesFileName)
+    
 def runDistrictsPSRCtoBKRZones():
 
-    # read file
-    tazSharesFileName = "psrc_to_bkr.txt" #psrc_zone_id	bkr_zone_id	percent 1.0=100%
-    tazSharesFileName = os.path.join(os.getcwd(), tazSharesFileName)
-    tazShares = pd.read_table(tazSharesFileName)
-
-    # read zone districts file
-    wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs"
-    zoneFileName = "TAZIndex.txt"
-
     # read psrc zone group file
-    zoneFileName = os.path.join(wd, zoneFileName)
-    zoneDistricts = pd.read_table(zoneFileName)
+    zoneFile = os.path.join(wd, zoneFileName)
+    zoneDistricts = pd.read_table(zoneFile)
     colnames = list(zoneDistricts.columns.values)
     zoneDistricts = zoneDistricts[["Zone_id","External"]]
 
@@ -70,7 +70,7 @@ def runDistrictsPSRCtoBKRZones():
 
     #write
     outfile = zoneFileName.split(".")[0]+ "_bkr.txt"
-    tazdata_bkr.to_csv(outfile, sep = "\t" , header = True, index = False)
+    tazdata_bkr.to_csv(os.path.join(wd,outfile), sep = "\t" , header = True, index = False)
 
 if __name__== "__main__":
     runDistrictsPSRCtoBKRZones()

@@ -19,6 +19,11 @@ import pandas as pd
 import h5py
 import numpy as np
 
+#inputs
+wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs/"
+tods = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20', '20to5' ]
+num_bkr_zones = 1530
+
 def writeSkimTables(fileName, skims, tod):
     
     #delete columns first and then write
@@ -30,14 +35,7 @@ def writeSkimTables(fileName, skims, tod):
 
     bkrskim.close()
 
-
 def runSkimAdjustment():
-
-    #get matrix names
-    num_bkr_zones = 1530 #user input
-
-    wd = r"E:/Projects/Clients/bkr/model/soundcast/inputs/"
-    tods = ['5to6', '6to7', '7to8', '8to9', '9to10', '10to14', '14to15', '15to16', '16to17', '17to18', '18to20', '20to5' ]
 
     for tod in tods:
         print "processing: " + tod
@@ -47,7 +45,7 @@ def runSkimAdjustment():
         matrices = map(lambda x: x[0], matFile.get("Skims").items())
         
         #write out
-        bkrMatFile = os.path.join("E:/Projects/Clients/bkr/model/bkrcast/inputs/", tod + ".h5")
+        bkrMatFile = os.path.join(wd, tod + "_bkr.h5")
         shutil.copy2(psrcFileName, bkrMatFile)
         bkrskim = h5py.File(bkrMatFile, "a")
 
@@ -63,7 +61,6 @@ def runSkimAdjustment():
             del bkrskim[dataset]
             bkrskim.create_dataset(dataset, data = matData,compression="gzip")
        
-        #wd_out = r"E:/Projects/Clients/bkr/model/bkrcast/inputs/"
         bkrskim.close()
 
 if __name__== "__main__":
