@@ -19,7 +19,6 @@ import pandas as pd
 import socket
 import dframe_explorer
 sys.path.append(os.getcwd())
-#from map_configuration import *
 from input_configuration import *
 
 # set working directory to soundcast root 

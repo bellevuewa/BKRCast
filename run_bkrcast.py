@@ -157,6 +157,9 @@ def run_truck_supplemental(iteration):
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribution.py'])
         if returncode != 0:
            sys.exit(1)
+        
+        #copy supplemental output - debug
+        shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
 @timed
 def daysim_assignment(iteration):
 
@@ -185,8 +188,9 @@ def daysim_assignment(iteration):
      #### ###############################################################
      if run_skims_and_paths:
          logger.info("Start of %s iteration of Skims and Paths", str(iteration))
-         num_iterations = str(max_iterations_list[iteration])
-         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', num_iterations])
+         #num_iterations = str(max_iterations_list[iteration])
+         #returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', num_iterations])
+         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', str(iteration)])
          
          logger.info("End of %s iteration of Skims and Paths", str(iteration))
          print 'return code from skims and paths is ' + str(returncode)

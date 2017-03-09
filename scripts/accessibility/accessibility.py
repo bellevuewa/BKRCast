@@ -1,7 +1,6 @@
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
-#from accessibility_configuration import *
 from input_configuration import *
 from emme_configuration import *
 import pandas as pd

@@ -40,15 +40,8 @@ import pandas as pd
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-#from standard_summary_configuration import *
 from input_configuration import *
 from emme_configuration import *
-
-#daily_network_fname = 'outputs/daily_network_results.csv'
-
-## Input Files:
-#aadt_counts_file = 'soundcast_aadt.csv'
-#tptt_counts_file = 'soundcast_tptt.csv'
 
 def json_to_dictionary(dict_name):
 

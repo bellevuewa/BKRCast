@@ -20,7 +20,7 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-from input_configuration import *
+#from input_configuration import *
 from emme_configuration import *
 from EmmeProject import *
 
@@ -60,6 +60,17 @@ else:
 def parse_args():
     """Parse command line arguments for max number of assignment iterations"""
     return sys.argv[1]
+
+#feedback iteration
+iteration = parse_args()
+
+#only for feedback loops.
+if int(iteration)>len(max_iterations_list):
+    #build seed skims
+    max_num_iterations = int(iteration)
+else:
+    #feedback loop
+    max_num_iterations = str(max_iterations_list[int(iteration)])
 
 def create_hdf5_skim_container2(hdf5_name):
     #create containers for TOD skims
@@ -343,7 +354,7 @@ def traffic_assignment(my_project):
 
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
-    max_num_iterations = parse_args()
+    #max_num_iterations = parse_args()
     mod_assign["stopping_criteria"]["max_iterations"]= int(max_num_iterations)
     mod_assign["stopping_criteria"]["best_relative_gap"]= best_relative_gap 
     mod_assign["stopping_criteria"]["relative_gap"]= relative_gap
@@ -1277,6 +1288,35 @@ def temp_assign_capacity(project_name):
     cap_period = str(transit_tod[project_name.tod]['num_of_hours']) + ' * 100' 
     project_name.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "ul1=0")
 
+#save highway assignment results for sensitivity tests
+def store_assign_results(project_name):
+    print('save assignment results')
+    tod = project_name.tod
+    network = project_name.current_scenario.get_network()
+    
+    #empty list to save link data
+    link_data = []
+    
+    #go through each link and store data
+    for link in network.links():
+        #print(link.id)
+        link_data.append({'link_id': link.id,
+                          'length': link.length,
+                          'from_node': link.i_node,
+                          'to_node': link.j_node,
+                          'vol_auto': link.auto_volume,
+                          'time_auto': link.auto_time})
+    #convert to dataframe
+    link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
+    
+    #make a directory in output folder
+    if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
+        os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
+    
+    #write out assignment results    
+    file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
+    link_data_df.to_csv(file_path, index = False)
+
 def run_assignments_parallel(project_name):
 
     start_of_run = time.time()
@@ -1322,6 +1362,9 @@ def run_assignments_parallel(project_name):
     vdf_initial(my_project)
     ##run auto assignment/skims
     traffic_assignment(my_project)
+    
+    #save results
+    store_assign_results(my_project)
    
     attribute_based_skims(my_project, "Time")
 

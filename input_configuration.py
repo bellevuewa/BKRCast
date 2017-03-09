@@ -38,7 +38,7 @@ if not(use_simple_configuration):
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True
+    run_copy_seed_skims = False
     create_no_toll_network = True
     run_skims_and_paths_seed_trips = True
 
@@ -345,10 +345,8 @@ LEHD_work_flows = 'scripts/summarize/inputs/calibration/HFAZ_WFAZ_LEHD2014.xlsx'
 
 acs_data = 'scripts/summarize/inputs/calibration/ACS_2014.xlsx'
 report_output_location = 'outputs'
-bc_outputs_file = 'outputs/BenefitCost.xlsx'
 
 #Network validation summary
-report_output_location = 'Outputs'
 network_summary_files = ['6to9_transit', '9to1530_transit',
                          'counts_output', 'network_summary']
 fac_type_dict = {'highway' : 'ul3 = 1 or ul3 = 2',
@@ -385,7 +383,7 @@ output_list = ['prod_att.csv', 'gq_prod_att.csv', 'network_summary.csv', 'counts
                'screenline_volumes']
 
 #################################### BENEFIT COST TOOL ####################################
-
+bc_outputs_file = 'outputs/BenefitCost.xlsx'
 # Read in Configuration Hard Code for now
 output_name = 'TransFu2010'
 
@@ -436,5 +434,5 @@ REPORT_ROW_GAP = 20
 map_daysim_alt = r'R:\SoundCast\releases\TransportationFutures2010\outputs\daysim_outputs.h5'
 
 # Parameters
-hightaz = 3700    # Max TAZ for mapping
+hightaz = 1530    # Max TAZ for mapping
 max_trav_time = 30    # Threshold travel time for accessibility calculation

@@ -1,8 +1,7 @@
-﻿##################################### NETWORK IMPORTER ####################################
+##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
-project = r'projects/' + master_project + r'/' + master_project + '.emp'
-#project = 'Projects/LoadTripTables/LoadTripTables.emp'
-network_summary_project = 'Projects/LoadTripTables/LoadTripTables.emp'
+project = 'Projects/LoadTripTables/LoadTripTables.emp'
+network_summary_project = project
 tod_networks = ['am', 'md', 'pm', 'ni']
 sound_cast_net_dict = {'6to9' : 'am', '9to1530' : 'md', '1530to1830' : 'pm', '1830to6' : 'ni'}
 load_transit_tod = ['6to9', '9to1530', '1530to1830', '1830to6']
@@ -12,11 +11,19 @@ transit_vehicle_file = 'vehicles.txt'
 base_net_name = '_roadway.in'
 turns_name = '_turns.in'
 transit_name = '_transit.in'
-shape_name = '_link_shape_1002.txt' #is it needed?
+shape_name = '_linkshapes.in'
 no_toll_modes = ['s', 'h', 'i', 'j']
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
 headway_file = 'sc_headways.csv'
+
+#extra attribute - add to the list in dictionary format
+#format = {'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True}}
+#'type' is one of 'NODE', 'LINK', 'TURN', 'TRANSIT_LINE', or 'TRANSIT_SEGMENT'
+#'name' should start with '@', for ex. '@toll1'
+#'desc1' could be any string describing the attributes
+#'overwrite' is True or False
+extra_attributes = [{'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True}]
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'

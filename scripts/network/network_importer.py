@@ -138,8 +138,11 @@ def import_tolls(emmeProject):
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@trkc3",extra_attribute_description="Heavy Truck Tolls",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@brfer",extra_attribute_description="Bridge & Ferrry Flag",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@rdly",extra_attribute_description="Intersection Delay",overwrite=True)
- 
     
+    #add extra attributes input by user in emme_configuration.py
+    for attribute in extra_attributes:
+        t29 = create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
+
     import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
 
     tod_4k = sound_cast_net_dict[emmeProject.tod]
@@ -226,25 +229,34 @@ def run_importer(project_name):
         my_project.change_active_database(key)
         for scenario in list(my_project.bank.scenarios()):
             my_project.bank.delete_scenario(scenario)
+        
         #create scenario
         my_project.bank.create_scenario(1002)
         my_project.change_scenario()
-        #print key
+        
+        #delete existing links and nodes
         my_project.delete_links()
         my_project.delete_nodes()
-      
+        
+        #import mode file
         my_project.process_modes('inputs/networks/' + mode_file)
         
+        #import base network
         my_project.process_base_network('inputs/networks/' + value + base_net_name)
        # my_project.process_base_network('inputs/networks/fixes/ferries/' + value + base_net_name)
 
-        my_project.process_turn('inputs/networks/' + value + turns_name)
-    #my_project.process_shape('/inputs/network' + tod_network + shape_name)
+        #import linkshapes
+        my_project.process_shape('inputs/networks/' + value + shape_name)
 
+        #import turns
+        my_project.process_turn('inputs/networks/' + value + turns_name)
+
+        #import transit networks
         if my_project.tod in load_transit_tod:
            my_project.process_vehicles('inputs/networks/' + transit_vehicle_file)
            my_project.process_transit('inputs/networks/' + value + transit_name)
            update_headways(my_project, headway_df)
+
         #import tolls
         import_tolls(my_project)
         #time_period_headway_df = headeway_df.loc[(headway_df['hdw_' + my_project.tod])]
@@ -252,8 +264,8 @@ def run_importer(project_name):
         
 
 def main():
-    print(project)
-    run_importer(project)
+    print network_summary_project
+    run_importer(network_summary_project)
     # comment out for now - nagendra.dhakar@rsginc.com
     #returncode = subprocess.call([sys.executable,'scripts/network/daysim_zone_inputs.py'])
     returncode=0

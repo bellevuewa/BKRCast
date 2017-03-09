@@ -26,8 +26,9 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from input_configuration import *
 from logcontroller import *
-from input_configuration import *
 from emme_configuration import *
+import input_configuration
+import emme_configuration
 import pandas as pd
 
 import glob

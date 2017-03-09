@@ -17,12 +17,9 @@ import inro.emme.desktop.app as app
 import inro.modeller as _m
 from EmmeProject import *
 import datetime
-#from benefit_cost_configuration import *
 from input_configuration import *
 from emme_configuration import *
 from h5toDF import *
-
-
 
 def get_variables_trips(output_df,trip_variables, hh_variables, person_variables):
     trip_data = output_df['Trip'][trip_variables]

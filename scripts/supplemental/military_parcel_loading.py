@@ -5,11 +5,8 @@ sys.path.append(os.getcwd())
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
-
 #it might make sense to put these file locations in a config somewhere
 parcel_file =  "inputs\\accessibility\\" + parcels_file_name
-#military_file = "inputs\\accessibility\\parcels_military.csv"
-#jblm_file = "inputs\\accessibility\\\distribute_jblm_jobs.csv"
 
 parcels_urbansim = pd.read_csv(parcel_file, sep = " ")
 
