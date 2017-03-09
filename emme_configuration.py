@@ -23,7 +23,8 @@ headway_file = 'sc_headways.csv'
 #'name' should start with '@', for ex. '@toll1'
 #'desc1' could be any string describing the attributes
 #'overwrite' is True or False
-extra_attributes = [{'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True}]
+#'file_name' is path (within the BKRCast directory) of the file with attribute value - format should be inode, jnode, attr
+extra_attributes = [{'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True, 'file_name':'inputs/tolls/test.in'}]
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'

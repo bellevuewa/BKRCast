@@ -138,12 +138,17 @@ def import_tolls(emmeProject):
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@trkc3",extra_attribute_description="Heavy Truck Tolls",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@brfer",extra_attribute_description="Bridge & Ferrry Flag",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@rdly",extra_attribute_description="Intersection Delay",overwrite=True)
-    
+
+    import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
+
     #add extra attributes input by user in emme_configuration.py
     for attribute in extra_attributes:
         t29 = create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
-
-    import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
+        if(os.path.isfile(attribute["file_name"])):
+            import_attributes(attribute["file_name"], scenario = emmeProject.current_scenario,
+                               column_labels = {0: "inode",
+                                                1: "jnode",
+                                                2: attribute["name"]})
 
     tod_4k = sound_cast_net_dict[emmeProject.tod]
 
