@@ -1375,6 +1375,12 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
 
     ##Transit Pass and Auto Ownership
     #Transit Pass Ownership
+    #survey, data2, has ptpass values as 
+    #-1: missing (they didnt ask that question on the university survey, but a lot of students have to buy a transit pass as part of their fees, so most of them probably have a pass)
+    #0: no pass 
+    #1-6: various types of passes, but can treat them all as 1 (yes)
+    #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
+    data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
     ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()

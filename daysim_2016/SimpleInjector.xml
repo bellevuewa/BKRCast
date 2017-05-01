@@ -3821,6 +3821,12 @@
         <member name="F:SimpleInjector.Internals.ContainerControlledItem.Registration">
             <summary>Can be null.</summary>
         </member>
+        <member name="P:SimpleInjector.Internals.CyclicDependencyException.Message">
+            <summary>
+            Gets a message that describes the current exception.
+            </summary>
+            <value>The error message that explains the reason for the exception, or an empty string("").</value>
+        </member>
         <member name="T:SimpleInjector.Internals.CyclicDependencyValidator">
             <summary>
             Allows verifying whether a given type has a direct or indirect dependency on itself. Verifying is done

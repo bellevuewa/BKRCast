@@ -254,8 +254,11 @@ def clean_up():
     delete_files = ['working\\household.bin', 'working\\household.pk', 'working\\parcel.bin',
                    'working\\parcel.pk', 'working\\parcel_node.bin', 'working\\parcel_node.pk', 'working\\park_and_ride.bin',
                    'working\\park_and_ride_node.pk', 'working\\person.bin', 'working\\person.pk', 'working\\zone.bin',
-                   'working\\zone.pk', 'inputs\\accessibility\\'+parcels_file_name, output_parcels]
+                   'working\\zone.pk']
 
+    if (delete_parcel_data):
+        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels])
+    
     for file in delete_files: 
         if(os.path.isfile(os.path.join(os.getcwd(), file))):
             os.remove(os.path.join(os.getcwd(), file))

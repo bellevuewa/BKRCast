@@ -198,3 +198,8 @@ parcels = process_parcels(parcels, transit_df)
 
 parcels_done = clean_up(parcels)
 parcels_done.to_csv(output_parcels, index = False, sep = ' ')
+
+#to a csv file
+del col_order[6:24]
+parcels_done = parcels_done[col_order]
+parcels_done.to_csv(buffered_parcels_csv, index = False)

@@ -65,6 +65,9 @@ if not(use_simple_configuration):
     run_district_summary_report = True
     run_landuse_summary = True
     run_tableau_db = False
+    
+    #delete parcel files from the working directory
+    delete_parcel_data = True
 
     # DaySim - household sampling rate input
     pop_sample = [10, 2, 1]
@@ -192,6 +195,7 @@ good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap"
 parcels_file_name = 'parcels_urbansim.txt'
 buffered_parcels = 'buffered_parcels.dat'
 output_parcels = 'inputs/' + buffered_parcels
+buffered_parcels_csv = 'inputs/' + 'buffered_parcels.csv'
 transit_stops_name = 'inputs/accessibility/transit_stops_2014.csv'
 nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
@@ -256,13 +260,13 @@ commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
 #################################### DAYSIM ####################################
 households_persons_file = r'inputs\hh_and_persons.h5'
 # Popsampler - super/sub-sampling in population synthesis
-sampling_option = 1 #1-5: five options available - each option is a column in pop_sample_district below
-pop_sample_district = {'BKR':[1,4,4,2,2],
-					'Seattle':[1,0.50,0.25,0.50,0.25], 
-					'Rest of King':[1,0.20,0.10,0.20,0.10], 
-					'Pierce':[1,0.10,0.05,0.10,0.05], 
-					'Snohomish':[1,0.10,0.05,0.10,0.05], 
-					'Kitsap':[1,0.10,0.05,0.10,0.05]} #population sampling by districts - 5 options to choose from (each option is a column)
+sampling_option = 2 #1-3: five options available - each option is a column in pop_sample_district below
+pop_sample_district = {'BKR':[1,4,2],
+					'Seattle':[1,0.50,0.50], 
+					'Rest of King':[1,0.20,0.20], 
+					'Pierce':[1,0.10,0.10], 
+					'Snohomish':[1,0.10,0.10], 
+					'Kitsap':[1,0.10,0.10]} #population sampling by districts - 3 options to choose from (each option is a column) - base case and two preferred sampling plans
 zone_district_file = 'TAZ_District_CrossWalk.csv' #input to generate taz_sample_rate_file below
 taz_sample_rate_file = 'taz_sample_rate.txt' #intermediate output, input to popsampler script
 

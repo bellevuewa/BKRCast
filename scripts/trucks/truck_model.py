@@ -21,6 +21,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import * 
 from input_configuration import *
 from emme_configuration import *
+#from truck_configuration import *
 
 # Temp log file for de-bugging
 logfile = open("truck_log.txt", 'wb')

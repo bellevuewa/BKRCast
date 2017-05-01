@@ -7,6 +7,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
+#from bike_configuration import *
 
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''

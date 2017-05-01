@@ -20,7 +20,7 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-#from input_configuration import *
+from input_configuration import *
 from emme_configuration import *
 from EmmeProject import *
 
@@ -1284,9 +1284,16 @@ def delete_matrices_parallel(project_name):
 
 #temp definition - by nagendra.dhakar@rsginc.com
 def temp_assign_capacity(project_name):
-    print('assign temp speeds')
+    print('assign temp capacity')
     cap_period = str(transit_tod[project_name.tod]['num_of_hours']) + ' * 100' 
     project_name.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "ul1=0")
+
+#temp definition - by nagendra.dhakar@rsginc.com
+def temp_assign_speed(project_name):
+    print('assign temp speeds')
+    speed_period = '60' 
+    project_name.network_calculator("link_calculation", result = "ul2", expression = speed_period, selections_by_link = "ul2=0,1") #speed between 0 and 1
+    print('finished assign temp speeds')
 
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name):
@@ -1355,6 +1362,7 @@ def run_assignments_parallel(project_name):
     #print (my_project.tod)
     #if (my_project.tod == '5to9'):
     temp_assign_capacity(my_project) #added by nagendra.dhakar
+    temp_assign_speed(my_project) #added by nagendra.dhakar
 
     # ************arterial delay is being handled in network_importer for now. Leave commented!!!!!!!!!!!!!
     #arterial_delay_calc(my_project)

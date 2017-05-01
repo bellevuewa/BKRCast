@@ -251,7 +251,7 @@ def run_importer(project_name):
        # my_project.process_base_network('inputs/networks/fixes/ferries/' + value + base_net_name)
 
         #import linkshapes
-        my_project.process_shape('inputs/networks/' + value + shape_name)
+        #my_project.process_shape('inputs/networks/' + value + shape_name)
 
         #import turns
         my_project.process_turn('inputs/networks/' + value + turns_name)
