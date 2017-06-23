@@ -136,7 +136,7 @@ def build_shadow_only():
             return
 
 def run_truck_supplemental(iteration):
-     run_truck_model = False #debug - nagendra.dhakar@rsginc.com
+     #run_truck_model =True #debug - nagendra.dhakar@rsginc.com
       ### RUN Truck Model ################################################################
      if run_truck_model:
          returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
@@ -154,12 +154,16 @@ def run_truck_supplemental(iteration):
             returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
             if returncode != 0:
                 sys.exit(1)
+
+        #run distribution oly once - for calibration purpose only - change later
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribution.py'])
+        
         if returncode != 0:
            sys.exit(1)
         
         #copy supplemental output - debug
         shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
+        
 @timed
 def daysim_assignment(iteration):
 

@@ -20,7 +20,7 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-from input_configuration import *
+#from input_configuration import *
 from emme_configuration import *
 from EmmeProject import *
 
@@ -379,9 +379,13 @@ def traffic_assignment(my_project):
     logging.debug(text)
 
 def transit_assignment(my_project):
-
+    
     start_transit_assignment = time.time()
 
+    print('starting transtit assignment')
+    text = 'starting transtit assignment'
+    logging.debug(text)
+    
     #Define the Emme Tools used in this function
     assign_transit = my_project.tool("inro.emme.transit_assignment.extended_transit_assignment")
 
@@ -396,7 +400,8 @@ def transit_assignment(my_project):
 
     end_transit_assignment = time.time()
     print 'It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the transit assignment.'
-
+    #text = 'It took ' + round((end_transit_assignment-start_transit_assignment)/60,2) + ' minutes to run the transit assignment.'
+    #logging.debug(text)
 
 def transit_skims(my_project):
 
@@ -406,7 +411,8 @@ def transit_skims(my_project):
     my_spec_list = skim_specs["spec1"]
     for item in my_spec_list:
         skim_transit(item)
-
+    #text = 'Finished skimming transit ' + my_project.tod
+    #logging.debug(text)
 
 def attribute_based_skims(my_project,my_skim_attribute):
     #Use only for Time or Distance!
@@ -624,10 +630,8 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
         skims_group = my_store.create_group("Skims")
         print "Group Skims Created"
 
-
     #Load in the necessary Dictionaries
     matrix_dict = json_to_dictionary("user_classes")
-
 
    # First Store a Dataset containing the Indicices for the Array to Matrix using mf01
     try:
@@ -1316,13 +1320,28 @@ def store_assign_results(project_name):
     #convert to dataframe
     link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
     
-    #make a directory in output folder
+##    transit_line_data = []
+##    for transit_line in network.transit_lines():
+##        #print(transit_line)
+##	transit_line_data.append({'id': transit_line.id,
+##                                  'line_desc': transit_line.description,
+##                                  'mode': transit_line.mode,
+##                                  'mode_desc': transit_line.mdesc,
+##                                  'boarding': transit_line['ca_board_t']})
+##
+##    transit_line_data_df = pd.DataFrame(transit_line_data, columns = transit_line_data[0].keys()) 
+	
+    #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
         os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
     
-    #write out assignment results    
+    #write out hwy assignment results    
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
+##
+##    #write out transit assignment results
+##    file_path = os.path.join(project_folder, 'outputs', 'iter' + str(iteration), 'transit_line_' + tod + '.csv')
+##    link_data_df.to_csv(file_path, index = False)
 
 def run_assignments_parallel(project_name):
 
@@ -1361,8 +1380,8 @@ def run_assignments_parallel(project_name):
         calc_bus_pce(my_project)
     #print (my_project.tod)
     #if (my_project.tod == '5to9'):
-    temp_assign_capacity(my_project) #added by nagendra.dhakar
-    temp_assign_speed(my_project) #added by nagendra.dhakar
+    #temp_assign_capacity(my_project) #added by nagendra.dhakar
+    #temp_assign_speed(my_project) #added by nagendra.dhakar
 
     # ************arterial delay is being handled in network_importer for now. Leave commented!!!!!!!!!!!!!
     #arterial_delay_calc(my_project)

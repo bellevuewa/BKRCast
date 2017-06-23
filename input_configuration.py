@@ -11,8 +11,8 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new'
-parcels_file_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new/inputs/2014/landuse'
+project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr'
+parcels_file_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/inputs/2014/landuse'
 base_year = '2014'  # This should always be 2014 unless the base year changes
 scenario_name = '2014' #name of the folder with scenario data
 
