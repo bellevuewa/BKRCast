@@ -15,7 +15,7 @@ library(Hmisc)
 library(data.table)
 library(plyr)
 
-setwd("E:/Projects/Clients/bkr/tasks/calibration/daysim_summaries")
+setwd("E:/Projects/Clients/bkr/tasks/calibration/daysim_summaries/bkrcast_all")
 
 #------------------------------------
 #Source functions and config settings

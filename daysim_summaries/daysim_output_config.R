@@ -1,27 +1,28 @@
 #DaySim Version - DelPhi or C#
 dsVersion                                 = "C#"
 
-parcelfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/inputs/buffered_parcels.dat"
-dshhfile                                  = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/_household.tsv"
-dsperfile                                 = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/_person.tsv"
-dspdayfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/_person_day.tsv"
-dstourfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/_tour.tsv"
-dstripfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/_trip.tsv"
-#dstriplistfile                            = "E:/Projects/Clients/bkr/model/bkrcast_tod_new/outputs/Tdm_trip_list.csv"
+#BKRCast
+dshhfile                                  = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_household.tsv"
+dsperfile                                 = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_person.tsv"
+dspdayfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_person_day.tsv"
+dstourfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_tour.tsv"
+dstripfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_trip.tsv"
 
-# BKRCast Survey
-surveyhhfile                              = "./data/Household_bkr.dat"
-surveyperfile                             = "./data/Person_bkr.dat"
+#calibration
+#dshhfile                                  = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_household.tsv"
+#dsperfile                                 = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_person.tsv"
+#dspdayfile                                = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_person_day.tsv"
+#dstourfile                                = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_tour.tsv"
+#dstripfile                                = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_trip.tsv"
+
+# Survey
+surveyhhfile                              = "./data/Household_bkr_new.dat"
+surveyperfile                             = "./data/Person_bkr_new_skim.dat"
 surveypdayfile                            = "./data/PersonDay_bkr.dat"
-surveytourfile                            = "./data/Tour_bkr.dat"
-surveytripfile                            = "./data/Trip_bkr.dat"
+surveytourfile                            = "./data/Tour_bkr_new_skim.dat"
+surveytripfile                            = "./data/Trip_bkr_new_skim.dat"
 
-amskimfile                                = "../DaySim/hwyskim_am.TXT"
-mdskimfile                                = "../DaySim/hwyskim_md.TXT"
-pmskimfile                                = "../DaySim/hwyskim_pm.TXT"
-evskimfile                                = "../DaySim/hwyskim_op.TXT"
-
-tazcountycorr                             = "./data/taz_districts_bkr.csv"
+tazcountycorr                             = "./data/zone_districts.csv"
 
 wrklocmodelfile                           = "./templates/WrkLocation.csv"
 schlocmodelfile                           = "./templates/SchLocation.csv"
@@ -64,6 +65,6 @@ runTourTOD                                = TRUE
 runTripMode                               = TRUE
 runTripTOD                                = TRUE
 
-excludeChildren5                          = TRUE
+excludeChildren5                          = FALSE
 tourAdj                                   = FALSE
 tourAdjFile				                        = "./data/peradjfac.csv"

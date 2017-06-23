@@ -50,9 +50,11 @@ if(prepSurvey)
   setStyleAction(wb,XLC$"STYLE_ACTION.NONE")
   for(i in 1:length(suff))
   {
-    purp <- i-1  
+    purp <- i-1
+    #purp <- i #for trip lengths by mode
     survtripdestmodfile$outsheet <- paste(survtripdestmodfile$outsheet_orig,suff[i],sep="_")
     tabulate_summaries(survtripdata[survtripdata$dpurp == purp],survtripdestmodfile,"survey",wb)
+    #tabulate_summaries(survtripdata[survtripdata$mode == purp],survtripdestmodfile,"survey",wb) #for trip lengths by mode
   }
   saveWorkbook(wb)
   
@@ -78,9 +80,11 @@ if(prepDaySim)
   setStyleAction(wb,XLC$"STYLE_ACTION.NONE")
   for(i in 1:length(suff))
   {
-    purp <- i-1  
+    purp <- i-1
+    #purp <- i #for trip lengths by mode
     dstripdestmodfile$outsheet <- paste(dstripdestmodfile$outsheet_orig,suff[i],sep="_")
     tabulate_summaries(dstripdata[dstripdata$dpurp == purp],dstripdestmodfile,"daysim",wb)
+    #tabulate_summaries(dstripdata[dstripdata$mode == purp],dstripdestmodfile,"daysim",wb) #for trip lengths by mode
   }
   saveWorkbook(wb)
   

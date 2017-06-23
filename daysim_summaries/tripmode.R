@@ -110,7 +110,7 @@ prep_trmode_NHTS <- function(tripdata)
 prep_tripdata <- function(tripdata,tourdata,perdata,prepsrc)
 {
   tourdata <- merge(tourdata,perdata[,list(hhno,pno,pptyp,psexpfac)],by=c("hhno","pno"),all.x=T)
-  tourdata[,pdpurp2:=ifelse(parent == 0,pdpurp,8)]
+  tourdata[,pdpurp2:=ifelse(parent == 0,pdpurp,8)] # parent >0 are work-based - set to pdpurp2=8
   
   if(prepsrc=="survey")
   {
