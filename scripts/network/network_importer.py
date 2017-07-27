@@ -138,12 +138,14 @@ def import_tolls(emmeProject):
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@trkc3",extra_attribute_description="Heavy Truck Tolls",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@brfer",extra_attribute_description="Bridge & Ferrry Flag",overwrite=True)
     t28 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@rdly",extra_attribute_description="Intersection Delay",overwrite=True)
+    t29 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@slid",extra_attribute_description="slid",overwrite=True)
+    t30 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@count",extra_attribute_description="count",overwrite=True)
 
     import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
 
     #add extra attributes input by user in emme_configuration.py
     for attribute in extra_attributes:
-        t29 = create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
+        t31 = create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
         if(os.path.isfile(attribute["file_name"])):
             import_attributes(attribute["file_name"], scenario = emmeProject.current_scenario,
                                column_labels = {0: "inode",
@@ -152,7 +154,8 @@ def import_tolls(emmeProject):
 
     tod_4k = sound_cast_net_dict[emmeProject.tod]
 
-    attr_file= ['inputs/tolls/' + tod_4k + '_roadway_tolls.in', 'inputs/tolls/ferry_vehicle_fares.in', 'inputs/networks/rdly/' + tod_4k + '_rdly.txt']
+
+    attr_file= ['inputs/tolls/' + tod_4k + '_roadway_tolls.in', 'inputs/tolls/ferry_vehicle_fares.in', 'inputs/networks/rdly/' + tod_4k + '_rdly.txt', 'inputs/observed/2014_'+tod_4k+'_screenline_cnts.txt']
 
     # set tolls
     #for file in attr_file:
@@ -182,7 +185,23 @@ def import_tolls(emmeProject):
     #@rdly:
     import_attributes(attr_file[2], scenario = emmeProject.current_scenario,
              revert_on_error=True)
-
+    #@count
+    
+    if (tod_4k=='am' or tod_4k == 'pm'):
+        print('add count for period: ' + tod_4k)
+        import_attributes(attr_file[3], scenario = emmeProject.current_scenario, field_separator = 'TAB',
+                  column_labels={0: "inode",
+                                 1: "jnode",
+                                 2: "@slid",
+                                 3: "@count"},
+                  revert_on_error=True)
+        if (tod_4k=='am'):
+            phf = 0.38
+        elif (tod_4k == 'pm'):
+            phf = 0.35
+        count_period = '@count * ' + str(1/phf)
+        emmeProject.network_calculator("link_calculation", result = "@count", expression = count_period, selections_by_link = "all")
+	
     print('update capacity for period: ' + tod_4k) #capacities in the original network are per hour
     cap_period = str(hwy_tod[tod_4k]) + ' * ul1' 
     emmeProject.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "all")

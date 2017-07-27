@@ -12,7 +12,6 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 from EmmeProject import *
 from input_configuration import *
-#from truck_configuration import *
 
 # Global variable to hold taz id/index; populated in main
 dictZoneLookup = {}

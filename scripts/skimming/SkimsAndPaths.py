@@ -20,9 +20,9 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-#from input_configuration import *
 from emme_configuration import *
 from EmmeProject import *
+from input_configuration import *
 
 #Create a logging file to report model progress
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
@@ -157,7 +157,7 @@ def define_matrices(my_project):
     # Create the Highway Skims in Emme
         #Check to see if we want to make Distance skims for this period:
     if my_project.tod in distance_skim_tod:
-            #overide the global skim matrix designation (time & cost most likely) to make sure distance skims are created for this tod
+        #overide the global skim matrix designation (time & cost most likely) to make sure distance skims are created for this tod
         my_skim_matrix_designation=skim_matrix_designation_limited + skim_matrix_designation_all_tods
     else:
         my_skim_matrix_designation = skim_matrix_designation_all_tods
@@ -289,57 +289,6 @@ def calc_bus_pce(my_project):
      print my_expression
      my_project.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
-def arterial_delay_calc(my_project):
-
-    start_arterial_calc = time.time()
-
-    # Create the temporary attributes needed for the signal delay calculations
-    #t1 = create_extras(extra_attribute_type="LINK",extra_attribute_name="@tmpl1",extra_attribute_description="temp link calc 1",overwrite=True)
-    #t1 = my_project.create_extra_attribute("LINK", "@tmpl1", "temp link calc 1", True)
-    #t2 = my_project.create_extra_attribute("LINK", "@tmpl2", "temp link calc 2", True)
-    #t3 = my_project.create_extra_attribute("NODE", "@tmpn1", "temp node calc 1", True)
-    #t4 = my_project.create_extra_attribute("NODE", "@tmpn2", "temp node calc 2", True)
-    #t5 = my_project.create_extra_attribute("NODE", "@cycle", "Cycle Length", True)
-    #t6 = my_project.create_extra_attribute("LINK", "@red", "Red Time", True)
-
-    ## Set Temporary Link Attribute #1 to 1 for arterial links (ul3 .ne. 1,2)
-    ## Exclude links that intersect with centroid connectors and weave links
-    #my_project.network_calculator("link_calculation", result = "@tmpl1", expression = "1", selections_by_link = "mod=a and i=4001,9999999 and j=4001,9999999 and ul3=3,99 and not length=0,.015")
-    
-    ## Set Temporary Link Attribute #2 to the minimum of lanes+2 or 5
-    ## for arterial links (ul3 .ne. 1,2)  - tmpl2 will equal either 3,4,5
-    ## Exclude links that intersect with centroid connectors and weave links
-    #my_project.network_calculator("link_calculation", result = "@tmpl2", expression = "(lanes+2).min.5", selections_by_link = "mod=a and i=4001,9999999 and j=4001,9999999 and ul3=3,99 and not length=0,.015")
-   
-    ## Set Temporary Node Attribute #1 to sum of intersecting arterial links (@tmpl1)
-    #my_project.network_calculator("link_calculation", result = "@tmpn1", expression = "@tmpl1", aggregation = "+")
-    
-    ## Set Temporary Node Attribute #2 to sum of intersecting arterial links (@tmpl2)
-    #my_project.network_calculator("link_calculation", result = "@tmpn2", expression = "@tmpl2", aggregation = "+")
-    
-    ## Cycle Time at Every I-Node
-    #my_project.network_calculator("node_calculation", result = "@cycle", expression = "(1+(@tmpn2/8)*(@tmpn1/4))*(@tmpn1.gt.2)")
- 
-    #my_project.network_calculator("link_calculation", result = "@red", expression = "1.2*@cyclej*(1-(@tmpn1j*@tmpl2)/(2*@tmpn2j))", selections_by_link = "mod=a and i=4001,9999999 and j=4001,9999999 and ul3=3,99 and @cyclej=0.01,999999")
-    ## Red Time at Every J-Node
-    
-    ## Calculate intersection delay factor for every link with a cycle time exceeding zero
-    #my_project.network_calculator("link_calculation", result = "@rdly", expression = "((@red*@red)/(2*@cyclej).max.0.2).min.1.0", selections_by_link = "@cyclej=0.01,999999")
- 
-    ## Set intersection delay factor to 0 for links of 0.01 mile lenght or less
-    #my_project.network_calculator("link_calculation", result = "@rdly", expression = "0", selections_by_link = "length=0,0.01")
-    
-    ##delete the temporary extra attributes
-    #my_project.delete_extra_attribute("@tmpl1")
-    #my_project.delete_extra_attribute("@tmpl2")
-    #my_project.delete_extra_attribute("@tmpn1")
-    #my_project.delete_extra_attribute("@tmpn2")
-    #my_project.delete_extra_attribute("@cycle")
-    #my_project.delete_extra_attribute("@red")
-    #my_project.network_calculator("link_calculation", result = "@rdly", expression = "@rdly * .75")
-    end_arterial_calc = time.time()
-
-
 def traffic_assignment(my_project):
 
     start_traffic_assignment = time.time()
@@ -392,6 +341,7 @@ def transit_assignment(my_project):
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("extended_transit_assignment")
     print "modify constant for certain nodes"
+    
     #modify constants for certain nodes:
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
     assignment_specification["waiting_time"]["perception_factor"] = transit_node_attributes['wait_time_perception']['name'] 
@@ -400,8 +350,6 @@ def transit_assignment(my_project):
 
     end_transit_assignment = time.time()
     print 'It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the transit assignment.'
-    #text = 'It took ' + round((end_transit_assignment-start_transit_assignment)/60,2) + ' minutes to run the transit assignment.'
-    #logging.debug(text)
 
 def transit_skims(my_project):
 
@@ -411,8 +359,6 @@ def transit_skims(my_project):
     my_spec_list = skim_specs["spec1"]
     for item in my_spec_list:
         skim_transit(item)
-    #text = 'Finished skimming transit ' + my_project.tod
-    #logging.debug(text)
 
 def attribute_based_skims(my_project,my_skim_attribute):
     #Use only for Time or Distance!
@@ -498,7 +444,7 @@ def attribute_based_skims(my_project,my_skim_attribute):
     logging.debug(text)
 
 def attribute_based_toll_cost_skims(my_project, toll_attribute):
-    #Function to calculate true/toll cost skims. Should fold this into attribute_based_skims function.
+     #Function to calculate true/toll cost skims. Should fold this into attribute_based_skims function.
 
      start_time_skim = time.time()
 
@@ -671,7 +617,7 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
             my_store["Skims"].create_dataset(matrix_name, data=matrix_value.astype('uint16'),compression='gzip')
             print matrix_name+' was transferred to the HDF5 container.'
 
-        #transit
+    #transit
     if my_project.tod in transit_skim_tod:
         for item in transit_submodes:
             matrix_name= 'ivtwa' + item
@@ -842,8 +788,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
                         trips = np.asscalar(np.float32(trexpfac[x]))
                         trips = round(trips, 2)
                         print trips
-                        #print trips
-                        #if mode in supplemental_modes:
+
                         demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
         
         #Regular Daysim Output:            
@@ -865,7 +810,6 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    #if OtazInt not in SPECIAL_GENERATORS.values() and DtazInt not in SPECIAL_GENERATORS.values():
                     trips = np.asscalar(np.float32(trexpfac[x]))
                     trips = round(trips, 2)
                     demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
@@ -879,7 +823,6 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
         matrix_id = my_project.bank.matrix(str(mat_name)).id
         np_array = demand_matrices[mat_name]
         emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')
-        #emme_matrix.raw_data=[_array.array('f',row) for row in np_array]
         print mat_name
         print np_array.shape
         emme_matrix.from_numpy(np_array)
@@ -982,7 +925,6 @@ def create_trip_tod_indices(tod):
      deptm = deptm.astype('float')
      deptm = deptm/60
      deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
-     #deptm = deptm.astype('int') #commented out after converting time periods to half hours, replaced with the above line - nagendra.dhakar@rsginc.com
      
      #Get the list of hours for this tod
      todValues = todIDListdict[tod]
@@ -1286,19 +1228,6 @@ def delete_matrices_parallel(project_name):
     delete_matrices(my_project, "ORIGIN")
     delete_matrices(my_project, "DESTINATION")
 
-#temp definition - by nagendra.dhakar@rsginc.com
-def temp_assign_capacity(project_name):
-    print('assign temp capacity')
-    cap_period = str(transit_tod[project_name.tod]['num_of_hours']) + ' * 100' 
-    project_name.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "ul1=0")
-
-#temp definition - by nagendra.dhakar@rsginc.com
-def temp_assign_speed(project_name):
-    print('assign temp speeds')
-    speed_period = '60' 
-    project_name.network_calculator("link_calculation", result = "ul2", expression = speed_period, selections_by_link = "ul2=0,1") #speed between 0 and 1
-    print('finished assign temp speeds')
-
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name):
     print('save assignment results')
@@ -1319,17 +1248,6 @@ def store_assign_results(project_name):
                           'time_auto': link.auto_time})
     #convert to dataframe
     link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
-    
-##    transit_line_data = []
-##    for transit_line in network.transit_lines():
-##        #print(transit_line)
-##	transit_line_data.append({'id': transit_line.id,
-##                                  'line_desc': transit_line.description,
-##                                  'mode': transit_line.mode,
-##                                  'mode_desc': transit_line.mdesc,
-##                                  'boarding': transit_line['ca_board_t']})
-##
-##    transit_line_data_df = pd.DataFrame(transit_line_data, columns = transit_line_data[0].keys()) 
 	
     #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
@@ -1338,10 +1256,6 @@ def store_assign_results(project_name):
     #write out hwy assignment results    
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
-##
-##    #write out transit assignment results
-##    file_path = os.path.join(project_folder, 'outputs', 'iter' + str(iteration), 'transit_line_' + tod + '.csv')
-##    link_data_df.to_csv(file_path, index = False)
 
 def run_assignments_parallel(project_name):
 
@@ -1360,7 +1274,6 @@ def run_assignments_parallel(project_name):
     hdf5_trips_to_Emme(my_project, hdf5_file_path)
     matrix_controlled_rounding(my_project)
 
-    ##tod = m.emmebank.title
     populate_intrazonals(my_project)
    
     ##create transit fare matrices:
@@ -1378,25 +1291,20 @@ def run_assignments_parallel(project_name):
     intitial_extra_attributes(my_project)
     if my_project.tod in transit_tod:
         calc_bus_pce(my_project)
-    #print (my_project.tod)
-    #if (my_project.tod == '5to9'):
-    #temp_assign_capacity(my_project) #added by nagendra.dhakar
-    #temp_assign_speed(my_project) #added by nagendra.dhakar
-
-    # ************arterial delay is being handled in network_importer for now. Leave commented!!!!!!!!!!!!!
-    #arterial_delay_calc(my_project)
 
     vdf_initial(my_project)
+    
     ##run auto assignment/skims
     traffic_assignment(my_project)
     
     #save results
-    store_assign_results(my_project)
+    #store_assign_results(my_project)
    
     attribute_based_skims(my_project, "Time")
 
     ###bike/walk:
     bike_walk_assignment(my_project, 'false')
+    
     ###Only skim for distance if in global distance_skim_tod list
     if my_project.tod in distance_skim_tod:
        attribute_based_skims(my_project,"Distance")
@@ -1409,7 +1317,6 @@ def run_assignments_parallel(project_name):
 
     ##dispose emmebank
     my_project.bank.dispose()
-    #app.App.close(my_desktop)
     print my_project.tod + " finished"
     end_of_run = time.time()
     print 'It took', round((end_of_run-start_of_run)/60,2), ' minutes to execute all processes for ' + my_project.tod
@@ -1426,13 +1333,8 @@ def main():
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
         start_pool(l)
-
-    
-    ##want pooled processes finished before executing more code in main:
-    #run_assignments_parallel('projects/15to18/15to18.emp')
     
     start_transit_pool(project_list)
-    #run_transit('projects/20to5/20to5.emp')
    
     f = open('inputs/converge.txt', 'w')
    

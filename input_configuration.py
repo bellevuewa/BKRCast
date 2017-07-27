@@ -11,8 +11,8 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr'
-parcels_file_folder = 'E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/inputs/2014/landuse'
+project_folder = 'E:/Projects/Clients/bkr/github/BKRCast_Test'
+parcels_file_folder = 'E:/Projects/Clients/bkr/github/BKRCast_Test/inputs/2014/landuse'
 base_year = '2014'  # This should always be 2014 unless the base year changes
 scenario_name = '2014' #name of the folder with scenario data
 
@@ -27,20 +27,18 @@ if not(use_simple_configuration):
     
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
-    run_convert_hhinc_2000_2010 = False
     run_accessibility_calcs = True
     run_copy_daysim_code = True
     run_setup_emme_project_folders = True
     run_setup_emme_bank_folders = True
-    run_copy_large_inputs = False #set to True if scenario inputs are stored in base_inputs folder
     run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = True
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = False
+    run_copy_seed_skims = True
     create_no_toll_network = True
-    run_skims_and_paths_seed_trips = True
+    run_skims_and_paths_seed_trips = False
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
     should_build_shadow_price = True
@@ -48,11 +46,10 @@ if not(use_simple_configuration):
     run_truck_model = True
     run_supplemental_trips = True
     run_daysim = True
+    run_daysim_popsampler = True
     run_accessibility_summary = True
-    run_network_summary = False
     run_bkrcast_summary =  True
     run_create_daily_bank = False
-    run_ben_cost = False
     run_truck_summary = False
 
     # Specific reports to run
@@ -64,20 +61,19 @@ if not(use_simple_configuration):
     run_time_choice_report = True
     run_district_summary_report = True
     run_landuse_summary = True
-    run_tableau_db = False
     
-    #delete parcel files from the working directory
+    #delete parcel files from the project directory
     delete_parcel_data = True
 
     # DaySim - household sampling rate input
-    pop_sample = [10, 2, 1]
+    pop_sample = [1, 1, 1]
     
     # Assignment Iterations:
-    max_iterations_list = [10, 100, 100]
+    max_iterations_list = [50, 100, 100]
     min_pop_sample_convergence_test = 10
     
     # start building shadow prices - only run work locations
-    shadow_work = [2, 1, 1]
+    shadow_work = [1, 1, 1]
     shadow_con = 30 #%RMSE for shadow pricing to consider being converged
 
 else:
@@ -92,30 +88,21 @@ else:
         else:
             run_update_parking = True
 
-        if base_year == '2010':
-            run_convert_hhinc_2000_2010 = True
-        else:
-            run_convert_hhinc_2000_2010 = False
-
         run_accessibility_calcs = True
         run_accessibility_summary = True
         run_copy_daysim_code = True
         run_setup_emme_project_folders = True
         run_setup_emme_bank_folders = True
-        run_copy_large_inputs = True
         run_landuse_summary = True
     else:
         run_update_parking = False
-        run_convert_hhinc_2000_2010 = False
         run_accessibility_calcs = False
         run_accessibility_summary = False
         run_copy_daysim_code = False
         run_setup_emme_project_folders = False
         run_setup_emme_bank_folders = False
-        run_copy_large_inputs = False
         run_landuse_summary = False
 
-        
     if run_daysim:
         run_soundcast_summary = True
         run_daysim_report = True
@@ -136,7 +123,7 @@ else:
         run_district_summary_report = False
 
     if should_build_shadow_price:
-        shadow_work = [2, 1]
+        shadow_work = [1, 1]
         shadow_con = 30 #%RMSE for shadow pricing to consider being converged
         feedback_iterations = feedback_iterations - 1 # when building shadow prices a final iteration happens automatically
 
@@ -149,20 +136,17 @@ else:
         run_import_networks = True
         run_truck_model = True
         run_supplemental_trips = True
-        run_network_summary = True
         run_create_daily_bank = True
 
     if run_skims_and_paths:
             run_import_networks = True
             run_truck_model = True
             run_supplemental_trips = True
-            run_network_summary = True
             run_create_daily_bank = True
     else:
             run_import_networks = False
             run_truck_model = False
             run_supplemental_trips = False
-            run_network_summary = False
             run_create_daily_bank = False
 
     pop_sample = []
@@ -313,6 +297,16 @@ bike_count_data = 'inputs/bikes/bike_counts.csv'
 # Multiplier for storing skim results
 bike_skim_mult = 100    # divide by 100 to store as int
 
+extra_attributes_dict = {'@tveh' : 'total vehicles', 
+                         '@mveh' : 'medium trucks', 
+                         '@hveh' : 'heavy trucks', 
+                         '@vmt' : 'vmt',\
+                         '@vht' : 'vht', 
+                         '@trnv' : 'buses in auto equivalents',
+                         '@ovol' : 'observed volume', 
+                         '@bveh' : 'number of buses'}
+transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
+
 #################################### TRUCK MODEL ####################################
 
 truck_model_project = 'Projects/TruckModel/TruckModel.emp'
@@ -349,94 +343,3 @@ LEHD_work_flows = 'scripts/summarize/inputs/calibration/HFAZ_WFAZ_LEHD2014.xlsx'
 
 acs_data = 'scripts/summarize/inputs/calibration/ACS_2014.xlsx'
 report_output_location = 'outputs'
-
-#Network validation summary
-network_summary_files = ['6to9_transit', '9to1530_transit',
-                         'counts_output', 'network_summary']
-fac_type_dict = {'highway' : 'ul3 = 1 or ul3 = 2',
-                 'arterial' : 'ul3 = 3 or ul3 = 4 or ul3 = 6',
-                 'connectors' : 'ul3 = 5'}
-extra_attributes_dict = {'@tveh' : 'total vehicles', 
-                         '@mveh' : 'medium trucks', 
-                         '@hveh' : 'heavy trucks', 
-                         '@vmt' : 'vmt',\
-                         '@vht' : 'vht', 
-                         '@trnv' : 'buses in auto equivalents',
-                         '@ovol' : 'observed volume', 
-                         '@bveh' : 'number of buses'}
-transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
-
-# Input Files
-counts_file = 'TrafficCounts_Mid.txt' #highway counts
-truck_counts_file = r'scripts/summarize/inputs/network_summary/truck_counts_2014.csv' #truck counts
-observed_boardings_file = 'scripts/summarize/inputs/network_summary/transit_boardings_2014.csv' #observed transit boardings
-aadt_counts_file = 'soundcast_aadt.csv'
-tptt_counts_file = 'soundcast_tptt.csv'
-
-# Output Files:
-out_lu_summary = r'outputs/landuse_summary.xlsx'
-net_summary_file = 'network_summary.csv'
-counts_output_file = 'counts_output.csv'
-screenlines_file = 'screenline_volumes.csv'
-daily_network_fname = 'outputs/daily_network_results.csv'
-
-uc_list = ['@svtl1', '@svtl2', '@svtl3', '@h2tl1', '@h2tl2', '@h2tl3', 
-           '@h3tl1', '@h3tl2', '@h3tl3', '@lttrk', '@mveh', '@hveh', '@bveh']
-
-output_list = ['prod_att.csv', 'gq_prod_att.csv', 'network_summary.csv', 'counts_output.csv', 'daysim_outputs.h5',
-               'screenline_volumes']
-
-#################################### BENEFIT COST TOOL ####################################
-bc_outputs_file = 'outputs/BenefitCost.xlsx'
-# Read in Configuration Hard Code for now
-output_name = 'TransFu2010'
-
-pollutant_file = 'scripts/summarize/inputs/benefit_cost/pollutant_rates.csv'
-injury_file ='scripts/summarize/inputs/benefit_cost/injury_rates.csv'
-
-HOUSEHOLD_VOT = 25
-TRUCK_VOT = 50
-MINS_HR= 60
-CENTS_DOLLAR = 100
-
-LOW_INC_MAX = 25000
-MAX_INC = 10000000000
-
-HRS_PARKED_AVG = 2
-PAID_UNPAID_PARK_RATIO = 0.5
-FOUR_PLUS_CAR_AVG = 4.3
-ANNUALIZATION = 300
-ANNUAL_OWNERSHIP_COST = 6290
-
-# Passenger car equivalent factors
-HV_TRUCK_FACTOR = 2
-MED_TRUCK_FACTOR = 1.5
-
-# The emissions and safety rates are per 1 million VMT
-EMISSIONS_FACTOR = 1000000
-SAFETY_FACTOR = 1000000
-# Cost per ton of emissions
-CO2_COST = 55.34
-CO_COST = 380
-NO_COST = 9800
-VOC_COST = 7800
-PM_COST = 6500
-# Collision Costs
-PROPERTYD_COST = 2600
-INJURY_COST = 75500
-FATALITY_COST = 2500000
-# Noise Costs per VMT
-CAR_NOISE_COST = 0.0012
-TRUCK_NOISE_COST = 0.015
-
-#Write the tables every report_row_gap number of rows apart
-REPORT_ROW_GAP = 20
-
-#################################### MAP CONFIGURATION ####################################
-
-# Alternative run for map comparisons
-map_daysim_alt = r'R:\SoundCast\releases\TransportationFutures2010\outputs\daysim_outputs.h5'
-
-# Parameters
-hightaz = 1530    # Max TAZ for mapping
-max_trav_time = 30    # Threshold travel time for accessibility calculation
