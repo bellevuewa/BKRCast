@@ -8,6 +8,13 @@ dspdayfile                                = "E:/Projects/Clients/bkr/model/bkrca
 dstourfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_tour.tsv"
 dstripfile                                = "E:/Projects/Clients/bkr/model/bkrcast_tod_new_distbkr/outputs/_trip.tsv"
 
+#BKRCast-ESD
+#dshhfile                                  = "./data/bkrcast_esd/_household.tsv"
+#dsperfile                                 = "./data/bkrcast_esd/_person.tsv"
+#dspdayfile                                = "./data/bkrcast_esd/_person_day.tsv"
+#dstourfile                                = "./data/bkrcast_esd/_tour.tsv"
+#dstripfile                                = "./data/bkrcast_esd/_trip.tsv"
+
 #calibration
 #dshhfile                                  = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_household.tsv"
 #dsperfile                                 = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_person.tsv"
