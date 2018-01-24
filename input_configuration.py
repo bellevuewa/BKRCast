@@ -11,8 +11,8 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = 'E:/Projects/Clients/bkr/github/BKRCast_Test'
-parcels_file_folder = 'E:/Projects/Clients/bkr/github/BKRCast_Test/inputs/2014/landuse'
+project_folder = r'F:\BKRCast_Repository\BKRCast'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\Job Conversion Test\parcel_level\test1'
 base_year = '2014'  # This should always be 2014 unless the base year changes
 scenario_name = '2014' #name of the folder with scenario data
 
@@ -46,10 +46,10 @@ if not(use_simple_configuration):
     run_truck_model = True
     run_supplemental_trips = True
     run_daysim = True
-    run_daysim_popsampler = True
+    run_daysim_popsampler = False
     run_accessibility_summary = True
     run_bkrcast_summary =  True
-    run_create_daily_bank = False
+    run_create_daily_bank = True
     run_truck_summary = False
 
     # Specific reports to run
@@ -111,7 +111,7 @@ else:
         run_dest_choice_report = True
         run_long_term_report = True
         run_time_choice_report = True
-        run_district_summary_report = False
+        run_district_summary_report = True
     else:
         run_soundcast_summary = False
         run_daysim_report = False
@@ -120,7 +120,7 @@ else:
         run_dest_choice_report = False
         run_long_term_report = False
         run_time_choice_report = False
-        run_district_summary_report = False
+        run_district_summary_report = True
 
     if should_build_shadow_price:
         shadow_work = [1, 1]

@@ -201,6 +201,15 @@ def setup_emme_project_folders():
         desktop.project.save()
         desktop.close()
         
+        #copy worksheets
+        wspath = os.path.join('inputs/worksheets/', tod)
+        destpath = os.path.join('projects/', tod, 'Worksheets')
+        for filename in os.listdir(wspath):
+            src = os.path.join(wspath, filename)
+            dest = os.path.join(destpath, filename)
+            if  (os.path.isfile(src)):
+                shutil.copyfile(src, dest)
+        
    
 @timed    
 def copy_large_inputs():

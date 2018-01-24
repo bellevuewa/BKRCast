@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>scripts\network\network_importer.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="bkrcast_log.txt" />
+    <Content Include="inputs\2014\landuse\parcels_urbansim.txt" />
+    <Content Include="inputs\2014\shadow_pricing\shadow_prices.txt" />
+    <Content Include="inputs\accessibility\parcels_urbansim.txt" />
+    <Content Include="inputs\converge.txt" />
+    <Content Include="inputs\extra_attributes\%40biketype.txt" />
+    <Content Include="inputs\extra_attributes\%40bkrlink.txt" />
+    <Content Include="inputs\extra_attributes\%40bkrnode.txt" />
+    <Content Include="inputs\extra_attributes\%40class.txt" />
+    <Content Include="inputs\extra_attributes\%40elevation.txt" />
+    <Content Include="inputs\extra_attributes\%40htoll.txt" />
+    <Content Include="inputs\extra_attributes\%40ltoll.txt" />
+    <Content Include="inputs\extra_attributes\%40nihdwy.txt" />
+    <Content Include="inputs\extra_attributes\%40revlane.txt" />
+    <Content Include="inputs\extra_attributes\%40revlane_cap.txt" />
+    <Content Include="inputs\extra_attributes\%40slid.txt" />
+    <Content Include="inputs\extra_attributes\%40slope.txt" />
+    <Content Include="inputs\extra_attributes\%40stoll.txt" />
+    <Content Include="inputs\extra_attributes\%40subarea.txt" />
+    <Content Include="inputs\extra_attributes\extra_attribute_definitions.txt" />
+    <Content Include="inputs\networks\modes.txt" />
+    <Content Include="inputs\networks\rdly\am_rdly.txt" />
+    <Content Include="inputs\networks\rdly\md_rdly.txt" />
+    <Content Include="inputs\networks\rdly\ni_rdly.txt" />
+    <Content Include="inputs\networks\rdly\pm_rdly.txt" />
+    <Content Include="inputs\networks\vehicles.txt" />
+    <Content Include="inputs\node_index_2014.txt" />
+    <Content Include="inputs\observed\%40local_cnts_am_2014.txt" />
+    <Content Include="inputs\observed\%40local_cnts_md_2014.txt" />
+    <Content Include="inputs\observed\%40local_cnts_pm_2014.txt" />
+    <Content Include="inputs\observed\%40slcnt_am_2014.txt" />
+    <Content Include="inputs\observed\%40slcnt_md_2014.txt" />
+    <Content Include="inputs\observed\%40slcnt_pm_2014.txt" />
+    <Content Include="inputs\observed\2014_am_screenline_cnts.txt" />
+    <Content Include="inputs\observed\2014_pm_screenline_cnts.txt" />
+    <Content Include="inputs\observed\am_2015_counts.txt" />
+    <Content Include="inputs\observed\md_2014_counts.txt" />
+    <Content Include="inputs\observed\pm_2014_counts.txt" />
+    <Content Include="inputs\observed\ScreenLine_ID.txt" />
+    <Content Include="inputs\parcel_buffer\parcels_urbansim.txt" />
+    <Content Include="inputs\parcel_nodes_2014.txt" />
+    <Content Include="inputs\shadow_pricing\shadow_prices.txt" />
+    <Content Include="inputs\shadow_rmse.txt" />
+    <Content Include="inputs\TAZIndex.txt" />
+    <Content Include="inputs\taz_sample_rate.txt" />
+    <Content Include="inputs\trucks\input_skims.txt" />
+    <Content Include="inputs\trucks\matrix_balancing_spec.txt" />
+    <Content Include="inputs\trucks\matrix_calc_spec.txt" />
+    <Content Include="inputs\trucks\origin_emp_dict.txt" />
+    <Content Include="inputs\trucks\parcels_allowable_lu.txt" />
+    <Content Include="inputs\trucks\truck_emp_dict.txt" />
+    <Content Include="inputs\trucks\truck_gen_calc_dict.txt" />
+    <Content Include="inputs\trucks\truck_matrices_dict.txt" />
+    <Content Include="inputs\trucks\truck_tod_factor_dict.txt" />
+    <Content Include="inputs\vdfs\vdfs1530to1830.txt" />
+    <Content Include="inputs\vdfs\vdfs1830to6.txt" />
+    <Content Include="inputs\vdfs\vdfs6to9.txt" />
+    <Content Include="inputs\vdfs\vdfs9to1530.txt" />
+    <Content Include="inputs\worksheets\1830to6\Test_1830to6.txt" />
+    <Content Include="inputs\worksheets\6to9\Test_6to9.txt" />
+    <Content Include="inputs\worksheets\9to1530\Test_9to1530.txt" />
+    <Content Include="inputs\worksheets\Supplementals\Test_supplemental.txt" />
+    <Content Include="inputs\worksheets\TruckModel\Test_truck.txt" />
+    <Content Include="projects\1830to6\Worksheets\Test_1830to6.txt" />
+    <Content Include="projects\6to9\Worksheets\Test_6to9.txt" />
+    <Content Include="projects\9to1530\Worksheets\Test_9to1530.txt" />
+    <Content Include="projects\Supplementals\Worksheets\Test_supplemental.txt" />
+    <Content Include="projects\TruckModel\Worksheets\Test_truck.txt" />
+    <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
+    <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
+    <Content Include="scripts\summarize\inputs\network_summary\TrafficCounts_Mid.txt" />
+    <Content Include="scripts\summarize\mapping\dframe_explorer.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="emme_configuration.py" />
+    <Compile Include="input_configuration.py" />
+    <Compile Include="input_configuration_simple.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\batchRepackH5.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\daysiminputcheck.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\moreworkers.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_auto.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_calibration.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_daysimtrips.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_hhs.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_intrazonal.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_parcel.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_skims.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_tazdistricts.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_trips.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_trips_tod.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_trucks.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_zonedata.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\psrc2bkr_zonegroups.py" />
+    <Compile Include="psrc_to_bkrcast_scripts\run_bkr_sampling_tests.py" />
+    <Compile Include="run_bkrcast.py" />
+    <Compile Include="scripts\accessibility\accessibility.py" />
+    <Compile Include="scripts\archive\archive.py" />
+    <Compile Include="scripts\archive\revive.py" />
+    <Compile Include="scripts\bikes\bike_model.py" />
+    <Compile Include="scripts\data_wrangling.py" />
+    <Compile Include="scripts\EmmeProject.py" />
+    <Compile Include="scripts\logcontroller.py" />
+    <Compile Include="scripts\network\daysim_zone_inputs.py" />
+    <Compile Include="scripts\network\network_importer.py" />
+    <Compile Include="scripts\popsampler.py" />
+    <Compile Include="scripts\skimming\SkimsAndPaths.py" />
+    <Compile Include="scripts\summarize\benefit_cost\benefit_cost.py" />
+    <Compile Include="scripts\summarize\calibration\daysim_summary.py" />
+    <Compile Include="scripts\summarize\calibration\get_skims.py" />
+    <Compile Include="scripts\summarize\calibration\SCsummary.py" />
+    <Compile Include="scripts\summarize\calibration\summary_functions.py" />
+    <Compile Include="scripts\summarize\exploratory\bike_summary.py" />
+    <Compile Include="scripts\summarize\h5toDF.py" />
+    <Compile Include="scripts\summarize\mapping\dframe_explorer.py" />
+    <Compile Include="scripts\summarize\mapping\map_configuration.py" />
+    <Compile Include="scripts\summarize\mapping\run_map.py" />
+    <Compile Include="scripts\summarize\standard\daily_bank.py" />
+    <Compile Include="scripts\summarize\standard\network_summary.py" />
+    <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
+    <Compile Include="scripts\summarize\standard\parcel_summary.py" />
+    <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
+    <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
+    <Compile Include="scripts\summarize\standard\truck_vols.py" />
+    <Compile Include="scripts\summarize\xlautofit.py" />
+    <Compile Include="scripts\summarize\__init__.py" />
+    <Compile Include="scripts\summary_functions.py" />
+    <Compile Include="scripts\supplemental\distribution.py" />
+    <Compile Include="scripts\supplemental\generation.py" />
+    <Compile Include="scripts\trucks\truck_model.py" />
+    <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
+    <Compile Include="scripts\utils\create_node_to_node_index.py" />
+    <Compile Include="scripts\utils\h5toDF.py" />
+    <Compile Include="scripts\utils\shadow_pricing_check.py" />
+    <Compile Include="scripts\utils\update_parking.py" />
+    <Compile Include="scripts\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="inputs" />
+    <Folder Include="inputs\2014\" />
+    <Folder Include="inputs\2014\landuse" />
+    <Folder Include="inputs\2014\shadow_pricing" />
+    <Folder Include="inputs\accessibility" />
+    <Folder Include="inputs\extra_attributes" />
+    <Folder Include="inputs\networks" />
+    <Folder Include="inputs\networks\rdly" />
+    <Folder Include="inputs\observed" />
+    <Folder Include="inputs\parcel_buffer" />
+    <Folder Include="inputs\shadow_pricing" />
+    <Folder Include="inputs\trucks" />
+    <Folder Include="inputs\vdfs" />
+    <Folder Include="inputs\worksheets\" />
+    <Folder Include="inputs\worksheets\1830to6" />
+    <Folder Include="inputs\worksheets\6to9" />
+    <Folder Include="inputs\worksheets\9to1530" />
+    <Folder Include="inputs\worksheets\Supplementals" />
+    <Folder Include="inputs\worksheets\TruckModel" />
+    <Folder Include="projects\" />
+    <Folder Include="projects\1830to6\" />
+    <Folder Include="projects\1830to6\Worksheets" />
+    <Folder Include="projects\6to9\" />
+    <Folder Include="projects\6to9\Worksheets" />
+    <Folder Include="projects\9to1530\" />
+    <Folder Include="projects\9to1530\Worksheets" />
+    <Folder Include="projects\Supplementals\" />
+    <Folder Include="projects\Supplementals\Worksheets" />
+    <Folder Include="projects\TruckModel\" />
+    <Folder Include="projects\TruckModel\Worksheets" />
+    <Folder Include="psrc_to_bkrcast_scripts" />
+    <Folder Include="scripts" />
+    <Folder Include="scripts\accessibility" />
+    <Folder Include="scripts\archive" />
+    <Folder Include="scripts\bikes" />
+    <Folder Include="scripts\network" />
+    <Folder Include="scripts\skimming" />
+    <Folder Include="scripts\summarize" />
+    <Folder Include="scripts\summarize\benefit_cost" />
+    <Folder Include="scripts\summarize\calibration" />
+    <Folder Include="scripts\summarize\exploratory" />
+    <Folder Include="scripts\summarize\inputs\" />
+    <Folder Include="scripts\summarize\inputs\network_summary" />
+    <Folder Include="scripts\summarize\mapping" />
+    <Folder Include="scripts\summarize\standard" />
+    <Folder Include="scripts\supplemental" />
+    <Folder Include="scripts\trucks" />
+    <Folder Include="scripts\utils" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

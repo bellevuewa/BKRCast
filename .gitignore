@@ -7,3 +7,8 @@ Daysim/last-run.log
 *.tex
 *.alo
 *.Rhistory
+/inputs
+/daysim
+/outputs
+/.vs
+/bkrcast_log.txt

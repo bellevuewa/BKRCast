@@ -24,7 +24,28 @@ headway_file = 'sc_headways.csv'
 #'desc1' could be any string describing the attributes
 #'overwrite' is True or False
 #'file_name' is path (within the BKRCast directory) of the file with attribute value - format should be inode, jnode, attr
-extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'desc1', 'overwrite': True, 'file_name':'inputs/counts/screenline_cnts.txt'}]
+extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', 'overwrite': True, 'file_name':'inputs/counts/screenline_cnts.txt'},
+                    {'type':'NODE', 'name': '@bkrnode', 'description': 'flag for BKR internal nodes', 'overwrite': True, 'file_name':'inputs/extra_attributes/@bkrnode.txt'},
+                    {'type':'NODE', 'name': '@elevation', 'description': 'elevation (from ArcGIS, KC 5ft contour)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@elevation.txt'},
+                    {'type':'LINK', 'name': '@biketype', 'description': 'bike lane type for BKR area', 'overwrite': True, 'file_name':'inputs/extra_attributes/@biketype.txt'},
+                    {'type':'LINK', 'name': '@bkrlink', 'description': 'flag for BKR internal links', 'overwrite': True, 'file_name':'inputs/extra_attributes/@bkrlink.txt'},
+                    {'type':'LINK', 'name': '@class', 'description': 'Functional classification', 'overwrite': True, 'file_name':'inputs/extra_attributes/@class.txt'},
+                    {'type':'LINK', 'name': '@htoll', 'description': 'HOV toll', 'overwrite': True, 'file_name':'inputs/extra_attributes/@htoll.txt'},
+                    {'type':'LINK', 'name': '@ltoll', 'description': 'LOV toll', 'overwrite': True, 'file_name':'inputs/extra_attributes/@ltoll.txt'},
+                    {'type':'LINK', 'name': '@stoll', 'description': 'SOV toll', 'overwrite': True, 'file_name':'inputs/extra_attributes/@stoll.txt'},
+                    {'type':'LINK', 'name': '@revlane', 'description': 'reversible lane tag', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane.txt'},
+                    {'type':'LINK', 'name': '@revlane_cap', 'description': 'full capacity for reversible lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane_cap.txt'},
+                    {'type':'LINK', 'name': '@slid', 'description': 'Screen line ID', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slid.txt'},
+                    {'type':'LINK', 'name': '@slope', 'description': 'splope (calculated in GIS from KC 5ft)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slope.txt'},
+                    {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
+                    {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'}]
+AM_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_am_2014', 'description': 'Local counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_am_2014.txt'},
+                       {'type':'LINK', 'name': '@slcnt_am_2014', 'description': 'Screenline counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_am_2014.txt'}]
+MD_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_md_2014', 'description': 'Local counts MDPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_md_2014.txt'},
+                       {'type':'LINK', 'name': '@slcnt_md_2014', 'description': 'Screenline counts MDPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_md_2014.txt'}]
+PM_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_pm_2014', 'description': 'Local counts PMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_pm_2014.txt'},
+                       {'type':'LINK', 'name': '@slcnt_pm_2014', 'description': 'Screenline counts PMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_pm_2014.txt'}]
+NI_extra_attributes = [{'type':'TRANSIT_LINE', 'name': '@nihdwy', 'description': 'headway at night', 'overwrite': True, 'default_value': '999', 'file_name':'inputs/extra_attributes/@nihdwy.txt'} ]
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'
