@@ -39,7 +39,7 @@
     <Content Include="inputs\extra_attributes\%40stoll.txt" />
     <Content Include="inputs\extra_attributes\%40subarea.txt" />
     <Content Include="inputs\extra_attributes\extra_attribute_definitions.txt" />
-    <Content Include="inputs\networks\modes.txt" />
+    <Content Include="inputs\networks\modes.txt" />pm_2014_counts.txt
     <Content Include="inputs\networks\rdly\am_rdly.txt" />
     <Content Include="inputs\networks\rdly\md_rdly.txt" />
     <Content Include="inputs\networks\rdly\ni_rdly.txt" />

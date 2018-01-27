@@ -204,13 +204,19 @@ def setup_emme_project_folders():
         #copy worksheets
         wspath = os.path.join('inputs/worksheets/', tod)
         destpath = os.path.join('projects/', tod, 'Worksheets')
-        for filename in os.listdir(wspath):
-            src = os.path.join(wspath, filename)
-            dest = os.path.join(destpath, filename)
-            if  (os.path.isfile(src)):
-                shutil.copyfile(src, dest)
+        copyfiles(wspath, destpath)
+        # copy media files
+        destpath = os.path.join('projects/', tod, 'Media')
+        copyfiles('inputs/Media/', destpath)
+
         
-   
+def copyfiles(sourceFolder, destFolder):
+    for filename in os.listdir(sourceFolder):
+        src = os.path.join(sourceFolder, filename)
+        dest = os.path.join(destFolder, filename)
+        if (os.path.isfile(src)):
+            shutil.copyfile(src, dest)
+
 @timed    
 def copy_large_inputs():
     print 'Copying large inputs...' 
