@@ -180,7 +180,7 @@ def setup_emme_project_folders():
 
     # Create master project, associate with all tod emmebanks
     project = app.create_project('projects', master_project)
-    desktop = app.start_dedicated(False, "cth", project)
+    desktop = app.start_dedicated(False, modeller_initial, project)
     data_explorer = desktop.data_explorer()
     for tod in tod_list:
         database = data_explorer.add_database('Banks/' + tod + '/emmebank')
@@ -194,7 +194,7 @@ def setup_emme_project_folders():
     tod_list.append('Supplementals')
     for tod in tod_list:
         project = app.create_project('projects', tod)
-        desktop = app.start_dedicated(False, "cth", project)
+        desktop = app.start_dedicated(False, modeller_initial, project)
         data_explorer = desktop.data_explorer()
         database = data_explorer.add_database('Banks/' + tod + '/emmebank')
         database.open()

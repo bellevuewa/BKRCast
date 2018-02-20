@@ -21,6 +21,9 @@ daysim_code = project_folder + '/daysim_2016'
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
+# modeller name will be updated in the EMME databank
+modeller_initial = "hd"
+
 #################################### SUB-PROCESS FLAGS  ####################################
 
 if not(use_simple_configuration):
@@ -30,7 +33,7 @@ if not(use_simple_configuration):
     run_accessibility_calcs = False
     run_copy_daysim_code = False
     run_setup_emme_project_folders = True
-    run_setup_emme_bank_folders = False
+    run_setup_emme_bank_folders = True
     run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = True
 

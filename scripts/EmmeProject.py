@@ -32,7 +32,7 @@ from EmmeProject import *
 
 class EmmeProject:
     def __init__(self, filepath):
-        self.desktop = app.start_dedicated(True, "cth", filepath)
+        self.desktop = app.start_dedicated(True, modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
         #delete locki:
         self.m.emmebank.dispose()
