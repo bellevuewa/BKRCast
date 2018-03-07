@@ -1,0 +1,15 @@
+"steps","stepnames","stepruntimes","cumruntimes"
+1,"reading hh data",5.15000000000009,5.15000000000009
+2,"reading person data",21.6999999999998,26.8499999999999
+3,"reading person day data",17.7900000000002,44.6400000000001
+4,"reading person day tour data",56.4499999999998,101.09
+5,"reading person day trip data",150.47,251.56
+6,"summarizing work location choice",22.6100000000001,274.17
+7,"summarizing vehicle ownership choice",5.39999999999986,279.57
+8,"summarizing Day pattern",115.82,395.39
+9,"summarizing Destination Choice",25.53,420.92
+10,"summarizing Trip Destination Choice",27.6799999999998,448.6
+11,"summarizing Tour Mode Choice",15.96,464.56
+12,"summarizing Tour Time of Day Choice",24.48,489.04
+13,"summarizing Trip Mode Choice",32.4400000000001,521.48
+14,"summarizing Trip Time of Day Choice",45.2,566.68

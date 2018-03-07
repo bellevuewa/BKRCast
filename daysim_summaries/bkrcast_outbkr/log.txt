@@ -1,0 +1,254 @@
+
+R version 3.3.3 (2017-03-06) -- "Another Canoe"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##This is a temporary main control file with lots of TODOs to move 
+> ##this whole effort to a package with project specific config and run files
+> 
+> #Rprof()
+> 
+> #-----------------------
+> #Load packages
+> #-----------------------
+> ##TODO consider local R installation, with predownloaded packages in that library
+> library(foreign)
+> library(reshape)
+> library(XLConnect)
+Loading required package: XLConnectJars
+XLConnect 0.2-12 by Mirai Solutions GmbH [aut],
+  Martin Studer [cre],
+  The Apache Software Foundation [ctb, cph] (Apache POI, Apache Commons
+    Codec),
+  Stephen Colebourne [ctb, cph] (Joda-Time Java library),
+  Graph Builder [ctb, cph] (Curvesapi Java library)
+http://www.mirai-solutions.com ,
+http://miraisolutions.wordpress.com
+> library(descr)
+> library(Hmisc)
+Loading required package: lattice
+Loading required package: survival
+Loading required package: Formula
+Loading required package: ggplot2
+
+Attaching package: 'Hmisc'
+
+The following objects are masked from 'package:base':
+
+    format.pval, round.POSIXt, trunc.POSIXt, units
+
+> library(data.table)
+
+Attaching package: 'data.table'
+
+The following object is masked from 'package:reshape':
+
+    melt
+
+> library(plyr)
+
+Attaching package: 'plyr'
+
+The following objects are masked from 'package:Hmisc':
+
+    is.discrete, summarize
+
+The following objects are masked from 'package:reshape':
+
+    rename, round_any
+
+> 
+> setwd("D:/Sensitivity Test/BKRCast_V1-3_Test13/daysim_summaries/bkrcast_outbkr")
+> 
+> #------------------------------------
+> #Source functions and config settings
+> #------------------------------------
+> source("utilfunc.R")
+> #TODO function in package to create template config file in a specified location
+> source("daysim_output_config.R")
+> 
+> progressStart("run DaySim summaries",14)
+> 
+> #-----------------------
+> #Load data
+> #-----------------------
+> 
+> #Geographical correspondence
+> countycorr <- fread(tazcountycorr)
+> 
+> #Load DaySim outputs into Rdata files
+> progressNextStep("reading hh data")
+> if(runWrkSchLocationChoice | runVehAvailability | runDayPattern | runTourDestination | runTourMode)
++ {
++   if(prepDaySim)
++     readSaveRdata(dshhfile,"dshhdata")
++   if(prepSurvey)
++     readSaveRdata(surveyhhfile,"survhhdata")
++ }
+Read 0.0% of 1341066 rowsRead 1341066 rows and 21 (of 21) columns from 0.082 GB file in 00:00:04
+> 
+> progressNextStep("reading person data")
+> if(runWrkSchLocationChoice | runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode | runTripTOD)
++ {
++   if(prepDaySim)
++     readSaveRdata(dsperfile,"dsperdata")
++   if(prepSurvey)
++     readSaveRdata(surveyperfile,"survperdata")
++ }
+Read 17.4% of 3337784 rowsRead 32.7% of 3337784 rowsRead 48.5% of 3337784 rowsRead 64.4% of 3337784 rowsRead 80.6% of 3337784 rowsRead 96.5% of 3337784 rowsRead 3337784 rows and 24 (of 24) columns from 0.270 GB file in 00:00:08
+> 
+> progressNextStep("reading person day data")
+> if(runDayPattern)
++ {
++   if(prepDaySim)
++     readSaveRdata(dspdayfile,"dspdaydata")
++   if(prepSurvey)
++     readSaveRdata(surveypdayfile,"survpdaydata")
++ }
+Read 47.0% of 3337784 rowsRead 79.7% of 3337784 rowsRead 3337784 rows and 31 (of 31) columns from 0.265 GB file in 00:00:04
+> 
+> progressNextStep("reading person day tour data")
+> if(runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode)
++ {
++   if(prepDaySim)
++     readSaveRdata(dstourfile,"dstourdata")
++   if(prepSurvey)
++     readSaveRdata(surveytourfile,"survtourdata")
++ }
+Read 0.0% of 5324500 rowsRead 6.9% of 5324500 rowsRead 13.7% of 5324500 rowsRead 20.1% of 5324500 rowsRead 27.0% of 5324500 rowsRead 34.0% of 5324500 rowsRead 40.9% of 5324500 rowsRead 47.9% of 5324500 rowsRead 55.0% of 5324500 rowsRead 62.4% of 5324500 rowsRead 69.7% of 5324500 rowsRead 77.4% of 5324500 rowsRead 84.3% of 5324500 rowsRead 91.1% of 5324500 rowsRead 97.8% of 5324500 rowsRead 5324500 rows and 33 (of 33) columns from 0.680 GB file in 00:00:30
+> 
+> progressNextStep("reading person day trip data")
+> if(runDayPattern | runTripMode | runTripTOD)
++ {
++   if(prepDaySim)
++     readSaveRdata(dstripfile,"dstripdata")
++   if(prepSurvey)
++     readSaveRdata(surveytripfile,"survtripdata")
++ }
+Read 0.0% of 14625476 rowsRead 2.2% of 14625476 rowsRead 4.2% of 14625476 rowsRead 6.4% of 14625476 rowsRead 8.6% of 14625476 rowsRead 10.8% of 14625476 rowsRead 13.1% of 14625476 rowsRead 15.2% of 14625476 rowsRead 17.4% of 14625476 rowsRead 19.5% of 14625476 rowsRead 21.6% of 14625476 rowsRead 23.7% of 14625476 rowsRead 25.9% of 14625476 rowsRead 28.0% of 14625476 rowsRead 30.2% of 14625476 rowsRead 32.4% of 14625476 rowsRead 34.6% of 14625476 rowsRead 36.8% of 14625476 rowsRead 39.0% of 14625476 rowsRead 41.2% of 14625476 rowsRead 43.3% of 14625476 rowsRead 45.5% of 14625476 rowsRead 47.7% of 14625476 rowsRead 49.8% of 14625476 rowsRead 51.9% of 14625476 rowsRead 53.9% of 14625476 rowsRead 56.1% of 14625476 rowsRead 58.3% of 14625476 rowsRead 60.6% of 14625476 rowsRead 62.9% of 14625476 rowsRead 65.2% of 14625476 rowsRead 67.5% of 14625476 rowsRead 69.6% of 14625476 rowsRead 71.8% of 14625476 rowsRead 74.1% of 14625476 rowsRead 76.4% of 14625476 rowsRead 78.7% of 14625476 rowsRead 80.9% of 14625476 rowsRead 83.1% of 14625476 rowsRead 85.3% of 14625476 rowsRead 87.5% of 14625476 rowsRead 89.6% of 14625476 rowsRead 91.8% of 14625476 rowsRead 93.9% of 14625476 rowsRead 96.1% of 14625476 rowsRead 98.2% of 14625476 rowsRead 14625476 rows and 28 (of 28) columns from 1.874 GB file in 00:01:26
+> 
+> #Optional tour weight adjustment
+> if(tourAdj)
++ {
++   touradj <- fread(tourAdjFile)
++ }
+> 
+> #force gc()
+> gc()
+          used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 1458266 77.9    2637877  140.9   1770749   94.6
+Vcells 1922276 14.7  205646906 1569.0 236698478 1805.9
+> 
+> #-----------------------
+> #Run tabulations
+> #-----------------------
+> ##TODO split between preparing tables in an R object and then putting them somewhere
+> ##TODO e.g. in a spreadsheet, in a pdf report, etc.
+> 
+> #source("nonhwy.R")
+> 
+> progressNextStep("summarizing work location choice")
+> if(runWrkSchLocationChoice)
++ {
++   source("wrkschlocation.R")
++ }
+[1] "Work/School Location Summary...Started"
+[1] "Work/School Location Summary...Finished"
+> progressNextStep("summarizing vehicle ownership choice")
+> if(runVehAvailability)
++ {
++   source("vehavailability.R")
++ }
+[1] "Vehicle Availabililty Summary...Started"
+[1] "Vehicle Availabililty Summary...Finished"
+> progressNextStep("summarizing Day pattern")
+> if(runDayPattern)
++ {
++   source("daypattern.R")
++ }
+[1] "Day Pattern Summary...Started"
+[1] "Day Pattern Summary...Finished"
+> progressNextStep("summarizing Destination Choice")
+> if(runTourDestination)
++ {
++   source("tourdestination.R")
++ }
+[1] "Tour Destination Summary...Started"
+[1] "Tour Destination Summary...Finished"
+> progressNextStep("summarizing Trip Destination Choice")
+> if(runTourDestination)
++ {
++   source("tripdestination.R")
++ }
+[1] "Trip Destination Summary...Started"
+[1] "Trip Destination Summary...Finished"
+> progressNextStep("summarizing Tour Mode Choice") 
+> if(runTourMode)
++ {
++   source("tourmode.R")
++ }
+[1] "Tour Mode Summary...Started"
+[1] "Tour Mode Summary...Finished"
+> progressNextStep("summarizing Tour Time of Day Choice") 
+> if(runTourTOD)
++ {
++   source("tourtod.R")
++ }
+[1] "Tour Time of Day Summary...Started"
+[1] "Tour Time of Day Summary...Finished"
+> progressNextStep("summarizing Trip Mode Choice") 
+> if(runTripMode)
++ {
++   source("tripmode.R")
++ }
+[1] "Trip Mode Summary...Started"
+[1] "Trip Mode Summary...Finished"
+> progressNextStep("summarizing Trip Time of Day Choice")
+> if(runTripTOD)
++ {
++   source("triptod.R")
++ }
+[1] "Trip Time of Day Summary...Started"
+[1] "survey"
+[1] "times are in minutes"
+[1] "daysim"
+[1] "times are in minutes"
+[1] "Trip Time of Day Summary...Finished"
+> 
+> progressEnd(outputsDir)
+   steps                            stepnames stepruntimes cumruntimes
+1      1                      reading hh data         7.12        7.12
+2      2                  reading person data        19.63       26.75
+3      3              reading person day data        16.21       42.96
+4      4         reading person day tour data        67.32      110.28
+5      5         reading person day trip data       172.54      282.82
+6      6     summarizing work location choice        19.14      301.96
+7      7 summarizing vehicle ownership choice         3.52      305.48
+8      8              summarizing Day pattern       105.27      410.75
+9      9       summarizing Destination Choice        15.12      425.87
+10    10  summarizing Trip Destination Choice        25.91      451.78
+11    11         summarizing Tour Mode Choice        13.78      465.56
+12    12  summarizing Tour Time of Day Choice        23.20      488.76
+13    13         summarizing Trip Mode Choice        28.28      517.04
+14    14  summarizing Trip Time of Day Choice        42.63      559.67
+> 
+> # Rprof(NULL)
+> # memprof <- summaryRprof()
+> 
+> proc.time()
+   user  system elapsed 
+ 530.00  462.87  561.57 

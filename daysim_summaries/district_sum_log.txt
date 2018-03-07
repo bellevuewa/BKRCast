@@ -1,0 +1,205 @@
+
+R version 3.3.3 (2017-03-06) -- "Another Canoe"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ######################
+> #district summaries by purpose
+> #avg. trip lengths by mode
+> ######################
+> 
+> 
+> library(foreign)
+> library(data.table)
+> 
+> #suff <- c("survey", "bkrcast_esd")
+> suff <- c("survey","bkrcast_lodes","bkrcast_esd","soundcast")
+> #suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out","bkrcast_esd")
+> #suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out", "bkrcast_esd", "bkrcast_esd_in", "bkrcast_esd_out")
+> outfile_district <- paste("D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/bkrcast_all/","district_summary.csv", sep = "")
+> outfile_mode <- paste("D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/","TL_mode.csv", sep = "")
+> outfile_ptype <- paste("D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/","summary_ptype.csv", sep = "")
+> 
+> file.correspondence <- paste("D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/data/",'zone_districts.csv', sep = "")
+> file.parcel = 'D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/inputs/buffered_parcels.dat'
+> 
+> for (dataset in suff) {
++   print(dataset)
++   #dataset = "bkrcast_lodes" #debug
++   #for survey, soundcast, and bkrcast dataset
++   if(grepl("survey", dataset)){
++     #survey
++     wd <- 'D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/bkrcast_all/data/'
++     file.trips <- 'Trip_bkr_new_skim.dat'
++     file.hhs <- 'Household_bkr_new.dat'
++     file.persons <- 'Person_bkr_new_skim.dat'
++     file.tours <- 'Tour_bkr_new_skim.dat'
++     file.delim = ' '
++     file.ext_inbkr = '_inbkr.dat'
++     file.ext_outbkr = '_outbkr.dat'
++     
++   } else if (dataset == "soundcast") {
++     #soundcast
++     wd <- 'D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/'
++     file.trips <- '_trip.tsv'
++     file.hhs <- '_household.tsv'
++     file.persons <- '_person.tsv'
++     file.tours <- '_tour.tsv'
++     
++     file.delim = '\t'
++     
++   } else if (grepl("lodes", dataset)){
++     #bkrcast - lodes
++     wd <- 'D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/'
++     #wd <- 'E:/Projects/Clients/bkr/tasks/calibration/outputs'
++     file.trips <- '_trip.tsv'
++     file.hhs <- '_household.tsv'
++     file.tours <- '_tour.tsv'
++     file.persons <- '_person.tsv'
++     file.delim = '\t'
++     file.ext_inbkr = '_inbkr.tsv'
++     file.ext_outbkr = '_outbkr.tsv' 
++   } else {
++     #bkrcast - esd
++     wd <- 'D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/'
++     file.trips <- '_trip.tsv'
++     file.hhs <- '_household.tsv'
++     file.tours <- '_tour.tsv'
++     file.persons <- '_person.tsv'
++     file.delim = '\t'
++     file.ext_inbkr = '_inbkr.tsv'
++     file.ext_outbkr = '_outbkr.tsv' 
++   }
++   
++   #for within/outside BKR dataset
++   if(grepl("_in", dataset)){
++     file.trips = paste(unlist(strsplit(file.trips, "[.]"))[1], file.ext_inbkr, sep="")
++   } else if (grepl("_out", dataset)){
++     file.trips = paste(unlist(strsplit(file.trips, "[.]"))[1], file.ext_outbkr, sep="")
++   }
++   
++   setwd(wd)
++   hhs <- read.csv(file.hhs, sep = file.delim)
++   persons <- read.csv(file.persons, sep = file.delim)
++   #person_day <- read.csv(file.person_day, sep = file.delim)
++   tours <- read.csv(file.tours, sep = file.delim)
++   trips <- read.csv(file.trips, sep = file.delim)
++   taz_corr <- read.csv(file.correspondence)
++   
++   #workplace location by district
++   persons$wrk_district <- taz_corr$DISTRICT[match(persons$pwtaz, taz_corr$TAZ)]
++   tours$d_district <- taz_corr$DISTRICT[match(tours$tdtaz, taz_corr$TAZ)]
++   summary.person <- xtabs(psexpfac ~ wrk_district, data=persons) #weighted
++   summary.tour <- xtabs(toexpfac ~ pdpurp + d_district, data=tours) #weighted
++   
++   #tours <- merge(tours,persons[,c("hhno","pno","pptyp","psexpfac")],by=c("hhno","pno"),all.x=T)
++   #tours$pdpurp2 <- ifelse(tours$parent==0,tours$pdpurp,8)
++   
++   trips$temp <- trips$travdist * trips$trexpfac
++   sum.triplength <- xtabs(temp ~ mode, data = trips)
++   sum.trips <- xtabs(trexpfac ~ mode, data = trips)
++   summary.mode <- sum.triplength/sum.trips
++   
++   if(dataset == 'soundcast'){
++     parcels <- read.csv(file.parcel, sep = " ")
++     trips$otaz <- parcels$taz_p[match(trips$opcl, parcels$parcelid)]
++     trips$dtaz <- parcels$taz_p[match(trips$dpcl, parcels$parcelid)]
++     hhs$hhtaz <- parcels$taz_p[match(hhs$hhparcel, parcels$parcelid)]
++     parcels$district <- taz_corr$DISTRICT[match(parcels$taz_p, taz_corr$TAZ)]
++     summary.parcels <- xtabs(emptot_p ~ district, data=parcels) #weighted
++   }
++   
++   #get household taz
++   trips$hhtaz <- hhs$hhtaz[match(trips$hhno, hhs$hhno)]
++   
++   trips$count <- 1
++   trips$o_district <- taz_corr$DISTRICT[match(trips$otaz, taz_corr$TAZ)]
++   trips$d_district <- taz_corr$DISTRICT[match(trips$dtaz, taz_corr$TAZ)]
++   
++   trips$count  <- ifelse((trips$opcl<=0) | (trips$dpcl<=0), 0, trips$count)
++   trips <- trips[trips$count==1,]
++   
++   #trip tod
++   trips$trip_time <- ifelse(trips$half==1, trips$arrtm, trips$deptm)
++   trips$trip_tod <- ifelse(trips$trip_time >= 360 & trips$trip_time <540, 'am','nt')
++   trips$trip_tod <- ifelse(trips$trip_time >= 540 & trips$trip_time <930, 'md', trips$trip_tod)
++   trips$trip_tod <- ifelse(trips$trip_time >= 930 & trips$trip_time <1110, 'pm', trips$trip_tod)
++   
++   #trips <- trips[trips$trip_tod != 'op',]
++   
++   #trip purpose - HBW, HBO, NHB
++   #trips$purp <- ifelse((trips$opurp == 0 & trips$dpurp == 1 & trips$otaz == trips$hhtaz) | (trips$dpurp == 0 & trips$opurp == 1 & trips$dtaz == trips$hhtaz), "HBW", "NHB")
++   #trips$purp <- ifelse((trips$opurp == 0 & trips$dpurp > 1 & trips$otaz == trips$hhtaz) | (trips$dpurp == 0 & trips$opurp > 1 & trips$dtaz == trips$hhtaz), "HBO", trips$purp)
++ 
++   trips$purp <- ifelse((trips$oadtyp == 1 & trips$dpurp == 1) | (trips$dadtyp == 1 & trips$opurp == 1), "HBW", "NHB")
++   #trips$purp <- ifelse((trips$oadtyp > 1 & trips$dpurp == 1) | (trips$dadtyp > 1 & trips$opurp == 1), "NBW", trips$purp)
++   trips$purp <- ifelse((trips$oadtyp == 1 & trips$dpurp > 1) | (trips$dadtyp == 1 & trips$opurp > 1), "HBO", trips$purp)
++   
++   #debug
++   #trips$orig_flag <- ifelse(trips$otaz == trips$hhtaz,1,0)
++   #trips$dest_flag <- ifelse(trips$dtaz == trips$hhtaz,1,0)
++   #trips$both_flag <- ifelse(trips$otaz == trips$hhtaz & trips$dtaz == trips$hhtaz,1,0)
++   #temp <- xtabs(trexpfac ~ opurp+dpurp+orig_flag, data=trips) #weighted
++   #temp <- xtabs(trexpfac ~ opurp+dpurp+dest_flag, data=trips) #weighted
++   #temp <- xtabs(trexpfac ~ opurp+dpurp+both_flag, data=trips) #weighted
++   
++   #summary.district <- xtabs(count ~ o_district+d_district, data=trips) #unweighted
++   summary.district <- xtabs(trexpfac ~ o_district+d_district+purp, data=trips) #weighted
++   #summary.pdpurp2 <- xtabs(trexpfac ~ pdpurp2+tmodetp, data=trips) #weighted
++   #summary.mode <- xtabs(trexpfac ~ mode+tmodetp, data=trips) #weighted
++   
++   #get persontype
++   #trips <- trips[trips$mode != 6,]
++   trips$ptype <- persons$pptyp[match(paste(trips$hhno,"_", trips$pno), paste(persons$hhno, "_", persons$pno))]
++   #summary.ptype <- xtabs(trexpfac ~ o_district+d_district+ptype, data=trips) #weighted
++   #summary.purp <- xtabs(trexpfac ~ o_district+d_district+dpurp, data=trips) #weighted
++   #write.table(summary.ptype, file = "summary_ptype.csv", sep = ",", append = F)
++ 
++   #trips = trips[(trips$d_district==2) | (trips$d_district==6),]
++   #temp = trips[(trips$d_district==2),]
++   xtabs(trexpfac ~ ptype+dpurp, data=trips) #weighted
++   
++   #temp =aggregate(trips$tseg, by=list(trips$tour_id, trips$half), max)
++   #colnames(temp) = c("tour_id", "half", "num_trips")
++   #trips$num_trips <- temp$num_trips[match(paste(trips$tour_id, "_", trips$half), paste(temp$tour_id, "_", temp$half))]
++   #trips$stop_flag <- 1
++   #trips$stop_flag <- ifelse(trips$tseg == trips$num_trips, 0, 1)
++ 
++   summary.stops <- xtabs(trexpfac ~ o_district+d_district+purp+trip_tod+ptype+dpurp, data=trips) #weighted
++ 
++   if (dataset == suff[1]) {
++     write.table(dataset, file = outfile_district, sep = ",", append = F)
++     write.table(dataset, file = outfile_mode, sep = ",", append = F)
++     write.table(dataset, file = outfile_ptype, sep = ",", append = F)
++   } else {
++     write.table(dataset, file = outfile_district, sep = ",", append = T)
++     write.table(dataset, file = outfile_mode, sep = ",", append = T)
++     write.table(dataset, file = outfile_ptype, sep = ",", append = T)
++   }
++   
++   #write.table(summary.ptype, file = outfile_ptype, sep = ",", append = T, row.names = F)
++   #write.table("dpurp", file = outfile_ptype, sep = ",", append = T)
++   #write.table(summary.purp, file = outfile_ptype, sep = ",", append = T, row.names = F)
++   write.table(summary.stops, file = outfile_ptype, sep = ",", append = T, row.names = F)
++   
++   write.table(summary.district, file = outfile_district, sep = ",", append = T)
++   write.table(sum.triplength, file = outfile_mode, sep = ",", append = T)
++   write.table(sum.trips, file = outfile_mode, sep = ",", append = T)
++   write.table(summary.mode, file = outfile_mode, sep = ",", append = T)
++   
++ }
+[1] "survey"
