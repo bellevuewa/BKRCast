@@ -38,6 +38,7 @@ extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', '
                     {'type':'LINK', 'name': '@slid', 'description': 'Screen line ID', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slid.txt'},
                     {'type':'LINK', 'name': '@slope', 'description': 'splope (calculated in GIS from KC 5ft)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slope.txt'},
                     {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
+                    {'type':'LINK', 'name': '@kirkland_slid', 'description': 'Screenlines for Kirkland only', 'overwrite': True, 'file_name':'inputs/extra_attributes/@kirkland_slid.txt'},
                     {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'}]
 AM_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_am_2014', 'description': 'Local counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_am_2014.txt'},
                        {'type':'LINK', 'name': '@slcnt_am_2014', 'description': 'Screenline counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_am_2014.txt'}]
