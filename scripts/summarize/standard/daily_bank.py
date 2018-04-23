@@ -105,7 +105,7 @@ def export_link_values(my_project):
 def main():
     print 'creating daily bank'
     #Use a copy of an existing bank for the daily bank
-    copy_emmebank('Banks/7to8', 'Banks/Daily')
+    copy_emmebank('Banks/1530to1830', 'Banks/Daily')
 
     daily_emmebank =_emmebank.Emmebank(r'Banks\Daily\emmebank')
     # Set the emmebank title
