@@ -5,7 +5,7 @@ import pandas as pd
 import h5py
 import numpy as np
 
-writer = pd.ExcelWriter(out_lu_summary, engine= 'xlsxwriter')
+writer = pd.ExcelWriter(report_output_location + '/landusesummary.xlsx', engine= 'xlsxwriter')
 print 'Summarizing parcels and synthetic population'
 
 # Summarize parcel inputs
