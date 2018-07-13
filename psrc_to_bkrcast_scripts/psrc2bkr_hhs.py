@@ -21,10 +21,10 @@ import h5py
 import numpy as np
 
 #input settings
-wd = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
+wd = r"I:\Modeling and Analysis Group\03_Data\PSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
 popsynFileName = "hh_and_persons.h5"
-parcel_dir = "E:/Projects/Clients/bkr/model/bkrcast_tod/inputs/"
-parcelFileName = "buffered_parcels.dat"
+parcel_dir = r"I:\Modeling and Analysis Group\03_Data\PSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
+parcelFileName = "parcels_bkr.txt"
 
 def readSynPopTables(fileName):
     print('read synpop file')
@@ -69,14 +69,14 @@ def runSynPopPSRCtoBKRZones():
     #get parcle-taz correspondence
     parcelFile = os.path.join(parcel_dir, parcelFileName)
     parcels = pd.read_table(parcelFile, sep=" ")
-    parcels = parcels[["parcelid","taz_p"]]
+    parcels = parcels[["PARCELID","TAZ_P"]]
 
     #merge to households
     print('assign bkr tazs')
-    households = pd.merge(households, parcels, left_on = "hhparcel", right_on = "parcelid")
+    households = pd.merge(households, parcels, left_on = "hhparcel", right_on = "PARCELID")
     
-    households["hhtaz"] = households["taz_p"].astype(np.int32)
-    households.drop(["parcelid","taz_p"], inplace=True, axis=1)
+    households["hhtaz"] = households["TAZ_P"].astype(np.int32)
+    households.drop(["PARCELID","TAZ_P"], inplace=True, axis=1)
     
     households = households.sort_values("hhno")
 

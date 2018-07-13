@@ -11,8 +11,8 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\BKRCast_Repository\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\Job Conversion Test\parcel_level\test1'
+project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\Job Conversion Test\parcel_level\test11'
 base_year = '2014'  # This should always be 2014 unless the base year changes
 scenario_name = '2014' #name of the folder with scenario data
 
@@ -30,7 +30,7 @@ if not(use_simple_configuration):
     
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
-    run_accessibility_calcs = False
+    run_accessibility_calcs = True
     run_copy_daysim_code = False
     run_setup_emme_project_folders = True
     run_setup_emme_bank_folders = True
@@ -45,14 +45,14 @@ if not(use_simple_configuration):
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
     should_build_shadow_price = True
-    run_skims_and_paths = True
-    run_truck_model = True
-    run_supplemental_trips = True
-    run_daysim = True
+    run_skims_and_paths = False
+    run_truck_model = False
+    run_supplemental_trips = False
+    run_daysim = False
     run_daysim_popsampler = False
-    run_accessibility_summary = True
-    run_bkrcast_summary =  True
-    run_create_daily_bank = True
+    run_accessibility_summary = False
+    run_bkrcast_summary =  False
+    run_create_daily_bank = False
     run_truck_summary = False
 
     # Specific reports to run
