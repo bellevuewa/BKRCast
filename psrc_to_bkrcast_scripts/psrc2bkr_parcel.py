@@ -20,7 +20,7 @@ import numpy as np
 import csv
 
 # inputs
-wd = r"I:\Modeling and Analysis Group\03_Data\PSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
+wd = r"Z:\Modeling Group\BKRCast\2035Parcel_fromPSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
 parcel_file = 'parcels.dat'
 
 # correspondence file
@@ -52,6 +52,8 @@ def runPSRCtoBKRZones():
     
     #merge bkr taz to parcel file
     parcels_bkr = pd.merge(parcels_psrc, parcel_bkr_taz, left_on = 'PARCELID', right_on = 'PARCELID')
+    parcels_bkr['PSRCTAZ'] = parcels_bkr['TAZ_P']
+    parcels_fields.append('PSRCTAZ')
     parcels_bkr['TAZ_P'] = parcels_bkr['TAZNUM'].astype(np.int32)
     parcels_bkr = parcels_bkr[parcels_fields]
     parcels_bkr = parcels_bkr.sort_values(by = ['PARCELID'], ascending=[True])

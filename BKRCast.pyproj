@@ -89,8 +89,10 @@
     <Compile Include="scripts\summarize\xlautofit.py" />
     <Compile Include="scripts\summarize\__init__.py" />
     <Compile Include="scripts\summary_functions.py" />
+    <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
     <Compile Include="scripts\supplemental\distribution.py" />
     <Compile Include="scripts\supplemental\generation.py" />
+    <Compile Include="scripts\supplemental\military_parcel_loading.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
     <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
     <Compile Include="scripts\utils\create_node_to_node_index.py" />

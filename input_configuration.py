@@ -15,6 +15,7 @@ project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\Job Conversion Test\parcel_level\test11'
 base_year = '2014'  # This should always be 2014 unless the base year changes
 scenario_name = '2014' #name of the folder with scenario data
+model_year = '2014'
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2016' 

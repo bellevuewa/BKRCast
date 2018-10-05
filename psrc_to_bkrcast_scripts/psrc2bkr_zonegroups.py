@@ -25,9 +25,10 @@ import numpy as np
 import csv
 
 #inputs
-transit_dir = r'E:\Projects\Clients\bkr\model\soundcast\inputs\Fares'
-puma_dir = r'E:\Projects\Clients\bkr\model\soundcast\inputs\supplemental\generation\ensembles'
-transitFileName = "transit_fare_zones.grt"
+transit_dir = r'D:\Soundcast\SC2014\soundcast-2-1\inputs\2014\networks\fares'
+puma_dir = r'D:\Soundcast\SC2014\soundcast-2-1\inputs\scenario\supplemental\generation\ensembles'
+#transitFileName = "transit_fare_zones.grt"
+transitFileName = "parking_gz.txt"
 pumaFileName = "puma00.ens"
 tazSharesFileName = "psrc_to_bkr.txt"
 
@@ -40,6 +41,7 @@ def runGroupsPSRCtoBKRZones(wd, zoneGroupsFileName, header_rows):
 
     # read psrc zone group file
     zoneGroupsFileName = os.path.join(wd, zoneGroupsFileName)
+    print zoneGroupsFileName
     zoneGroups = pd.read_table(zoneGroupsFileName, delimiter = " ", skiprows = header_rows, names = ["t","groups","zone"])
     print(zoneGroups.head())
 
@@ -60,7 +62,9 @@ def runGroupsPSRCtoBKRZones(wd, zoneGroupsFileName, header_rows):
     tazGroups_bkr = temp.loc[temp.groupby(["bkr_zone_id"])['percent'].idxmax()]
 
     extension = zoneGroupsFileName.split(".")[1]
+    print extension
     outfile = os.path.join(wd,zoneGroupsFileName.split(".")[0] + "_bkr." + extension)
+    print outfile
 
     if (header_rows > 0):
         print('here')
@@ -71,6 +75,7 @@ def runGroupsPSRCtoBKRZones(wd, zoneGroupsFileName, header_rows):
         tazGroups_bkr[["t","groups","bkr_zone_id"]].to_csv(file, sep = " ", header = False, index = False)
 
 if __name__== "__main__":
-    runGroupsPSRCtoBKRZones(transit_dir, transitFileName, header_rows = 10)
+    #runGroupsPSRCtoBKRZones(transit_dir, transitFileName, header_rows = 10)
+    runGroupsPSRCtoBKRZones(transit_dir, transitFileName, header_rows = 3)
     runGroupsPSRCtoBKRZones(puma_dir, pumaFileName, header_rows = 1)
 

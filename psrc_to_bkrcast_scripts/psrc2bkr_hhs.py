@@ -21,10 +21,10 @@ import h5py
 import numpy as np
 
 #input settings
-wd = r"I:\Modeling and Analysis Group\03_Data\PSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
+wd = r"Z:\Modeling Group\BKRCast\2035Parcel_fromPSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
 popsynFileName = "hh_and_persons.h5"
-parcel_dir = r"I:\Modeling and Analysis Group\03_Data\PSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
-parcelFileName = "parcels_bkr.txt"
+parcel_dir = r"Z:\Modeling Group\BKRCast\2035Parcel_fromPSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
+parcelFileName = "parcels_urbansim.txt"
 
 def readSynPopTables(fileName):
     print('read synpop file')

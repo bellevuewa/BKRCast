@@ -22,7 +22,7 @@ df_parcels = pd.read_csv(input_parcels, delim_whitespace=True)
 df_ensemble = pd.read_csv(input_ensemble, low_memory = False)
 df_daily_parking_cost = pd.DataFrame(pd.read_csv(daily_parking_cost, low_memory = False))
 df_hourly_parking_cost = pd.DataFrame(pd.read_csv(hourly_parking_cost, low_memory = False))
-join_ensemble_to_parcel = pd.merge(left = df_parcels, right=df_ensemble,left_on="TAZ_P",right_on="TAZ")
+join_ensemble_to_parcel = pd.merge(left = df_parcels, right=df_ensemble,left_on="PSRCTAZ",right_on="TAZ")
 # Join daily costs with parcel data 
 merged_df = pd.merge(left=join_ensemble_to_parcel,
                                 right=df_daily_parking_cost, 
