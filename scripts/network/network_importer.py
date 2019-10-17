@@ -220,6 +220,7 @@ def load_extra_attributes(emmeProject, attribute_list):
     import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
     #add extra attributes input by user in emme_configuration.py
     for attribute in attribute_list:
+        print attribute
         create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
         if(os.path.isfile(attribute["file_name"])):
             import_attributes(attribute["file_name"], scenario = emmeProject.current_scenario)
@@ -242,6 +243,26 @@ def update_headways(emmeProject, headways_df):
             network.delete_transit_line(transit_line.id)
     emmeProject.current_scenario.publish_network(network)
 
+def distance_pricing(distance_rate, hot_rate, emmeProject):
+   toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]
+   network = emmeProject.current_scenario.get_network()
+   for link in network.links():
+        if link.data3 > 0:
+            if add_distance_pricing:
+                for att in toll_atts:
+                    link[att] = link[att] + (link.length * distance_rate)
+            if add_hot_lane_tolls:
+                # is the link a managed lane:
+                if link['@tolllane'] == 1:     ## toll lane
+                    # get the modes allowed
+                    test = [i[1].id for i in enumerate(link.modes)]
+                    # if sov modes are allowed, they should be tolled
+                    if 's' in test or 'e' in test:
+                        print hot_rate
+                        link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
+                        link['@toll2'] = link['@toll2'] + (link.length * hot_rate)          
+    
+   emmeProject.current_scenario.publish_network(network)
 
 def run_importer(project_name):
     my_project = EmmeProject(project_name)
@@ -282,7 +303,8 @@ def run_importer(project_name):
         import_tolls(my_project)
         #time_period_headway_df = headeway_df.loc[(headway_df['hdw_' + my_project.tod])]
         #print len(time_period_headway_df)
-        
+        if add_distance_pricing or add_hot_lane_tolls:
+            distance_pricing(distance_rate_dict[value], HOT_rate_dict[value], my_project)     
 
 def main():
     print network_summary_project

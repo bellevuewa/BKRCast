@@ -1,6 +1,16 @@
 import math
 import sys
 HORIZON_YEAR = 2035   ## range = [2014, 2040]
+
+###### Distance-based pricing######
+add_distance_pricing = False # usually set to False unless we want to test VMT tax
+# rate below includes 3.5 cent carbon tax
+distance_rate_dict = {'am' : 13.5, 'md' : 8.5, 'pm' : 13.5, 'ni' : 8.5}
+
+# HOT Lane 
+add_hot_lane_tolls = True
+HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}
+
 ##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
 project = 'Projects/LoadTripTables/LoadTripTables.emp'
@@ -15,7 +25,7 @@ base_net_name = '_roadway.in'
 turns_name = '_turns.in'
 transit_name = '_transit.in'
 shape_name = '_linkshapes.in'
-no_toll_modes = ['s', 'h', 'i', 'j']
+no_toll_modes = ['s', 'h', 'i', 'j']  # need to investigate: do we need to put light truck (u), mid truck (v) and heavy truck (t)
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
 headway_file = 'sc_headways.csv'
@@ -42,7 +52,8 @@ extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', '
                     {'type':'LINK', 'name': '@slope', 'description': 'splope (calculated in GIS from KC 5ft)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slope.txt'},
                     {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
                     {'type':'LINK', 'name': '@kirkland_slid', 'description': 'Screenlines for Kirkland only', 'overwrite': True, 'file_name':'inputs/extra_attributes/@kirkland_slid.txt'},
-                    {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'}]
+                    {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'},
+                    {'type':'LINK', 'name': '@tolllane', 'description': 'Flag for toll lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@tolllane.txt'}]
 AM_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_am_2014', 'description': 'Local counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_am_2014.txt'},
                        {'type':'LINK', 'name': '@slcnt_am_2014', 'description': 'Screenline counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_am_2014.txt'}]
 MD_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_md_2014', 'description': 'Local counts MDPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_md_2014.txt'},
