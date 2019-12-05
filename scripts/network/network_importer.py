@@ -253,7 +253,7 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                     link[att] = link[att] + (link.length * distance_rate)
             if add_hot_lane_tolls:
                 # is the link a managed lane:
-                if link['@tolllane'] == 1:     ## toll lane
+                if link['@tolllane'] == 1:     ## toll lane option 1 (I405): free for 3+
                     # get the modes allowed
                     test = [i[1].id for i in enumerate(link.modes)]
                     # if sov modes are allowed, they should be tolled
@@ -261,6 +261,13 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                         print hot_rate
                         link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
                         link['@toll2'] = link['@toll2'] + (link.length * hot_rate)          
+                else if link['@tolllane'] == 2:    ## toll lane option 2 (SR167): free for 2+
+                    # get the modes allowed
+                    test = [i[1].id for i in enumerate(link.modes)]
+                    # if sov modes are allowed, they should be tolled
+                    if 's' in test or 'e' in test:
+                        print hot_rate
+                        link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
     
    emmeProject.current_scenario.publish_network(network)
 
