@@ -220,7 +220,6 @@ def load_extra_attributes(emmeProject, attribute_list):
     import_attributes = emmeProject.m.tool("inro.emme.data.network.import_attribute_values")
     #add extra attributes input by user in emme_configuration.py
     for attribute in attribute_list:
-        print attribute
         create_extras(extra_attribute_type=attribute["type"],extra_attribute_name=attribute["name"],extra_attribute_description=attribute["description"],overwrite=attribute["overwrite"])
         if(os.path.isfile(attribute["file_name"])):
             import_attributes(attribute["file_name"], scenario = emmeProject.current_scenario)
@@ -247,20 +246,30 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
    toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]
    network = emmeProject.current_scenario.get_network()
    for link in network.links():
-        if link.data3 > 0:
-            if add_distance_pricing:
-                for att in toll_atts:
-                    link[att] = link[att] + (link.length * distance_rate)
-            if add_hot_lane_tolls:
-                # is the link a managed lane:
-                if link['@tolllane'] == 1:     ## toll lane
-                    # get the modes allowed
-                    test = [i[1].id for i in enumerate(link.modes)]
-                    # if sov modes are allowed, they should be tolled
-                    if 's' in test or 'e' in test:
-                        print hot_rate
-                        link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
-                        link['@toll2'] = link['@toll2'] + (link.length * hot_rate)          
+        if add_distance_pricing:
+            for att in toll_atts:
+                link[att] = link[att] + (link.length * distance_rate)
+        if add_hot_lane_tolls:
+            # is the link a managed lane: 1 for I405 HOT north part; 3 is for the south part
+            if (link['@tolllane'] == 1) or (link['@tolllane'] == 3):     ## toll lane option 1 (I405): free for 3+
+                # get the modes allowed
+                test = [i[1].id for i in enumerate(link.modes)]
+                # if sov modes are allowed, they should be tolled
+                if 's' in test or 'e' in test:
+                    print hot_rate
+                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
+                    link['@toll2'] = link['@toll2'] + (link.length * hot_rate)
+                if 'v' in test:
+                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
+            elif link['@tolllane'] == 2:    ## toll lane option 2 (SR167): free for 2+
+                # get the modes allowed
+                test = [i[1].id for i in enumerate(link.modes)]
+                # if sov modes are allowed, they should be tolled
+                if 's' in test or 'e' in test:
+                    print hot_rate
+                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
+                if 'v' in test:
+                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
     
    emmeProject.current_scenario.publish_network(network)
 
