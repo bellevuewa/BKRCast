@@ -96,6 +96,19 @@ def copy_accessibility_files():
         print 'error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv'
         sys.exit(1)
 
+    print 'Copying transit stop file'
+    try:
+        shcopy(base_inputs + '/landuse/transit_stops_2014.csv', 'inputs/accessibility')
+    except:
+        print 'error copying transit stop file at ' + base_inputs + '/landuse/transit_stops_2014.csv'
+        sys.exit(1)
+
+    print 'Copy parking ensemble file'
+    try:
+        shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
+    except:
+        print 'error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv'
+        sys.exit(1)
 
     print 'Copying Hourly and Daily Parking Files'
     if run_update_parking: 
