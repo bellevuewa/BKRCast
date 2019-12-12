@@ -110,6 +110,14 @@ def copy_accessibility_files():
         print 'error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv'
         sys.exit(1)
 
+    print 'Copy all street network files'
+    try:
+        shcopy(base_inputs + '/accessibility//all_streets_links_2014.csv', 'inputs/accessibility')
+        shcopy(base_inputs + '/accessibility//all_streets_nodes_2014.csv', 'inputs/accessibility')
+    except:
+        print 'error copying all street network files from ' + base_inputs + '/accessibility folder'
+        sys.exit(1)
+
     print 'Copying Hourly and Daily Parking Files'
     if run_update_parking: 
         try:
