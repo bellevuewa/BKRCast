@@ -22,6 +22,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="daysim_configuration_template.properties" />
     <Content Include="inputs\observed\pm_2014_counts.txt" />
     <Content Include="projects\1830to6\Worksheets\Test_1830to6.txt" />
     <Content Include="projects\6to9\Worksheets\Test_6to9.txt" />
