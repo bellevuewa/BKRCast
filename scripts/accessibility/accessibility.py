@@ -138,9 +138,13 @@ def clean_up(parcels):
     return parcels_final
 
 
-
-# read in data
-parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
+if run_update_parking and base_year != scenario_name:
+    input_parcels = "inputs\\accessibility\\" + parcels_file_name
+    print 'open file ', input_parcels
+    parcels = pd.DataFrame.from_csv(input_parcels, sep = " ", index_col = None )
+else: 
+    # read in data
+    parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
 
 #capitalize field names to avoid errors
 parcels.columns = [i.upper() for i in parcels.columns]
