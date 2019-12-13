@@ -146,6 +146,7 @@ else:
     # read in data
     parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
 
+
 #capitalize field names to avoid errors
 parcels.columns = [i.upper() for i in parcels.columns]
 #check for missing data!

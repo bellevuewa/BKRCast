@@ -203,3 +203,13 @@ Type 'q()' to quit R.
 +   
 + }
 [1] "survey"
+[1] "bkrcast_lodes"
+[1] "bkrcast_esd"
+[1] "soundcast"
+There were 29 warnings (use warnings() to see them)
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+1609.84   73.62 1862.21 

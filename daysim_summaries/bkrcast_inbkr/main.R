@@ -15,7 +15,7 @@ library(Hmisc)
 library(data.table)
 library(plyr)
 
-setwd("D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/daysim_summaries/bkrcast_inbkr")
+setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_inbkr")
 
 #------------------------------------
 #Source functions and config settings

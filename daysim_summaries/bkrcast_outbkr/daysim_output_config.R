@@ -2,11 +2,11 @@
 dsVersion                                 = "C#"
 
 #BKRCast
-dshhfile                                  = "D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/_household_outbkr.tsv"
-dsperfile                                 = "D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/_person_outbkr.tsv"
-dspdayfile                                = "D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/_person_day_outbkr.tsv"
-dstourfile                                = "D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/_tour_outbkr.tsv"
-dstripfile                                = "D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test19/outputs/_trip_outbkr.tsv"
+dshhfile                                  = "D:/2018baseyear/BKR0V1-02/outputs/_household_outbkr.tsv"
+dsperfile                                 = "D:/2018baseyear/BKR0V1-02/outputs/_person_outbkr.tsv"
+dspdayfile                                = "D:/2018baseyear/BKR0V1-02/outputs/_person_day_outbkr.tsv"
+dstourfile                                = "D:/2018baseyear/BKR0V1-02/outputs/_tour_outbkr.tsv"
+dstripfile                                = "D:/2018baseyear/BKR0V1-02/outputs/_trip_outbkr.tsv"
 
 #calibration
 #dshhfile                                  = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_household_outbkr.tsv"

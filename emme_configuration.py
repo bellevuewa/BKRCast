@@ -1,6 +1,6 @@
 import math
 import sys
-HORIZON_YEAR = 2035   ## range = [2014, 2040]
+HORIZON_YEAR = 2018   ## range = [2014, 2040]
 
 ###### Distance-based pricing######
 add_distance_pricing = False # usually set to False unless we want to test VMT tax
