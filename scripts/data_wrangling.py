@@ -118,6 +118,7 @@ def copy_accessibility_files():
         print 'error copying all street network files from ' + base_inputs + '/accessibility folder'
         sys.exit(1)
 
+
     print 'Copying Hourly and Daily Parking Files'
     if run_update_parking: 
         try:

@@ -11,14 +11,13 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\Job Conversion Test\parcel_level\test11'
-base_year = '2014'  # This should always be 2014 unless the base year changes
-scenario_name = '2014' #name of the folder with scenario data
-model_year = '2014'
+project_folder = r'D:\2018baseyear\BKR0V1-02'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
+base_year = '2018'  # This should always be 2014 unless the base year changes
+scenario_name = '2018' #name of the folder with scenario data
 
 #settings automatically assigned
-daysim_code = project_folder + '/daysim_2016' 
+daysim_code = project_folder + '/daysim_2019' 
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
@@ -32,28 +31,28 @@ if not(use_simple_configuration):
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
     run_accessibility_calcs = True
-    run_copy_daysim_code = False
-    run_setup_emme_project_folders = True
-    run_setup_emme_bank_folders = True
-    run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
-    run_import_networks = True
+    run_copy_daysim_code = True
+    run_setup_emme_project_folders = False
+    run_setup_emme_bank_folders = False
+    run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
+    run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True
+    run_copy_seed_skims = True   
     create_no_toll_network = True
     run_skims_and_paths_seed_trips = False
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
     should_build_shadow_price = True
-    run_skims_and_paths = False
-    run_truck_model = False
-    run_supplemental_trips = False
-    run_daysim = False
+    run_skims_and_paths = True
+    run_truck_model = True
+    run_supplemental_trips = True
+    run_daysim = True
     run_daysim_popsampler = False
-    run_accessibility_summary = False
-    run_bkrcast_summary =  False
-    run_create_daily_bank = False
+    run_accessibility_summary = True
+    run_bkrcast_summary =  True
+    run_create_daily_bank = True
     run_truck_summary = False
 
     # Specific reports to run
@@ -248,7 +247,7 @@ commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
 #################################### DAYSIM ####################################
 households_persons_file = r'inputs\hh_and_persons.h5'
 # Popsampler - super/sub-sampling in population synthesis
-sampling_option = 2 #1-3: five options available - each option is a column in pop_sample_district below
+sampling_option = 1 #1-3: five options available - each option is a column in pop_sample_district below
 pop_sample_district = {'BKR':[1,4,2],
 					'Seattle':[1,0.50,0.50], 
 					'Rest of King':[1,0.20,0.20], 
@@ -260,7 +259,7 @@ taz_sample_rate_file = 'taz_sample_rate.txt' #intermediate output, input to pops
 
 #################################### BIKE MODEL ####################################
 
-bike_assignment_tod = ['6to9']
+bike_assignment_tod = ['6to9', '1530to1830', '9to1530', '1830to6']
 
 # Distance perception penalties for link AADT from Broach et al., 2012
 # 1 is AADT 10k-20k, 2 is 20k-30k, 3 is 30k+
