@@ -303,6 +303,9 @@ def run_all_summaries():
 def main():
 
 ## SET UP INPUTS ##########################################################
+    if run_copy_input_files:
+        copy_large_inputs()
+    
     if run_accessibility_calcs:
         accessibility_calcs()
 

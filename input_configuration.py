@@ -32,6 +32,7 @@ if not(use_simple_configuration):
     run_update_parking = False #Only update parking for future-year analysis!
     run_accessibility_calcs = True
     run_copy_daysim_code = True
+    run_copy_input_files = True
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
     run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'

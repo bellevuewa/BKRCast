@@ -224,12 +224,12 @@ def setup_emme_project_folders():
         desktop.close()
         
         #copy worksheets
-        wspath = os.path.join('inputs/worksheets/', tod)
+        wspath = os.path.join('inputs/etc/worksheets/', tod)
         destpath = os.path.join('projects/', tod, 'Worksheets')
         copyfiles(wspath, destpath)
         # copy media files
         destpath = os.path.join('projects/', tod, 'Media')
-        copyfiles('inputs/Media/', destpath)
+        copyfiles('inputs/etc/Media/', destpath)
 
         
 def copyfiles(sourceFolder, destFolder):
@@ -242,24 +242,37 @@ def copyfiles(sourceFolder, destFolder):
 @timed    
 def copy_large_inputs():
     print 'Copying large inputs...' 
-    shcopy(base_inputs+'/etc/daysim_outputs_seed_trips.h5','Inputs')
-    dir_util.copy_tree(base_inputs+'/networks','Inputs/networks')
-    dir_util.copy_tree(base_inputs+'/trucks','Inputs/trucks')
-    dir_util.copy_tree(base_inputs+'/tolls','Inputs/tolls')
-    dir_util.copy_tree(base_inputs+'/Fares','Inputs/Fares')
-    dir_util.copy_tree(base_inputs+'/bikes','Inputs/bikes')
-    dir_util.copy_tree(base_inputs+'/supplemental/distribution','inputs/supplemental/distribution')
-    dir_util.copy_tree(base_inputs+'/supplemental/generation','inputs/supplemental/generation')
+    print '  network files..'
+    dir_util.copy_tree(base_inputs+'/networks','inputs/networks')
+    print '  counts..'
+    dir_util.copy_tree(base_inputs+'/observed','inputs/observed')
+    print '  extra attributes..'
+    dir_util.copy_tree(base_inputs+'/extra_attributes','inputs/extra_attributes')
+    print '  tolls..'
+    dir_util.copy_tree(base_inputs+'/tolls','inputs/tolls')
+    print '  vdfs..'
+    dir_util.copy_tree(base_inputs+'/vdfs','inputs/vdfs')
+    print '  intraZonals..'
+    dir_util.copy_tree(base_inputs+'/IntraZonals','inputs/IntraZonals')
+    print '  fare..'
+    dir_util.copy_tree(base_inputs+'/Fares','inputs/Fares')
+    print '  trucks..'
+    dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
+    print '  accessibility..'
+    dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
+    print '  bikes..'
+    dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
+    print '  supplemental..'
+    dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
     dir_util.copy_tree(base_inputs+'/supplemental/trips','outputs/supplemental')
-    dir_util.copy_tree(base_inputs+'/corridors','Inputs/corridors')
-    shcopy(base_inputs+'/landuse/hh_and_persons.h5','Inputs')
-    shcopy(base_inputs+'/etc/survey.h5','scripts/summarize')
-    shcopy(base_inputs+'/4k/auto.h5','Inputs/4k')
-    shcopy(base_inputs+'/4k/transit.h5','Inputs/4k')
-    # node to node short distance files:
-    shcopy(base_inputs+'/short_distance_files/node_index_2014.txt', 'Inputs')
-    shcopy(base_inputs+'/short_distance_files/node_to_node_distance_2014.h5', 'Inputs')
-    shcopy(base_inputs+'/short_distance_files/parcel_nodes_2014.txt', 'Inputs')
+    print '  4k..'
+    dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
+    print '  synthetic population..'
+    shcopy(base_inputs+'/landuse/hh_and_persons.h5','inputs')
+    print '  survey..'
+    shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
+    print '  park and ride capacity..'
+    shcopy(base_inputs +'/pnr/p_r_nodes.csv','inputs')
 
 @timed
 def copy_shadow_price_file():
