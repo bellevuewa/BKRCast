@@ -27,11 +27,11 @@ Type 'q()' to quit R.
 > LODES = FALSE
 > ESD = TRUE
 > 
-> filter_type = "hh" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
+> filter_type = "trip" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
 > 
 > if(Survey){
 +   #survey
-+   wd <- 'E:/Projects/Clients/bkr/tasks/calibration/daysim_summaries/bkrcast_all/data'
++   wd <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data'
 +   file.hhs <- 'Household_bkr_new.dat'
 +   file.persons <- 'Person_bkr_new_skim.dat'
 +   file.person_day <- 'PersonDay_bkr.dat'
@@ -58,7 +58,7 @@ Type 'q()' to quit R.
 +   
 + } else if (ESD) {
 +   #daysim - esd data
-+   wd <- 'D:/Sensitivity Test/BKRCast_V1-3_Test13/outputs'
++   wd <- 'D:/2018baseyear/BKR0V1-02/outputs'
 +   file.hhs <- '_household.tsv'
 +   file.persons <- '_person.tsv' 
 +   file.person_day <- '_person_day.tsv'
@@ -69,7 +69,7 @@ Type 'q()' to quit R.
 +   file.ext_outbkr = '_outbkr.tsv'
 + }
 > 
-> file.correspondence <- 'D:/Sensitivity Test/BKRCast_V1-3_Test13/daysim_summaries/bkrcast_all/data/TAZ_District_CrossWalk.csv'
+> file.correspondence <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data/TAZ_District_CrossWalk.csv'
 > 
 > setwd(wd)
 > print("reading inputs ...")
@@ -138,7 +138,7 @@ Type 'q()' to quit R.
 +               sep = file.delim, row.names = FALSE)
 +   
 + }
-[1] "filter is hhs"
+[1] "filter is trip"
 [1] "filter trips ..."
 > 
 > ##tours
@@ -214,4 +214,4 @@ Type 'q()' to quit R.
 > 
 > proc.time()
    user  system elapsed 
-1161.70   32.84 1222.76 
+1355.12   79.71 1451.70 

@@ -294,7 +294,7 @@ def clean_up():
                    'working\\zone.pk']
 
     if (delete_parcel_data):
-        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels])
+        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels, buffered_parcels_csv])
     
     for file in delete_files: 
         if(os.path.isfile(os.path.join(os.getcwd(), file))):

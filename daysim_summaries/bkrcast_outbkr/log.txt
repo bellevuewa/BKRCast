@@ -30,14 +30,12 @@ Type 'q()' to quit R.
 > library(reshape)
 > library(XLConnect)
 Loading required package: XLConnectJars
-XLConnect 0.2-12 by Mirai Solutions GmbH [aut],
+XLConnect 0.2-15 by Mirai Solutions GmbH [aut],
   Martin Studer [cre],
-  The Apache Software Foundation [ctb, cph] (Apache POI, Apache Commons
-    Codec),
-  Stephen Colebourne [ctb, cph] (Joda-Time Java library),
+  The Apache Software Foundation [ctb, cph] (Apache POI),
   Graph Builder [ctb, cph] (Curvesapi Java library)
-http://www.mirai-solutions.com ,
-http://miraisolutions.wordpress.com
+http://www.mirai-solutions.com
+https://github.com/miraisolutions/xlconnect
 > library(descr)
 > library(Hmisc)
 Loading required package: lattice
@@ -49,7 +47,7 @@ Attaching package: 'Hmisc'
 
 The following objects are masked from 'package:base':
 
-    format.pval, round.POSIXt, trunc.POSIXt, units
+    format.pval, units
 
 > library(data.table)
 
@@ -72,7 +70,7 @@ The following objects are masked from 'package:reshape':
     rename, round_any
 
 > 
-> setwd("D:/Sensitivity Test/BKRCast_V1-3_Test13/daysim_summaries/bkrcast_outbkr")
+> setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_outbkr")
 > 
 > #------------------------------------
 > #Source functions and config settings
@@ -99,7 +97,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyhhfile,"survhhdata")
 + }
-Read 0.0% of 1341066 rowsRead 1341066 rows and 21 (of 21) columns from 0.082 GB file in 00:00:04
 > 
 > progressNextStep("reading person data")
 > if(runWrkSchLocationChoice | runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode | runTripTOD)
@@ -109,7 +106,7 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyperfile,"survperdata")
 + }
-Read 17.4% of 3337784 rowsRead 32.7% of 3337784 rowsRead 48.5% of 3337784 rowsRead 64.4% of 3337784 rowsRead 80.6% of 3337784 rowsRead 96.5% of 3337784 rowsRead 3337784 rows and 24 (of 24) columns from 0.270 GB file in 00:00:08
+Read 14.4% of 2771738 rowsRead 33.6% of 2771738 rowsRead 53.4% of 2771738 rowsRead 73.2% of 2771738 rowsRead 90.9% of 2771738 rowsRead 2771738 rows and 24 (of 24) columns from 0.224 GB file in 00:00:07
 > 
 > progressNextStep("reading person day data")
 > if(runDayPattern)
@@ -119,7 +116,7 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveypdayfile,"survpdaydata")
 + }
-Read 47.0% of 3337784 rowsRead 79.7% of 3337784 rowsRead 3337784 rows and 31 (of 31) columns from 0.265 GB file in 00:00:04
+Read 57.7% of 2771738 rowsRead 94.9% of 2771738 rowsRead 2771738 rows and 31 (of 31) columns from 0.220 GB file in 00:00:04
 > 
 > progressNextStep("reading person day tour data")
 > if(runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode)
@@ -129,7 +126,7 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytourfile,"survtourdata")
 + }
-Read 0.0% of 5324500 rowsRead 6.9% of 5324500 rowsRead 13.7% of 5324500 rowsRead 20.1% of 5324500 rowsRead 27.0% of 5324500 rowsRead 34.0% of 5324500 rowsRead 40.9% of 5324500 rowsRead 47.9% of 5324500 rowsRead 55.0% of 5324500 rowsRead 62.4% of 5324500 rowsRead 69.7% of 5324500 rowsRead 77.4% of 5324500 rowsRead 84.3% of 5324500 rowsRead 91.1% of 5324500 rowsRead 97.8% of 5324500 rowsRead 5324500 rows and 33 (of 33) columns from 0.680 GB file in 00:00:30
+Read 0.9% of 4485077 rowsRead 8.7% of 4485077 rowsRead 16.7% of 4485077 rowsRead 25.0% of 4485077 rowsRead 32.8% of 4485077 rowsRead 41.0% of 4485077 rowsRead 48.4% of 4485077 rowsRead 56.6% of 4485077 rowsRead 64.9% of 4485077 rowsRead 73.8% of 4485077 rowsRead 81.2% of 4485077 rowsRead 89.0% of 4485077 rowsRead 96.5% of 4485077 rowsRead 4485077 rows and 33 (of 33) columns from 0.578 GB file in 00:00:15
 > 
 > progressNextStep("reading person day trip data")
 > if(runDayPattern | runTripMode | runTripTOD)
@@ -139,7 +136,7 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytripfile,"survtripdata")
 + }
-Read 0.0% of 14625476 rowsRead 2.2% of 14625476 rowsRead 4.2% of 14625476 rowsRead 6.4% of 14625476 rowsRead 8.6% of 14625476 rowsRead 10.8% of 14625476 rowsRead 13.1% of 14625476 rowsRead 15.2% of 14625476 rowsRead 17.4% of 14625476 rowsRead 19.5% of 14625476 rowsRead 21.6% of 14625476 rowsRead 23.7% of 14625476 rowsRead 25.9% of 14625476 rowsRead 28.0% of 14625476 rowsRead 30.2% of 14625476 rowsRead 32.4% of 14625476 rowsRead 34.6% of 14625476 rowsRead 36.8% of 14625476 rowsRead 39.0% of 14625476 rowsRead 41.2% of 14625476 rowsRead 43.3% of 14625476 rowsRead 45.5% of 14625476 rowsRead 47.7% of 14625476 rowsRead 49.8% of 14625476 rowsRead 51.9% of 14625476 rowsRead 53.9% of 14625476 rowsRead 56.1% of 14625476 rowsRead 58.3% of 14625476 rowsRead 60.6% of 14625476 rowsRead 62.9% of 14625476 rowsRead 65.2% of 14625476 rowsRead 67.5% of 14625476 rowsRead 69.6% of 14625476 rowsRead 71.8% of 14625476 rowsRead 74.1% of 14625476 rowsRead 76.4% of 14625476 rowsRead 78.7% of 14625476 rowsRead 80.9% of 14625476 rowsRead 83.1% of 14625476 rowsRead 85.3% of 14625476 rowsRead 87.5% of 14625476 rowsRead 89.6% of 14625476 rowsRead 91.8% of 14625476 rowsRead 93.9% of 14625476 rowsRead 96.1% of 14625476 rowsRead 98.2% of 14625476 rowsRead 14625476 rows and 28 (of 28) columns from 1.874 GB file in 00:01:26
+Read 0.0% of 14913595 rowsRead 2.0% of 14913595 rowsRead 4.0% of 14913595 rowsRead 6.2% of 14913595 rowsRead 8.2% of 14913595 rowsRead 10.3% of 14913595 rowsRead 12.3% of 14913595 rowsRead 14.4% of 14913595 rowsRead 16.6% of 14913595 rowsRead 18.8% of 14913595 rowsRead 21.0% of 14913595 rowsRead 23.1% of 14913595 rowsRead 25.3% of 14913595 rowsRead 27.4% of 14913595 rowsRead 29.5% of 14913595 rowsRead 31.8% of 14913595 rowsRead 34.0% of 14913595 rowsRead 36.2% of 14913595 rowsRead 38.2% of 14913595 rowsRead 40.3% of 14913595 rowsRead 42.4% of 14913595 rowsRead 44.7% of 14913595 rowsRead 46.7% of 14913595 rowsRead 48.9% of 14913595 rowsRead 51.2% of 14913595 rowsRead 53.3% of 14913595 rowsRead 55.5% of 14913595 rowsRead 57.6% of 14913595 rowsRead 59.7% of 14913595 rowsRead 62.0% of 14913595 rowsRead 64.0% of 14913595 rowsRead 66.0% of 14913595 rowsRead 68.1% of 14913595 rowsRead 70.1% of 14913595 rowsRead 72.1% of 14913595 rowsRead 74.3% of 14913595 rowsRead 76.5% of 14913595 rowsRead 78.5% of 14913595 rowsRead 80.5% of 14913595 rowsRead 82.4% of 14913595 rowsRead 84.7% of 14913595 rowsRead 86.9% of 14913595 rowsRead 88.7% of 14913595 rowsRead 90.5% of 14913595 rowsRead 92.7% of 14913595 rowsRead 95.0% of 14913595 rowsRead 97.4% of 14913595 rowsRead 99.6% of 14913595 rowsRead 14913595 rows and 28 (of 28) columns from 1.929 GB file in 00:00:53
 > 
 > #Optional tour weight adjustment
 > if(tourAdj)
@@ -150,8 +147,8 @@ The following objects are masked from 'package:reshape':
 > #force gc()
 > gc()
           used (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells 1458266 77.9    2637877  140.9   1770749   94.6
-Vcells 1922276 14.7  205646906 1569.0 236698478 1805.9
+Ncells 1459051 78.0    2637877  140.9   1770749   94.6
+Vcells 1924075 14.7  223976312 1708.9 241310187 1841.1
 > 
 > #-----------------------
 > #Run tabulations
@@ -231,24 +228,24 @@ Vcells 1922276 14.7  205646906 1569.0 236698478 1805.9
 > 
 > progressEnd(outputsDir)
    steps                            stepnames stepruntimes cumruntimes
-1      1                      reading hh data         7.12        7.12
-2      2                  reading person data        19.63       26.75
-3      3              reading person day data        16.21       42.96
-4      4         reading person day tour data        67.32      110.28
-5      5         reading person day trip data       172.54      282.82
-6      6     summarizing work location choice        19.14      301.96
-7      7 summarizing vehicle ownership choice         3.52      305.48
-8      8              summarizing Day pattern       105.27      410.75
-9      9       summarizing Destination Choice        15.12      425.87
-10    10  summarizing Trip Destination Choice        25.91      451.78
-11    11         summarizing Tour Mode Choice        13.78      465.56
-12    12  summarizing Tour Time of Day Choice        23.20      488.76
-13    13         summarizing Trip Mode Choice        28.28      517.04
-14    14  summarizing Trip Time of Day Choice        42.63      559.67
+1      1                      reading hh data         5.61        5.61
+2      2                  reading person data        17.79       23.40
+3      3              reading person day data        13.36       36.76
+4      4         reading person day tour data        46.71       83.47
+5      5         reading person day trip data       162.93      246.40
+6      6     summarizing work location choice        23.72      270.12
+7      7 summarizing vehicle ownership choice         4.16      274.28
+8      8              summarizing Day pattern       123.31      397.59
+9      9       summarizing Destination Choice        16.80      414.39
+10    10  summarizing Trip Destination Choice        35.56      449.95
+11    11         summarizing Tour Mode Choice        14.77      464.72
+12    12  summarizing Tour Time of Day Choice        27.31      492.03
+13    13         summarizing Trip Mode Choice        36.78      528.81
+14    14  summarizing Trip Time of Day Choice        59.36      588.17
 > 
 > # Rprof(NULL)
 > # memprof <- summaryRprof()
 > 
 > proc.time()
    user  system elapsed 
- 530.00  462.87  561.57 
+ 593.62  272.92  590.46 
