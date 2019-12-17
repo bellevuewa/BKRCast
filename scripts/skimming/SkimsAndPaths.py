@@ -51,7 +51,7 @@ if survey_seed_trips:
 	hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
 elif daysim_seed_trips:
 	print 'Using DAYSIM OUTPUT SEED TRIPS'
-	hdf5_file_path = 'inputs/daysim_outputs_seed_trips.h5'
+	hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
 else:
 	print 'Using DAYSIM OUTPUTS'
 	hdf5_file_path = 'outputs/daysim_outputs.h5'
