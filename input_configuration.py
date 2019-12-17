@@ -35,14 +35,14 @@ if not(use_simple_configuration):
     run_copy_input_files = True
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
-    run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
+    run_copy_seed_supplemental_trips = True  #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True   
+    run_copy_seed_skims = True   # usually True
     create_no_toll_network = True
-    run_skims_and_paths_seed_trips = False
+    run_skims_and_paths_seed_trips = False  # usually False
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
     should_build_shadow_price = True
