@@ -1,0 +1,9 @@
+{
+    "result": "ul2",
+    "expression": "30",
+    "aggregation": null,
+    "selections": {
+        "link": "type=45 & ul2=0"
+    },
+    "type": "NETWORK_CALCULATION"
+}

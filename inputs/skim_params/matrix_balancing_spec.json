@@ -1,0 +1,21 @@
+{
+    "third_dimension": null,
+    "constraint": {
+        "by_zone": {
+            "origins": "1-1528",
+            "destinations": "1-1528"
+        },
+        "by_value": null
+    },
+    "max_iterations": 10,
+    "max_relative_error": 0.0001,
+    "results": {
+        "od_balanced_values": "mf11",
+        "origin_coefficients": null,
+        "destination_coefficients": null
+    },
+    "type": "MATRIX_BALANCING",
+    "od_values_to_balance": "mf8",
+    "origin_totals": "mo36",
+    "destination_totals": "md7"
+}
