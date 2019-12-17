@@ -96,13 +96,6 @@ def copy_accessibility_files():
         print 'error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv'
         sys.exit(1)
 
-    print 'Copying transit stop file'
-    try:
-        shcopy(base_inputs + '/landuse/transit_stops_2014.csv', 'inputs/accessibility')
-    except:
-        print 'error copying transit stop file at ' + base_inputs + '/landuse/transit_stops_2014.csv'
-        sys.exit(1)
-
     print 'Copy parking ensemble file'
     try:
         shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
@@ -260,6 +253,8 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
     print '  accessibility..'
     dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
+    shcopy(base_inputs + '/landuse/distribute_jblm_jobs.csv', 'inputs/accessibility')
+    shcopy(base_inputs + '/landuse/parcels_military.csv', 'inputs/accessibility')
     print '  bikes..'
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
     print '  supplemental..'
@@ -267,8 +262,10 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/supplemental/trips','outputs/supplemental')
     print '  4k..'
     dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
-    print '  synthetic population..'
-    shcopy(base_inputs+'/landuse/hh_and_persons.h5','inputs')
+    print '  land use..'
+    shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
+    shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
+    shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
     print '  survey..'
     shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
     print '  park and ride capacity..'
@@ -310,8 +307,8 @@ def clean_up():
         delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels, buffered_parcels_csv])
     
     for file in delete_files: 
-        if(os.path.isfile(os.path.join(os.getcwd(), file))):
-            os.remove(os.path.join(os.getcwd(), file))
+        if (os.path.isfile(file)):
+            os.remove(file)
         else:
             print file
 
