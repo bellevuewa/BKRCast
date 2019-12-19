@@ -91,7 +91,7 @@ def copy_accessibility_files():
         sys.exit(1)
 
     try:
-        shcopy(base_inputs+'/landuse/distribute_jblm_jobs.csv','Inputs/accessibility')
+        shcopy(base_inputs+'/landuse/distribute_jblm_jobs.csv','inputs/accessibility')
     except:
         print 'error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv'
         sys.exit(1)
@@ -105,8 +105,8 @@ def copy_accessibility_files():
 
     print 'Copy all street network files'
     try:
-        shcopy(base_inputs + '/accessibility//all_streets_links_2014.csv', 'inputs/accessibility')
-        shcopy(base_inputs + '/accessibility//all_streets_nodes_2014.csv', 'inputs/accessibility')
+        shcopy(base_inputs + '/accessibility/all_streets_links_2014.csv', 'inputs/accessibility')
+        shcopy(base_inputs + '/accessibility/all_streets_nodes_2014.csv', 'inputs/accessibility')
     except:
         print 'error copying all street network files from ' + base_inputs + '/accessibility folder'
         sys.exit(1)
@@ -115,8 +115,8 @@ def copy_accessibility_files():
     print 'Copying Hourly and Daily Parking Files'
     if run_update_parking: 
         try:
-            shcopy(base_inputs+'/landuse/hourly_parking_costs.csv','Inputs/accessibility')
-            shcopy(base_inputs+'/landuse/daily_parking_costs.csv','Inputs/accessibility')
+            shcopy(base_inputs+'/landuse/hourly_parking_costs.csv','inputs/accessibility')
+            shcopy(base_inputs+'/landuse/daily_parking_costs.csv','inputs/accessibility')
         except:
             print 'error copying parking file at' + base_inputs+'/landuse/' + ' either hourly or daily parking costs'
             sys.exit(1)
@@ -253,31 +253,19 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
     print '  accessibility..'
     dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
-    shcopy(base_inputs + '/landuse/distribute_jblm_jobs.csv', 'inputs/accessibility')
-    shcopy(base_inputs + '/landuse/parcels_military.csv', 'inputs/accessibility')
     print '  bikes..'
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
     print '  supplemental..'
     dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
-    dir_util.copy_tree(base_inputs+'/supplemental/trips','outputs/supplemental')
     print '  4k..'
     dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
     print '  land use..'
     shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
-    shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
     shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
     print '  survey..'
     shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
     print '  park and ride capacity..'
     shcopy(base_inputs +'/pnr/p_r_nodes.csv','inputs')
-
-@timed
-def copy_shadow_price_file():
-    print 'Copying shadow price file.' 
-    if not os.path.exists('working'):
-       os.makedirs('working')
-    shcopy(base_inputs+'/shadow_prices/shadow_prices.txt','working')
-
 
 @timed
 def copy_seed_supplemental_trips():
