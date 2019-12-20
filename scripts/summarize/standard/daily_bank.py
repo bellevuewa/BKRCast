@@ -1,13 +1,20 @@
 import inro.emme.database.emmebank as _emmebank
+import inro.emme.desktop.app as app
+import inro.modeller as _m
+import inro.emme.matrix as ematrix
+import inro.emme.database.matrix
 import os, sys
 import numpy as np
 sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
 from emme_configuration import *
 import json
 import shutil
 from distutils import dir_util
-from scripts.EmmeProject import *
+from EmmeProject import *
+
+print os.getcwd()
 
 daily_network_fname = 'outputs/daily_network_results.csv'
 keep_atts = ['@type']
