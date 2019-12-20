@@ -168,8 +168,8 @@ def DayPattern(data1, data2, name1, name2, location):
     print('Tours per Person by Purpose data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
     #Tours per Person by Purpose and Person Type/Number of Stops
-    PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno'])
-    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno'])
+    PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
+    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     tpd = {}
     stops = {}
     for purpose in data1['Tour']['pdpurp'].value_counts().index:
@@ -232,8 +232,8 @@ def DayPattern(data1, data2, name1, name2, location):
     #Total trips per person
     atp1 = get_total(data1['Trip']['trexpfac']) / Person_1_total
     atp2 = get_total(data2['Trip']['trexpfac']) / Person_2_total
-    atl1 = weighted_average(data1['Trip'].query('travdist > 0 and travdist < 200'), 'travdist', 'trexpfac')
-    atl2 = weighted_average(data2['Trip'].query('travdist > 0 and travdist < 200'), 'travdist', 'trexpfac')
+    atl1 = weighted_average(data1['Trip'].query('travdist > 0 and travdist < 200').copy(), 'travdist', 'trexpfac')
+    atl2 = weighted_average(data2['Trip'].query('travdist > 0 and travdist < 200').copy(), 'travdist', 'trexpfac')
     ttp1 = [atp1, atl1]
     ttp2 = [atp2, atl2]
     label = ['Average Trips Per Person', 'Average Trip Length']
@@ -396,8 +396,8 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     wrkr_2_hzone = pd.merge(wrkrs2, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
     total_workers_1 = wrkrs1['psexpfac'].sum()
     total_workers_2 = wrkrs2['psexpfac'].sum()
-    workers_1 = wrkr_1_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200')
-    workers_2 = wrkr_2_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200')
+    workers_1 = wrkr_1_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
+    workers_2 = wrkr_2_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
     workers_1['Share (%)'] = workers_1['psexpfac'] / workers_1['psexpfac'].sum()
     workers_2['Share (%)'] = workers_2['psexpfac'] / workers_2['psexpfac'].sum()
     workers1_avg_dist = weighted_average(workers_1, 'pwaudist', 'psexpfac')
@@ -410,8 +410,8 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     st_2_hzone = pd.merge(st2, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
     total_students_1 = st1['psexpfac'].sum()
     total_students_2 = st2['psexpfac'].sum()
-    students_1 = st_1_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200')
-    students_2 = st_2_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200')
+    students_1 = st_1_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
+    students_2 = st_2_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
     students_1['Share (%)'] = students_1['psexpfac'] / students_1['psexpfac'].sum()
     students_2['Share (%)'] = students_2['psexpfac'] / students_2['psexpfac'].sum()
     students1_avg_dist = weighted_average(students_1, 'psaudist', 'psexpfac')
@@ -550,10 +550,10 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
 
     #Filter out unreasonable trip/tour lengths
     #survey data does not include drive to transit trips, remove- how can we do this without referencing max internal zone?    
-    tour_ok_1 = data1['Tour'].query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']]
-    tour_ok_2 = data2['Tour'].query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']] 
-    trip_ok_1 = data1['Trip'].query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']]
-    trip_ok_2 = data2['Trip'].query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] 
+    tour_ok_1 = data1['Tour'].query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy()
+    tour_ok_2 = data2['Tour'].query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy() 
+    trip_ok_1 = data1['Trip'].query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']].copy()
+    trip_ok_2 = data2['Trip'].query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy()
 
     #Get total trips and tours
     Trip_1_total = get_total(trip_ok_1['trexpfac'])
@@ -569,10 +569,10 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Merge tour and trip files
     tourtrip1 = pd.merge(tour_ok_1[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp']],
                        trip_ok_1[['hhno', 'pno', 'tour', 'day', 'trexpfac']],
-                       on = ['hhno', 'pno', 'tour', 'day'])
+                       on = ['hhno', 'pno', 'tour', 'day']).copy()
     tourtrip2 = pd.merge(tour_ok_2[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp']],
                        trip_ok_2[['hhno', 'pno', 'tour', 'day', 'trexpfac']],
-                       on = ['hhno', 'pno', 'tour', 'day'])
+                       on = ['hhno', 'pno', 'tour', 'day']).copy()
 
     #Compute weighted average of trip length grouped by purpose
     triptotal1 = weighted_average(tourtrip1[['tautodist', 'toexpfac', 'pdpurp']], 'tautodist', 'toexpfac', 'pdpurp')
@@ -599,8 +599,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     notrips2 = notrips2.rename(columns = {'trexpfac':'notrips'})
 
     #Merge number of trips with the tour file
-    toursnotrips1 = pd.merge(tour_ok_1[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips1, on = ['hhno', 'pno', 'tour'])
-    toursnotrips2 = pd.merge(tour_ok_2[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips2, on = ['hhno', 'pno', 'tour'])
+    toursnotrips1 = pd.merge(tour_ok_1[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips1, on = ['hhno', 'pno', 'tour']).copy()
+    toursnotrips2 = pd.merge(tour_ok_2[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips2, on = ['hhno', 'pno', 'tour']).copy()
 
     #Get the average number of trips per tour
     tourtotal1 = weighted_average(toursnotrips1, 'notrips', 'toexpfac', 'pdpurp')
@@ -944,8 +944,8 @@ def ModeChoice(data1, data2, name1, name2, location):
         counts1pivot['Other'] = np.nan
     counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
     counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
-    counts1pivot = counts1pivot.fillna(0).transpose()
-    counts2pivot = counts2pivot.fillna(0).transpose()
+    counts1pivot = counts1pivot.fillna(0).transpose().copy()
+    counts2pivot = counts2pivot.fillna(0).transpose().copy()
     counts_difference = counts1pivot - counts2pivot
     counts_pd = 100*counts_difference/counts2pivot
 
@@ -960,18 +960,18 @@ def ModeChoice(data1, data2, name1, name2, location):
     for tour_mode in modes:
         for trip_mode in modes:
             try:
-                percent1pivot[tour_mode][trip_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
+                percent1pivot.loc[tour_mode, trip_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
             except ZeroDivisionError:
-                percent1pivot[tour_mode][trip_mode] = float('nan')
+                percent1pivot.loc[tour_mode, trip_mode] = float('nan')
             try:
-                percent2pivot[tour_mode][trip_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
+                percent2pivot.loc[tour_mode, trip_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
             except ZeroDivisionError:
-                percent2pivot[tour_mode][trip_mode] = float('nan')
-            share_difference[tour_mode][trip_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
+                percent2pivot.loc[tour_mode, trip_mode] = float('nan')
+            share_difference.loc[tour_mode, trip_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
             try:
-                share_pd[tour_mode][trip_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
+                share_pd.loc[tour_mode, trip_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
             except ZeroDivisionError:
-                share_pd[tour_mode][trip_mode] = float('nan')
+                share_pd.loc[tour_mode, trip_mode] = float('nan')
         roundto = 2
         percent1pivot[tour_mode] = percent1pivot[tour_mode].astype('float').round(roundto)
         percent1pivot = add_index_name(percent1pivot, 'Trip_Mode')
@@ -994,8 +994,8 @@ def ModeChoice(data1, data2, name1, name2, location):
     ##Trip Cross-Tabulations
 
     #Tours by Mode and Travel Time
-    df1 = tour_ok_1[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']]
-    df2 = tour_ok_2[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']]
+    df1 = tour_ok_1[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']].copy()
+    df2 = tour_ok_2[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']].copy()
     toursmtt = pd.DataFrame()
     toursmtt['Mean Auto Time (' + name1 + ')'] = weighted_average(df1, 'tautotime', 'toexpfac', 'tmodetp').round(2)
     toursmtt['Mean Auto Distance (' + name1 + ')'] = weighted_average(df1, 'tautodist', 'toexpfac', 'tmodetp').round(2)
@@ -1009,8 +1009,8 @@ def ModeChoice(data1, data2, name1, name2, location):
     print('Tours by Mode and Travel Time data frame created in ' + str(round(cp5 - cp4, 1)) + ' seconds')
 
     #Trips by Mode and Travel Time
-    tripdf1 = trip_ok_1[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']]
-    tripdf2 = trip_ok_2[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']]
+    tripdf1 = trip_ok_1[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']].copy()
+    tripdf2 = trip_ok_2[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']].copy()
     tripsmtt1 = pd.DataFrame()
     tripsmtt2 = pd.DataFrame()
     tripm1 = tripdf1.groupby('mode').sum()['trexpfac']
@@ -1050,8 +1050,8 @@ def ModeChoice(data1, data2, name1, name2, location):
     print('Trips by Mode and Travel Time data frame created in ' + str(round(cp6 - cp5, 1)) + ' seconds')
 
     #Trips by purpose and travel time
-    ttdf1 = trip_ok_1[['travtime','travdist','trexpfac','mode','dpurp']]
-    ttdf2 = trip_ok_2[['travtime','travdist','trexpfac','mode','dpurp']]
+    ttdf1 = trip_ok_1[['travtime','travdist','trexpfac','mode','dpurp']].copy()
+    ttdf2 = trip_ok_2[['travtime','travdist','trexpfac','mode','dpurp']].copy()
 
     #Some weighted averages to get average distance and travel time
     ttdf1['ttsp'] = ttdf1['travtime'].multiply(ttdf1['trexpfac'])
@@ -1279,24 +1279,24 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     print('Workers at Home data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
 
     #Average Distance to Work in Miles
-    workers_1 = wkr_1_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl')
-    workers_2 = wkr_2_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl')
-    workers_1_ft = workers_1.query('pwtyp == "Paid Full-Time Worker"')
-    workers_2_ft = workers_2.query('pwtyp == "Paid Full-Time Worker"')
-    workers_1_pt = workers_1.query('pwtyp == "Paid Part-Time Worker"')
-    workers_2_pt = workers_2.query('pwtyp == "Paid Part-Time Worker"')
-    workers_1_female = workers_1.query('pgend == "Female"')
-    workers_2_female = workers_2.query('pgend == "Female"')
-    workers_1_male = workers_1.query('pgend == "Male"')
-    workers_2_male = workers_2.query('pgend == "Male"')
-    workers_1_ageund30 = workers_1.query('pagey < 30')
-    workers_2_ageund30 = workers_2.query('pagey < 30')
-    workers_1_age30to49 = workers_1.query('pagey >= 30 and pagey < 50')
-    workers_2_age30to49 = workers_2.query('pagey >= 30 and pagey < 50')
-    workers_1_age50to64 = workers_1.query('pagey >= 50 and pagey < 65')
-    workers_2_age50to64 = workers_2.query('pagey >= 50 and pagey < 65')
-    workers_1_age65up = workers_1.query('pagey >= 65')
-    workers_2_age65up = workers_2.query('pagey >= 65')
+    workers_1 = wkr_1_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl').copy()
+    workers_2 = wkr_2_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl').copy()
+    workers_1_ft = workers_1.query('pwtyp == "Paid Full-Time Worker"').copy()
+    workers_2_ft = workers_2.query('pwtyp == "Paid Full-Time Worker"').copy()
+    workers_1_pt = workers_1.query('pwtyp == "Paid Part-Time Worker"').copy()
+    workers_2_pt = workers_2.query('pwtyp == "Paid Part-Time Worker"').copy()
+    workers_1_female = workers_1.query('pgend == "Female"').copy()
+    workers_2_female = workers_2.query('pgend == "Female"').copy()
+    workers_1_male = workers_1.query('pgend == "Male"').copy()
+    workers_2_male = workers_2.query('pgend == "Male"').copy()
+    workers_1_ageund30 = workers_1.query('pagey < 30').copy()
+    workers_2_ageund30 = workers_2.query('pagey < 30').copy()
+    workers_1_age30to49 = workers_1.query('pagey >= 30 and pagey < 50').copy()
+    workers_2_age30to49 = workers_2.query('pagey >= 30 and pagey < 50').copy()
+    workers_1_age50to64 = workers_1.query('pagey >= 50 and pagey < 65').copy()
+    workers_2_age50to64 = workers_2.query('pagey >= 50 and pagey < 65').copy()
+    workers_1_age65up = workers_1.query('pagey >= 65').copy()
+    workers_2_age65up = workers_2.query('pagey >= 65').copy()
 
     workers_1['Share (%)'] = workers_1['psexpfac'] / workers_1['psexpfac'].sum()
     workers_2['Share (%)'] = workers_2['psexpfac'] / workers_2['psexpfac'].sum()
@@ -1341,18 +1341,18 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     print('Distance to Work data frames created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
     #Average Distance to School
-    students_1 = data1['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200')
-    students_2 = data2['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200')
+    students_1 = data1['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200').copy()
+    students_2 = data2['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200').copy()
     students_1['share'] = students_1['psexpfac'] / students_1['psexpfac'].sum()
     students_2['share'] = students_2['psexpfac'] / students_2['psexpfac'].sum()
-    students_1_und5 = students_1.query('pagey < 5')
-    students_2_und5 = students_2.query('pagey < 5')
-    students_1_512 = students_1.query('pagey >= 5 and pagey < 13')
-    students_2_512 = students_2.query('pagey >= 5 and pagey < 13')
-    students_1_1318 = students_1.query('pagey >= 13 and pagey < 19')
-    students_2_1318 = students_2.query('pagey >= 13 and pagey < 19')
-    students_1_19p = students_1.query('pagey >= 19')
-    students_2_19p = students_2.query('pagey >= 19')
+    students_1_und5 = students_1.query('pagey < 5').copy()
+    students_2_und5 = students_2.query('pagey < 5').copy()
+    students_1_512 = students_1.query('pagey >= 5 and pagey < 13').copy()
+    students_2_512 = students_2.query('pagey >= 5 and pagey < 13').copy()
+    students_1_1318 = students_1.query('pagey >= 13 and pagey < 19').copy()
+    students_2_1318 = students_2.query('pagey >= 13 and pagey < 19').copy()
+    students_1_19p = students_1.query('pagey >= 19').copy()
+    students_2_19p = students_2.query('pagey >= 19').copy()
 
     students_1_avg_dist = weighted_average(students_1, 'psaudist', 'psexpfac')
     students_2_avg_dist = weighted_average(students_2, 'psaudist', 'psexpfac')
