@@ -226,6 +226,20 @@ def main():
     # Write daily link-level results
     my_project = EmmeProject(network_summary_project)
     export_link_values(my_project)
+    create_daily_project_folder()
+
+def create_daily_project_folder():
+    if os.path.exists(os.path.join('projects/daily')):
+        print 'Delete Project Folder'
+        shutil.rmtree('projects/daily')
+
+    project = app.create_project('projects', 'daily')
+    desktop = app.start_dedicated(False, modeller_initial, project)
+    data_explorer = desktop.data_explorer()
+    database = data_explorer.add_database('Banks/daily/emmebank')
+    database.open()
+    desktop.project.save()
+    desktop.close()
 
 if __name__ == '__main__':
     main()
