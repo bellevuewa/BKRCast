@@ -20,8 +20,8 @@ dirs_for_removal = ['inputs/4k', 'inputs/supplemental', 'outputs', 'inputs/bikes
 files_for_removal = ['inputs/parking_gz.csv', 'inputs/lu_type.csv', 'inputs/p_r_nodes.csv', households_persons_file, 'inputs/6to9.h5', 'inputs/9to1530.h5', 'inputs/1530to1830.h5', 'inputs/1830to6.h5']
 
 print 'Please confirm the model folder: ', project_folder
-enter = input('Press Y to continue')
-if enter != 'Y'
+enter = raw_input('Press Y to continue')
+if enter != 'Y':
     print 'Thanks. Please modify project folder in input_configuration.py.'
     exit()
 
