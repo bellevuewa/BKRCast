@@ -4,12 +4,12 @@ HORIZON_YEAR = 2018   ## range = [2014, 2040]
 
 ###### Distance-based pricing######
 add_distance_pricing = False # usually set to False unless we want to test VMT tax
-# rate below includes 3.5 cent carbon tax
+# rate below includes 3.5 cent carbon tax, PSRC
 distance_rate_dict = {'am' : 13.5, 'md' : 8.5, 'pm' : 13.5, 'ni' : 8.5}
 
 # HOT Lane 
 add_hot_lane_tolls = True
-HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}
+HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}    # PSRC
 
 ##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
@@ -158,10 +158,10 @@ taz_data_loc = '/supplemental/generation/landuse/tazdata.in'
 pums_data_loc = '/supplemental/generation/pums/' 
 externals_loc = '/supplemental/generation/externals.csv'
 # Special generator zones and demand (dictionary key is TAZ, value is demand)
-spg_general = {1357: 1682,
-               1359: 7567,
-               1358: 14013}    
-spg_airport = {1356: 101838}
+spg_general = {1357: 1761,
+               1359: 7921,
+               1358: 14668} # updated on 1/10/2020, PSRC   
+spg_airport = {1356: 105240} # updated on 1/10/2020, PSRC
 ## growth rates are provided by PSRC
 ## Adjust auto special generators to HORIZON_YEAR, by scaling up 2014 daily trips.
 for key in spg_airport:
