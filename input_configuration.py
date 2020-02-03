@@ -11,7 +11,7 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\2018baseyear\BKR0V1-02'
+project_folder = r'D:\projects\2018baseyear\BKR0V1-02'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
 base_year = '2018'  # This should always be 2014 unless the base year changes
 scenario_name = '2018' #name of the folder with scenario data
@@ -30,19 +30,19 @@ if not(use_simple_configuration):
     
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
-    run_accessibility_calcs = True
-    run_copy_daysim_code = True
-    run_copy_input_files = True
+    run_accessibility_calcs = False
+    run_copy_daysim_code = False
+    run_copy_input_files = False
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
-    run_copy_seed_supplemental_trips = True  #generally set to True unless you already have trips under 'outputs/supplemental'
+    run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True   # usually True
+    run_copy_seed_skims = True   
     create_no_toll_network = True
-    run_skims_and_paths_seed_trips = False  # usually False
+    run_skims_and_paths_seed_trips = False
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
     should_build_shadow_price = True

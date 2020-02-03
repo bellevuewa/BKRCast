@@ -9,7 +9,20 @@ distance_rate_dict = {'am' : 13.5, 'md' : 8.5, 'pm' : 13.5, 'ni' : 8.5}
 
 # HOT Lane 
 add_hot_lane_tolls = True
-HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}    # PSRC
+#HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}    # PSRC
+
+
+# HOT lane rate per mile
+# @tolllane
+# 1: I405 toll lane, north section, leaving Bellevue
+# 2: I405 toll lane, north section, going Bellevue
+# 3: I405 toll lane, south section, leaving Bellevue
+# 4: I405 toll lane, south section, going Bellevue
+# 6: HOT2+ (for SR167)
+HOT_rate_dict = {'am' : {1: 10, 2: 35, 3: 10, 4: 35, 6: 35},
+                  'md' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10},
+                  'pm' : {1: 35, 2: 10, 3: 35, 4: 10, 6: 35},
+                  'ni' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10}}
 
 ##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
@@ -25,7 +38,7 @@ base_net_name = '_roadway.in'
 turns_name = '_turns.in'
 transit_name = '_transit.in'
 shape_name = '_linkshapes.in'
-no_toll_modes = ['s', 'h', 'i', 'j']  # need to investigate: do we need to put light truck (u), mid truck (v) and heavy truck (t)
+no_toll_modes = ['s', 'h']  
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
 headway_file = 'sc_headways.csv'
@@ -64,7 +77,7 @@ NI_extra_attributes = [{'type':'TRANSIT_LINE', 'name': '@nihdwy', 'description':
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'
-STOP_THRESHOLD = 0.025
+STOP_THRESHOLD = 0.015
 parallel_instances = 4   # Number of simultaneous parallel processes. Must be a factor of 4.
 max_iter = 50             # Assignment Convergence Criteria
 best_relative_gap = 0.01  # Assignment Convergence Criteria
