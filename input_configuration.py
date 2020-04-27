@@ -31,12 +31,12 @@ if not(use_simple_configuration):
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
     run_accessibility_calcs = True
-    run_copy_daysim_code = False
+    run_copy_daysim_code = True
     run_copy_input_files = True
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
     run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
-    run_import_networks = False
+    run_import_networks = True
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
@@ -45,11 +45,11 @@ if not(use_simple_configuration):
     run_skims_and_paths_seed_trips = False
 
     ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
-    should_build_shadow_price = False
+    should_build_shadow_price = True
     run_skims_and_paths = True
     run_truck_model = True
     run_supplemental_trips = True
-    run_daysim = False
+    run_daysim = True
     run_daysim_popsampler = False
     run_accessibility_summary = True
     run_bkrcast_summary =  True
@@ -71,14 +71,14 @@ if not(use_simple_configuration):
     delete_parcel_data = False
 
     # DaySim - household sampling rate input
-    pop_sample = [10, 10]
+    pop_sample = [1, 1, 1]
     
     # Assignment Iterations:
-    max_iterations_list = [5, 5]
+    max_iterations_list = [50, 100, 100]
     min_pop_sample_convergence_test = 10
     
     # start building shadow prices - only run work locations
-    shadow_work = [10, 10]
+    shadow_work = [1, 1, 1]
     shadow_con = 30 #%RMSE for shadow pricing to consider being converged
 
 else:
@@ -176,7 +176,7 @@ else:
 #################################### LOG FILES  ####################################
 
 # run daysim and assignment in feedback until convergence
-main_log_file = 'bkrcast_tnc_log.txt'
+main_log_file = 'bkrcast_wprs_log.txt'
 
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]
@@ -252,12 +252,12 @@ commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
 households_persons_file = r'inputs\hh_and_persons.h5'
 # Popsampler - super/sub-sampling in population synthesis
 sampling_option = 1 #1-3: five options available - each option is a column in pop_sample_district below
-pop_sample_district = {'BKR':[1,4],
-					'Seattle':[1,0.50], 
-					'Rest of King':[1,0.20], 
-					'Pierce':[1,0.10], 
-					'Snohomish':[1,0.10], 
-					'Kitsap':[1,0.10]} #population sampling by districts - 3 options to choose from (each option is a column) - base case and two preferred sampling plans
+pop_sample_district = {'BKR':[1,4,2],
+					'Seattle':[1,0.50,0.50], 
+					'Rest of King':[1,0.20,0.20], 
+					'Pierce':[1,0.10,0.10], 
+					'Snohomish':[1,0.10,0.10], 
+					'Kitsap':[1,0.10,0.10]} #population sampling by districts - 3 options to choose from (each option is a column) - base case and two preferred sampling plans
 zone_district_file = 'TAZ_District_CrossWalk.csv' #input to generate taz_sample_rate_file below
 taz_sample_rate_file = 'taz_sample_rate.txt' #intermediate output, input to popsampler script
 

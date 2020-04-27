@@ -273,8 +273,8 @@ def intitial_extra_attributes(my_project):
 
     # Create the link extra attributes to store volume results
     for x in range (0, len(matrix_dict["Highway"])):
-        if 'prs' not in matrix_dict["Highway"][x]["Name"]:
-            my_project.create_extra_attribute("LINK", "@"+matrix_dict["Highway"][x]["Name"], matrix_dict["Highway"][x]["Description"], True)
+        #if 'prs' not in matrix_dict["Highway"][x]["Name"]:
+        my_project.create_extra_attribute("LINK", "@"+matrix_dict["Highway"][x]["Name"], matrix_dict["Highway"][x]["Description"], True)
                      
 
     # Create the link extra attributes to store the auto equivalent of bus vehicles
@@ -302,7 +302,19 @@ def traffic_assignment(my_project):
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("general_path_based_assignment")
     my_user_classes= json_to_dictionary("user_classes")
-
+    prs_auto_ar = json_to_dictionary("prs_auto_map")    
+    prs_auto_map = {prs.get('Name'):prs.get('Auto') for prs in prs_auto_ar}
+    
+    # Add PRS trips to Auto trips
+    logging.debug('Adding PRS trips to Auto trips')
+    for prs_mat_name, auto_mat_name in prs_auto_map.iteritems():
+        prs_mat_id = my_project.bank.matrix(prs_mat_name).id
+        auto_mat_id = my_project.bank.matrix(auto_mat_name).id
+        my_project.matrix_calculator(result = auto_mat_id,
+                                     expression = prs_mat_id + ' + ' + auto_mat_id)
+    logging.debug('Finished adding PRS trips to Auto trips')
+    
+    
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
     #max_num_iterations = parse_args()
@@ -310,6 +322,8 @@ def traffic_assignment(my_project):
     mod_assign["stopping_criteria"]["best_relative_gap"]= best_relative_gap 
     mod_assign["stopping_criteria"]["relative_gap"]= relative_gap
     mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
+              
+    
 
     for x in range (0, len(mod_assign["classes"])):
         #print my_user_classes["Highway"][x]['Name']+' '+mod_assign["classes"][x]["demand"]
@@ -717,8 +731,12 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
-    uniqueMatrices = set(matrix_dict.values())
-
+    uniqueMatrices = set(matrix_dict.values())    
+    prs_auto_ar = json_to_dictionary("prs_auto_map")
+    
+    prs_frac_assign = {prs.get('Name'):prs.get('FracToAssign') for prs in prs_auto_ar}
+    prs_auto_map = {prs.get('Name'):prs.get('Auto') for prs in prs_auto_ar}
+    
     #Stores in the HDF5 Container to read or write to
     daysim_set = my_store['Trip']
 
@@ -824,18 +842,18 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
             if mode[x] == 9:
                 # Paid ride share
                 if dorp[x] > 10 and dorp[x] < 14:
-                    modes = {11:4, 12:5, 13:5} #PRS1+D = HOV2, PRS2+D or PRS3++D = HOV3+
-                    frac_assign = {11:1, 12:0.5, 13:0.25}
-                    mat_name = matrix_dict[(int(modes[dorp[x]]),int(vot[x]),int(toll_path[x]))]
+                    #modes = {11:4, 12:5, 13:5} #PRS1+D = HOV2, PRS2+D or PRS3++D = HOV3+
+                    #frac_assign = {11:1, 12:0.5, 13:0.25}
+                    #mat_name = matrix_dict[(int(modes[dorp[x]]),int(vot[x]),int(toll_path[x]))]
                     mat_name_prs = matrix_dict[(int(dorp[x]+1),int(vot[x]),int(toll_path[x]))]
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))*frac_assign[dorp[x]]
+                    trips = np.asscalar(np.float32(trexpfac[x]))*prs_frac_assign.get(mat_name_prs)#frac_assign[dorp[x]]
                     trips = round(trips, 2)
-                    demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
+                    #demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
                     demand_matrices[mat_name_prs][myOtaz, myDtaz] = demand_matrices[mat_name_prs][myOtaz, myDtaz] + trips
-                # AV
+                # AV (not fully implemented)
                 if dorp[x]>20 and dorp[x]<24:
                     modes = {21:3, 22:4, 23:5}
                     frac_assign = {21:1, 22:0.5, 23:0.25}
@@ -1041,7 +1059,7 @@ def run_transit(project_name):
 
     #Calc Wait Times
     app.App.refresh_data
-    matrix_calculator = json_to_dictionary("matrix_calculation")
+    matrix_calculator = json_to_dictionary("matrix_calc_spec")
     matrix_calc = m.tool("inro.emme.matrix_calculation.matrix_calculator")
 
     #Hard coded for now, generalize later
@@ -1275,22 +1293,35 @@ def store_assign_results(project_name):
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
     
-    #empty list to save link data
-    link_data = []
+    link_attr = ['link_id']
+    my_user_classes = json_to_dictionary('user_classes')
+    mod_skim = json_to_dictionary("general_path_based_volume")
+    for x in range(0, len(mod_skim["classes"])):
+        link_attr.append( "@" + my_user_classes["Highway"][x]["Name"])
     
-    #go through each link and store data
-    for link in network.links():
-        #print(link.id)
-        link_data.append({'link_id': link.id,
-                          'length': link.length,
-                          'from_node': link.i_node,
-                          'to_node': link.j_node,
-                          'vol_auto': link.auto_volume,
-                          'time_auto': link.auto_time,
-                          'ul1': link.data1,
-                          'ul2': link.data2})
+    #empty list to save link data
+    link_attr.extend(['length', 'auto_volume', 'auto_time', 'data1', 'data2'])
+    
+#    #go through each link and store data
+#    for link in network.links():
+#        #print(link.id)
+#        link_info = {'link_id': link.id,
+#                     'length': link.length,
+#                     'from_node': link.i_node,
+#                     'to_node': link.j_node,
+#                     'vol_auto': link.auto_volume,
+#                     'time_auto': link.auto_time,
+#                     'ul1': link.data1,
+#                     'ul2': link.data2}
+#        link_data.append()
+    attr_ls = network.get_attribute_values('LINK', link_attr[1:])[1:]
+    link_data_df = reduce((lambda df1, df2: pd.merge(df1,df2,how='outer',on='nodes')),
+                     [pd.DataFrame({'nodes':attr.keys(), 'values':attr.values()}) for attr in attr_ls])
+    link_data_df.columns = link_attr
+    #df_attr = pd.DataFrame([attrs for attrs in network.get_attribute_values(link_type, link_attr[1:])]).T
+    
     #convert to dataframe
-    link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
+    #link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
     
     #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
@@ -1339,9 +1370,6 @@ def run_assignments_parallel(project_name):
     
     ##run auto assignment/skims
     traffic_assignment(my_project)
-    
-    #save results
-    store_assign_results(my_project)
    
     attribute_based_skims(my_project, "Time")
 
@@ -1357,6 +1385,9 @@ def run_assignments_parallel(project_name):
     attribute_based_toll_cost_skims(my_project, "@toll2")
     attribute_based_toll_cost_skims(my_project, "@toll3")
     class_specific_volumes(my_project)
+    
+    #save results
+    store_assign_results(my_project)
 
     ##dispose emmebank
     my_project.bank.dispose()
