@@ -157,6 +157,8 @@ def run_truck_supplemental(iteration):
 
         #copy supplemental output
         shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
+        shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/'+'iter'+str(iteration)+'/supplemental_summary_' + str(iteration) + '.csv')
+        shcopy('outputs/supplemental/supplemental_trips_mode_tod.csv', 'outputs/'+'iter'+str(iteration)+'/supplemental_trips_mode_tod_' + str(iteration) + '.csv')
         
 @timed
 def daysim_assignment(iteration):
@@ -171,6 +173,11 @@ def daysim_assignment(iteration):
          if returncode != 0:
              #send_error_email(recipients, returncode)
              sys.exit(1)
+         if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
+             os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
+         shutil.copyfile(os.path.join(project_folder, 'outputs', 'daysim_outputs.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         'daysim_outputs.h5'))
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
      run_truck_supplemental(iteration)
@@ -182,10 +189,40 @@ def daysim_assignment(iteration):
          
          logger.info("End of %s iteration of Skims and Paths", str(iteration))
          print 'return code from skims and paths is ' + str(returncode)
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '6to9.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '6to9_sp.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '9to1530.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '9to1530_sp.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '1530to1830.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '1530to1830_sp.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '1830to6.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '1830to6_sp.h5'))
          if returncode != 0:
             sys.exit(1)
 
-         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
+         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py', str(iteration)])
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '6to9.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '6to9_bm.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '9to1530.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '9to1530_bm.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '1530to1830.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '1530to1830_bm.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'inputs', '1830to6.h5'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         '1830to6_bm.h5'))
+         shutil.copyfile(os.path.join(project_folder, 'outputs', 'bike_volumes.csv'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         'bike_volumes.csv'))
+         shutil.copyfile(os.path.join(project_folder, 'outputs', 'bike_attr.csv'),
+                         os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 
+                         'bike_attr.csv'))
          if returncode != 0:
             sys.exit(1)
 

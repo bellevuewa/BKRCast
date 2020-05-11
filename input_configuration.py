@@ -11,7 +11,7 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\Projects\Clients\BKR\GitInputs\2018-BKR0V1-02-tolling\BKR0V1-02-tolling'
+project_folder = r'D:\Projects\Clients\BKR\GitRunModel'
 parcels_file_folder = r'D:\Projects\Clients\BKR\GitInputs'
 base_year = '2018'  # This should always be 2014 unless the base year changes
 scenario_name = '2018' #name of the folder with scenario data
@@ -36,7 +36,7 @@ if not(use_simple_configuration):
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
     run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
-    run_import_networks = True
+    run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
@@ -55,7 +55,7 @@ if not(use_simple_configuration):
     run_bkrcast_summary =  True
     run_create_daily_bank = True
     run_truck_summary = False
-    run_prs_mode = True
+    run_prs_mode = False
 
     # Specific reports to run
     run_daysim_report = True
