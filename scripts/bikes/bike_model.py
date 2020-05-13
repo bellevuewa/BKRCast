@@ -9,13 +9,6 @@ from input_configuration import *
 from emme_configuration import *
 #from bike_configuration import *
 
-def parse_args():
-    """Parse command line arguments for output at each iteration"""
-    return sys.argv[1]
-
-#feedback iteration
-iteration = parse_args()
-
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''
     link_dict = {}
@@ -233,7 +226,6 @@ def get_aadt(my_project):
     '''Calculate link level daily total vehicles/volume, store in a DataFrame'''
     
     link_list = []
-    debug_list = []
 
     for key, value in sound_cast_net_dict.iteritems():
         my_project.change_active_database(key)
@@ -249,38 +241,8 @@ def get_aadt(my_project):
         network = my_project.current_scenario.get_network()
         for link in network.links():
             link_list.append({'link_id' : link.id, '@tveh' : link['@tveh'], 'length' : link.length})
-            debug_list.append({
-                    'tod':key,
-                    'link_id': link.id,
-                    '@svtl1': link['@svtl1'],
-                    '@svtl2' : link['@svtl2'],
-                    '@svtl3' : link['@svtl3'],
-                    '@svnt1' : link['@svnt1'],
-                    '@svnt2' : link['@svnt2'],
-                    '@svnt3' : link['@svnt3'],
-                    '@h2tl1' : link['@h2tl1'],
-                    '@h2tl2' : link['@h2tl2'],
-                    '@h2tl3' : link['@h2tl3'],
-                    '@h2nt1' : link['@h2nt1'],
-                    '@h2nt2' : link['@h2nt2'],
-                    '@h2nt3' : link['@h2nt3'],
-                    '@h3tl1' : link['@h3tl1'],
-                    '@h3tl2' : link['@h3tl2'],
-                    '@h3tl3' : link['@h3tl3'],
-                    '@h3nt1' : link['@h3nt1'],
-                    '@h3nt2' : link['@h3nt2'],
-                    '@h3nt3' : link['@h3nt3'],
-                    '@lttrk' : link['@lttrk'],
-                    '@mveh' : link['@mveh'],
-                    '@hveh' : link['@hveh'],
-                    '@bveh' : link['@bveh'],
-                    '@bvol' : link['@bvol'],
-                    '@tveh' : link['@tveh']
-                    })
             
-    df = pd.DataFrame(link_list, columns = link_list[0].keys())
-    debug_df = pd.DataFrame(debug_list, columns = debug_list[0].keys())
-    debug_df.to_csv(os.path.join(project_folder,'outputs','iter'+str(iteration),'bvolume.csv'))    
+    df = pd.DataFrame(link_list, columns = link_list[0].keys())       
     
     grouped = df.groupby(['link_id'])
     

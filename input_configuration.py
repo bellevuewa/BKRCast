@@ -11,8 +11,8 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\Projects\Clients\BKR\GitRunModel'
-parcels_file_folder = r'D:\Projects\Clients\BKR\GitInputs'
+project_folder = r'D:\projects\2018baseyear\BKR0V1-02'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
 base_year = '2018'  # This should always be 2014 unless the base year changes
 scenario_name = '2018' #name of the folder with scenario data
 
@@ -22,7 +22,7 @@ main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
 # modeller name will be updated in the EMME databank
-modeller_initial = "ag"
+modeller_initial = "hd"
 
 #################################### SUB-PROCESS FLAGS  ####################################
 
@@ -30,9 +30,9 @@ if not(use_simple_configuration):
     
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
-    run_accessibility_calcs = True
-    run_copy_daysim_code = True
-    run_copy_input_files = True
+    run_accessibility_calcs = False
+    run_copy_daysim_code = False
+    run_copy_input_files = False
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
     run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
@@ -68,7 +68,7 @@ if not(use_simple_configuration):
     run_landuse_summary = True
     
     #delete parcel files from the project directory
-    delete_parcel_data = False
+    delete_parcel_data = True
 
     # DaySim - household sampling rate input
     pop_sample = [1, 1, 1]
@@ -176,7 +176,7 @@ else:
 #################################### LOG FILES  ####################################
 
 # run daysim and assignment in feedback until convergence
-main_log_file = 'bkrcast_wprs_log.txt'
+main_log_file = 'bkrcast_log.txt'
 
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]

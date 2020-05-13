@@ -149,7 +149,7 @@ def balance_matrices(trip_purps, my_project, constraint_taz, cutoff_level=1e-20)
                                     destination_totals = 'md' + purpose + 'att', 
                                     constraint_by_zone_destinations = '1-' + str(constraint_taz), 
                                     constraint_by_zone_origins = '1-' + str(constraint_taz))
-        print "Validating balanced trips"
+        print "Validating balanced trips" #Debugging statement by aditya.gore@rsginc.com
         dis_mat = my_project.bank.matrix('mf' + purpose + 'dis').get_numpy_data()
         remove_trips = 0
         while (np.isnan(dis_mat).sum() > 0) and (cutoff_level < 1e-2):
@@ -159,7 +159,7 @@ def balance_matrices(trip_purps, my_project, constraint_taz, cutoff_level=1e-20)
             remove_trips += fri_mat[fri_mat < cutoff_level].sum()
             text = "Removing {} from friction factors {}".format(remove_trips,
                   purpose)
-            print(text)
+            print(text) #Debugging statement by aditya.gore@rsginc.com
             logging.debug(text)
             fri_mat[fri_mat < cutoff_level] = 0
             emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')    # Access Matrix API
@@ -174,24 +174,6 @@ def balance_matrices(trip_purps, my_project, constraint_taz, cutoff_level=1e-20)
             dis_mat = my_project.bank.matrix('mf' + purpose + 'dis').get_numpy_data()
             cutoff_level = cutoff_level*10
         
-
-def balance_matrices_woemme(trip_purps, my_project, constraint_taz):
-    ''' Balances productions and attractions by purpose for all internal zones '''
-    zones = my_project.current_scenario.zone_numbers
-    for purpose in trip_purps:
-        # For friction factors, have to make sure 0s in Externals are actually 0, otherwise you will get intrazonal trips - added by stefan coe
-        my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = '0', 
-                                 constraint_by_zone_destinations = str(LOW_STATION) + '-' + str(HIGH_STATION), 
-                                 constraint_by_zone_origins = str(LOW_STATION) + '-' + str(HIGH_STATION))
-        
-        print "Balancing trips for purpose: " + str(purpose)
-        fric_mat = my_project.bank.matrix('mf' + purpose + 'fri').get_numpy_data()
-        prod_mat = my_project.bank.matrix('mo' + purpose + 'pro').get_numpy_data()
-        att_mat = my_project.bank.matrix('md' + purpose + 'att').get_numpy_data()
-        dis_mat =  ematrix.MatrixData(indices=[zones,zones],type='f')
-        dis_mat.raw_data = [_array.array('f',row) for row in CalcDoublyConstrained(prod_mat,att_mat,fric_mat)]
-        dis_mat_id = my_project.bank.matrix('mf' + purpose + "dis").id
-        my_project.bank.matrix(dis_mat_id).set_data(dis_mat, my_project.current_scenario)
 
 def calculate_daily_trips(trip_purps, my_project):
     # Accounting for out- and in-bound trips.
@@ -244,50 +226,6 @@ def trips_by_tod(trips_by_mode, trip_purps):
         tod_df = {}
         print mode
     return trips_by_tod
-
-def CalcDoublyConstrained(ProdA, AttrA, F, maxIter = 10):
-    '''Calculates doubly constrained trip distribution for a given friction factor matrix
-    ProdA = Production array
-    AttrA = Attraction array
-    F = Friction factor matrix
-    maxIter (optional) = maximum iterations, default is 10
-    Returns trip table
-    '''
-    Trips1 = np.zeros((len(ProdA),len(ProdA)))
-    print 'Checking production, attraction balancing:'
-    sumP = sum(ProdA)
-    sumA = sum(AttrA)
-    print 'Production: ', sumP
-    print 'Attraction: ', sumA
-    if sumP <> sumA:
-        print 'Productions and attractions do not balance, attractions will be scaled to productions!'
-        AttrA = AttrA*(sumP/sumA)
-        AttrT = AttrA.copy()
-        ProdT = ProdA.copy()
-    else:
-        print 'Production, attraction balancing OK.'
-        AttrT = AttrA.copy()
-        ProdT = ProdA.copy()
-
-    for balIter in xrange(0, maxIter):
-        for i in range(0,len(ProdA)):
-            Trips1[i,:] = ProdA[i]*AttrA*F[i,:]/max(0.000001, sum(AttrA * F[i,:]))
-
-        #Run 2D balancing --->
-        ComputedAttractions = Trips1.sum(0)
-        print(np.where(ComputedAttractions==0))
-        ComputedAttractions[ComputedAttractions==0]=1
-        AttrA = AttrA*(AttrT/ComputedAttractions)
-
-        ComputedProductions = Trips1.sum(1)
-        print(np.where(ComputedProductions==0))
-        ComputedProductions[ComputedProductions==0]=1
-        ProdA = ProdA*(ProdT/ComputedProductions)
-
-    for i in range(0,len(ProdA)):
-            Trips1[i,:] = ProdA[i]*AttrA*F[i,:]/max(0.000001, sum(AttrA * F[i,:]))
-
-    return Trips1
 
 def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_project, constraint_taz):
     ''' Load data in Emme, balance trips by purpose, and produce O-D trip tables '''
@@ -448,11 +386,9 @@ def main():
 
     # Split by mode and TOD
     split_by_mode_tod = split_trips(combined, trip_purp_full, my_project)
-    df = pd.DataFrame.from_dict(split_by_mode_tod)
-    df.to_csv(os.path.join(supplemental_loc,'supplemental_trips_mode_tod.csv'))
     for mode, tod_dict in split_by_mode_tod.iteritems():
         for tod, trip_array in tod_dict.iteritems():
-            print('Mode: {}, TOD: {}, Trips: {}'.format(mode, tod, trip_array.sum()))
+            print('Mode: {}, TOD: {}, Trips: {}'.format(mode, tod, trip_array.sum())) #Debugging statement by aditya.gore@rsginc.com
 
     # Export results to H5
     export_trips(split_by_mode_tod, output_dir = 'outputs/supplemental')
