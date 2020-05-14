@@ -1281,7 +1281,7 @@ def store_assign_results(project_name, prefix=''):
         link_attr.append( "@" + my_user_classes["Highway"][x]["Name"])
     
     #empty list to save link data
-    link_attr.extend(['length', 'id', 'i_node', 'j_node', 'auto_volume', 'auto_time', 'data1', 'data2', 
+    link_attr.extend(['length', 'auto_volume', 'auto_time', 'data1', 'data2', 
     '@bvol', '@bkwt', '@ovol', '@trnv', '@trnv3', 'additional_volume'])
     
     attr_ls = network.get_attribute_values('LINK', link_attr[1:])[1:]
