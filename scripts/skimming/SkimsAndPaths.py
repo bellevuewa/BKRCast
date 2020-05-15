@@ -1283,6 +1283,9 @@ def store_assign_results(project_name, prefix=''):
     #empty list to save link data
     link_attr.extend(['length', 'auto_volume', 'auto_time', 'data1', 'data2', 
     '@bvol', '@bkwt', '@ovol', '@trnv', '@trnv3', 'additional_volume'])
+    link_all_attr = network.attributes('LINK')
+    link_attr = [attr for attr in link_attr if attr in link_all_attr]
+    
     
     attr_ls = network.get_attribute_values('LINK', link_attr[1:])[1:]
     link_data_df = reduce((lambda df1, df2: pd.merge(df1,df2,how='outer',on='nodes')),
