@@ -10,7 +10,7 @@ from emme_configuration import *
 # it may have multiple selections. For example, we can select by jurisdiction boundary 
 # and subarea boundary. They are two seperate and independent selections. That's OK.
 # but you cannot have a selection of ul1=1000 and ul2=60. This kind of selection is not allowed
-link_selectors = {'@bkrlink': 1}
+link_selectors = {'@bkrlink': 1, '@studyarea': 1, '@studyarea405': 1}
 
 # file will be exported to default output folder.
 outputfilename = 'system_metrics.txt'
@@ -38,6 +38,7 @@ def main():
             daily_vmt = 0
             daily_vht = 0
             daily_vdt = 0
+            daily_vol = 0
             f.write('Selection: %s\n' % flag)
             for tod, value in val.iteritems():
                 f.write('  ')
@@ -51,10 +52,13 @@ def main():
                         daily_vht = daily_vht + var_val
                     elif variable == 'VDT':
                         daily_vdt = daily_vdt + var_val
+                    elif variable == 'TotalVol':
+                        daily_vol = daily_vol + var_val
             f.write('  Time of Day: Daily\n')
             f.write('    VMT: %.2f\n' % daily_vmt)
             f.write('    VHT: %.2f\n' % daily_vht)
             f.write('    VDT: %.2f\n' % daily_vdt)
+            f.write('    Vol: %.2f\n' % daily_vol)
             f.write('\n')
     print 'Done'
 if __name__ == '__main__':
