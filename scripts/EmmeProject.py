@@ -35,7 +35,7 @@ class EmmeProject:
         self.desktop = app.start_dedicated(True, modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
         #delete locki:
-        #self.m.emmebank.dispose()
+        self.m.emmebank.dispose()
         pathlist = filepath.split("/")
         self.fullpath = filepath
         self.filename = pathlist.pop()
@@ -256,34 +256,6 @@ class EmmeProject:
         network_calc = self.m.tool(NAMESPACE)
         self.transit_segment_calc_result = network_calc(spec)
 
-    # flag: link selector (only one flag can be used for now)
-    # flag_value: selector = ?
-    # scen_id: scenario id
-    def calculate_VHT_subarea(self, flag, flag_value, scen_id):
-        scen = self.bank.scenario(scen_id)
-        if scen == None:
-            print 'scen_id ', scen_id, 'is not in the databank ', self.fullpath
-            return None
-        
-        links = scen.get_network().links()
-        VMT = 0
-        VHT = 0
-        VHD = 0
-        Vol = 0
-        total_length = 0
-        for link in links:
-            if link[flag] == flag_value:
-                Vol = Vol + link.auto_volume
-                total_length = total_length + link.length
-                VMT = VMT + link.auto_volume * link.length
-                VHT = VHT + link.auto_volume * link.auto_time / 60
-                VHD = VHD + link.auto_volume * (link.auto_time / 60 - link.length / link.data2)
-                ret = {'VMT': VMT, 'VHT': VHT, 'VHD': VHD, 'TotalVol': Vol, 'Total-Length': total_length}
-
-        return ret
-
-    def CloseDesktop(self):
-        self.desktop.close()
 
 def json_to_dictionary(dict_name):
 
@@ -292,4 +264,5 @@ def json_to_dictionary(dict_name):
     my_dictionary = json.load(open(input_filename))
 
     return(my_dictionary)
+
 
