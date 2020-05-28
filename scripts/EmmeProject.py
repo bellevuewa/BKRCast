@@ -269,12 +269,16 @@ class EmmeProject:
         VMT = 0
         VHT = 0
         VDT = 0
+        total_vol = 0
+        total_length = 0
         for link in links:
             if link[flag] == flag_value:
+                total_vol = total_vol + link.auto_volume
+                total_length = total_length + link.length
                 VMT = VMT + link.auto_volume * link.length
                 VHT = VHT + link.auto_volume * link.auto_time / 60
                 VDT = VDT + link.auto_volume * (link.auto_time / 60 - link.length / link.data2)
-                ret = {'VMT': VMT, 'VHT': VHT, 'VDT': VDT}
+                ret = {'VMT': VMT, 'VHT': VHT, 'VDT': VDT, 'TotalVol':total_vol, 'LinkLength':total_length}
 
         return ret
 

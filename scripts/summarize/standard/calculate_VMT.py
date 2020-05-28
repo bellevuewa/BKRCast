@@ -38,6 +38,7 @@ def main():
             daily_vmt = 0
             daily_vht = 0
             daily_vdt = 0
+            daily_vol = 0
             f.write('Selection: %s\n' % flag)
             for tod, value in val.iteritems():
                 f.write('  ')
@@ -51,10 +52,13 @@ def main():
                         daily_vht = daily_vht + var_val
                     elif variable == 'VDT':
                         daily_vdt = daily_vdt + var_val
+                    elif variable == 'TotalVol':
+                        daily_vol = daily_vol + var_val
             f.write('  Time of Day: Daily\n')
             f.write('    VMT: %.2f\n' % daily_vmt)
             f.write('    VHT: %.2f\n' % daily_vht)
             f.write('    VDT: %.2f\n' % daily_vdt)
+            f.write('    Vol: %.2f\n' % daily_vol)
             f.write('\n')
     print 'Done'
 if __name__ == '__main__':
