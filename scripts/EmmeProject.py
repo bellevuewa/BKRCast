@@ -285,6 +285,12 @@ class EmmeProject:
     def CloseDesktop(self):
         self.desktop.close()
 
+    def import_attribute_values(self, file_path, scen_id, field_seperator, revert_on_error):
+        NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
+        import_values = self.m.tool(NAMESPACE)
+        scen = self.bank.scenario(scen_id)
+        import_values(file_path, scenario = scen, field_separator = field_seperator, revert_on_error = revert_on_error)
+
 def json_to_dictionary(dict_name):
 
     #Determine the Path to the input files and load them
