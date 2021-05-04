@@ -6,15 +6,10 @@ from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
 
-'''
-   This tool is used to produce aggregated person trips by TAZ within a time period selected
-by start_time and end_time. Results are exported to the report_output_location folder.
-'''
-
 ## Configuration
 start_time = 0
 end_time = 0
-time_location = 'DEPARTURE'  # use time as 'DEPARTURE' or 'ARRIVAL'
+time_location = 'DEPARTURE'  # 'DEPARTURE' or 'ARRIVAL'
 ## end configuration
 
 # aggregate trip ends by TAZ and 
@@ -53,6 +48,7 @@ def main():
         selected_trips_df = trips_df.query(querystring)
     
     print selected_trips_df.shape
+
     calculate_person_trips_by_taz(selected_trips_df)
     print 'Done'
 

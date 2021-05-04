@@ -188,7 +188,6 @@ def main():
     trippath = os.path.join(project_folder, report_output_location, '_trip.tsv')
     print 'open ' + trippath
     trips_df = pd.read_csv(trippath, sep = '\t', low_memory = True)
-    trips_df['vmt'] = trips_df['travtime']
     studyarea_filepath = os.path.join(project_folder, subarea_taz_file)
     taz_subarea_df = pd.read_csv(studyarea_filepath, sep = ',')
     taz_subarea_df = taz_subarea_df.loc[~taz_subarea_df['TAZ'].duplicated()]
