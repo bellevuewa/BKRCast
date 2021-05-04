@@ -10,7 +10,8 @@ from emme_configuration import *
 # it may have multiple selections. For example, we can select by jurisdiction boundary 
 # and subarea boundary. They are two seperate and independent selections. That's OK.
 # but you cannot have a selection of ul1=1000 and ul2=60. This kind of selection is not allowed
-link_selectors = {'@bkrlink': 1, '@studyarea': 1, '@studyarea405': 1}
+#link_selectors = {'@bkrlink': 1, '@studyarea': 1, '@studyarea405': 1,'@studyareafreeway': 1, '@studyarearamps': 1}
+link_selectors = {'@corearea': 1}
 
 # file will be exported to default output folder.
 outputfilename = 'system_metrics.txt'

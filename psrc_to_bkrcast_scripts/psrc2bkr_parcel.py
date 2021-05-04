@@ -20,11 +20,11 @@ import numpy as np
 import csv
 
 # inputs
-wd = r"Z:\Modeling Group\BKRCast\2035Parcel_fromPSRC\LUV2_2035SCinputs\LUV2_Refined_2035_SCInputs"
-parcel_file = 'parcels.dat'
+wd = r"E:\Projects\Clients\bkr\model\bkrcast_tod\inputs\accessibility"
+parcel_file = 'parcels_urbansim_psrc.txt'
 
 # correspondence file
-parcel_bkr_taz_file = "parcel_BKRTAZ.csv"
+parcel_bkr_taz_file = "parcel_updated_bkrtaz.csv"
 
 # get script's directory
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -37,36 +37,22 @@ def runPSRCtoBKRZones():
     parcels_fields = list(parcels_psrc.columns)
 
     #read parcel to bkr taz correspondence
-    parcel_bkr_taz_file_path = os.path.join(wd, parcel_bkr_taz_file)
+    parcel_bkr_taz_file_path = os.path.join(script_dir, parcel_bkr_taz_file)
     parcel_bkr_taz = pd.read_csv(parcel_bkr_taz_file_path)
 
-    # all parcels in both parcels_psrc and correspondence
-    #df_all_parcels = pd.concat([parcels_psrc[['PARCELID']], parcel_bkr_taz[['PARCELID']]]) 
-    #print "all parcels {0:.0f}".format(len(df_all_parcels))
-    #df_all_parcels.drop_duplicates(keep = 'first', inplace = True)
-    #print "all parcels {0:.0f}".format(len(df_all_parcels))
-    #df_all_parcels = df_all_parcels.drop(parcel_bkr_taz['PARCELID'])
-    #print "parcle_BKR_taz {0:.0f}".format(len(parcel_bkr_taz))
-    #print 'parcels_psrc {0:.0f}'.format(len(parcels_psrc))
-    #print "all parcels {0:.0f}".format(len(df_all_parcels))
-    
     #merge bkr taz to parcel file
-    parcels_bkr = pd.merge(parcels_psrc, parcel_bkr_taz, left_on = 'PARCELID', right_on = 'PARCELID')
-    parcels_bkr['PSRCTAZ'] = parcels_bkr['TAZ_P']
-    parcels_fields.append('PSRCTAZ')
+    parcels_bkr = pd.merge(parcels_psrc, parcel_bkr_taz, left_on = 'PARCELID', right_on = 'parcelid')
     parcels_bkr['TAZ_P'] = parcels_bkr['TAZNUM'].astype(np.int32)
     parcels_bkr = parcels_bkr[parcels_fields]
     parcels_bkr = parcels_bkr.sort_values(by = ['PARCELID'], ascending=[True])
 
     if len(parcels_bkr) <> len(parcels_psrc):
         print('ERROR: some parcels do not have a bkr taz assigned')
-        print "parcle_BKR {0:.0f}".format(len(parcels_bkr))
-        print 'parcels_psrc {0:.0f}'.format(len(parcels_psrc))
-   
-    #write out the updated parcel file
-    parcel_file_out = parcel_file.split(".")[0]+ "_bkr.txt"
-    parcel_file_out_path = os.path.join(wd, parcel_file_out)
-    parcels_bkr.to_csv(parcel_file_out_path, sep = ' ', index = False)
+    else:
+        #write out the updated parcel file
+        parcel_file_out = parcel_file.split(".")[0]+ "_bkr.txt"
+        parcel_file_out_path = os.path.join(wd, parcel_file_out)
+        parcels_bkr.to_csv(parcel_file_out_path, sep = ' ', index = False)
 
 if __name__== "__main__":
     print('started ...')
