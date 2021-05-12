@@ -14,6 +14,10 @@
 
 #!python.exe
 # BKRCast Model Runner
+#
+# 5/11/2021
+# before model run starts, check if project_folder is pointing to the current directory
+# if not, it is an error that has to be fixed. 
 # ===========================
 
 import os
@@ -301,6 +305,14 @@ def run_all_summaries():
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
+    norm_proj_dir = os.path.normcase(project_folder)
+    cur_dir = os.getcwd()
+    if norm_proj_dir != os.path.normcase(cur_dir):
+        print '***Warning***'
+        print 'The project_folder is ' + project_folder
+        print 'The current directory is ' + cur_dir
+        print 'They do not match. Please reconcile the difference first.'
+        exit(-1)
 
 ## SET UP INPUTS ##########################################################
     if run_copy_input_files:
