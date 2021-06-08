@@ -281,6 +281,8 @@ def main():
     work_subtours_df = select_work_subtours(tours_df, subarea_taz_df)
     tours_by_workplace_df = pd.concat([tours_work_purpose_df, work_subtours_df])
     CalModeSharebyPurpose(0, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
+    for purpose in [1,2,3,4,5,6,7]:
+        CalModeSharebyPurpose(purpose, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
     print 'Tour mode share by workplace (with subtours) is finished.'
 
     CalModeSharebyPurpose(0, tours_work_purpose_df, Output_file, comments='By Workplace Only (without subtours)')        
