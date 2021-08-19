@@ -14,6 +14,7 @@ library(descr)
 library(Hmisc)
 library(data.table)
 library(plyr)
+library(Rcpp)
 
 setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_inbkr")
 

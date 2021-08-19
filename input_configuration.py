@@ -11,7 +11,7 @@ from input_configuration_simple import *
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\projects\2018baseyear\BKR0V1-02'
+project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
 base_year = '2018'  # This should always be 2014 unless the base year changes
 scenario_name = '2018' #name of the folder with scenario data
