@@ -233,7 +233,6 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
         f.write('HBSchool trips: %d\n' % hbsch_counts)
         f.write('HBO trips: %d\n' % hbo_counts)
         f.write('NHB trips: %d\n' % nhb_counts)
-    print 'Done'
 
 def main():  
     Output_file = ''
@@ -335,16 +334,23 @@ def main():
         output.write('Time period: ' + time_period + '\n')
         output.write('\n')
 
-    print 'Calculating mode share (all trip purpose)...'
+    print 'Calculating mode share (all trip purpose)... either end inside the subarea...'
     calculateModeSharebyTripPurpose(-1, either_end_in_subarea_trips_df, Output_file, overwritten = False,comments = 'Either end in the subarea')
 
-    print 'Calculating mode share (HBW only)...'
+    print 'Calculating mode share (HBW only)...either end inside the subarea...'
     hbw_df = either_end_in_subarea_trips_df.loc[((either_end_in_subarea_trips_df['oadtyp']==1) & (either_end_in_subarea_trips_df['dadtyp']==2))| ((either_end_in_subarea_trips_df['oadtyp']==2) & (either_end_in_subarea_trips_df['dadtyp']==1))]
     calculateModeSharebyTripPurpose(-1, hbw_df, Output_file, overwritten = False, comments = 'HBW')
 
-    print 'Calculating mode share by other purposes... '
+    print 'Calculating mode share by other purposes... either end inside the subarea...'
     for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
         calculateModeSharebyTripPurpose(purpose, either_end_in_subarea_trips_df, Output_file, overwritten = False, comments = 'Either end in the subarea')
+
+    print 'Calculating mode share (all trip purpose)...within the subarea...'
+    subarea_trip_df = select_trips_by_subarea(trips_df, subarea_taz_df, True, True)
+    calculateModeSharebyTripPurpose(-1, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
+    print 'Calculating mode share by other purposes... either end inside the subarea...'
+    for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
+        calculateModeSharebyTripPurpose(purpose, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
 
     # calculate mode share by residence
     print 'Calculating mode share by residence...'
