@@ -41,8 +41,10 @@ time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 def select_trips_by_time(total_trips_df, start_time= None, end_time = None):
     if (start_time == 0 and end_time == 0):
         selected_trips_df = total_trips_df
-    else:
+    elif start_time <= end_time:
         selected_trips_df = total_trips_df.loc[(total_trips_df['deptm'] >= start_time) & (total_trips_df['deptm'] < end_time)]
+    else: # night period
+        selected_trips_df = total_trips_df.loc[((total_trips_df['deptm'] >= start_time) & (total_trips_df['deptm'] < 1440)) | ((total_trips_df['deptm'] >= 0) & (total_trips_df['deptm'] < end_time))]
     return selected_trips_df
 
 def select_trips_by_subarea(trips_df, subarea_taz_df, trips_from_only, trips_end_only):
@@ -78,7 +80,7 @@ def get_time_period_by_minutes(period):
         end_time = 930
     elif period == 'ni':
         start_time = 1110
-        end_time = 1440
+        end_time = 360
     else:
         print 'period ' + period + ' is invalid.'
         exit()
@@ -294,11 +296,7 @@ def main():
     elif start_time == 0 and end_time == 0:
         time_period = 'daily'
     else:
-        if start_time < end_time:
-            time_period = str(start_time) + '-' + str(end_time)
-        else:
-            print 'end_time ' + str(end_time) + ' cannot be earlier than start_time ' + str(start_time)
-            sys.exit(2)
+        time_period = str(start_time) + '-' + str(end_time)
 
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
