@@ -131,6 +131,9 @@
     <Compile Include="scripts\summarize\mapping\dframe_explorer.py" />
     <Compile Include="scripts\summarize\mapping\map_configuration.py" />
     <Compile Include="scripts\summarize\mapping\run_map.py" />
+    <Compile Include="scripts\summarize\standard\calculate_AVO.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
     <Compile Include="scripts\summarize\standard\export_files_for_validation.py">
