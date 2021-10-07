@@ -20,9 +20,11 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"scripts\\utils"))
 from emme_configuration import *
 from EmmeProject import *
 from input_configuration import *
+import data_wrangling
 
 #Create a logging file to report model progress
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
@@ -56,6 +58,7 @@ else:
 	print 'Using DAYSIM OUTPUTS'
 	hdf5_file_path = 'outputs/daysim_outputs.h5'
 
+Global_WFH_Adjustment_Trips_DF = None
 
 def parse_args():
     """Parse command line arguments for max number of assignment iterations"""
@@ -686,6 +689,39 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     text = 'It took ' + str(round((end_export_hdf5-start_export_hdf5)/60,2)) + ' minutes to import matrices to Emme.'
     logging.debug(text)
 
+def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
+    purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
+    trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
+    trips_df['tripid'] = trips_df.reset_index().index
+    import pandas as pd
+    workers_df = pd.read_csv(converted_workers_filename)
+    workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
+    
+    selected_trips_df = trips_df.loc[(trips_df['deptm'] >= normal_biz_hrs_start) & (trips_df['deptm'] < normal_biz_hrs_end) & (trips_df['dpurp'].isin(purpose))]
+    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid']], on = 'pid', how = 'inner')
+
+    tazs = workers_df['hhtaz'].unique()
+    selected = pd.DataFrame()
+    # these trips are one way trips starting from their home
+    for taz in tazs:
+        otaztrips = selected_trips_df.loc[selected_trips_df['otaz'] == taz]
+        if otaztrips.shape[0] > 0:
+            trips = otaztrips.sample(frac = percent_trips_to_remove)
+            selected = selected.append(trips)
+    print 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+    selected.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_from_home.csv'), index = False)
+    # now we need to find the return trip
+    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'opcl', 'pid'], how = 'inner')
+    returntrips.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_return_home.csv'), index = False)
+    print 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
+    selected = selected.append(returntrips)
+    print 'Total trips (to be removed): ' + str(selected.shape[0])
+
+    # remove the selected trips from trips_df
+    trips_df = trips_df[~trips_df['tripid'].isin(selected['tripid'])]
+    trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
+    print 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+    return trips_df
 
 def hdf5_trips_to_Emme(my_project, hdf_filename):
 
@@ -704,15 +740,17 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
-    my_store=h5py.File(hdf_filename, "r+")
-
+    if Global_WFH_Adjustment_Trips_DF == None:
+        my_store=h5py.File(hdf_filename, "r+")
+        #Stores in the HDF5 Container to read or write to
+        daysim_set = my_store['Trip']
+    else:
+        daysim_set = Global_WFH_Adjustment_Trips_DF
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())
 
-    #Stores in the HDF5 Container to read or write to
-    daysim_set = my_store['Trip']
 
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
@@ -746,7 +784,8 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
     toll_path = toll_path.astype('int')
     toll_path = toll_path[tod_index]
 
-    my_store.close
+    if Global_WFH_Adjustment_Trips_DF == None:
+        my_store.close()
 
     #create & store in-memory numpy matrices in a dictionary. Key is matrix name, value is the matrix
     #also load up the external and truck trips
@@ -963,13 +1002,16 @@ def start_pool(project_list):
 
     #Doing some testing on best approaches to con-currency
     pool = Pool(processes=parallel_instances)
-    pool.map(run_assignments_parallel,project_list[0:parallel_instances])
+    # Global_WFH_Adjustment_Trips_DF does not change during parallel processing.
+    pool.map(run_assignments_parallel, project_list[0:parallel_instances])
     pool.close()
+    pool.join()
 
 def start_delete_matrices_pool(project_list):
     pool = Pool(processes=parallel_instances)
     pool.map(delete_matrices_parallel, project_list[0:parallel_instances])
     pool.close()
+    pool.join()
 
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
@@ -1294,28 +1336,28 @@ def run_assignments_parallel(project_name):
 
     vdf_initial(my_project)
     
-    ##run auto assignment/skims
-    traffic_assignment(my_project)
+    ###run auto assignment/skims
+    #traffic_assignment(my_project)
     
-    #save results
+    ##save results
     #store_assign_results(my_project)
    
-    attribute_based_skims(my_project, "Time")
+    #attribute_based_skims(my_project, "Time")
 
-    ###bike/walk:
-    bike_walk_assignment(my_project, 'false')
+    ####bike/walk:
+    #bike_walk_assignment(my_project, 'false')
     
-    ###Only skim for distance if in global distance_skim_tod list
-    if my_project.tod in distance_skim_tod:
-       attribute_based_skims(my_project,"Distance")
+    ####Only skim for distance if in global distance_skim_tod list
+    #if my_project.tod in distance_skim_tod:
+    #   attribute_based_skims(my_project,"Distance")
 
-    ####Toll skims
-    attribute_based_toll_cost_skims(my_project, "@toll1")
-    attribute_based_toll_cost_skims(my_project, "@toll2")
-    attribute_based_toll_cost_skims(my_project, "@toll3")
-    class_specific_volumes(my_project)
+    #####Toll skims
+    #attribute_based_toll_cost_skims(my_project, "@toll1")
+    #attribute_based_toll_cost_skims(my_project, "@toll2")
+    #attribute_based_toll_cost_skims(my_project, "@toll3")
+    #class_specific_volumes(my_project)
 
-    ##dispose emmebank
+    ###dispose emmebank
     my_project.bank.dispose()
     print my_project.tod + " finished"
     end_of_run = time.time()
@@ -1330,6 +1372,11 @@ def main():
     #represent a Time of Day string, such as 6to7, 7to8, 9to10, etc.
     start_of_run = time.time()
 
+    my_store = h5py.File(hdf5_file_path, 'r')
+    Global_WFH_Adjustment_Trips_DF = data_wrangling.h5_to_df(my_store, 'Trip')
+    my_store.close()
+    #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
+    Global_WFH_Adjustment_Trips_DF = remove_additional_HBO_trips_during_biz_hours(Global_WFH_Adjustment_Trips_DF, 600, 1020, r"I:\Modeling and Analysis Group\09_IndividualFolders\Hu Dong\WFH code debugging\converted_non_workers.csv", 0.5)
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
         start_pool(l)

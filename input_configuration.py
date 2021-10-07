@@ -35,7 +35,7 @@ if not(use_simple_configuration):
     run_copy_input_files = False
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
-    run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
+    run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
@@ -54,20 +54,20 @@ if not(use_simple_configuration):
     run_accessibility_summary = True
     run_bkrcast_summary =  True
     run_create_daily_bank = True
-    run_truck_summary = False
+    run_truck_summary = True
 
     # Specific reports to run
-    run_daysim_report = True
-    run_day_pattern_report = True
-    run_mode_choice_report = True
-    run_dest_choice_report = True
-    run_long_term_report = True
-    run_time_choice_report = True
-    run_district_summary_report = True
-    run_landuse_summary = True
+    run_daysim_report = False
+    run_day_pattern_report = False
+    run_mode_choice_report = False
+    run_dest_choice_report = False
+    run_long_term_report = False
+    run_time_choice_report = False
+    run_district_summary_report = False
+    run_landuse_summary = False
     
     #delete parcel files from the project directory
-    delete_parcel_data = True
+    delete_parcel_data = False
 
     # DaySim - household sampling rate input
     pop_sample = [1, 1, 1]

@@ -20,9 +20,11 @@ import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"scripts\\utils"))
 from emme_configuration import *
 from EmmeProject import *
 from input_configuration import *
+import data_wrangling
 
 #Create a logging file to report model progress
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
@@ -686,8 +688,45 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     text = 'It took ' + str(round((end_export_hdf5-start_export_hdf5)/60,2)) + ' minutes to import matrices to Emme.'
     logging.debug(text)
 
-def hdf5_trips_from_purpose_to_Emme(my_project, hdf_filename):
+def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
+    purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
+    trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
+    trips_df['tripid'] = trips_df.reset_index().index
+    import pandas as pd
+    workers_df = pd.read_csv(converted_workers_filename)
+    workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
+    
+    selected_trips_df = trips_df.loc[(trips_df['deptm'] >= normal_biz_hrs_start) & (trips_df['deptm'] < normal_biz_hrs_end) & (trips_df['dpurp'].isin(purpose))]
+    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid']], on = 'pid', how = 'inner')
 
+    tazs = workers_df['hhtaz'].unique()
+    selected = pd.DataFrame()
+    # these trips are one way trips starting from their home
+    for taz in tazs:
+        otaztrips = selected_trips_df.loc[selected_trips_df['otaz'] == taz]
+        if otaztrips.shape[0] > 0:
+            trips = otaztrips.sample(frac = percent_trips_to_remove)
+            selected = selected.append(trips)
+    print 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+    selected.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_from_home.csv'), index = False)
+    # now we need to find the return trip
+    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'opcl', 'pid'], how = 'inner')
+    returntrips.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_return_home.csv'), index = False)
+    print 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
+    selected = selected.append(returntrips)
+    print 'Total trips (to be removed): ' + str(selected.shape[0])
+
+    # remove the selected trips from trips_df
+    trips_df = trips_df[~trips_df['tripid'].isin(selected['tripid'])]
+    trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
+    print 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+
+
+# This function only applies to a synthetic population that converts some full time workers to non-workers to mimic work from home condition.
+# For the new converted non-workers, they do not make any work trips but they will  make other HB trips, like shopping, social and other purpose
+# during the normal work hours that would less likely happen if they work in office. To make it more reasonable, we will remove a % of these HBO trips during the normal office
+# hours 10AM to 5PM, unless the trips are meal.
+def hdf5_trips_to_Emme_wfh_restraint(my_project, hdf_filename, normal_biz_hrs_start=0, normal_biz_hrs_end=0, converted_workers_filename = None, percent_trips_to_remove = 0):
     start_time = time.time()
 
     #Determine the Path and Scenario File and Zone indicies that go with it
@@ -704,15 +743,16 @@ def hdf5_trips_from_purpose_to_Emme(my_project, hdf_filename):
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
     my_store=h5py.File(hdf_filename, "r+")
+    trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
 
+    #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
+    remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove)
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())
 
-    #Stores in the HDF5 Container to read or write to
-    daysim_set = my_store['Trip']
-
+    daysim_set = trips_df
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
     otaz = np.asarray(daysim_set["otaz"])
@@ -737,7 +777,6 @@ def hdf5_trips_from_purpose_to_Emme(my_project, hdf_filename):
     dpurp = np.asarray(daysim_set['dpurp'])
     dpurp = dpurp.astype('int')
     dpurp = dpurp[tod_index]
-
 
     if not survey_seed_trips:
         vot = np.asarray(daysim_set["vot"])
@@ -1412,7 +1451,7 @@ def store_assign_results(project_name):
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
 
-def run_assignments_parallel_byOD_from_purpose(project_name):
+def run_assignments_parallel_w_nonworker_trip_adjustment(project_name):
 
     start_of_run = time.time()
 
@@ -1426,7 +1465,7 @@ def run_assignments_parallel_byOD_from_purpose(project_name):
     define_matrices(my_project)
 
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
-    hdf5_trips_from_purpose_to_Emme(my_project, hdf5_file_path)
+    hdf5_trips_to_Emme_wfh_restraint(my_project, hdf5_file_path, 600, 1020, r"I:\Modeling and Analysis Group\09_IndividualFolders\Hu Dong\WFH code debugging\converted_non_workers.csv", 0.5)
     matrix_controlled_rounding(my_project)
 
     populate_intrazonals(my_project)
@@ -1557,9 +1596,9 @@ def main():
     #    start_pool(l)
 
     for i in range (0, 4, parallel_instances):
-        run_assignments_parallel_byOD_from_purpose(project_list[i])
+        run_assignments_parallel_w_nonworker_trip_adjustment(project_list[i])
 
-    # start_transit_pool(project_list)
+    #start_transit_pool(project_list)
    
     f = open('inputs/converge.txt', 'w')
    

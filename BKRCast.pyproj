@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\skimming\create_od_matrices_from_purpose.py</StartupFile>
+    <StartupFile>scripts\skimming\SkimsAndPaths.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -120,7 +120,6 @@
     <Compile Include="scripts\network\daysim_zone_inputs.py" />
     <Compile Include="scripts\network\network_importer.py" />
     <Compile Include="scripts\popsampler.py" />
-    <Compile Include="scripts\skimming\create_od_matrices_from_purpose.py" />
     <Compile Include="scripts\skimming\SkimsAndPaths.py" />
     <Compile Include="scripts\summarize\benefit_cost\benefit_cost.py" />
     <Compile Include="scripts\summarize\calibration\daysim_summary.py" />
