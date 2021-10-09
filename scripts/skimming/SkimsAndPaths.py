@@ -1,22 +1,16 @@
 
-import array as _array
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import inro.emme.matrix as ematrix
-import inro.emme.database.matrix
 import inro.emme.database.emmebank as _eb
 import json
 import numpy as np
 import time
 import os,sys
 import h5py
-import Tkinter, tkFileDialog
-import multiprocessing as mp
-import subprocess
 from multiprocessing import Pool
 import logging
-import datetime
-import argparse
+import getopt
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
@@ -33,47 +27,13 @@ logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
 current_time = str(time.strftime("%H:%M:%S"))
 logging.debug('----Began SkimsAndPaths script at ' + current_time)
 
-# When we start a model run, we want to start with seed trips to assign.  Usually this will be
-# an old daysim outputs, but sometimes you may want to use the expanded survey. On the second or
-# higher iteration, you will want to use daysim_outputs.h5 from the h5 directory because these outputs
-# result from using the latest assignment and skimming.
-if '-use_survey_seed_trips' in sys.argv:
-    survey_seed_trips = True
-    daysim_seed_trips= False
-
-elif '-use_daysim_output_seed_trips' in sys.argv:
-    survey_seed_trips = False
-    daysim_seed_trips= True
-else:
-    survey_seed_trips = False
-    daysim_seed_trips= False
-
-if survey_seed_trips:
-	print 'Using SURVEY SEED TRIPS.'
-	hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
-elif daysim_seed_trips:
-	print 'Using DAYSIM OUTPUT SEED TRIPS'
-	hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
-else:
-	print 'Using DAYSIM OUTPUTS'
-	hdf5_file_path = 'outputs/daysim_outputs.h5'
-
-Global_WFH_Adjustment_Trips_DF = None
-
-def parse_args():
-    """Parse command line arguments for max number of assignment iterations"""
-    return sys.argv[1]
-
+survey_seed_trips = False
+daysim_seed_trips= False
+hdf5_file_path = h5_results_file
 #feedback iteration
-iteration = parse_args()
-
-#only for feedback loops.
-if int(iteration)>len(max_iterations_list):
-    #build seed skims
-    max_num_iterations = int(iteration)
-else:
-    #feedback loop
-    max_num_iterations = str(max_iterations_list[int(iteration)])
+iteration = 0
+max_num_iterations = 0
+Global_WFH_Adjustment_Trips_DF = None
 
 def create_hdf5_skim_container2(hdf5_name):
     #create containers for TOD skims
@@ -293,6 +253,7 @@ def calc_bus_pce(my_project):
      my_project.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
 def traffic_assignment(my_project):
+    global max_num_iterations
 
     start_traffic_assignment = time.time()
     print 'starting traffic assignment for' +  my_project.tod
@@ -306,11 +267,10 @@ def traffic_assignment(my_project):
 
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
-    #max_num_iterations = parse_args()
-    mod_assign["stopping_criteria"]["max_iterations"]= int(max_num_iterations)
+    mod_assign["stopping_criteria"]["max_iterations"]= max_num_iterations
     mod_assign["stopping_criteria"]["best_relative_gap"]= best_relative_gap 
     mod_assign["stopping_criteria"]["relative_gap"]= relative_gap
-    mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
+    #mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
 
     for x in range (0, len(mod_assign["classes"])):
         vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)
@@ -708,23 +668,34 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
         if otaztrips.shape[0] > 0:
             trips = otaztrips.sample(frac = percent_trips_to_remove)
             selected = selected.append(trips)
-    print 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+
+    text = 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+    print text
+    logging.debug(text)
+
     selected.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_from_home.csv'), index = False)
     # now we need to find the return trip
     returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'opcl', 'pid'], how = 'inner')
     returntrips.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_return_home.csv'), index = False)
-    print 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
+    text = 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
+    print text
+    logging.debug(text)
     selected = selected.append(returntrips)
-    print 'Total trips (to be removed): ' + str(selected.shape[0])
+    text = 'Total trips (to be removed): ' + str(selected.shape[0])
+    print text
+    logging.debug(text)
 
     # remove the selected trips from trips_df
     trips_df = trips_df[~trips_df['tripid'].isin(selected['tripid'])]
     trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
-    print 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+    text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+    print text
+    logging.debug(text)
     return trips_df
 
 def hdf5_trips_to_Emme(my_project, hdf_filename):
-
+    global survey_seed_trips
+    global daysim_seed_trips
     start_time = time.time()
 
     #Determine the Path and Scenario File and Zone indicies that go with it
@@ -1005,7 +976,6 @@ def start_pool(project_list):
     # Global_WFH_Adjustment_Trips_DF does not change during parallel processing.
     pool.map(run_assignments_parallel, project_list[0:parallel_instances])
     pool.close()
-    pool.join()
 
 def start_delete_matrices_pool(project_list):
     pool = Pool(processes=parallel_instances)
@@ -1272,6 +1242,7 @@ def delete_matrices_parallel(project_name):
 
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name):
+    global iteration
     print('save assignment results')
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
@@ -1336,26 +1307,26 @@ def run_assignments_parallel(project_name):
 
     vdf_initial(my_project)
     
-    ###run auto assignment/skims
-    #traffic_assignment(my_project)
+    ##run auto assignment/skims
+    traffic_assignment(my_project)
     
-    ##save results
-    #store_assign_results(my_project)
+    #save results
+    store_assign_results(my_project)
    
-    #attribute_based_skims(my_project, "Time")
+    attribute_based_skims(my_project, "Time")
 
-    ####bike/walk:
-    #bike_walk_assignment(my_project, 'false')
+    ###bike/walk:
+    bike_walk_assignment(my_project, 'false')
     
-    ####Only skim for distance if in global distance_skim_tod list
-    #if my_project.tod in distance_skim_tod:
-    #   attribute_based_skims(my_project,"Distance")
+    ###Only skim for distance if in global distance_skim_tod list
+    if my_project.tod in distance_skim_tod:
+       attribute_based_skims(my_project,"Distance")
 
-    #####Toll skims
-    #attribute_based_toll_cost_skims(my_project, "@toll1")
-    #attribute_based_toll_cost_skims(my_project, "@toll2")
-    #attribute_based_toll_cost_skims(my_project, "@toll3")
-    #class_specific_volumes(my_project)
+    ####Toll skims
+    attribute_based_toll_cost_skims(my_project, "@toll1")
+    attribute_based_toll_cost_skims(my_project, "@toll2")
+    attribute_based_toll_cost_skims(my_project, "@toll3")
+    class_specific_volumes(my_project)
 
     ###dispose emmebank
     my_project.bank.dispose()
@@ -1365,22 +1336,122 @@ def run_assignments_parallel(project_name):
     text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute all processes for ' + my_project.tod
     logging.debug(text)
 
+def help():
+    print 'Run skims and paths on EMME databanks.'
+    print ''
+    print 'SkimsAndPaths.py -h -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag'
+    print '      iteration_number: nth iteration'
+    print '      -use_survey_seed_trips: Use survey seed trips instead of trips generated by Daysim'
+    print '      -use_daysim_output_seed_trips: use Daysim seed trips instead of trips generated by Daysim'
+    print '      -h: help'
+    print '      -i: file_name for the converted workers'
+    print '      -s: start time of the core business hours in minutes, starting from mid-night'
+    print '      -e: end time of the core business hours in minutes, starting from mid-night'
+    print '      -p: fraction of trips starting in core business hours to be removed. These trips are made by workers who are converted from full time workers to non-workers'
+    print '      trip_table_flag:'
+    print '         use_survey_seed_trips' 
+    print '         use_daysim_output_seed_trips'
+    print ''
+
 def main():
 
     #Start Daysim-Emme Equilibration
     #This code is organized around the time periods for which we run assignments, often represented by the variable tod. This variable will always
     #represent a Time of Day string, such as 6to7, 7to8, 9to10, etc.
     start_of_run = time.time()
+    converted_workers_file_name = ''
+    time_start = 0
+    time_end = 0
+    percent = 0.0
+    # global variables below
+    global survey_seed_trips
+    global daysim_seed_trips
+    global max_num_iterations
+    global iteration
+    global Global_WFH_Adjustment_Trips_DF
+    global hdf5_file_path
 
-    my_store = h5py.File(hdf5_file_path, 'r')
-    Global_WFH_Adjustment_Trips_DF = data_wrangling.h5_to_df(my_store, 'Trip')
-    my_store.close()
-    #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
-    Global_WFH_Adjustment_Trips_DF = remove_additional_HBO_trips_during_biz_hours(Global_WFH_Adjustment_Trips_DF, 600, 1020, r"I:\Modeling and Analysis Group\09_IndividualFolders\Hu Dong\WFH code debugging\converted_non_workers.csv", 0.5)
-    for i in range (0, 4, parallel_instances):
-        l = project_list[i:i+parallel_instances]
-        start_pool(l)
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hi:s:e:p:f:') 
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+        elif opt == '-f':
+            converted_workers_file_name = arg
+        elif opt == '-s':
+            time_start = int(arg)
+        elif opt == '-e':
+            time_end = int(arg)
+        elif opt == '-p':
+            percent = float(arg)
+        elif opt ==  '-i':
+            iteration = int(arg)
+        else:
+            print 'Invalid option: ' + opt
+            print 'Use -h to display help.'
+            exit(2)
     
+    #only for feedback loops.
+    if iteration > len(max_iterations_list):
+        #build seed skims
+        max_num_iterations = iteration
+    else:
+        #feedback loop
+        max_num_iterations = max_iterations_list[iteration]
+
+    for arg in args:
+        # When we start a model run, we want to start with seed trips to assign.  Usually this will be
+        # an old daysim outputs, but sometimes you may want to use the expanded survey. On the second or
+        # higher iteration, you will want to use daysim_outputs.h5 from the h5 directory because these outputs
+        # result from using the latest assignment and skimming.
+        if arg == 'use_survey_seed_trips':
+            survey_seed_trips = True
+            daysim_seed_trips= False
+        elif arg == 'use_daysim_output_seed_trips':
+            survey_seed_trips = False
+            daysim_seed_trips= True
+        else:
+            survey_seed_trips = False
+            daysim_seed_trips= False
+
+    print 'survey_seed_trips = ' + str(survey_seed_trips)
+    print 'daysim_seed_trips = ' + str(daysim_seed_trips)
+    if survey_seed_trips:
+        text =  'Using SURVEY SEED TRIPS.'
+        hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
+    elif daysim_seed_trips:
+        text = 'Using DAYSIM OUTPUT SEED TRIPS'
+        hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
+    else:
+        text = 'Using DAYSIM OUTPUTS'
+        hdf5_file_path = h5_results_file
+    print text
+    logging.debug(text)
+
+    if ((converted_workers_file_name) != ''):
+        my_store = h5py.File(hdf5_file_path, 'r')
+        Global_WFH_Adjustment_Trips_DF = data_wrangling.h5_to_df(my_store, 'Trip')
+        my_store.close()
+        #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
+        Global_WFH_Adjustment_Trips_DF = remove_additional_HBO_trips_during_biz_hours(Global_WFH_Adjustment_Trips_DF, time_start, time_end, converted_workers_file_name, percent)
+        text = 'Some home based trips are adjusted for WFH estimate.'
+        print text
+        logging.debug(text)
+        text = 'core biz time: ' + str(time_start) + '-' + str(time_end)
+        print text
+        logging.debug(text)
+        text = converted_workers_file_name
+        logging.debug(text)
+        text = '% of trips for adjustment made by workers working from home: ' + str(percent)
+        logging.debug(text)
+
+    start_pool(project_list)
+    #run_assignments_parallel(project_list[2])
     start_transit_pool(project_list)
    
     f = open('inputs/converge.txt', 'w')

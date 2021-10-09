@@ -71,9 +71,9 @@ def build_seed_skims(max_iterations):
     print "Processing skims and paths."
     time_copy = datetime.datetime.now()
     returncode = subprocess.call([sys.executable,
-        'scripts/skimming/SkimsAndPaths.py',
+        'scripts/skimming/SkimsAndPaths.py', '-i',
         str(max_iterations),
-        '-use_daysim_output_seed_trips'])
+        'use_daysim_output_seed_trips'])
     if returncode != 0:
         sys.exit(1)
          
@@ -176,7 +176,7 @@ def daysim_assignment(iteration):
      #### ASSIGNMENTS ##############################################################
      if run_skims_and_paths:
          logger.info("Start of %s iteration of Skims and Paths", str(iteration))
-         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', str(iteration)])
+         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
          logger.info("End of %s iteration of Skims and Paths", str(iteration))
          print 'return code from skims and paths is ' + str(returncode)
