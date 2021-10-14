@@ -702,7 +702,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     dictZoneLookup = dict((value,index) for index,value in enumerate(zones))
     #create an index of trips for this TOD. This prevents iterating over the entire array (all trips).
-    tod_index = create_trip_tod_indices(my_project.tod)
+    tod_index = create_trip_tod_indices(my_project.tod, adj_trips_df)
 
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
@@ -914,36 +914,41 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
 
     return demand_matrix
 
-def create_trip_tod_indices(tod):
-     #creates an index for those trips that belong to tod (time of day)
-     tod_dict = text_to_dictionary('time_of_day')
-     uniqueTOD = set(tod_dict.values())
-     todIDListdict = {}
-     
-     #this creates a dictionary where the TOD string, e.g. 18to20, is the key, and the value is a list of the hours for that period, e.g [18, 19, 20]
-     for k, v in tod_dict.iteritems():
+def create_trip_tod_indices(tod, adj_trips_df):
+    #creates an index for those trips that belong to tod (time of day)
+    tod_dict = text_to_dictionary('time_of_day')
+    uniqueTOD = set(tod_dict.values())
+    todIDListdict = {}
+    
+    #this creates a dictionary where the TOD string, e.g. 18to20, is the key, and the value is a list of the hours for that period, e.g [18, 19, 20]
+    for k, v in tod_dict.iteritems():
         todIDListdict.setdefault(v, []).append(k)
 
-     #Now for the given tod, get the index of all the trips for that Time Period
-     print hdf5_file_path
-     my_store = h5py.File(hdf5_file_path, "r+")
-     daysim_set = my_store["Trip"]
-     #open departure time array
-     deptm = np.asarray(daysim_set["deptm"])
-     #convert to hours
-     deptm = deptm.astype('float')
-     deptm = deptm/60
-     deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
-     
-     #Get the list of hours for this tod
-     todValues = todIDListdict[tod]
-     # ix is an array of true/false
-     ix = np.in1d(deptm.ravel(), todValues)
-     #An index for trips from this tod, e.g. [3, 5, 7) means that there are trips from this time period from the index 3, 5, 7 (0 based) in deptm
-     indexArray = np.where(ix)
+    if adj_trips_df is None: 
+        #Now for the given tod, get the index of all the trips for that Time Period
+        print hdf5_file_path
+        my_store = h5py.File(hdf5_file_path, "r+")
+        daysim_set = my_store["Trip"]
+    else:
+        daysim_set = adj_trips_df
 
-     return indexArray
-     my_store.close
+    #open departure time array
+    deptm = np.asarray(daysim_set["deptm"])
+    #convert to hours
+    deptm = deptm.astype('float')
+    deptm = deptm/60
+    deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
+     
+    #Get the list of hours for this tod
+    todValues = todIDListdict[tod]
+    # ix is an array of true/false
+    ix = np.in1d(deptm.ravel(), todValues)
+    #An index for trips from this tod, e.g. [3, 5, 7) means that there are trips from this time period from the index 3, 5, 7 (0 based) in deptm
+    indexArray = np.where(ix)
+    
+    if adj_trips_df is None:
+        my_store.close()
+    return indexArray
 
 def matrix_controlled_rounding(my_project):
     #
