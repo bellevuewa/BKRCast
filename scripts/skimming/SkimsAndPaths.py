@@ -9,6 +9,7 @@ import time
 import os,sys
 import h5py
 from multiprocessing import Pool
+from functools import partial
 import logging
 import getopt
 sys.path.append(os.getcwd())
@@ -32,8 +33,6 @@ daysim_seed_trips= False
 hdf5_file_path = h5_results_file
 #feedback iteration
 iteration = 0
-max_num_iterations = 0
-Global_WFH_Adjustment_Trips_DF = None
 
 def create_hdf5_skim_container2(hdf5_name):
     #create containers for TOD skims
@@ -252,11 +251,10 @@ def calc_bus_pce(my_project):
      print my_expression
      my_project.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
-def traffic_assignment(my_project):
-    global max_num_iterations
-
+def traffic_assignment(my_project, max_iteration):
     start_traffic_assignment = time.time()
     print 'starting traffic assignment for' +  my_project.tod
+    print 'max iteration = ' + str(max_iteration)
     #Define the Emme Tools used in this function
     assign_extras = my_project.m.tool("inro.emme.traffic_assignment.set_extra_function_parameters")
     assign_traffic = my_project.m.tool("inro.emme.traffic_assignment.path_based_traffic_assignment")
@@ -267,7 +265,7 @@ def traffic_assignment(my_project):
 
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
-    mod_assign["stopping_criteria"]["max_iterations"]= max_num_iterations
+    mod_assign["stopping_criteria"]["max_iterations"]= max_iteration
     mod_assign["stopping_criteria"]["best_relative_gap"]= best_relative_gap 
     mod_assign["stopping_criteria"]["relative_gap"]= relative_gap
     #mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
@@ -693,11 +691,9 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     logging.debug(text)
     return trips_df
 
-def hdf5_trips_to_Emme(my_project, hdf_filename):
-    global survey_seed_trips
-    global daysim_seed_trips
+def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     start_time = time.time()
-
+    print 'hdf5_trips_to_Emme()'
     #Determine the Path and Scenario File and Zone indicies that go with it
     
     zonesDim = len(my_project.current_scenario.zone_numbers)
@@ -711,12 +707,15 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
-    if Global_WFH_Adjustment_Trips_DF == None:
+    if adj_trips_df is None:
         my_store=h5py.File(hdf_filename, "r+")
         #Stores in the HDF5 Container to read or write to
         daysim_set = my_store['Trip']
+        print  hdf_filename + ' is used to populate trip tables.'
     else:
-        daysim_set = Global_WFH_Adjustment_Trips_DF
+        daysim_set = adj_trips_df
+        print 'Ajusted trip dataframe is used to populate trip tables.'
+
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
@@ -755,7 +754,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename):
     toll_path = toll_path.astype('int')
     toll_path = toll_path[tod_index]
 
-    if Global_WFH_Adjustment_Trips_DF == None:
+    if adj_trips_df is None:
         my_store.close()
 
     #create & store in-memory numpy matrices in a dictionary. Key is matrix name, value is the matrix
@@ -965,16 +964,17 @@ def matrix_controlled_rounding(my_project):
     text = 'finished matrix controlled rounding'
     logging.debug(text)
 
-def start_pool(project_list):
+def start_pool(project_list, max_num_iterations, adjusted_trips_df):
     #An Emme databank can only be used by one process at a time. Emme Modeler API only allows one instance of Modeler and
     #it cannot be destroyed/recreated in same script. In order to run things con-currently in the same script, must have
     #seperate projects/banks for each time period and have a pool for each project/bank.
     #Fewer pools than projects/banks will cause script to crash.
-
+    print 'inside pool: ' + str(max_num_iterations)
     #Doing some testing on best approaches to con-currency
     pool = Pool(processes=parallel_instances)
-    # Global_WFH_Adjustment_Trips_DF does not change during parallel processing.
-    pool.map(run_assignments_parallel, project_list[0:parallel_instances])
+    # wfh_adj_trips_df does not change during parallel processing.
+    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df)
+    pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
     pool.close()
 
 def start_delete_matrices_pool(project_list):
@@ -1242,7 +1242,6 @@ def delete_matrices_parallel(project_name):
 
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name):
-    global iteration
     print('save assignment results')
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
@@ -1270,8 +1269,8 @@ def store_assign_results(project_name):
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
 
-def run_assignments_parallel(project_name):
-
+def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
+    print 'Inside run_assignment_parallel: ' + project_name + ' ' + str(max_iteration)
     start_of_run = time.time()
 
     my_project = EmmeProject(project_name)
@@ -1284,7 +1283,7 @@ def run_assignments_parallel(project_name):
     define_matrices(my_project)
 
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
-    hdf5_trips_to_Emme(my_project, hdf5_file_path)
+    hdf5_trips_to_Emme(my_project, hdf5_file_path, adj_trips_df)
     matrix_controlled_rounding(my_project)
 
     populate_intrazonals(my_project)
@@ -1308,7 +1307,7 @@ def run_assignments_parallel(project_name):
     vdf_initial(my_project)
     
     ##run auto assignment/skims
-    traffic_assignment(my_project)
+    traffic_assignment(my_project, max_iteration)
     
     #save results
     store_assign_results(my_project)
@@ -1363,12 +1362,12 @@ def main():
     time_start = 0
     time_end = 0
     percent = 0.0
+    max_num_iterations = 0
+    wfh_adj_trips_df = None
     # global variables below
     global survey_seed_trips
     global daysim_seed_trips
-    global max_num_iterations
     global iteration
-    global Global_WFH_Adjustment_Trips_DF
     global hdf5_file_path
 
     try:
@@ -1402,7 +1401,8 @@ def main():
         max_num_iterations = iteration
     else:
         #feedback loop
-        max_num_iterations = max_iterations_list[iteration]
+        max_num_iterations = max_iterations_list[int(iteration)]
+    print 'max_num_iterations = ' + str(max_num_iterations)
 
     for arg in args:
         # When we start a model run, we want to start with seed trips to assign.  Usually this will be
@@ -1435,10 +1435,10 @@ def main():
 
     if ((converted_workers_file_name) != ''):
         my_store = h5py.File(hdf5_file_path, 'r')
-        Global_WFH_Adjustment_Trips_DF = data_wrangling.h5_to_df(my_store, 'Trip')
+        wfh_adj_trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
         my_store.close()
         #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
-        Global_WFH_Adjustment_Trips_DF = remove_additional_HBO_trips_during_biz_hours(Global_WFH_Adjustment_Trips_DF, time_start, time_end, converted_workers_file_name, percent)
+        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, time_start, time_end, converted_workers_file_name, percent)
         text = 'Some home based trips are adjusted for WFH estimate.'
         print text
         logging.debug(text)
@@ -1450,7 +1450,7 @@ def main():
         text = '% of trips for adjustment made by workers working from home: ' + str(percent)
         logging.debug(text)
 
-    start_pool(project_list)
+    start_pool(project_list, max_num_iterations, wfh_adj_trips_df)
     #run_assignments_parallel(project_list[2])
     start_transit_pool(project_list)
    

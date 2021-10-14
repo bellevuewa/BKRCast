@@ -14,7 +14,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-i 0 </CommandLineArguments>
+    <CommandLineArguments>-i 2 -s 600 -e 930 -f "I:\Modeling and Analysis Group\09_IndividualFolders\Hu Dong\WFH code debugging\converted_non_workers.csv" -p 0.5</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
   </PropertyGroup>
