@@ -141,6 +141,9 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
+    <Compile Include="scripts\summarize\standard\pacalculator.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\summarize\standard\parcel_summary.py" />
     <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
     <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
