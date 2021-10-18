@@ -6,6 +6,7 @@ import inro.emme.database.emmebank as _eb
 import json
 import numpy as np
 import time
+import datetime
 import os,sys
 import h5py
 from multiprocessing import Pool
@@ -658,7 +659,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     selected_trips_df = trips_df.loc[(trips_df['deptm'] >= normal_biz_hrs_start) & (trips_df['deptm'] < normal_biz_hrs_end) & (trips_df['dpurp'].isin(purpose))]
     selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid']], on = 'pid', how = 'inner')
 
-    tazs = workers_df['hhtaz'].unique()
+    tazs = selected_trips_df['otaz'].unique()
     selected = pd.DataFrame()
     # these trips are one way trips starting from their home
     for taz in tazs:
@@ -667,29 +668,48 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
             trips = otaztrips.sample(frac = percent_trips_to_remove)
             selected = selected.append(trips)
 
-    text = 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+    text = 'Trips to be removed: ' + str(selected.shape[0])
     print text
     logging.debug(text)
 
-    selected.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_from_home.csv'), index = False)
-    # now we need to find the return trip
-    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'opcl', 'pid'], how = 'inner')
-    returntrips.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_return_home.csv'), index = False)
-    text = 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
-    print text
-    logging.debug(text)
-    selected = selected.append(returntrips)
-    text = 'Total trips (to be removed): ' + str(selected.shape[0])
-    print text
-    logging.debug(text)
-
+    summarize_trips(selected)
     # remove the selected trips from trips_df
     trips_df = trips_df[~trips_df['tripid'].isin(selected['tripid'])]
     trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
     text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+
+    updated_trip_name = os.path.join(report_output_location, '_updated_trips_df.tsv')
+    trips_df.to_csv(updated_trip_name, index = False, sep =' ')
     print text
     logging.debug(text)
     return trips_df
+
+def summarize_trips(trips_df):
+    removed_filename = os.path.join(report_output_location, 'trips_to_be_removed.csv')
+    trips_df.to_csv(removed_filename, index = False)
+    filename = os.path.join(report_output_location, 'summary_removed_trips.txt')
+    
+    subtotal_trips = trips_df['trexpfac'].count()
+    trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp').sum()
+    trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
+    trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
+    trips_by_purpose.reset_index(inplace = True)
+    trips_by_purpose.replace({'dpurp' : purp_trip_dict}, inplace = True)
+    trips_by_purpose.columns = ['purp', 'dist', 'trips', 'share', 'avgdist']
+    trips_by_purpose['avgdist'] = trips_by_purpose['avgdist'].map('{:.1f}'.format)
+    trips_by_purpose['dist'] = trips_by_purpose['dist'].map('{:.1f}'.format)
+    trips_by_purpose['share'] = trips_by_purpose['share'].map('{:.1%}'.format)
+    trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
+
+    with open(filename, 'w') as f:
+        f.write(str(datetime.datetime.now()) + '\n')
+        f.write('This is the summary of trips_to_be_removed.csv\n')
+        f.write('Total trips removed: ' + str(subtotal_trips))
+        f.write('\n')
+        f.write('Trip by Purpose\n')
+        f.write('%s' % trips_by_purpose)
+    print 'Removed trips are saved in ' + removed_filename
+    print 'Summary is saved in ' + filename
 
 def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     start_time = time.time()
