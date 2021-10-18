@@ -32,6 +32,8 @@ import input_configuration as prj
 # add options to command line.
 # make it part of a standard tool of BKRCast model.
 
+# 10/18/2021
+# allow a different trip df name other than _trips.tsv to be entered through -i option in the command line.
 #################################################################################################################
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
 purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
@@ -143,8 +145,9 @@ def select_trips_either_end_in_subarea(trips_df, subarea_taz_df):
 def help():
     print 'Calculate mode share from trips in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.'
     print ''
-    print 'trip_mode_share_calculator.py -h -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code'
+    print 'trip_mode_share_calculator.py -h -i <input_file> -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code'
     print '    -h: help'
+    print '    -i: input file name. This file is saved in outputs folder.'
     print '    -o: output file name. This file is saved in outputs folder.'
     print '    -s: subarea definition file name. This file needs absolute file path.'
     print "    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period."
@@ -238,6 +241,7 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
 
 def main():  
     Output_file = ''
+    trips_file = ''
     Output_file_trip_dist = ''
     subarea_taz_file = ''
     subarea_code = ''
@@ -246,7 +250,7 @@ def main():
     end_time = 0
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'ho:s:t:', ['stime=', 'etime='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hi:o:s:t:', ['stime=', 'etime='])
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -257,6 +261,10 @@ def main():
             sys.exit(0)
         elif opt == '-o':
             Output_file = os.path.join(prj.project_folder, 'outputs', arg) 
+            fn, ext = os.path.splitext(arg)
+            Output_file_trip_dist =  os.path.join(prj.project_folder, 'outputs', fn + '_trip_distance' + ext)
+        elif opt == '-i':
+            trips_file = os.path.join(prj.project_folder, 'outputs', arg)
         elif opt == '-t':
             if arg in time_periods:
                 time_period = arg
@@ -298,16 +306,18 @@ def main():
     else:
         time_period = str(start_time) + '-' + str(end_time)
 
+    if trips_file == '':
+        trips_file = os.path.join(prj.project_folder, 'outputs', '_trip.tsv')
+
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
     if Output_file_trip_dist == '':
         Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
-
+    print 'Input file: ' + trips_file
     print 'Output file: ' + Output_file
     print 'Output trip distance file: ' + Output_file_trip_dist
     print 'subarea definition file: ' + subarea_taz_file
 
-    trips_file = os.path.join(prj.project_folder, 'outputs', '_trip.tsv')
     hhs_file = os.path.join(prj.project_folder, 'outputs', '_household.tsv')
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
