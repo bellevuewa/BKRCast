@@ -657,7 +657,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
     
     selected_trips_df = trips_df.loc[(trips_df['deptm'] >= normal_biz_hrs_start) & (trips_df['deptm'] < normal_biz_hrs_end) & (trips_df['dpurp'].isin(purpose))]
-    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid']], on = 'pid', how = 'inner')
+    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid', 'hhparcel']], on = 'pid', how = 'inner')
 
     tazs = selected_trips_df['otaz'].unique()
     selected = pd.DataFrame()
@@ -668,7 +668,17 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
             trips = otaztrips.sample(frac = percent_trips_to_remove)
             selected = selected.append(trips)
 
-    text = 'Trips to be removed: ' + str(selected.shape[0])
+    trips_from = selected.shape[0]
+    text = 'Trips to be removed: (from any location) ' + str(trips_from)
+    print text
+    logging.debug(text)
+
+    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl', 'hhparcel']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'hhparcel', 'pid'], how = 'inner')
+    selected = selected.append(returntrips)
+    selected.drop(['opcl_x','opcl_y','dpcl_x','dpcl_y'], axis = 1, inplace = True)
+    selected.drop_duplicates()
+
+    text = 'Trips to be removed: (going back home) ' + str(selected.shape[0] - trips_from)
     print text
     logging.debug(text)
 
@@ -679,7 +689,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
 
     updated_trip_name = os.path.join(report_output_location, '_updated_trips_df.tsv')
-    trips_df.to_csv(updated_trip_name, index = False, sep =' ')
+    trips_df.to_csv(updated_trip_name, index = False, sep ='\t')
     print text
     logging.debug(text)
     return trips_df
