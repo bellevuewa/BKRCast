@@ -1,18 +1,22 @@
 
+import array as _array
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import inro.emme.matrix as ematrix
+import inro.emme.database.matrix
 import inro.emme.database.emmebank as _eb
 import json
 import numpy as np
 import time
-import datetime
 import os,sys
 import h5py
+import Tkinter, tkFileDialog
+import multiprocessing as mp
+import subprocess
 from multiprocessing import Pool
-from functools import partial
 import logging
-import getopt
+import datetime
+import argparse
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
@@ -29,11 +33,46 @@ logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
 current_time = str(time.strftime("%H:%M:%S"))
 logging.debug('----Began SkimsAndPaths script at ' + current_time)
 
-survey_seed_trips = False
-daysim_seed_trips= False
-hdf5_file_path = h5_results_file
+# When we start a model run, we want to start with seed trips to assign.  Usually this will be
+# an old daysim outputs, but sometimes you may want to use the expanded survey. On the second or
+# higher iteration, you will want to use daysim_outputs.h5 from the h5 directory because these outputs
+# result from using the latest assignment and skimming.
+if '-use_survey_seed_trips' in sys.argv:
+    survey_seed_trips = True
+    daysim_seed_trips= False
+
+elif '-use_daysim_output_seed_trips' in sys.argv:
+    survey_seed_trips = False
+    daysim_seed_trips= True
+else:
+    survey_seed_trips = False
+    daysim_seed_trips= False
+
+if survey_seed_trips:
+	print 'Using SURVEY SEED TRIPS.'
+	hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
+elif daysim_seed_trips:
+	print 'Using DAYSIM OUTPUT SEED TRIPS'
+	hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
+else:
+	print 'Using DAYSIM OUTPUTS'
+	hdf5_file_path = 'outputs/daysim_outputs.h5'
+
+
+def parse_args():
+    """Parse command line arguments for max number of assignment iterations"""
+    return sys.argv[1]
+
 #feedback iteration
-iteration = 0
+iteration = parse_args()
+
+#only for feedback loops.
+if int(iteration)>len(max_iterations_list):
+    #build seed skims
+    max_num_iterations = int(iteration)
+else:
+    #feedback loop
+    max_num_iterations = str(max_iterations_list[int(iteration)])
 
 def create_hdf5_skim_container2(hdf5_name):
     #create containers for TOD skims
@@ -252,10 +291,10 @@ def calc_bus_pce(my_project):
      print my_expression
      my_project.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
-def traffic_assignment(my_project, max_iteration):
+def traffic_assignment(my_project):
+
     start_traffic_assignment = time.time()
     print 'starting traffic assignment for' +  my_project.tod
-    print 'max iteration = ' + str(max_iteration)
     #Define the Emme Tools used in this function
     assign_extras = my_project.m.tool("inro.emme.traffic_assignment.set_extra_function_parameters")
     assign_traffic = my_project.m.tool("inro.emme.traffic_assignment.path_based_traffic_assignment")
@@ -266,10 +305,11 @@ def traffic_assignment(my_project, max_iteration):
 
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
-    mod_assign["stopping_criteria"]["max_iterations"]= max_iteration
+    #max_num_iterations = parse_args()
+    mod_assign["stopping_criteria"]["max_iterations"]= int(max_num_iterations)
     mod_assign["stopping_criteria"]["best_relative_gap"]= best_relative_gap 
     mod_assign["stopping_criteria"]["relative_gap"]= relative_gap
-    #mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
+    mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
 
     for x in range (0, len(mod_assign["classes"])):
         vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)
@@ -657,9 +697,9 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
     
     selected_trips_df = trips_df.loc[(trips_df['deptm'] >= normal_biz_hrs_start) & (trips_df['deptm'] < normal_biz_hrs_end) & (trips_df['dpurp'].isin(purpose))]
-    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid', 'hhparcel']], on = 'pid', how = 'inner')
+    selected_trips_df = pd.merge(selected_trips_df, workers_df[['pid']], on = 'pid', how = 'inner')
 
-    tazs = selected_trips_df['otaz'].unique()
+    tazs = workers_df['hhtaz'].unique()
     selected = pd.DataFrame()
     # these trips are one way trips starting from their home
     for taz in tazs:
@@ -667,63 +707,28 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
         if otaztrips.shape[0] > 0:
             trips = otaztrips.sample(frac = percent_trips_to_remove)
             selected = selected.append(trips)
-
-    trips_from = selected.shape[0]
-    text = 'Trips to be removed: (from any location) ' + str(trips_from)
-    print text
-    logging.debug(text)
-
-    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl', 'hhparcel']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'hhparcel', 'pid'], how = 'inner')
+    print 'Trips (to be removed) starting from home: ' + str(selected.shape[0])
+    selected.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_from_home.csv'), index = False)
+    # now we need to find the return trip
+    returntrips = pd.merge(trips_df, selected[['pid', 'opcl', 'dpcl']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'opcl', 'pid'], how = 'inner')
+    returntrips.to_csv(os.path.join(report_output_location, 'trips_to_be_removed_return_home.csv'), index = False)
+    print 'Trips (to be removed) ending at home: ' + str(returntrips.shape[0])
     selected = selected.append(returntrips)
-    selected.drop(['opcl_x','opcl_y','dpcl_x','dpcl_y'], axis = 1, inplace = True)
-    selected.drop_duplicates()
+    print 'Total trips (to be removed): ' + str(selected.shape[0])
 
-    text = 'Trips to be removed: (going back home) ' + str(selected.shape[0] - trips_from)
-    print text
-    logging.debug(text)
-
-    summarize_trips(selected)
     # remove the selected trips from trips_df
     trips_df = trips_df[~trips_df['tripid'].isin(selected['tripid'])]
     trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
-    text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
+    print 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
 
-    updated_trip_name = os.path.join(report_output_location, '_updated_trips_df.tsv')
-    trips_df.to_csv(updated_trip_name, index = False, sep ='\t')
-    print text
-    logging.debug(text)
-    return trips_df
 
-def summarize_trips(trips_df):
-    removed_filename = os.path.join(report_output_location, 'trips_to_be_removed.csv')
-    trips_df.to_csv(removed_filename, index = False)
-    filename = os.path.join(report_output_location, 'summary_removed_trips.txt')
-    
-    subtotal_trips = trips_df['trexpfac'].count()
-    trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp').sum()
-    trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
-    trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
-    trips_by_purpose.reset_index(inplace = True)
-    trips_by_purpose.replace({'dpurp' : purp_trip_dict}, inplace = True)
-    trips_by_purpose.columns = ['purp', 'dist', 'trips', 'share', 'avgdist']
-    trips_by_purpose['avgdist'] = trips_by_purpose['avgdist'].map('{:.1f}'.format)
-    trips_by_purpose['dist'] = trips_by_purpose['dist'].map('{:.1f}'.format)
-    trips_by_purpose['share'] = trips_by_purpose['share'].map('{:.1%}'.format)
-    trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
-
-    with open(filename, 'w') as f:
-        f.write(str(datetime.datetime.now()) + '\n')
-        f.write('This is the summary of trips_to_be_removed.csv\n')
-        f.write('Total trips removed: ' + str(subtotal_trips))
-        f.write('\n')
-        f.write('Trip by Purpose\n')
-        f.write('%s' % trips_by_purpose)
-    print 'Removed trips are saved in ' + removed_filename
-    print 'Summary is saved in ' + filename
-
-def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
+# This function only applies to a synthetic population that converts some full time workers to non-workers to mimic work from home condition.
+# For the new converted non-workers, they do not make any work trips but they will  make other HB trips, like shopping, social and other purpose
+# during the normal work hours that would less likely happen if they work in office. To make it more reasonable, we will remove a % of these HBO trips during the normal office
+# hours 10AM to 5PM, unless the trips are meal.
+def hdf5_trips_to_Emme_wfh_restraint(my_project, hdf_filename, normal_biz_hrs_start=0, normal_biz_hrs_end=0, converted_workers_filename = None, percent_trips_to_remove = 0):
     start_time = time.time()
-    print 'hdf5_trips_to_Emme()'
+
     #Determine the Path and Scenario File and Zone indicies that go with it
     
     zonesDim = len(my_project.current_scenario.zone_numbers)
@@ -732,25 +737,176 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     dictZoneLookup = dict((value,index) for index,value in enumerate(zones))
     #create an index of trips for this TOD. This prevents iterating over the entire array (all trips).
-    tod_index = create_trip_tod_indices(my_project.tod, adj_trips_df)
+    tod_index = create_trip_tod_indices(my_project.tod)
 
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
-    if adj_trips_df is None:
-        my_store=h5py.File(hdf_filename, "r+")
-        #Stores in the HDF5 Container to read or write to
-        daysim_set = my_store['Trip']
-        print  hdf_filename + ' is used to populate trip tables.'
-    else:
-        daysim_set = adj_trips_df
-        print 'Ajusted trip dataframe is used to populate trip tables.'
+    my_store=h5py.File(hdf_filename, "r+")
+    trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
+
+    #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
+    remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove)
+
+    #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
+    matrix_dict = text_to_dictionary('demand_matrix_dictionary')
+    uniqueMatrices = set(matrix_dict.values())
+
+    daysim_set = trips_df
+    #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
+    #This means that only trip info for the current Time Period will be included in each array.
+    otaz = np.asarray(daysim_set["otaz"])
+    otaz = otaz.astype('int')
+    otaz = otaz[tod_index]
+    
+    dtaz = np.asarray(daysim_set["dtaz"])
+    dtaz = dtaz.astype('int')
+    dtaz = dtaz[tod_index]
+
+    mode = np.asarray(daysim_set["mode"])
+    mode = mode.astype("int")
+    mode = mode[tod_index]
+    
+    trexpfac = np.asarray(daysim_set["trexpfac"])
+    trexpfac = trexpfac[tod_index]
+
+    opurp = np.asarray(daysim_set['opurp'])
+    opurp = opurp.astype('int')
+    opurp = opurp[tod_index]
+
+    dpurp = np.asarray(daysim_set['dpurp'])
+    dpurp = dpurp.astype('int')
+    dpurp = dpurp[tod_index]
+
+    if not survey_seed_trips:
+        vot = np.asarray(daysim_set["vot"])
+        vot = vot[tod_index]
+
+    deptm = np.asarray(daysim_set["deptm"])
+    deptm =deptm[tod_index]
+
+    dorp = np.asarray(daysim_set["dorp"])
+    dorp = dorp.astype('int')
+    dorp = dorp[tod_index]
+
+    toll_path = np.asarray(daysim_set["pathtype"])
+    toll_path = toll_path.astype('int')
+    toll_path = toll_path[tod_index]
+
+    my_store.close
+
+    #create & store in-memory numpy matrices in a dictionary. Key is matrix name, value is the matrix
+    #also load up the external and truck trips
+    demand_matrices={}
+   
+    for matrix_name in ['lttrk','metrk','hvtrk']:
+        demand_matrix = load_trucks_external(my_project, matrix_name, zonesDim)
+        demand_matrices.update({matrix_name : demand_matrix})
+
+    # Load in supplemental trips
+    # We're assuming all trips are only for income 2, toll classes
+    for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk']:
+        demand_matrix = load_supplemental_trips(my_project, matrix_name, zonesDim)
+        demand_matrices.update({matrix_name : demand_matrix})
+
+    # Create empty demand matrices for other modes without supplemental trips
+    for matrix in list(uniqueMatrices):
+        if matrix not in demand_matrices.keys():
+            demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
+            demand_matrices.update({matrix : demand_matrix})
+
+    #Start going through each trip & assign it to the correct Matrix. Using Otaz, but array length should be same for all
+    #The correct matrix is determined using a tuple that consists of (mode, vot, toll path). This tuple is the key in matrix_dict.
+
+    for x in range (0, len(otaz)):
+        #Start building the tuple key, 3 VOT of categories...
+        if survey_seed_trips:
+            vot = 2
+            if mode[x]<7:
+                mat_name = matrix_dict[mode[x], vot, toll_path[x]]
+
+                if dorp[x] <= 1:
+                    #get the index of the Otaz
+                    #some missing Os&Ds in seed trips!
+                    if dictZoneLookup.has_key[otaz[x]] and dictZoneLookup.has_key[dtaz[x]]:
+                        myOtaz = dictZoneLookup[otaz[x]]
+                        myDtaz = dictZoneLookupd[dtaz[x]]
+                        print myOtaz, myDtaz 
+                        trips = np.asscalar(np.float32(trexpfac[x]))
+                        trips = round(trips, 2)
+                        print trips
+
+                        demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
+        
+        #Regular Daysim Output:            
+        else:
+            if vot[x] < 15: vot[x]=1
+            elif vot[x] < 25: vot[x]=2
+            else: vot[x]=3
+
+        #get the matrix name from matrix_dict. Throw out school bus (8) for now.
+            if mode[x] <= 0: 
+                 print x, mode[x]
+            if mode[x]<8 and mode[x]>0:
+                #Only want drivers, transit trips.
+                # to do: this should probably be in the emme_configuration file, in case the ids change
+                auto_mode_ids = [3, 4, 5]
+                # using dorp to select out driver trips only for car trips; for non-auto trips, put all trips in the matrix                              
+                if dorp[x] <= 1 or mode[x] not in auto_mode_ids:
+                    mat_name = matrix_dict[(int(mode[x]),int(vot[x]),int(toll_path[x]))]
+                    myOtaz = dictZoneLookup[otaz[x]]
+                    myDtaz = dictZoneLookup[dtaz[x]]
+                    #add the trip, if it's not in a special generator location
+                    trips = np.asscalar(np.float32(trexpfac[x]))
+                    trips = round(trips, 2)
+                    demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
+  
+  #all in-memory numpy matrices populated, now write out to emme
+    if survey_seed_trips:
+        for matrix in demand_matrices.itervalues():
+            matrix = matrix.astype(np.uint16)
+    for mat_name in uniqueMatrices:
+        print mat_name
+        matrix_id = my_project.bank.matrix(str(mat_name)).id
+        np_array = demand_matrices[mat_name]
+        emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')
+        print mat_name
+        print np_array.shape
+        emme_matrix.from_numpy(np_array)
+        my_project.bank.matrix(matrix_id).set_data(emme_matrix, my_project.current_scenario)
+    
+    end_time = time.time()
+
+    print 'It took', round((end_time-start_time)/60,2), ' minutes to import trip tables to emme.'
+    text = 'It took ' + str(round((end_time-start_time)/60,2)) + ' minutes to import trip tables to emme.'
+    logging.debug(text)
+
+def hdf5_trips_to_Emme(my_project, hdf_filename):
+
+    start_time = time.time()
+
+    #Determine the Path and Scenario File and Zone indicies that go with it
+    
+    zonesDim = len(my_project.current_scenario.zone_numbers)
+    zones = my_project.current_scenario.zone_numbers
+
+    #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
+    dictZoneLookup = dict((value,index) for index,value in enumerate(zones))
+    #create an index of trips for this TOD. This prevents iterating over the entire array (all trips).
+    tod_index = create_trip_tod_indices(my_project.tod)
+
+
+    #Create the HDF5 Container if needed and open it in read/write mode using "r+"
+
+    my_store=h5py.File(hdf_filename, "r+")
 
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())
 
+    #Stores in the HDF5 Container to read or write to
+    daysim_set = my_store['Trip']
 
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
@@ -784,8 +940,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     toll_path = toll_path.astype('int')
     toll_path = toll_path[tod_index]
 
-    if adj_trips_df is None:
-        my_store.close()
+    my_store.close
 
     #create & store in-memory numpy matrices in a dictionary. Key is matrix name, value is the matrix
     #also load up the external and truck trips
@@ -944,41 +1099,36 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
 
     return demand_matrix
 
-def create_trip_tod_indices(tod, adj_trips_df):
-    #creates an index for those trips that belong to tod (time of day)
-    tod_dict = text_to_dictionary('time_of_day')
-    uniqueTOD = set(tod_dict.values())
-    todIDListdict = {}
-    
-    #this creates a dictionary where the TOD string, e.g. 18to20, is the key, and the value is a list of the hours for that period, e.g [18, 19, 20]
-    for k, v in tod_dict.iteritems():
+def create_trip_tod_indices(tod):
+     #creates an index for those trips that belong to tod (time of day)
+     tod_dict = text_to_dictionary('time_of_day')
+     uniqueTOD = set(tod_dict.values())
+     todIDListdict = {}
+     
+     #this creates a dictionary where the TOD string, e.g. 18to20, is the key, and the value is a list of the hours for that period, e.g [18, 19, 20]
+     for k, v in tod_dict.iteritems():
         todIDListdict.setdefault(v, []).append(k)
 
-    if adj_trips_df is None: 
-        #Now for the given tod, get the index of all the trips for that Time Period
-        print hdf5_file_path
-        my_store = h5py.File(hdf5_file_path, "r+")
-        daysim_set = my_store["Trip"]
-    else:
-        daysim_set = adj_trips_df
-
-    #open departure time array
-    deptm = np.asarray(daysim_set["deptm"])
-    #convert to hours
-    deptm = deptm.astype('float')
-    deptm = deptm/60
-    deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
+     #Now for the given tod, get the index of all the trips for that Time Period
+     print hdf5_file_path
+     my_store = h5py.File(hdf5_file_path, "r+")
+     daysim_set = my_store["Trip"]
+     #open departure time array
+     deptm = np.asarray(daysim_set["deptm"])
+     #convert to hours
+     deptm = deptm.astype('float')
+     deptm = deptm/60
+     deptm = np.floor(deptm/0.5)*0.5 #convert to nearest .5 - for ex. 2.4 is 2.0 and 2.6 is 2.5.
      
-    #Get the list of hours for this tod
-    todValues = todIDListdict[tod]
-    # ix is an array of true/false
-    ix = np.in1d(deptm.ravel(), todValues)
-    #An index for trips from this tod, e.g. [3, 5, 7) means that there are trips from this time period from the index 3, 5, 7 (0 based) in deptm
-    indexArray = np.where(ix)
-    
-    if adj_trips_df is None:
-        my_store.close()
-    return indexArray
+     #Get the list of hours for this tod
+     todValues = todIDListdict[tod]
+     # ix is an array of true/false
+     ix = np.in1d(deptm.ravel(), todValues)
+     #An index for trips from this tod, e.g. [3, 5, 7) means that there are trips from this time period from the index 3, 5, 7 (0 based) in deptm
+     indexArray = np.where(ix)
+
+     return indexArray
+     my_store.close
 
 def matrix_controlled_rounding(my_project):
     #
@@ -999,24 +1149,21 @@ def matrix_controlled_rounding(my_project):
     text = 'finished matrix controlled rounding'
     logging.debug(text)
 
-def start_pool(project_list, max_num_iterations, adjusted_trips_df):
+def start_pool(project_list):
     #An Emme databank can only be used by one process at a time. Emme Modeler API only allows one instance of Modeler and
     #it cannot be destroyed/recreated in same script. In order to run things con-currently in the same script, must have
     #seperate projects/banks for each time period and have a pool for each project/bank.
     #Fewer pools than projects/banks will cause script to crash.
-    print 'inside pool: ' + str(max_num_iterations)
+
     #Doing some testing on best approaches to con-currency
     pool = Pool(processes=parallel_instances)
-    # wfh_adj_trips_df does not change during parallel processing.
-    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df)
-    pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
+    pool.map(run_assignments_parallel,project_list[0:parallel_instances])
     pool.close()
 
 def start_delete_matrices_pool(project_list):
     pool = Pool(processes=parallel_instances)
     pool.map(delete_matrices_parallel, project_list[0:parallel_instances])
     pool.close()
-    pool.join()
 
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
@@ -1295,7 +1442,7 @@ def store_assign_results(project_name):
                           'time_auto': link.auto_time})
     #convert to dataframe
     link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
-	
+
     #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
         os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
@@ -1304,8 +1451,8 @@ def store_assign_results(project_name):
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
 
-def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
-    print 'Inside run_assignment_parallel: ' + project_name + ' ' + str(max_iteration)
+def run_assignments_parallel_w_nonworker_trip_adjustment(project_name):
+
     start_of_run = time.time()
 
     my_project = EmmeProject(project_name)
@@ -1318,7 +1465,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     define_matrices(my_project)
 
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
-    hdf5_trips_to_Emme(my_project, hdf5_file_path, adj_trips_df)
+    hdf5_trips_to_Emme_wfh_restraint(my_project, hdf5_file_path, 600, 1020, r"I:\Modeling and Analysis Group\09_IndividualFolders\Hu Dong\WFH code debugging\converted_non_workers.csv", 0.5)
     matrix_controlled_rounding(my_project)
 
     populate_intrazonals(my_project)
@@ -1342,10 +1489,10 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     vdf_initial(my_project)
     
     ##run auto assignment/skims
-    traffic_assignment(my_project, max_iteration)
+    traffic_assignment(my_project)
     
     #save results
-    store_assign_results(my_project)
+    #store_assign_results(my_project)
    
     attribute_based_skims(my_project, "Time")
 
@@ -1362,7 +1509,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     attribute_based_toll_cost_skims(my_project, "@toll3")
     class_specific_volumes(my_project)
 
-    ###dispose emmebank
+    ##dispose emmebank
     my_project.bank.dispose()
     print my_project.tod + " finished"
     end_of_run = time.time()
@@ -1370,22 +1517,71 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute all processes for ' + my_project.tod
     logging.debug(text)
 
-def help():
-    print 'Run skims and paths on EMME databanks.'
-    print ''
-    print 'SkimsAndPaths.py -h -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag'
-    print '      iteration_number: nth iteration'
-    print '      -use_survey_seed_trips: Use survey seed trips instead of trips generated by Daysim'
-    print '      -use_daysim_output_seed_trips: use Daysim seed trips instead of trips generated by Daysim'
-    print '      -h: help'
-    print '      -i: file_name for the converted workers'
-    print '      -s: start time of the core business hours in minutes, starting from mid-night'
-    print '      -e: end time of the core business hours in minutes, starting from mid-night'
-    print '      -p: fraction of trips starting in core business hours to be removed. These trips are made by workers who are converted from full time workers to non-workers'
-    print '      trip_table_flag:'
-    print '         use_survey_seed_trips' 
-    print '         use_daysim_output_seed_trips'
-    print ''
+def run_assignments_parallel(project_name):
+
+    start_of_run = time.time()
+
+    my_project = EmmeProject(project_name)
+   
+    ##delete and create new demand and skim matrices:
+    delete_matrices(my_project, "FULL")
+    delete_matrices(my_project, "ORIGIN")
+    delete_matrices(my_project, "DESTINATION")
+
+    define_matrices(my_project)
+
+    ###import demand/trip tables to emme. this is actually quite fast con-currently.
+    hdf5_trips_to_Emme(my_project, hdf5_file_path)
+    matrix_controlled_rounding(my_project)
+
+    populate_intrazonals(my_project)
+   
+    ##create transit fare matrices:
+    if my_project.tod in fare_matrices_tod:
+        fare_dict = json_to_dictionary('transit_fare_dictionary')
+        fare_file = fare_dict[my_project.tod]['Files']['fare_box_file']
+        #fare box:
+        create_fare_zones(my_project, zone_file, fare_file)
+        #monthly:
+        fare_file = fare_dict[my_project.tod]['Files']['monthly_pass_file']
+        create_fare_zones(my_project, zone_file, fare_file)
+        print('finished creating transit fare matrices')
+
+    ##set up for assignments
+    intitial_extra_attributes(my_project)
+    if my_project.tod in transit_tod:
+        calc_bus_pce(my_project)
+
+    vdf_initial(my_project)
+    
+    ##run auto assignment/skims
+    traffic_assignment(my_project)
+    
+    #save results
+    #store_assign_results(my_project)
+   
+    attribute_based_skims(my_project, "Time")
+
+    ###bike/walk:
+    bike_walk_assignment(my_project, 'false')
+    
+    ###Only skim for distance if in global distance_skim_tod list
+    if my_project.tod in distance_skim_tod:
+       attribute_based_skims(my_project,"Distance")
+
+    ####Toll skims
+    attribute_based_toll_cost_skims(my_project, "@toll1")
+    attribute_based_toll_cost_skims(my_project, "@toll2")
+    attribute_based_toll_cost_skims(my_project, "@toll3")
+    class_specific_volumes(my_project)
+
+    ##dispose emmebank
+    my_project.bank.dispose()
+    print my_project.tod + " finished"
+    end_of_run = time.time()
+    print 'It took', round((end_of_run-start_of_run)/60,2), ' minutes to execute all processes for ' + my_project.tod
+    text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute all processes for ' + my_project.tod
+    logging.debug(text)
 
 def main():
 
@@ -1393,101 +1589,16 @@ def main():
     #This code is organized around the time periods for which we run assignments, often represented by the variable tod. This variable will always
     #represent a Time of Day string, such as 6to7, 7to8, 9to10, etc.
     start_of_run = time.time()
-    converted_workers_file_name = ''
-    time_start = 0
-    time_end = 0
-    percent = 0.0
-    max_num_iterations = 0
-    wfh_adj_trips_df = None
-    # global variables below
-    global survey_seed_trips
-    global daysim_seed_trips
-    global iteration
-    global hdf5_file_path
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hi:s:e:p:f:') 
-    except getopt.GetoptError:
-        help()
-        sys.exit(2)
+    ### temporarily disable the parallel processing.
+    #for i in range(0, 4, parallel_instances):
+    #    l = project_list[i:i+parallel_instances]
+    #    start_pool(l)
 
-    for opt, arg in opts:
-        if opt == '-h':
-            help()
-            sys.exit(0)
-        elif opt == '-f':
-            converted_workers_file_name = arg
-        elif opt == '-s':
-            time_start = int(arg)
-        elif opt == '-e':
-            time_end = int(arg)
-        elif opt == '-p':
-            percent = float(arg)
-        elif opt ==  '-i':
-            iteration = int(arg)
-        else:
-            print 'Invalid option: ' + opt
-            print 'Use -h to display help.'
-            exit(2)
-    
-    #only for feedback loops.
-    if iteration > len(max_iterations_list):
-        #build seed skims
-        max_num_iterations = iteration
-    else:
-        #feedback loop
-        max_num_iterations = max_iterations_list[int(iteration)]
-    print 'max_num_iterations = ' + str(max_num_iterations)
+    for i in range (0, 4, parallel_instances):
+        run_assignments_parallel_w_nonworker_trip_adjustment(project_list[i])
 
-    for arg in args:
-        # When we start a model run, we want to start with seed trips to assign.  Usually this will be
-        # an old daysim outputs, but sometimes you may want to use the expanded survey. On the second or
-        # higher iteration, you will want to use daysim_outputs.h5 from the h5 directory because these outputs
-        # result from using the latest assignment and skimming.
-        if arg == 'use_survey_seed_trips':
-            survey_seed_trips = True
-            daysim_seed_trips= False
-        elif arg == 'use_daysim_output_seed_trips':
-            survey_seed_trips = False
-            daysim_seed_trips= True
-        else:
-            survey_seed_trips = False
-            daysim_seed_trips= False
-
-    print 'survey_seed_trips = ' + str(survey_seed_trips)
-    print 'daysim_seed_trips = ' + str(daysim_seed_trips)
-    if survey_seed_trips:
-        text =  'Using SURVEY SEED TRIPS.'
-        hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
-    elif daysim_seed_trips:
-        text = 'Using DAYSIM OUTPUT SEED TRIPS'
-        hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
-    else:
-        text = 'Using DAYSIM OUTPUTS'
-        hdf5_file_path = h5_results_file
-    print text
-    logging.debug(text)
-
-    if ((converted_workers_file_name) != ''):
-        my_store = h5py.File(hdf5_file_path, 'r')
-        wfh_adj_trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
-        my_store.close()
-        #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
-        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, time_start, time_end, converted_workers_file_name, percent)
-        text = 'Some home based trips are adjusted for WFH estimate.'
-        print text
-        logging.debug(text)
-        text = 'core biz time: ' + str(time_start) + '-' + str(time_end)
-        print text
-        logging.debug(text)
-        text = converted_workers_file_name
-        logging.debug(text)
-        text = '% of trips for adjustment made by workers working from home: ' + str(percent)
-        logging.debug(text)
-
-    start_pool(project_list, max_num_iterations, wfh_adj_trips_df)
-    #run_assignments_parallel(project_list[2])
-    start_transit_pool(project_list)
+    #start_transit_pool(project_list)
    
     f = open('inputs/converge.txt', 'w')
    

@@ -30,17 +30,17 @@ if not(use_simple_configuration):
     
     # For Overriding the simple configuration, when you want to run things in more detail:
     run_update_parking = False #Only update parking for future-year analysis!
-    run_accessibility_calcs = False
+    run_accessibility_calcs = True
     run_copy_daysim_code = False
     run_copy_input_files = False
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
-    run_copy_seed_supplemental_trips = True #generally set to True unless you already have trips under 'outputs/supplemental'
+    run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
     run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
-    run_copy_seed_skims = True   
+    run_copy_seed_skims = False   
     create_no_toll_network = True
     run_skims_and_paths_seed_trips = False
 
@@ -54,7 +54,7 @@ if not(use_simple_configuration):
     run_accessibility_summary = True
     run_bkrcast_summary =  True
     run_create_daily_bank = True
-    run_truck_summary = False
+    run_truck_summary = True
 
     # Specific reports to run
     run_daysim_report = True
@@ -67,7 +67,7 @@ if not(use_simple_configuration):
     run_landuse_summary = True
     
     #delete parcel files from the project directory
-    delete_parcel_data = True
+    delete_parcel_data = False
 
     # DaySim - household sampling rate input
     pop_sample = [1, 1, 1]
@@ -238,6 +238,11 @@ intersections = ["nodes1", "nodes3", "nodes4"]
 
 transit_modes = {"lbus": "bus", "ebus": "express", 
        "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
+
+# daysim mode definition
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
+#daysim trip purpose definition
+purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 
 #################################### INPUT CHECKS ####################################
 
