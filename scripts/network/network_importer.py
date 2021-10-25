@@ -15,6 +15,9 @@ sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from emme_configuration import *
 from input_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 class EmmeProject:
     def __init__(self, filepath):
         self.desktop = app.start_dedicated(True, modeller_initial, filepath)
@@ -38,10 +41,10 @@ class EmmeProject:
             if database.title() == database_name:
                 
                 database.open()
-                print 'changed'
+                print('changed')
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
-                print self.tod
+                print(self.tod)
                 self.current_scenario = list(self.bank.scenarios())[0]
     def process_modes(self, mode_file):
         NAMESPACE = "inro.emme.data.network.mode.mode_transaction"
@@ -179,7 +182,7 @@ def import_tolls(emmeProject):
              revert_on_error=True)
    
     # set TOD specific extra attributes
-    print "import screenline counts and local counts for period: " + tod_4k
+    print("import screenline counts and local counts for period: ") + tod_4k
     if (tod_4k == 'am'):	
         load_extra_attributes(emmeProject, AM_extra_attributes)
     elif (tod_4k == 'md'):
@@ -237,7 +240,7 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                 test = [i[1].id for i in enumerate(link.modes)]
                 # if sov modes are allowed, they should be tolled
                 if 's' in test or 'e' in test:
-                    print hot_rate
+                    print(hot_rate)
                     link['@toll1'] = link['@toll1'] + (link.length * hot_rate[link['@tolllane']])
                     if ((tod_4k == 'am') or (tod_4k =='pm')):
                         link['@toll2'] = link['@toll2'] + (link.length * hot_rate[link['@tolllane']])
@@ -248,7 +251,7 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                 test = [i[1].id for i in enumerate(link.modes)]
                 # if sov modes are allowed, they should be tolled
                 if 's' in test or 'e' in test:
-                    print hot_rate
+                    print(hot_rate)
                     link['@toll1'] = link['@toll1'] + (link.length * hot_rate[link['@tolllane']])
                 if 'v' in test:
                     link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate[link['@tolllane']])
@@ -315,7 +318,7 @@ def run_importer(project_name):
             change_mode_for_no_toll_traffic(my_project)
 
 def main():
-    print network_summary_project
+    print(network_summary_project)
     run_importer(network_summary_project)
     # comment out for now - nagendra.dhakar@rsginc.com
     #returncode = subprocess.call([sys.executable,'scripts/network/daysim_zone_inputs.py'])
@@ -323,7 +326,7 @@ def main():
     if returncode != 0:
         sys.exit(1)
     
-    print 'done'
+    print('done')
 
 if __name__ == "__main__":
     main()

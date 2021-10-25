@@ -27,6 +27,10 @@ import summary_functions as scf
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
+# 10/25/2021
+# modified to be compatible with python 3
+
+
 input_file = report_output_location+'/network_summary_detailed.xlsx'
 output_file= report_output_location+'/network_summary.xlsx'
 net_summary_df = pd.io.excel.read_excel(input_file, sheetname = 'Network Summary')
@@ -745,7 +749,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
             for rownum in range(len(times)):
                 countstime.write_string(rownum + 1, 0, times[rownum], index_format)
                 for colnum in range(len(columns)):
-                    if columns[colnum] <> '% Difference':
+                    if columns[colnum] != '% Difference':
                         countstime.write_number(rownum + 1, colnum + 1, counts_by_tod.loc[times[rownum], columns[colnum]], number_format)
                     else:
                         try:

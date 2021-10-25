@@ -5,6 +5,9 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.getcwd())
 from input_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 #it might make sense to put these file locations in a config somewhere
 parcel_file =  'inputs/scenario/landuse/parcels_urbansim.txt'
 military_file = 'inputs/scenario/landuse/parcels_military.csv'
@@ -96,4 +99,4 @@ for colname in all_parcels.columns:
 all_parcels = all_parcels[all_parcels.PARCELID !=0]
 
 all_parcels.to_csv(parcel_file, sep = ' ', index = False)
-print 'Parcels successfully updated with military jobs.'
+print('Parcels successfully updated with military jobs.')

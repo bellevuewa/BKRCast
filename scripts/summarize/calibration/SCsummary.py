@@ -25,8 +25,9 @@ from xlautofit import *
 import math
 from input_configuration import *
 from summary_functions import *
-#from calibration_summary_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
 
 
 def DistrictSummary(data1, data2, name1, name2, location, districtfile):

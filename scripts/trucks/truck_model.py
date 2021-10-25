@@ -22,6 +22,9 @@ from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # Temp log file for de-bugging
 logfile = open("truck_log.txt", 'wb')
           
@@ -57,15 +60,15 @@ def skims_to_hdf5(EmmeProject):
                 del my_store[tod][matrix_name]
                 'deleted ' + str(e)
             #export to hdf5
-            print 'exporting' 
+            print('exporting')
             matrix_name = tod[0] + name
-            print matrix_name
+            print(matrix_name)
             matrix_id = EmmeProject.bank.matrix(matrix_name).id
-            print matrix_id
+            print(matrix_id)
             matrix = EmmeProject.bank.matrix(matrix_id)
             matrix_value = np.matrix(matrix.raw_data)
             my_store[tod].create_dataset(matrix_name, data=matrix_value.astype('float32'),compression='gzip')
-            print matrix_name+' was transferred to the HDF5 container.'
+            print(matrix_name + ' was transferred to the HDF5 container.')
             matrix_value = None
                     
     my_store.close()
@@ -110,7 +113,7 @@ def import_emp_matrices():
                                  'medium_trucks_ee', 'medium_trucks_ei', 'medium_trucks_ie',
                                  'trucks']
     for name in truck_matrix_import_list:
-        print 'importing: ' + str(name)
+        print('importing: ' + str(name))
         my_project.import_matrices('inputs/trucks/' + name + '.in')
 
 #calculate total households (9_calculate_total_households.mac) by origin:

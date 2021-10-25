@@ -21,6 +21,9 @@ import dframe_explorer
 sys.path.append(os.getcwd())
 from input_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # set working directory to soundcast root 
 os.chdir('../../..')
 main_dir = os.getcwd()
@@ -128,7 +131,7 @@ def accessibility_calc(parcels):
   accessiblity_df = pd.DataFrame(index=range(1,hightaz+1))   # plus 1 because range function is 0-based
 
   for skim_name, skim_value in filtered_skims.iteritems():
-      print "Calculating accessibility for: " + skim_name
+      print("Calculating accessibility for: " + skim_name)
       accessiblity_df[skim_name] = calc_jobs(filtered_skims, skim_name, jobs)
 
   # add column for TAZ
@@ -181,7 +184,7 @@ def transit_mode_share(trip_hh):
 
 def main():
 
-  print "Processing data before loading map"
+  print("Processing data before loading map")
 
   # Read parcel data
   #parcels = pd.read_csv(main_dir + r'/inputs/buffered_parcels.dat', delim_whitespace=True)

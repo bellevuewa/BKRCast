@@ -14,6 +14,10 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -38,8 +42,8 @@ def runSkimCheck():
     #get matrix names
     num_bkr_zones = 1530 #user input
 
-    print "processing: " + tod
-    
+    print("processing: " + tod)
+          
     #get matrix names
     bkrFileName = os.path.join(wd, tod + ".h5")
     matFile = h5py.File(bkrFileName)
@@ -51,10 +55,10 @@ def runSkimCheck():
         value_row = matData[taz][:] # from taz
 
         if (value_col < 60000).sum() < 2:
-            print taz
+            print(taz)
 
         if (value_row < 60000).sum() < 2:
-            print taz
+            print(taz)
 
 def readSynPopTables(fileName):
     popsyn = h5py.File(fileName)

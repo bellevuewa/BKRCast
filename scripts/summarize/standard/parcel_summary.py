@@ -5,7 +5,10 @@ import os, sys
 sys.path.append(os.getcwd())
 from input_configuration import *# Import as a module to access inputs as a dictionary
 
-print "running parcel summary"
+# 10/25/2021
+# modified to be compatible with python 3
+
+print("running parcel summary")
 
 parcel_urbcen_map = 'parcels_in_urbcens.csv'    # lookup for parcel to RGC
 file_out = 'parcel_summary.xlsx'    # summary output file name
@@ -15,17 +18,17 @@ main_dir = os.path.abspath('')
 try:
     parcels = pd.read_table(main_dir + "/inputs/" + buffered_parcels, sep=' ')
 except:
-    print "Missing 'buffered_parcels.dat'"
+    print("Missing 'buffered_parcels.dat'")
 
 try:
     map = pd.read_csv(main_dir + "/scripts/summarize/inputs/" + parcel_urbcen_map)
 except:
-    print "Missing 'parcels_in_urbcens.csv'"
+    print("Missing 'parcels_in_urbcens.csv'")
 
 
 # Join the urban center location to the parcels file
 parcels = pd.merge(parcels, map, left_on='parcelid', right_on='hhparcel')
-print "Loading parcel data to summarize..."
+print("Loading parcel data to summarize...")
 
 # Summarize parcel fields by urban center
 mean_by_urbcen = pd.DataFrame(parcels.groupby('NAME').mean())

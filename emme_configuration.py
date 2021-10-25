@@ -1,5 +1,9 @@
 import math
 import sys
+
+# 10/25/2021
+# modified to be compatible with python 3
+
 HORIZON_YEAR = 2018   ## range = [2014, 2040]
 
 ###### Distance-based pricing######

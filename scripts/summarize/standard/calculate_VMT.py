@@ -6,6 +6,9 @@ from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # link selectors. only one selection one link selector can be used for now
 # it may have multiple selections. For example, we can select by jurisdiction boundary 
 # and subarea boundary. They are two seperate and independent selections. That's OK.
@@ -17,7 +20,7 @@ link_selectors = {'@corearea': 1}
 outputfilename = 'system_metrics.txt'
 
 def main():
-    print network_summary_project
+    print(network_summary_project)
     my_project = EmmeProject(network_summary_project)
 
     metrics = {}
@@ -29,7 +32,7 @@ def main():
             temp.update({value:ret})
         metrics.update({flag:temp})
     my_project.CloseDesktop()
-    print metrics    
+    print(metrics)    
 
     outputfile = os.path.join(project_folder, report_output_location, outputfilename)
 
@@ -61,6 +64,6 @@ def main():
             f.write('    VDT: %.2f\n' % daily_vdt)
             f.write('    Vol: %.2f\n' % daily_vol)
             f.write('\n')
-    print 'Done'
+    print('Done')
 if __name__ == '__main__':
     main()

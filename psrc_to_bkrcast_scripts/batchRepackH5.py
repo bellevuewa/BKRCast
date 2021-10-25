@@ -2,6 +2,8 @@
 # Batch repack HDF5 files
 # python.exe batchRepackH5.py
 # Ben.Stabler@rsginc.com, 10/20/16
+# 10/25/2021
+# modified to be compatible with python 3
 
 import os
 import fnmatch
@@ -21,4 +23,4 @@ for item in matches:
     itemOut = item.replace(".h5","_repack.h5")
     cmdLine = h5repack + " %s %s" % (item, itemOut)
     os.system(cmdLine)
-    print cmdLine
+    print"cmdLine"

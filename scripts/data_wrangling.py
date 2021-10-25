@@ -35,6 +35,9 @@ import h5py
 
 import glob
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 
 def multipleReplace(text, wordDict):
     for key in wordDict:
@@ -43,7 +46,7 @@ def multipleReplace(text, wordDict):
 
 @timed
 def copy_daysim_code():
-    print 'Copying Daysim executables...'
+    print('Copying Daysim executables...')
     if not os.path.exists(os.path.join(os.getcwd(), 'daysim')):
        os.makedirs(os.path.join(os.getcwd(), 'daysim'))
     try:
@@ -51,7 +54,7 @@ def copy_daysim_code():
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print message
+        print(message)
         sys.exit(1)
 
 @timed
@@ -59,78 +62,78 @@ def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
         os.makedirs('inputs/accessibility')
     
-    print 'Copying UrbanSim parcel file'
+    print('Copying UrbanSim parcel file')
     try:
         if os.path.isfile(os.path.join(parcels_file_folder,parcels_file_name)):
             shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accessibility')
         # the file may need to be reformatted- like this coming right out of urbansim
         elif os.path.isfile(os.path.join(parcels_file_folder,'parcels.dat')):
-            print 'the file is ' + os.path.join(parcels_file_folder,'parcels.dat')
-            print "Parcels file is being reformatted to Daysim format"
+            print('the file is ' + os.path.join(parcels_file_folder,'parcels.dat'))
+            print("Parcels file is being reformatted to Daysim format")
             parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
-            print 'Read in unformatted parcels file'
+            print('Read in unformatted parcels file')
             for col in parcels.columns:
-                print col
+                print(col)
                 new_col = [x.upper() for x in col]
                 new_col = ''.join(new_col)
                 parcels=parcels.rename(columns = {col:new_col})
-                print new_col
+                print(new_col)
             parcels.to_csv(os.path.join(parcels_file_folder,parcels_file_name), sep = " ")
             shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accesibility')
 
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print message
+        print(message)
         sys.exit(1)
 
 
-    print 'Copying Military parcel file'
+    print('Copying Military parcel file')
     try:
         shcopy(base_inputs+'/landuse/parcels_military.csv','inputs/accessibility')
     except:
-        print 'error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv'
+        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
         sys.exit(1)
 
     try:
         shcopy(base_inputs+'/landuse/distribute_jblm_jobs.csv','inputs/accessibility')
     except:
-        print 'error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv'
+        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
         sys.exit(1)
 
-    print 'Copy parking ensemble file'
+    print('Copy parking ensemble file')
     try:
         shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
     except:
-        print 'error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv'
+        print('error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv')
         sys.exit(1)
 
-    print 'Copy all street network files'
+    print('Copy all street network files')
     try:
         shcopy(base_inputs + '/accessibility/all_streets_links_2014.csv', 'inputs/accessibility')
         shcopy(base_inputs + '/accessibility/all_streets_nodes_2014.csv', 'inputs/accessibility')
     except:
-        print 'error copying all street network files from ' + base_inputs + '/accessibility folder'
+        print('error copying all street network files from ' + base_inputs + '/accessibility folder')
         sys.exit(1)
 
 
-    print 'Copying Hourly and Daily Parking Files'
+    print('Copying Hourly and Daily Parking Files')
     if run_update_parking: 
         try:
             shcopy(base_inputs+'/landuse/hourly_parking_costs.csv','inputs/accessibility')
             shcopy(base_inputs+'/landuse/daily_parking_costs.csv','inputs/accessibility')
         except:
-            print 'error copying parking file at' + base_inputs+'/landuse/' + ' either hourly or daily parking costs'
+            print('error copying parking file at' + base_inputs+'/landuse/' + ' either hourly or daily parking costs')
             sys.exit(1)
 
 @timed
 def copy_seed_skims():
-    print 'You have decided to start your run by copying seed skims that Daysim will use on the first iteration. Interesting choice! This will probably take around 15 minutes because the files are big. Starting now...'
+    print('You have decided to start your run by copying seed skims that Daysim will use on the first iteration. Interesting choice! This will probably take around 15 minutes because the files are big. Starting now...')
     if not(os.path.isdir(base_inputs+'/seed_skims')):
-           print 'It looks like you do not hava directory called' + base_inputs+'/seed_skims, where the code is expecting the files to be. Please make sure to put your seed_skims there.'
+           print('It looks like you do not hava directory called' + base_inputs+'/seed_skims, where the code is expecting the files to be. Please make sure to put your seed_skims there.')
     for filename in glob.glob(os.path.join(base_inputs+'/seed_skims', '*.*')):
         shutil.copy(filename, 'inputs')
-    print 'Done copying seed skims.'
+    print('Done copying seed skims.')
 
 def text_to_dictionary(dict_name):
 
@@ -161,7 +164,7 @@ def setup_emme_bank_folders():
         os.makedirs('Banks')
     else:
         # remove it
-        print 'deleting Banks folder'
+        print('deleting Banks folder')
         shutil.rmtree('Banks')
 
     #gets time periods from the projects folder, so setup_emme_project_folder must be run first!
@@ -169,8 +172,8 @@ def setup_emme_bank_folders():
     time_periods.append('TruckModel')
     time_periods.append('Supplementals')
     for period in time_periods:
-        print period
-        print "creating bank for time period %s" % period
+        print(eriod)
+        print("creating bank for time period %s" % period)
         os.makedirs(os.path.join('Banks', period))
         path = os.path.join('Banks', period, 'emmebank')
         emmebank = _eb.create(path, emmebank_dimensions_dict)
@@ -192,7 +195,7 @@ def setup_emme_project_folders():
     tod_list = list(set(tod_dict.values()))
 
     if os.path.exists(os.path.join('projects')):
-        print 'Delete Project Folder'
+        print('Delete Project Folder')
         shutil.rmtree('projects')
 
     # Create master project, associate with all tod emmebanks
@@ -236,37 +239,37 @@ def copyfiles(sourceFolder, destFolder):
 
 @timed    
 def copy_large_inputs():
-    print 'Copying large inputs...' 
-    print '  network files..'
+    print('Copying large inputs...')
+    print('  network files..')
     dir_util.copy_tree(base_inputs+'/networks','inputs/networks')
-    print '  counts..'
+    print('  counts..')
     dir_util.copy_tree(base_inputs+'/observed','inputs/observed')
-    print '  extra attributes..'
+    print('  extra attributes..')
     dir_util.copy_tree(base_inputs+'/extra_attributes','inputs/extra_attributes')
-    print '  tolls..'
+    print('  tolls..')
     dir_util.copy_tree(base_inputs+'/tolls','inputs/tolls')
-    print '  vdfs..'
+    print('  vdfs..')
     dir_util.copy_tree(base_inputs+'/vdfs','inputs/vdfs')
-    print '  intraZonals..'
+    print('  intraZonals..')
     dir_util.copy_tree(base_inputs+'/IntraZonals','inputs/IntraZonals')
-    print '  fare..'
+    print('  fare..')
     dir_util.copy_tree(base_inputs+'/Fares','inputs/Fares')
-    print '  trucks..'
+    print('  trucks..')
     dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
-    print '  accessibility..'
+    print('  accessibility..')
     dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
-    print '  bikes..'
+    print('  bikes..')
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
-    print '  supplemental..'
+    print('  supplemental..')
     dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
-    print '  4k..'
+    print('  4k..')
     dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
-    print '  land use..'
+    print('  land use..')
     shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
     shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
-    print '  survey..'
+    print('  survey..')
     shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
-    print '  park and ride capacity..'
+    print('  park and ride capacity..')
     shcopy(base_inputs +'/pnr/p_r_nodes.csv','inputs')
 
 @timed
@@ -300,7 +303,7 @@ def clean_up():
         if (os.path.isfile(file)):
             os.remove(file)
         else:
-            print file
+            print(file)
 
 
 def find_inputs(base_directory, save_list):
@@ -327,10 +330,10 @@ def check_inputs():
     # Save missing file list to soundcast log and print to console
     if len(missing_list) > 0:
         logger.info('Warning: the following files are missing and may be needed to complete the model run:')
-        print 'Warning: the following files are missing and may be needed to complete the model run:'
+        print('Warning: the following files are missing and may be needed to complete the model run:')
         for file in missing_list:
             logger.info('- ' + file)
-            print file
+            print(file)
 
 def h5_to_df(h5_file, group_name):
     """
@@ -352,11 +355,11 @@ def df_to_h5(df, h5_store, group_name):
     if group_name in h5_store:
         del h5_store[group_name]
         my_group = h5_store.create_group(group_name)
-        print "Group Skims Exists. Group deleSted then created"
+        print("Group Skims Exists. Group deleSted then created")
         #If not there, create the group
     else:
         my_group = h5_store.create_group(group_name)
-        print "Group Skims Created"
+        print("Group Skims Created")
     for col in df.columns:
         h5_store[group_name].create_dataset(col, data=df[col], dtype = 'int', compression = 'gzip')
 

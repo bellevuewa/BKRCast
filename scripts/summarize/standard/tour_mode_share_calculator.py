@@ -24,6 +24,9 @@ import input_configuration as prj
 # allow calculate mode share by either end in the subarea.
 # add options to command line.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 
 
 tour_purpose = {0: 'all',
@@ -40,13 +43,13 @@ time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 def CalModeSharebyPurpose(purpose, tour_df, Output_file, overwritten=False, comments=''):
     purpose_df = None
     if (purpose > 0 and purpose <= 7): 
-        print 'Calculating mode share for purpose ', purpose, ':', tour_purpose[purpose];
+        print('Calculating mode share for purpose ', purpose, ':', tour_purpose[purpose]);
         purpose_df = tour_df.loc[tour_df['pdpurp']==purpose][['tmodetp', 'toexpfac']].groupby('tmodetp').sum()
     elif purpose == 0:
-        print 'Calculating mode share for all purpose...'
+        print('Calculating mode share for all purpose...')
         purpose_df = tour_df[['tmodetp', 'toexpfac']].groupby('tmodetp').sum()
     else:
-        print 'invalid purpose ', purpose
+        print('invalid purpose ', purpose)
         return
 
     purpose_df['share'] = purpose_df['toexpfac'] / purpose_df['toexpfac'].sum()
@@ -90,7 +93,7 @@ def get_time_period_by_minutes(period):
         start_time = 1110
         end_time = 360
     else:
-        print 'period ' + period + ' is invalid.'
+        print('period ' + period + ' is invalid.')
         exit()
     return start_time, end_time
 
@@ -116,7 +119,7 @@ def select_tours_by_subarea(tours_df, subarea_taz_df, tours_from_only, tours_end
         else:
             subarea_tours_df = pd.concat([to_subarea_tours_df])
     else:
-        print 'No subarea is defined. Use the whole trip table.'
+        print('No subarea is defined. Use the whole trip table.')
         subarea_tours_df = tours_df
     return subarea_tours_df
 
@@ -146,20 +149,20 @@ def select_tours_either_end_in_subarea(tours_df, subarea_taz_df):
     return subarea_tours_df
 
 def help():
-    print 'Calculate mode share from tours in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.'
-    print ''
-    print 'tour_mode_share_calculator.py -h -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code'
-    print '    -h: help'
-    print '    -o: output file name. This file is saved in outputs folder.'
-    print '    -s: subarea definition file name. This file needs absolute file path.'
-    print "    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period."
-    print '    --stime: start time in number of minutes from midnight.'
-    print '    --etime: end time in number of minutes from midnight.'
-    print '    subarea_code: '
-    print "        'Region': the whole region"
-    print "        'Bellevue': Bellevue"
-    print "        'BelDT':   Bellevue downtown"
-    print ''
+    print('Calculate mode share from tours in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.')
+    print('')
+    print('tour_mode_share_calculator.py -h -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
+    print('    -h: help')
+    print('    -o: output file name. This file is saved in outputs folder.')
+    print('    -s: subarea definition file name. This file needs absolute file path.')
+    print("    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period.")
+    print('    --stime: start time in number of minutes from midnight.')
+    print('    --etime: end time in number of minutes from midnight.')
+    print('    subarea_code: ')
+    print("        'Region': the whole region")
+    print("        'Bellevue': Bellevue")
+    print("        'BelDT':   Bellevue downtown")
+    print('')
 
 def main():
     Output_file = ''
@@ -186,7 +189,7 @@ def main():
                 time_period = arg
                 start_time, end_time = get_time_period_by_minutes(time_period)
             else: 
-                print 'invalid value for the -t option.'
+                print('invalid value for the -t option.')
                 sys.exit(2)
         elif opt == '-s':
             subarea_taz_file = arg
@@ -207,7 +210,7 @@ def main():
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
             subarea_code = arg
         else:
-            print 'invalid argument. Use -h for help.'
+            print('invalid argument. Use -h for help.')
             sys.exit(2)
 
     if subarea_code == '':
@@ -224,8 +227,8 @@ def main():
 
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.txt')
-    print 'Output file: ' + Output_file
-    print 'subarea definition file: ' + subarea_taz_file
+    print('Output file: ' + Output_file)
+    print('subarea definition file: ' + subarea_taz_file)
 
     tours_file = os.path.join(prj.project_folder, 'outputs', '_tour.tsv')
     hhs_file = os.path.join(prj.project_folder, 'outputs', '_household.tsv')
@@ -265,14 +268,14 @@ def main():
     for purpose in [1,2,3,4,5,6,7]:
         CalModeSharebyPurpose(purpose, either_end_in_subarea_tours_df, Output_file, comments = 'either end in the subarea')        
 
-    print 'Tour mode share calculation is finished.'
+    print('Tour mode share calculation is finished.')
     hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
     tours_by_residence_df = select_tours_by_residence(hhs_df, tours_df, subarea_taz_df)
     CalModeSharebyPurpose(0, tours_by_residence_df, Output_file, comments='By Residence Only')        
     for purpose in [1,2,3,4,5,6,7]:
         CalModeSharebyPurpose(purpose, tours_by_residence_df, Output_file, comments='By Residence Only')        
 
-    print 'Tour mode share by residence is finished.'
+    print('Tour mode share by residence is finished.')
 
     # tours by workplace = tours from home for work purpose + all subtours from workplace.
     tours_work_purpose_df = select_tours_by_workplace(tours_df, subarea_taz_df)
@@ -281,17 +284,17 @@ def main():
     CalModeSharebyPurpose(0, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
     for purpose in [1,2,3,4,5,6,7]:
         CalModeSharebyPurpose(purpose, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
-    print 'Tour mode share by workplace (with subtours) is finished.'
+    print('Tour mode share by workplace (with subtours) is finished.')
 
     CalModeSharebyPurpose(0, tours_work_purpose_df, Output_file, comments='By Workplace Only (without subtours)')        
-    print 'Tour mode share by workplace (without subtours) is finished.'
+    print('Tour mode share by workplace (without subtours) is finished.')
 
     CalModeSharebyPurpose(0, work_subtours_df, Output_file, comments='Subtours at Workplace Only')        
     for purpose in [1,2,3,4,5,6,7]:
         CalModeSharebyPurpose(purpose, work_subtours_df, Output_file, comments='Subtours at Workplace Only')
 
-    print 'Tour mode share by subtours at workplace is finished.'        
-    print 'Done.'
+    print('Tour mode share by subtours at workplace is finished.')
+    print('Done.')
 
 
 

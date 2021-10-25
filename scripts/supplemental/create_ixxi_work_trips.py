@@ -11,6 +11,9 @@ from input_configuration import *
 from EmmeProject import *
 #from truck_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 output_dir = r'outputs/supplemental/'
 #my_project = EmmeProject(r'projects\Supplementals\Supplementals.emp')
 
@@ -72,7 +75,7 @@ f = {}
 for col in parcels_military.columns:
     if col == 'Zone' :
         f[col] = ['first']
-    elif col <> 'ParcelID':
+    elif col != 'ParcelID':
         f[col] = ['sum']
 parcels_military = parcels_military.groupby('ParcelID').agg(f).reset_index()
 
@@ -86,9 +89,9 @@ for row in parcels_military.iterrows():
     # add enlisted jobs to existing gov jobs at the parcel
     parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPGOV_P'] = float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPGOV_P']) + enlisted_jobs
     # add enlisted jobs to existing total jobs at the parcel
-    print 'old total ' + str(float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P']))
+    print('old total ' + str(float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P'])))
     parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P'] = float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P']) + enlisted_jobs
-    print 'new total ' + str(float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P']))
+    print('new total ' + str(float(parcels_urbansim.ix[parcels_urbansim.PARCELID==parcel_id, 'EMPTOT_P'])))
    
 parcels_urbansim.to_csv(os.path.join(parcel_file_dir, 'parcels_urbansim-with_military.txt'), sep = ' ', index = False)
 ###############

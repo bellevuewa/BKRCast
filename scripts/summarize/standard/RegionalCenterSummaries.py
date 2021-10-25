@@ -9,6 +9,9 @@ import os, sys
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def get_total(exp_fac):
     total = exp_fac.sum()
     if total < 1:
@@ -141,7 +144,7 @@ districtfile = 'Q:/soundcast/scripts/summarize/inputs/TAZ_TAD_County.csv'
 urbcen = 'Q:/soundcast/scripts/summarize/inputs/parcels_in_urbcens.csv'
 data = h5toDF.convert(datafile, guidefile, 'Results')
 zone_district = get_districts(districtfile)
-parcels_regional_centers = pd.DataFrame.from_csv(urbcen)
+parcels_regional_centers = pd.read_csv(urbcen)
 HHPer = pd.merge(data['Household'][['hhno', 'hhparcel']], data['Person'][['pwpcl', 'hhno', 'psexpfac', 'pno']], on = 'hhno')
 hh_center = pd.merge(HHPer[['hhno', 'pno', 'hhparcel', 'psexpfac']], parcels_regional_centers,
                      'outer', left_on = 'hhparcel', right_index = True)

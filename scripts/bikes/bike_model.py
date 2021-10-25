@@ -9,13 +9,16 @@ from input_configuration import *
 from emme_configuration import *
 #from bike_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''
     link_dict = {}
     for i in network.links():
         link_dict[i.id] = i[attr]
     df = pd.DataFrame({'link_id': link_dict.keys(), attr: link_dict.values()})
-    print df.head(4)
+    print(df.head(4))
     return df
 
 def bike_facility_weight(my_project, link_df):
@@ -102,7 +105,7 @@ def write_generalized_time(df):
 	filename = r'inputs/bikes/bkwt.in'
 	df[['inode','jnode', '@bkwt']].to_csv(filename, sep=' ', index=False)
 
-	print "results written to inputs/bikes/bkwt.in"
+	print("results written to inputs/bikes/bkwt.in")
 
 def calc_bike_weight(my_project, link_df):
 	''' Calculate perceived travel time weight for bikes
@@ -158,7 +161,7 @@ def bike_assignment(my_project, tod):
 	bike_spec = json.load(open(r'inputs\skim_params\bike_assignment.json'))
 	extended_assign_transit(bike_spec, add_volumes=True)
 
-	print 'bike assignment complete, now skimming'
+	print('bike assignment complete, now skimming')
 
 	skim_bike = my_project.m.tool("inro.emme.transit_assignment.extended.matrix_results")
 	bike_skim_spec = json.load(open(r'inputs\skim_params\bike_skim_setup.json'))
@@ -173,10 +176,10 @@ def bike_assignment(my_project, tod):
 
 	# Export skims to h5
 	for matrix in ["mfbkpt", "mfbkat"]:
-		print 'exporting skim: ' + str(matrix)
+		print('exporting skim: ' + str(matrix))
 		export_skims(my_project, matrix_name=matrix, tod=tod)
 
-	print "bike assignment complete"
+	print("bike assignment complete")
 
 def export_skims(my_project, matrix_name, tod):
 	'''Write skim matrix to h5 container'''
@@ -286,7 +289,7 @@ def write_link_counts(my_project, tod):
 		else:
 			x['bvol' + tod] = None
 		list_model_vols.append(x)
-	print len(list_model_vols)
+	print(len(list_model_vols))
 
 	df_count =  pd.DataFrame(list_model_vols)
 
@@ -299,8 +302,7 @@ def write_link_counts(my_project, tod):
 		df_count.to_csv(bike_link_vol,index=False) 
 
 def main():
-	
-	print 'running bike model'
+	print('running bike model')
 
 	# Remove any existing results
 	if os.path.exists(bike_link_vol):
@@ -310,7 +312,7 @@ def main():
 		    pass
 
 	filepath = r'projects/' + master_project + r'/' + master_project + '.emp'
-	print filepath #debug
+	print(filepath) #debug
 	my_project = EmmeProject(filepath)
 
 	# Extract AADT from daily bank
@@ -321,7 +323,7 @@ def main():
 
 	# Assign all AM trips (unable to assign trips without transit networks)
 	for tod in bike_assignment_tod:
-		print 'assigning bike trips for: ' + str(tod)
+		print('assigning bike trips for: ' + str(tod))
 		bike_assignment(my_project, tod)
 
 		# Write link volumes

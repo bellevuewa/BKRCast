@@ -8,6 +8,9 @@ import pandas as pd
 import os
 from jinja2 import Environment
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 @hook('after_request')
 def enable_cors():
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -33,18 +36,18 @@ def map_query(table, compare, filter, groupby, field, agg):
     df_alt = DFRAMES['alternative']
 
     if compare=='Main vs. Alternative':
-        print 'Showing base-alternative comparison'
+        print('Showing base-alternative comparison')
         if field not in df_main.columns:
-            print "Col not found, trying eval:", field
+            print("Col not found, trying eval:", field)
             df_main["eval"] = df_main.eval(field)
             field = "eval"
 
         cmd_base = "df_main%s.groupby('%s')['%s'].%s" % \
               (filter, groupby, field, agg)
-        print cmd_base
+        print(cmd_base)
 
         if field not in df_alt.columns:
-            print "Col not found, trying eval:", field
+            print("Col not found, trying eval:", field)
             df_alt["eval"] = df_alt.eval(field)
             field = "eval"
 
@@ -60,7 +63,7 @@ def map_query(table, compare, filter, groupby, field, agg):
         # Percent change versus base, should be flexible in future
         results = (alt_results-base_results)/base_results
     else:
-        print 'Showing primary results'
+        print('Showing primary results')
         if field not in df_main.columns:
             df_main["eval"] = df_main.eval(field)
             field = "eval"

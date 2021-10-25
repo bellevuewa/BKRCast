@@ -17,6 +17,7 @@
     <CommandLineArguments>--stime 960 --etime 1080 Bellevue</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
+    <TestFramework>Pytest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
