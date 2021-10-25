@@ -11,6 +11,8 @@ import input_configuration as prj
     make sure HOV2 has only two people and HOV3+ has more than 3 people. Therefore, this tool is no longer useful, and we should not calculate modeled AVO.
     9/29/2021. 
 '''
+# 10/25/2021
+# modified to be compatible with python 3
 
 def select_trips_by_time(total_trips_df, start_time= None, end_time = None):
     if (start_time == 0 and end_time == 0):
@@ -34,7 +36,7 @@ def select_trips_by_subarea(trips_df, subarea_taz_df, trips_from_only, trips_end
         else:
             subarea_trips_df = pd.concat([to_subarea_trips_df])
     else:
-        print 'No subarea is defined. Use the whole trip table.'
+        print('No subarea is defined. Use the whole trip table.')
         subarea_trips_df = trips_df
     return subarea_trips_df
 
@@ -56,7 +58,7 @@ def get_time_period_by_minutes(period):
         start_time = 1110
         end_time = 360
     else:
-        print 'period ' + period + ' is invalid.'
+        print('period ' + period + ' is invalid.')
         exit()
     return start_time, end_time
 
@@ -92,7 +94,7 @@ def main():
                 time_period = arg
                 start_time, end_time = get_time_period_by_minutes(time_period)
             else: 
-                print 'invalid value for the -t option.'
+                print('invalid value for the -t option.')
                 sys.exit(2)
         elif opt == '-s':
             subarea_taz_file = arg
@@ -113,7 +115,7 @@ def main():
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
             subarea_code = arg
         else:
-            print 'invalid argument. Use -h for help.'
+            print('invalid argument. Use -h for help.')
             sys.exit(2)
 
     if subarea_code == '':
@@ -145,8 +147,8 @@ def main():
     if Output_file_trip_dist == '':
         Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_AVO.txt')
 
-    print 'Output file: ' + Output_file
-    print 'subarea definition file: ' + subarea_taz_file
+    print('Output file: ' + Output_file)
+    print('subarea definition file: ' + subarea_taz_file)
 
     hov2_d_only = either_end_in_subarea_trips_df.loc[(either_end_in_subarea_trips_df['mode'] == 4) & (either_end_in_subarea_trips_df['dorp'] == 1), 'trexpfac'].sum()
     hov2_p_only = either_end_in_subarea_trips_df.loc[(either_end_in_subarea_trips_df['mode'] == 4) & (either_end_in_subarea_trips_df['dorp'] == 2), 'trexpfac'].sum()
@@ -174,7 +176,7 @@ def main():
         output.write('HOV2+\t' + str(hov2_d_only + hov3_d_only) + '\t' + str(hov2_p_only + hov3_p_only) + '\t' + str(round(AVO_HOV2plus, 2)) + '\n')
 
 
-    print 'Done'
+    print('Done')
 
 if __name__ == '__main__':
     main()

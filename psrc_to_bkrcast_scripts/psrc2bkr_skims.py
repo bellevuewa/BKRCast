@@ -14,6 +14,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -38,7 +41,7 @@ def writeSkimTables(fileName, skims, tod):
 def runSkimAdjustment():
 
     for tod in tods:
-        print "processing: " + tod
+        print("processing: " + tod)
         #get matrix names
         psrcFileName = os.path.join(wd, tod + ".h5")
         matFile = h5py.File(wd + tod + ".h5")

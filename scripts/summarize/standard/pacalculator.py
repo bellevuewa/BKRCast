@@ -9,13 +9,15 @@ import input_configuration as prj
 '''
 This tool is calculating person trips aggregated by origin and destination.
 '''
+# 10/25/2021
+# modified to be compatible with python 3
 
 def help():
-    print 'This program is used to calculate person trips aggregated by origin and destination taz.'
-    print 'The results are saved in an outputs/named scenario_name_daily_person_trips_by_OD.txt.'
-    print 'python pacalculator.py -h'
-    print '    -h: help'
-    print ''
+    print('This program is used to calculate person trips aggregated by origin and destination taz.')
+    print('The results are saved in an outputs/named scenario_name_daily_person_trips_by_OD.txt.')
+    print('python pacalculator.py -h')
+    print('    -h: help')
+    print('')
 
 def main() :
 
@@ -53,6 +55,6 @@ def main() :
         dfstr = combined_df.to_string()
         output.write(dfstr)
 
-    print 'done'
+    print('done')
 if __name__ == '__main__':
     main()

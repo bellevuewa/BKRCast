@@ -13,6 +13,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -46,7 +49,7 @@ def runPSRCtoBKRZones():
     parcels_bkr = parcels_bkr[parcels_fields]
     parcels_bkr = parcels_bkr.sort_values(by = ['PARCELID'], ascending=[True])
 
-    if len(parcels_bkr) <> len(parcels_psrc):
+    if len(parcels_bkr) != len(parcels_psrc):
         print('ERROR: some parcels do not have a bkr taz assigned')
     else:
         #write out the updated parcel file

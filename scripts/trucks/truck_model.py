@@ -22,6 +22,9 @@ from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # Temp log file for de-bugging
 logfile = open("truck_log.txt", 'wb')
           
@@ -57,15 +60,15 @@ def skims_to_hdf5(EmmeProject):
                 del my_store[tod][matrix_name]
                 'deleted ' + str(e)
             #export to hdf5
-            print 'exporting' 
+            print('exporting')
             matrix_name = tod[0] + name
-            print matrix_name
+            print(matrix_name)
             matrix_id = EmmeProject.bank.matrix(matrix_name).id
-            print matrix_id
+            print(matrix_id)
             matrix = EmmeProject.bank.matrix(matrix_id)
             matrix_value = np.matrix(matrix.raw_data)
             my_store[tod].create_dataset(matrix_name, data=matrix_value.astype('float32'),compression='gzip')
-            print matrix_name+' was transferred to the HDF5 container.'
+            print(matrix_name + ' was transferred to the HDF5 container.')
             matrix_value = None
                     
     my_store.close()
@@ -110,7 +113,7 @@ def import_emp_matrices():
                                  'medium_trucks_ee', 'medium_trucks_ei', 'medium_trucks_ie',
                                  'trucks']
     for name in truck_matrix_import_list:
-        print 'importing: ' + str(name)
+        print('importing: ' + str(name))
         my_project.import_matrices('inputs/trucks/' + name + '.in')
 
 #calculate total households (9_calculate_total_households.mac) by origin:
@@ -127,17 +130,17 @@ def calc_total_households():
 def truck_productions():
     origin_emp_dict = json_to_dictionary('origin_emp_dict')
     truck_emp_dict = json_to_dictionary('truck_emp_dict')
-    for key, value in origin_emp_dict.iteritems():
+    for key, value in origin_emp_dict.items():
         my_project.matrix_calculator(result = key, aggregation_destinations = '+',
                                      constraint_by_zone_origins = '*',
                                      constraint_by_zone_destinations = value, 
                                      expression = 'hhemp')
     #Populating origin matrices with Employment Sector totals by origin
-    for key, value in truck_emp_dict.iteritems():
+    for key, value in truck_emp_dict.items():
         my_project.matrix_calculator(result = key, expression = value)
 
     #Calculate Productions for 3 truck classes (Origin Matrices are populated)
-    for key, value in truck_generation_dict['productions'].iteritems():
+    for key, value in truck_generation_dict['productions'].items():
         my_project.matrix_calculator(result = value['results'], expression = value['expression'])
         # logfile.write("We're printing the productions part.")
 
@@ -147,7 +150,7 @@ def truck_productions():
 def truck_attractions():
     #Calculate Attractions for 3 truck classes (Destination Matrices are populated)
    
-    for key, value in truck_generation_dict['attractions'].iteritems():
+    for key, value in truck_generation_dict['attractions'].items():
         my_project.matrix_calculator(result = value['results'], expression = value['expression'])
         # logfile.write("We're printing the attractions part.")
 
@@ -164,7 +167,7 @@ def truck_attractions():
 
     spec_gen_dict = {'ltatt' : "spllgt", 'mtatt' : 'splmed', 'htatt' : 'splhvy'}
     #Special Generators (Destination Matrices are populated
-    for key, value in spec_gen_dict.iteritems():
+    for key, value in spec_gen_dict.items():
         my_project.matrix_calculator(result = 'md' + key, expression = 'md' + key + '+ md' + value)
 
 
@@ -175,7 +178,7 @@ def truck_attractions():
                      'mdmtattf' : 'mdmtatt * ' + str(truck_adjustment_factor['mtatt']),
                      'mdhtattf' : 'mdhtatt * ' + str(truck_adjustment_factor['htatt'])}
 
-    for key, value in refactor_dict.iteritems():
+    for key, value in refactor_dict.items():
         my_project.matrix_calculator(result = key, expression = value)
 
     
@@ -233,7 +236,7 @@ def import_skims():
         np_bidir_gc_skims[bidir_skim_name] = bi_dir_skim
 
     #import bi-directional skims to emmebank
-    for mat_name, matrix in np_bidir_gc_skims.iteritems():
+    for mat_name, matrix in np_bidir_gc_skims.items():
         matrix_id = my_project.bank.matrix(str(mat_name)).id
         emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')
         emme_matrix.raw_data=[_array.array('f',row) for row in matrix]
@@ -339,7 +342,7 @@ def calculate_daily_trips():
     
     truck_tod_factor_dict = json_to_dictionary('truck_tod_factor_dict')
     for tod in tod_networks:
-        for key, value in truck_tod_factor_dict.iteritems():
+        for key, value in truck_tod_factor_dict.items():
             my_project.matrix_calculator(result = 'mf' + tod[0] + key, 
                                          expression = value['daily_trips'] + '*' + value[tod])
 

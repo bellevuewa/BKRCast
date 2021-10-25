@@ -21,6 +21,9 @@ from input_configuration import *
 from emme_configuration import *
 from h5toDF import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def get_variables_trips(output_df,trip_variables, hh_variables, person_variables):
     trip_data = output_df['Trip'][trip_variables]
     hh_data = output_df['Household'][hh_variables]
@@ -67,7 +70,7 @@ def nonmotorized_benefits(trips, mode, max_income):
 
 def mode_users(trips, max_income):
     mode_user_totals= {'Bike': 0, 'Walk': 0, 'HOV2': 0, 'HOV3+': 0, 'SOV': 0, 'School Bus': 0, 'Transit' : 0, 'Walk': 0}
-    for key, value in mode_user_totals.iteritems():
+    for key, value in mode_user_totals.items():
         trips_mode =  trips.loc[(trips['mode'] == key) & (trips['hhincome']<max_income)]
         trips_people= len(trips_mode.groupby('id').count())
         mode_user_totals[key] =  trips_people
@@ -81,9 +84,9 @@ def group_vmt_speed(my_project):
     for item in speed_bins:
         speed_dict[item] = {'Car' : 0, 'Light Truck' : 0,  'Medium Truck' : 0, 'Heavy Truck': 0}
 
-    for key, value in sound_cast_net_dict.iteritems():
+    for key, value in sound_cast_net_dict.items():
 
-        print 'Getting VMT by Speed bin for time period ' + key
+        print('Getting VMT by Speed bin for time period ' + key)
         
         my_project.change_active_database(key)
         network = my_project.current_scenario.get_network()
@@ -116,9 +119,9 @@ def group_vmt_class(my_project):
     # store vmt by functional class 1= Freeway, 3= Expressway, etc
     vmt_func_class= {1 : 0, 3 : 0,  5 : 0, 7 : 0}
     
-    for key, value in sound_cast_net_dict.iteritems():
+    for key, value in sound_cast_net_dict.items():
 
-        print 'Getting VMT by Facility Type for Time Period ' + key
+        print('Getting VMT by Facility Type for Time Period ' + key)
         my_project.change_active_database(key)
         network = my_project.current_scenario.get_network()
 
@@ -156,7 +159,7 @@ def emissions_calc(vmt_speed_dict):
 
 def noise_calc(vmt_speed_dict):
     noise_vmt = {'Car VMT': 0, 'Truck VMT' : 0}
-    for speed, vmt in vmt_speed_dict.iteritems():
+    for speed, vmt in vmt_speed_dict.items():
         noise_vmt['Car VMT'] += vmt['Car']
         noise_vmt['Truck VMT'] += vmt['Light Truck']+ vmt['Medium Truck']+ vmt['Heavy Truck']
     
@@ -211,12 +214,12 @@ def main():
     # For Auto the time is just in-vehicle time var
     # For transit: path.Time = outboundInVehicleTime + initialWaitTime +
     # transferWaitTime + WalkTime
-    print 'Counting People'
+    print('Counting People')
     bc_people['Total People'] = outputs['Person']['pno'].count()
     merge_hh_person = pd.merge(outputs['Person'][person_variables], outputs['Household'][hh_variables], 'inner', on = 'hhno')
     bc_people['Low Income People'] =  merge_hh_person.query('hhincome < @LOW_INC_MAX').count()['id']
 
-    print "Calculating Auto Travel Time Impacts"
+    print("Calculating Auto Travel Time Impacts")
 
     bc_outputs_by_mode['Total Household Time Impedances'] = impedance_inc_mode(trips, MAX_INC,"travtime") / MINS_HR
     bc_outputs_by_mode[' Household Low-Income Time'] = impedance_inc_mode(trips, LOW_INC_MAX, "travtime") / MINS_HR
@@ -236,7 +239,7 @@ def main():
     # in the field Travcost on the trip records
     # For Auto the travel cost is: the Toll cost in the skims + Auto Operatin?
     # For transit, the cost is the fare
-    print "Calculating Out-of-Pocket and Ownership Costs"
+    print("Calculating Out-of-Pocket and Ownership Costs")
     bc_outputs_by_mode['Total Household Costs'] = impedance_inc_mode(trips, MAX_INC, "travcost")
     bc_outputs_by_mode['Total Low Income Household Costs'] = impedance_inc_mode(trips, LOW_INC_MAX,"travcost")
     
@@ -262,7 +265,7 @@ def main():
     # this. I think the problem is capturing the short walk trips and we should be able
     # to get this with the 2014 dataset.
 
-    print bc_costs
+    print(bc_costs)
     walk_times = nonmotorized_benefits(trips, 'Walk', MAX_INC)
     bike_times = nonmotorized_benefits(trips, 'Bike', MAX_INC)
     transit_walk_times = nonmotorized_benefits(trips, 'Transit', MAX_INC)

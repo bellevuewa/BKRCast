@@ -13,23 +13,23 @@ extra_attributes = [{'type':'LINK', 'name': '@studyarea', 'description': 'flag f
                        {'type':'LINK', 'name': '@studyarea405', 'description': 'flag for I405 and ramps in study area', 'overwrite': True, 'file_name':'inputs/extra_attributes/@studyarea405.txt'}]
 
 def main():
-    print network_summary_project
+    print(network_summary_project)
     my_project = EmmeProject(network_summary_project)
 
-    for flag, val in sound_cast_net_dict.iteritems():
+    for flag, val in sound_cast_net_dict.items():
         my_project.change_active_database(flag)
-        print 'TOD: ', flag
+        print('TOD: ', flag)
         for attr in extra_attributes:
-            print '  ', attr['name'], ' is created'
+            print('  ', attr['name'], ' is created')
             my_project.create_extra_attribute(attr['type'], attr['name'], attr['description'], attr['overwrite'])
             filepath = os.path.join(project_folder, attr['file_name']).replace('\\','/')
             if os.path.isfile(filepath) == True:
                 my_project.import_attribute_values(filepath, '1002', ' ', False)
-                print '      value is imported.'
+                print('      value is imported.')
             else:
-                print '    ', attr['file_name'], ' is not a valid file.'
+                print('    ', attr['file_name'], ' is not a valid file.')
 
-    print 'Done'
+    print('Done')
 
 if __name__ == '__main__':
     main()

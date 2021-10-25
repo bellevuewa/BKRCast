@@ -14,7 +14,10 @@ import shutil
 from distutils import dir_util
 from EmmeProject import *
 
-print os.getcwd()
+# 10/25/2021
+# modified to be compatible with python 3
+
+print(os.getcwd())
 
 daily_network_fname = 'outputs/daily_network_results.csv'
 keep_atts = ['@type']
@@ -96,7 +99,7 @@ def export_link_values(my_project):
     df.columns = np.insert(link_attr, 0, 'nodes')    # columns are attrs w/ node id inserted to front of array
     
     for attr in link_attr:
-        print "processing: " + str(attr)
+        print("processing: " + str(attr))
         
         # store values and node id for a single attr in a temp df 
         df_attr = pd.DataFrame([network.get_attribute_values(link_type, [attr])[1].keys(),
@@ -110,7 +113,7 @@ def export_link_values(my_project):
     df.to_csv(daily_network_fname)
 
 def main():
-    print 'creating daily bank'
+    print('creating daily bank')
     #Use a copy of an existing bank for the daily bank
     copy_emmebank('Banks/1530to1830', 'Banks/Daily')
 
@@ -138,14 +141,14 @@ def main():
     for matrix in daily_emmebank.matrices():
         daily_arr = matrix.get_numpy_data()
         daily_matrix_dict[matrix.name] = daily_arr
-        print matrix.name
+        print(matrix.name)
 
     time_period_list = []
 
 
-    for tod, time_period in sound_cast_net_dict.iteritems():
+    for tod, time_period in sound_cast_net_dict.items():
         path = os.path.join('Banks', tod, 'emmebank')
-        print path
+        print(path)
         bank = _emmebank.Emmebank(path)
         scenario = bank.scenario(1002)
         network = scenario.get_network()
@@ -172,15 +175,15 @@ def main():
 
 
     for extra_attribute in daily_scenario.extra_attributes():
-        print extra_attribute
+        print(extra_attribute)
         if extra_attribute not in keep_atts:
             daily_scenario.delete_extra_attribute(extra_attribute)
     daily_volume_attr = daily_scenario.create_extra_attribute('LINK', '@tveh')
     daily_network = daily_scenario.get_network()
 
-    for tod, time_period in sound_cast_net_dict.iteritems():
+    for tod, time_period in sound_cast_net_dict.items():
         path = os.path.join('Banks', tod, 'emmebank')
-        print path
+        print(path)
         bank = _emmebank.Emmebank(path)
         scenario = bank.scenario(1002)
         network = scenario.get_network()
@@ -205,23 +208,23 @@ def main():
     zone1 = 100
     zone2 = 100
 
-    print 'from zone', zone1, 'to zone', zone2
+    print('from zone', zone1, 'to zone', zone2)
     for matrix1 in daily_emmebank.matrices():
         NAME = matrix1.name
-        print NAME
-        print 'daily:' , matrix1.get_numpy_data()[zone1][zone2]
+        print(NAME)
+        print('daily:' , matrix1.get_numpy_data()[zone1][zone2])
         a = 0
-        for tod, time_period in sound_cast_net_dict.iteritems():
+        for tod, time_period in sound_cast_net_dict.items():
             path = os.path.join('banks', tod, 'emmebank')
             bank = _emmebank.Emmebank(path)
             for matrix2 in bank.matrices():
                 if matrix2.name == NAME:
                     my_arr = matrix2.get_numpy_data()
                     a += my_arr[zone1][zone2]
-        print 'hourly total:', a
+        print('hourly total:', a)
 
 
-    print 'daily bank created'
+    print('daily bank created')
 
     # Write daily link-level results
     my_project = EmmeProject(network_summary_project)
@@ -230,7 +233,7 @@ def main():
 
 def create_daily_project_folder():
     if os.path.exists(os.path.join('projects/daily')):
-        print 'Delete Project Folder'
+        print('Delete Project Folder')
         shutil.rmtree('projects/daily')
 
     project = app.create_project('projects', 'daily')

@@ -27,8 +27,10 @@ from multiprocessing import Pool, pool
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from input_configuration import *
-from EmmeProject import *
+#from EmmeProject import *
 
+# 10/25/2021
+# modified to be compatible with python 3
 
 class EmmeProject:
     def __init__(self, filepath):
@@ -135,7 +137,7 @@ class EmmeProject:
     def create_matrix (self, matrix_name, matrix_description, matrix_type):
         NAMESPACE = "inro.emme.data.matrix.create_matrix"
         process = self.m.tool(NAMESPACE)
-        print self.current_scenario
+        print(self.current_scenario)
         process (matrix_id= self.bank.available_matrix_identifier(matrix_type),
                           matrix_name= matrix_name,
                           matrix_description= matrix_description,
@@ -262,7 +264,7 @@ class EmmeProject:
     def calculate_VHT_subarea(self, flag, flag_value, scen_id):
         scen = self.bank.scenario(scen_id)
         if scen == None:
-            print 'scen_id ', scen_id, 'is not in the databank ', self.fullpath
+            print('scen_id ', scen_id, 'is not in the databank ', self.fullpath)
             return None
         
         links = scen.get_network().links()

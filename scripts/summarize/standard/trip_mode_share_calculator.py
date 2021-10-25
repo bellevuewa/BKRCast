@@ -34,6 +34,9 @@ import input_configuration as prj
 
 # 10/18/2021
 # allow a different trip df name other than _trips.tsv to be entered through -i option in the command line.
+
+# 10/25/2021
+# modified to be compatible with python 3
 #################################################################################################################
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
 purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
@@ -62,7 +65,7 @@ def select_trips_by_subarea(trips_df, subarea_taz_df, trips_from_only, trips_end
         else:
             subarea_trips_df = pd.concat([to_subarea_trips_df])
     else:
-        print 'No subarea is defined. Use the whole trip table.'
+        print('No subarea is defined. Use the whole trip table.')
         subarea_trips_df = trips_df
     return subarea_trips_df
 
@@ -84,7 +87,7 @@ def get_time_period_by_minutes(period):
         start_time = 1110
         end_time = 360
     else:
-        print 'period ' + period + ' is invalid.'
+        print('period ' + period + ' is invalid.')
         exit()
     return start_time, end_time
 
@@ -112,7 +115,7 @@ def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=F
     elif purpose >=0 and purpose <= 10:
         model_df = trip_df.loc[((trip_df['opurp'] == 0) & (trip_df['dpurp'] == purpose)) | ((trip_df['opurp'] == purpose) & (trip_df['dpurp'] == 0))][['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
     else:
-        print 'Purpose ' + str(purpose) + 'is invalid'
+        print('Purpose ' + str(purpose) + 'is invalid')
         return
 
     model_df['share'] = model_df['trexpfac'] / model_df['trexpfac'].sum()
@@ -143,21 +146,21 @@ def select_trips_either_end_in_subarea(trips_df, subarea_taz_df):
     return subarea_trips_df
 
 def help():
-    print 'Calculate mode share from trips in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.'
-    print ''
-    print 'trip_mode_share_calculator.py -h -i <input_file> -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code'
-    print '    -h: help'
-    print '    -i: input file name. This file is saved in outputs folder.'
-    print '    -o: output file name. This file is saved in outputs folder.'
-    print '    -s: subarea definition file name. This file needs absolute file path.'
-    print "    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period."
-    print '    --stime: start time in number of minutes from midnight.'
-    print '    --etime: end time in number of minutes from midnight.'
-    print '    subarea_code: '
-    print "        'Region': the whole region"
-    print "        'Bellevue': Bellevue"
-    print "        'BelDT':   Bellevue downtown"
-    print ''
+    print('Calculate mode share from trips in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.')
+    print('')
+    print('trip_mode_share_calculator.py -h -i <input_file> -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
+    print('    -h: help')
+    print('    -i: input file name. This file is saved in outputs folder.')
+    print('    -o: output file name. This file is saved in outputs folder.')
+    print('    -s: subarea definition file name. This file needs absolute file path.')
+    print("    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period.")
+    print('    --stime: start time in number of minutes from midnight.')
+    print('    --etime: end time in number of minutes from midnight.')
+    print('    subarea_code: ')
+    print("        'Region': the whole region")
+    print("        'Bellevue': Bellevue")
+    print("        'BelDT':   Bellevue downtown")
+    print('')
 
 def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     subtotal_trips = trips_df['trexpfac'].count()
@@ -189,30 +192,30 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     commute_trips['share'] = commute_trips['share'].map('{:.1%}'.format)
     commute_trips['travdist'] = commute_trips['travdist'].map('{:.1f}'.format)
 
-    print 'Total trips: ' + str(subtotal_trips)
+    print('Total trips: ' + str(subtotal_trips))
     # NHB trips calculation
     nhb_df = trips_df[['oadtyp','dadtyp', 'otaz', 'dtaz', 'trexpfac', 'opurp', 'dpurp']]
     nhb_df = nhb_df.loc[(nhb_df['oadtyp'] != 1) & (nhb_df['dadtyp'] != 1)]
     nhb_counts = nhb_df['trexpfac'].sum()
-    print 'Total NHB trips: ' + str(nhb_counts)
+    print('Total NHB trips: ' + str(nhb_counts))
 
     # HBW trip calculation
     hbw_df = trips_df[['oadtyp','dadtyp','otaz', 'dtaz', 'trexpfac', 'opurp', 'dpurp']]
     hbw_df = hbw_df.loc[((hbw_df['oadtyp'] == 1) & (hbw_df['dadtyp'] == 2)) | ((hbw_df['oadtyp'] == 2) & (hbw_df['dadtyp'] == 1))]
     hbw_counts = hbw_df['trexpfac'].sum()
-    print 'Total NBW trips: ' + str(hbw_counts)
+    print('Total NBW trips: ' + str(hbw_counts))
 
     # HBSchool trip calculation
     hbsch_df = trips_df[['oadtyp','dadtyp','otaz', 'dtaz', 'trexpfac', 'opurp', 'dpurp']]
     hbsch_df = hbsch_df.loc[((hbsch_df['oadtyp'] == 1) & (hbsch_df['dadtyp'] == 3)) | ((hbsch_df['oadtyp'] == 3) & (hbsch_df['dadtyp'] == 1))]
     hbsch_counts = hbsch_df['trexpfac'].sum()
-    print 'Total HBSchool trips: ' + str(hbsch_counts)
+    print('Total HBSchool trips: ' + str(hbsch_counts))
 
     # HBO trip calculation
     hbo_df = trips_df[['oadtyp','dadtyp','otaz', 'dtaz', 'trexpfac', 'opurp', 'dpurp']]
     hbo_df = hbo_df.loc[((hbo_df['oadtyp'] == 1) & (hbo_df['dadtyp'] > 3)) | ((hbo_df['oadtyp'] > 3) & (hbo_df['dadtyp'] == 1))]
     hbo_counts = hbo_df['trexpfac'].sum()
-    print 'Total HBO trips: ' + str(hbo_counts)
+    print('Total HBO trips: ' + str(hbo_counts))
 
     if overwritten:
         file_mode = 'w'
@@ -270,7 +273,7 @@ def main():
                 time_period = arg
                 start_time, end_time = get_time_period_by_minutes(time_period)
             else: 
-                print 'invalid value for the -t option.'
+                print('invalid value for the -t option.')
                 sys.exit(2)
         elif opt == '-s':
             subarea_taz_file = arg
@@ -291,7 +294,7 @@ def main():
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
             subarea_code = arg
         else:
-            print 'invalid argument. Use -h for help.'
+            print('invalid argument. Use -h for help.')
             sys.exit(2)
 
     if subarea_code == '':
@@ -313,10 +316,10 @@ def main():
         Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
     if Output_file_trip_dist == '':
         Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
-    print 'Input file: ' + trips_file
-    print 'Output file: ' + Output_file
-    print 'Output trip distance file: ' + Output_file_trip_dist
-    print 'subarea definition file: ' + subarea_taz_file
+    print('Input file: ' + trips_file)
+    print('Output file: ' + Output_file)
+    print('Output trip distance file: ' + Output_file_trip_dist)
+    print('subarea definition file: ' + subarea_taz_file)
 
     hhs_file = os.path.join(prj.project_folder, 'outputs', '_household.tsv')
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
@@ -342,46 +345,46 @@ def main():
         output.write('Time period: ' + time_period + '\n')
         output.write('\n')
 
-    print 'Calculating mode share (all trip purpose)... either end inside the subarea...'
+    print('Calculating mode share (all trip purpose)... either end inside the subarea...')
     calculateModeSharebyTripPurpose(-1, either_end_in_subarea_trips_df, Output_file, overwritten = False,comments = 'Either end in the subarea')
 
-    print 'Calculating mode share (HBW only)...either end inside the subarea...'
+    print('Calculating mode share (HBW only)...either end inside the subarea...')
     hbw_df = either_end_in_subarea_trips_df.loc[((either_end_in_subarea_trips_df['oadtyp']==1) & (either_end_in_subarea_trips_df['dadtyp']==2))| ((either_end_in_subarea_trips_df['oadtyp']==2) & (either_end_in_subarea_trips_df['dadtyp']==1))]
     calculateModeSharebyTripPurpose(-1, hbw_df, Output_file, overwritten = False, comments = 'HBW')
 
-    print 'Calculating mode share by other purposes... either end inside the subarea...'
+    print('Calculating mode share by other purposes... either end inside the subarea...')
     for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
         calculateModeSharebyTripPurpose(purpose, either_end_in_subarea_trips_df, Output_file, overwritten = False, comments = 'Either end in the subarea')
 
-    print 'Calculating mode share (all trip purpose)...within the subarea...'
+    print('Calculating mode share (all trip purpose)...within the subarea...')
     subarea_trip_df = select_trips_by_subarea(trips_df, subarea_taz_df, True, True)
     calculateModeSharebyTripPurpose(-1, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
-    print 'Calculating mode share by other purposes... either end inside the subarea...'
+    print('Calculating mode share by other purposes... either end inside the subarea...')
     for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
         calculateModeSharebyTripPurpose(purpose, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
 
     # calculate mode share by residence
-    print 'Calculating mode share by residence...'
+    print('Calculating mode share by residence...')
     hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
     trips_by_residence_df = trips_df.merge(hhs_df, left_on = 'hhno', right_on = 'hhno', how = 'left')
     trips_by_residence_df = trips_by_residence_df.merge(subarea_taz_df, left_on = 'hhtaz', right_on = 'TAZ', how = 'inner')
     calculateModeSharebyTripPurpose(-1, trips_by_residence_df, Output_file, comments = 'by residence only' )
-    print 'Calculating mode share by other purposes... '
+    print('Calculating mode share by other purposes... ')
     for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
         calculateModeSharebyTripPurpose(purpose, trips_by_residence_df, Output_file, overwritten = False, comments = 'by residence only')
 
     # calculate mode share by workplace
-    print 'Calculating mode share by workplace...'
+    print('Calculating mode share by workplace...')
     trips_to_workplace_df = trips_df.loc[trips_df['dadtyp'] == 2].merge(subarea_taz_df, left_on = 'dtaz', right_on = 'TAZ', how = 'inner')
     trips_from_workplace_df = trips_df.loc[trips_df['oadtyp'] == 2].merge(subarea_taz_df, left_on = 'otaz', right_on = 'TAZ', how = 'inner')
     trips_by_workplace_df = pd.concat([trips_to_workplace_df, trips_from_workplace_df])
     calculateModeSharebyTripPurpose(-1, trips_by_workplace_df, Output_file, comments = 'by workplace only')
-    print 'Calculating mode share by other purposes... '
+    print('Calculating mode share by other purposes... ')
     for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
         calculateModeSharebyTripPurpose(purpose, trips_by_workplace_df, Output_file, overwritten = False, comments = 'by workplace only')
-    print 'Mode share calculation is finished.'
+    print('Mode share calculation is finished.')
 
-    print 'Calculating tirp distance ...'
+    print('Calculating tirp distance ...')
     # output to file
     with open(Output_file_trip_dist, 'w') as f:
         f.write('Trip file: %s\n' % trips_file)
@@ -392,7 +395,7 @@ def main():
         f.write('End time: %d\n' % end_time)
         
     cal_trip_distance(either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'either end in the subarea')
-    print 'Done'
+    print('Done')
 
 if __name__ == '__main__':
     main()

@@ -3,6 +3,9 @@ sys.path.append(os.getcwd())
 from scripts.skimming.SkimsAndPaths import *
 from scripts.EmmeProject import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def revive(project_name):
     '''Populate emme trip tables and skims with h5 data'''
     
@@ -37,7 +40,7 @@ def revive(project_name):
         # Add the matrix if its available from the skims h5 database
         if matrix.name in skim_h5['Skims'].keys():
 
-            print 'processing matrix: ' + str(matrix.name)
+            print('processing matrix: ' + str(matrix.name))
 
             emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')
             matrix_id = my_project.bank.matrix(str(matrix.name)).id
@@ -45,7 +48,7 @@ def revive(project_name):
             emme_matrix.from_numpy(skim_h5['Skims'][matrix.name][:])
             my_project.bank.matrix(matrix.id).set_data(emme_matrix, my_project.current_scenario)
 
-            print 'added matrix: ' + str(matrix.name)
+            print('added matrix: ' + str(matrix.name))
         else:
             continue
 

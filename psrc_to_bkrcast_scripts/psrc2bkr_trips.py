@@ -14,6 +14,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -64,7 +67,7 @@ def runMatrixAdjustment():
         od_table = pd.DataFrame()
         od_table["o"] = np.repeat(psrc_zones,len(psrc_zones))
         od_table["d"] = np.tile(psrc_zones,len(psrc_zones))
-        print len(psrc_zones)
+        print(len(psrc_zones))
         #get matrix names
         matFile = h5py.File(wd + tod + ".h5")
         matrices = map(lambda x: x[0], matFile.items())

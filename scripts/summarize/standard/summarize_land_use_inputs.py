@@ -5,8 +5,11 @@ import pandas as pd
 import h5py
 import numpy as np
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 writer = pd.ExcelWriter(report_output_location + '/landusesummary.xlsx', engine= 'xlsxwriter')
-print 'Summarizing parcels and synthetic population'
+print('Summarizing parcels and synthetic population')
 
 # Summarize parcel inputs
 parcels = pd.read_csv(output_parcels, sep = ' ')
@@ -28,7 +31,7 @@ households = households_persons['Household']
 
 hh_col_dict = {}
 for col in households.keys():
-  if col <> 'incomeconverted':
+  if col != 'incomeconverted':
     my_array = np.asarray(households[col])
     hh_col_dict[col] = my_array
 household_df = pd.DataFrame(hh_col_dict)

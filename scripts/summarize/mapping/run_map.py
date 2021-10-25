@@ -21,6 +21,9 @@ import dframe_explorer
 sys.path.append(os.getcwd())
 from input_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # set working directory to soundcast root 
 os.chdir('../../..')
 main_dir = os.getcwd()
@@ -116,7 +119,7 @@ def accessibility_calc(parcels):
   # Create OD binary matrix with travel time less than max_trav_time = 1, 0 otherwise, store results in new dict
   filtered_skims = {}
 
-  for skim_name, skim_data in skim_dict.iteritems():
+  for skim_name, skim_data in skim_dict.items():
       # filter trips above travtime threshold and 0-time trips
       filtered_skims[skim_name] = np.where(skim_data > 0, 1, 9999)
       # 0-time trips suggest O-D pairs with zero service or access
@@ -127,8 +130,8 @@ def accessibility_calc(parcels):
   # Build a dataframe with accessibility by mode
   accessiblity_df = pd.DataFrame(index=range(1,hightaz+1))   # plus 1 because range function is 0-based
 
-  for skim_name, skim_value in filtered_skims.iteritems():
-      print "Calculating accessibility for: " + skim_name
+  for skim_name, skim_value in filtered_skims.items():
+      print("Calculating accessibility for: " + skim_name)
       accessiblity_df[skim_name] = calc_jobs(filtered_skims, skim_name, jobs)
 
   # add column for TAZ
@@ -159,7 +162,7 @@ def transit_mode_share(trip_hh):
                   "high_inc": trip_hh.query('Household_Income > 75000')}
 
   my_dict = {}
-  for df_name, df in trip_hh_inc.iteritems():
+  for df_name, df in trip_hh_inc.items():
     # Compute percent of trips by transit for households in each zone
     transit_share_df = df.groupby('TAZ').sum()/df.groupby('TAZ').count()
     # Add the result to an empty df with all zones
@@ -181,7 +184,7 @@ def transit_mode_share(trip_hh):
 
 def main():
 
-  print "Processing data before loading map"
+  print("Processing data before loading map")
 
   # Read parcel data
   #parcels = pd.read_csv(main_dir + r'/inputs/buffered_parcels.dat', delim_whitespace=True)

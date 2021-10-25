@@ -68,7 +68,7 @@ def convert_transit_skims():
     transit_skim_matrix_names = {'ivtwa': 'in vehicle time', 'auxwa': 'walk time','twtwa': 'total wait time',
                                  'farwa': 'fare', 'nbdwa': "average boardings"}
     
-    for key, value in transit_paths_dict.iteritems():
+    for key, value in transit_paths_dict.items():
         e = key in my_store
         if e:
             del my_store[key]
@@ -133,7 +133,7 @@ def convert_auto_tripTables():
     # keep of a list of the time matrices to calculate costs from
     
 
-    for key_time, value in auto_paths_dict.iteritems():
+    for key_time, value in auto_paths_dict.items():
         #my_store=h5py.File(hdf5_filename, "r+")
         e = key_time in my_store
         if e:
@@ -174,7 +174,7 @@ def convert_transit_tripTables():
     # keep of a list of the time matrices to calculate costs from
     
 
-    for key_time, value in transit_paths_dict.iteritems():
+    for key_time, value in transit_paths_dict.items():
         #my_store=h5py.File(hdf5_filename, "r+")
         e = key_time in my_store
         if e:
@@ -215,7 +215,7 @@ def convert_nm_tripTables():
     # keep of a list of the time matrices to calculate costs from
     
 
-    for key_time, value in nonmotorized_paths_dict.iteritems():
+    for key_time, value in nonmotorized_paths_dict.items():
         #my_store=h5py.File(hdf5_filename, "r+")
         e = key_time in my_store
         if e:

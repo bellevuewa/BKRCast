@@ -1,6 +1,9 @@
 import os, sys, math, h5py
 import pandas as pd
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 USAGE = """
 
 	python daysim_summary.py input_dir output_dir
@@ -502,8 +505,8 @@ def write_csv(df,fname):
 if __name__ == '__main__':
 
     if len(sys.argv) != 3:
-        print USAGE
-        print sys.argv
+        print(USAGE)
+        print(sys.argv)
         sys.exit(2)
 
     input_dir = sys.argv[1]
@@ -520,7 +523,7 @@ if __name__ == '__main__':
 
 			daysim_h5 = h5py.File(os.path.join(input_dir,fname))
 
-			print 'processing ' + fname
+			print('processing ' + fname)
 
 			process_dataset(h5file=daysim_h5, scenario_name=fname.split('.')[0])
 			del daysim_h5 # drop from memory to save space for next comparison
@@ -538,7 +541,7 @@ if __name__ == '__main__':
         if fname.endswith('.xlsx'):
             net_file = os.path.join(input_dir,fname)
 
-            print 'processing ' + fname
+            print('processing ' + fname)
 
             transit_summary(net_file, fname)
             traffic_counts(net_file, fname)

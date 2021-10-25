@@ -8,6 +8,9 @@ from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''
     link_dict = {}
@@ -39,11 +42,11 @@ def get_aadt_trucks(my_project):
     
     link_list = []
 
-    for key, value in sound_cast_net_dict.iteritems():
+    for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
         
         # Create extra attributes to store link volume data
-        for name, desc in extra_attributes_dict.iteritems():
+        for name, desc in extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, desc, 'True')
         
         ## Calculate total vehicles for each link
@@ -67,7 +70,7 @@ def get_aadt_trucks(my_project):
         
 
 def main():
-   print 'running truck_summary'
+   print('running truck_summary')
    truck_counts = pd.read_excel(truck_counts_file)
    filepath = r'projects/' + master_project + r'/' + master_project + '.emp'
    my_project = EmmeProject(filepath)

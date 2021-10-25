@@ -1,5 +1,9 @@
 import math
 import sys
+
+# 10/25/2021
+# modified to be compatible with python 3
+
 HORIZON_YEAR = 2018   ## range = [2014, 2040]
 
 ###### Distance-based pricing######
@@ -186,7 +190,7 @@ for key in spg_airport:
     elif HORIZON_YEAR >= 2014: 
         spg_airport_rate = pow(1 + 3.65/100, HORIZON_YEAR - 2014)
     else:
-        print 'Your HORIZON_YEAR is not valid.'
+        print('Your HORIZON_YEAR is not valid.')
         sys.exit(-1)    
     spg_airport[key] = spg_airport[key] * spg_airport_rate
 
@@ -197,7 +201,7 @@ for key in spg_general:
     elif HORIZON_YEAR >= 2014:
         spg_general_rate = pow(1 + 1.14/100, HORIZON_YEAR - 2014)  
     else: 
-        print 'Your HORIZON_YEAR is not valid'  
+        print('Your HORIZON_YEAR is not valid') 
         sys.exit(-1)
     spg_general[key] =  spg_general[key] * spg_general_rate
 

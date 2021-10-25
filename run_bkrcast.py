@@ -20,6 +20,9 @@
 # if not, it is an error that has to be fixed. 
 # ===========================
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os
 import sys
 import datetime
@@ -51,24 +54,24 @@ def accessibility_calcs():
         if base_year == scenario_name:
             print("----- This is a base-year analysis. Parking parcels are NOT being updated! Input for 'run_update_parking' is over-ridden. -----")
         else:
-            print 'Starting to update UrbanSim parcel data with 4k parking data file'
+            print('Starting to update UrbanSim parcel data with 4k parking data file')
             returncode = subprocess.call([sys.executable,
                                       'scripts/utils/update_parking.py', base_inputs])
             if returncode != 0:
-                print 'Update Parking failed'
+                print('Update Parking failed')
                 sys.exit(1)
-            print 'Finished updating parking data on parcel file'
+            print('Finished updating parking data on parcel file')
 
-    print 'Beginning Accessibility Calculations'
+    print('Beginning Accessibility Calculations')
     returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'])
     if returncode != 0:
-        print 'Accessibility Calculations Failed For Some Reason :('
+        print('Accessibility Calculations Failed For Some Reason :(')
         sys.exit(1)
-    print 'Done with accessibility calculations'
+    print('Done with accessibility calculations')
 
 @timed    
 def build_seed_skims(max_iterations):
-    print "Processing skims and paths."
+    print("Processing skims and paths.")
     time_copy = datetime.datetime.now()
     returncode = subprocess.call([sys.executable,
         'scripts/skimming/SkimsAndPaths.py', '-i',
@@ -78,7 +81,7 @@ def build_seed_skims(max_iterations):
         sys.exit(1)
          
     time_skims = datetime.datetime.now()
-    print '###### Finished skimbuilding:', str(time_skims - time_copy)
+    print('###### Finished skimbuilding:', str(time_skims - time_copy))
  
 @timed   
 def modify_config(config_vals):
@@ -106,7 +109,7 @@ def modify_config(config_vals):
     except:
      config_template.close()
      config.close()
-     print ' Error creating configuration template file'
+     print(' Error creating configuration template file')
      sys.exit(1)
     
 @timed
@@ -127,7 +130,7 @@ def build_shadow_only(iter):
 
         current_rmse = float(rmse_list[iteration_number - 1].rstrip("\n"))
         if current_rmse < shadow_con:
-            print "done with shadow prices"
+            print("done with shadow prices")
             shadow_con_file.close()
             return
 
@@ -179,7 +182,7 @@ def daysim_assignment(iteration):
          returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
          logger.info("End of %s iteration of Skims and Paths", str(iteration))
-         print 'return code from skims and paths is ' + str(returncode)
+         print('return code from skims and paths is ' + str(returncode))
          if returncode != 0:
             sys.exit(1)
 
@@ -308,10 +311,10 @@ def main():
     norm_proj_dir = os.path.normcase(project_folder)
     cur_dir = os.getcwd()
     if norm_proj_dir != os.path.normcase(cur_dir):
-        print '***Warning***'
-        print 'The project_folder is ' + project_folder
-        print 'The current directory is ' + cur_dir
-        print 'They do not match. Please reconcile the difference first.'
+        print('***Warning***')
+        print('The project_folder is ' + project_folder)
+        print('The current directory is ' + cur_dir)
+        print('They do not match. Please reconcile the difference first.')
         exit(-1)
 
 ## SET UP INPUTS ##########################################################
@@ -373,7 +376,7 @@ def main():
             daysim_popsampler(sampling_option)
        
         for iteration in range(len(pop_sample)):
-            print "We're on iteration %d" % (iteration)
+            print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))
             time_start = datetime.datetime.now()
             logger.info("starting run %s" % str((time_start)))
@@ -385,9 +388,9 @@ def main():
                         if not os.path.exists('working'):
                             os.makedirs('working')
                         shcopy(base_inputs+'/shadow_pricing/shadow_prices.txt','working/shadow_prices.txt')
-                        print "copying shadow prices" 
+                        print("copying shadow prices" )
                     except:
-                        print ' error copying shadow pricing file from shadow_pricing at ' + base_inputs+'/shadow_pricing/shadow_prices.txt'
+                        print(' error copying shadow pricing file from shadow_pricing at ' + base_inputs+'/shadow_pricing/shadow_prices.txt')
                         sys.exit(1)
 
                 # Set up your Daysim Configration
@@ -409,10 +412,10 @@ def main():
            
             converge=check_convergence(iteration, pop_sample[iteration])
             if converge == 'stop':
-                print "System converged!"
+                print("System converged!")
                 break
 
-            print 'The system is not yet converged. Daysim and Assignment will be re-run.'
+            print('The system is not yet converged. Daysim and Assignment will be re-run.')
 
 ### SUMMARIZE
 ### ##################################################################
@@ -422,7 +425,7 @@ def main():
 #### ##################################################################
     clean_up()
 
-    print '###### OH HAPPY DAY!  ALL DONE. GO GET A ' + random.choice(good_thing)
+    print('###### OH HAPPY DAY!  ALL DONE. GO GET A ' + random.choice(good_thing))
 
 if __name__ == "__main__":
     logger = logcontroller.setup_custom_logger('main_logger')

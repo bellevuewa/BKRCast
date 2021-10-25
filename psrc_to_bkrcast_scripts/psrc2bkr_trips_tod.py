@@ -14,6 +14,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -29,7 +32,7 @@ def runMatrixAdjustment():
     tods = ['5to9', '9to15', '15to18', '18to5']
     #tods = ['5to9']
     for tod in tods:
-        print "updating: " + tod
+        print("updating: " + tod)
         #get matrix names
         infile = os.path.join(wd,tod+".h5")
         matFile = h5py.File(infile, "a")

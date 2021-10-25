@@ -8,6 +8,8 @@ import numpy as np
 import re
 from pyproj import Proj, transform
 
+# 10/25/2021
+# modified to be compatible with python 3
 
 def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
     """Adds an attribute node_ids to the given dataset."""
@@ -31,11 +33,11 @@ def reproject_to_wgs84(longitude, latitude, ESPG = "+init=EPSG:2926", conversion
     return x, y
 
 def process_net_attribute(network, attr, fun):
-    print "Processing %s" % attr
+    print("Processing %s" % attr)
     newdf = None
-    for dist_index, dist in distances.iteritems():        
+    for dist_index, dist in distances.items():        
         res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
-        aggr = network.aggregate(dist, type=fun, decay="exponential", name=attr)
+        aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
         if newdf is None:
             newdf = pd.DataFrame({res_name: aggr, "node_ids": aggr.index.values})
         else:
@@ -45,7 +47,7 @@ def process_net_attribute(network, attr, fun):
 def process_dist_attribute(parcels, network, name, x, y):
     network.set_pois(name, x, y)
     res = network.nearest_pois(max_dist, name, num_pois=1, max_distance=999)
-    res[res <> 999] = (res[res <> 999]/5280.).astype(res.dtypes) # convert to miles
+    res[res != 999] = (res[res != 999]/5280.).astype(res.dtypes) # convert to miles
     res_name = "dist_%s" % name
     parcels[res_name] = res.loc[parcels.node_ids].values
     return parcels
@@ -58,7 +60,7 @@ def process_parcels(parcels, transit_df):
 
     # Start processing attributes
     newdf = None
-    for fun, attrs in parcel_attributes.iteritems():    
+    for fun, attrs in parcel_attributes.items():    
         for attr in attrs:
             net.set(parcels.node_ids, variable=parcels[attr], name=attr)    
             res = process_net_attribute(net, attr, fun)
@@ -90,8 +92,8 @@ def process_parcels(parcels, transit_df):
     net.init_pois(len(transit_modes)+1, max_dist, 1)
   
     # calc the distance from each parcel to nearest transit stop by type
-    for new_name, attr in transit_modes.iteritems():
-        print new_name
+    for new_name, attr in transit_modes.items():
+        print(new_name)
         # get the records/locations that have this type of transit:
         transit_type_df = transit_df.loc[(transit_df[attr] == 1)]
         parcels=process_dist_attribute(parcels, net, new_name, transit_type_df["x"], transit_type_df["y"])
@@ -127,7 +129,7 @@ def clean_up(parcels):
     parcels_final = pd.DataFrame()
     
     # currently Daysim just uses dist_lbus as actually meaning the minimum distance to transit, so we will match that setup for now.
-    print 'updating the distance to local bus field to actually hold the minimum to any transit because that is how Daysim is currently reading the field' 
+    print('updating the distance to local bus field to actually hold the minimum to any transit because that is how Daysim is currently reading the field')
     parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
 
 
@@ -140,11 +142,11 @@ def clean_up(parcels):
 
 if run_update_parking and base_year != scenario_name:
     input_parcels = "inputs\\accessibility\\" + parcels_file_name
-    print 'open file ', input_parcels
-    parcels = pd.DataFrame.from_csv(input_parcels, sep = " ", index_col = None )
+    print('open file ' + input_parcels)
+    parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
 else: 
     # read in data
-    parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
+    parcels = pd.read_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
 
 
 #capitalize field names to avoid errors
@@ -152,17 +154,19 @@ parcels.columns = [i.upper() for i in parcels.columns]
 #check for missing data!
 for col_name in parcels.columns:
     # daysim does not use EMPRSC_P
-	if col_name <> 'EMPRSC_P':
-		if parcels[col_name].sum() == 0:
-			print col_name + ' column sum is zero! Exiting program.'
-			sys.exit(1)
+    if col_name != 'EMPRSC_P':
+        if parcels[col_name].sum() == 0:
+            print(col_name + ' column sum is zero! Exiting program.')
+            sys.exit(1)
 
 # nodes must be indexed by node_id column, which is the first column
-nodes = pd.DataFrame.from_csv(nodes_file_name)
-links = pd.DataFrame.from_csv(links_file_name, index_col = None )
+nodes = pd.read_csv(nodes_file_name, index_col = 'node_id')
+links = pd.read_csv(links_file_name, index_col = None )
+links['from_node_id'] = links['from_node_id'].astype('int')
+links['to_node_id'] = links['to_node_id'].astype('int')
 
 # get rid of circular links
-links = links.loc[(links.from_node_id <> links.to_node_id)]
+links = links.loc[(links.from_node_id != links.to_node_id)]
 
 # assign impedance
 imp = pd.DataFrame(links.Shape_Length)
@@ -171,10 +175,10 @@ imp = imp.rename(columns = {'Shape_Length':'distance'})
 # create pandana network
 net = pdna.network.Network(nodes.x, nodes.y, links.from_node_id, links.to_node_id, imp)
 for dist in distances:
-            net.precompute(dist)
+    net.precompute(dist)
 
 # get transit stops
-transit_df = pd.DataFrame.from_csv(transit_stops_name,  index_col = None)
+transit_df = pd.read_csv(transit_stops_name,  index_col = None)
 transit_df['tstops'] = 1
 
 # intersections:

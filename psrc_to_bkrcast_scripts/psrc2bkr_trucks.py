@@ -13,6 +13,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 import os, shutil
 import pandas as pd
 import h5py
@@ -68,7 +71,7 @@ def runSpclGenPSRCtoBKRZones():
 
     for i in range(0, len(files_spclgen)):
         file = files_spclgen[i]
-        print "updating: " + file
+        print("updating: " + file)
 
         #psrc file
         psrcFileName = file
@@ -110,7 +113,7 @@ def runTruckPSRCtoBKRZones():
 
     for i in range(0, len(files_truck)):
         file = files_truck[i]
-        print "updating: " + file
+        print("updating: " + file)
 
         #psrc file
         psrcFileName = file

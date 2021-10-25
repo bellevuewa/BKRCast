@@ -13,6 +13,9 @@ sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 from EmmeProject import *
 from input_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 # Global variable to hold taz id/index; populated in main
 dictZoneLookup = {}
 
@@ -63,7 +66,7 @@ def load_skims(skim_file_loc, mode_name, divide_by_100=False):
 def calc_fric_fac(cost_skim, dist_skim):
     ''' Calculate friction factors for all trip purposes '''
     friction_fac_dic = {}
-    for purpose, coeff_val in coeff.iteritems():
+    for purpose, coeff_val in coeff.items():
         friction_fac_dic[purpose] = np.exp((coeff[purpose])*(cost_skim + (dist_skim * autoop * avotda)))        
                     
         ## Set external zones to zero to prevent external-external trips - minus 1 as numpy array starts with index 0
@@ -90,7 +93,7 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
 
     # Create Emme matrices if they don't already exist
     for purpose in trip_purps:
-        print purpose
+        print(purpose)
         if purpose + 'pro' not in matrix_name_list:
             my_project.create_matrix(str(purpose)+ "pro" , str(purpose) + " productions", "ORIGIN")
         if purpose + 'att' not in matrix_name_list:
@@ -132,7 +135,7 @@ def balance_matrices(trip_purps, my_project, constraint_taz):
                                  constraint_by_zone_destinations = str(LOW_STATION) + '-' + str(HIGH_STATION), 
                                  constraint_by_zone_origins = str(LOW_STATION) + '-' + str(HIGH_STATION))
         
-        print "Balancing trips for purpose: " + str(purpose)
+        print("Balancing trips for purpose: " + str(purpose))
         my_project.matrix_balancing(results_od_balanced_values = 'mf' + purpose + 'dis', 
                                     od_values_to_balance = 'mf' + purpose + 'fri', 
                                     origin_totals = 'mo' + purpose + 'pro', 
@@ -151,7 +154,7 @@ def export_trips(split_by_mode_tod, output_dir):
     ''' Export combined trips to H5 '''
 
     for tod in time_periods:
-        print "Exporting supplemental trips for time period: " + str(tod)
+        print("Exporting supplemental trips for time period: " + str(tod))
         my_store = h5py.File(output_dir + '/' + str(tod) + '.h5', "w-")
         for mode in mode_dict.keys(): 
             my_store.create_dataset(str(mode), data=split_by_mode_tod[mode][tod])
@@ -162,8 +165,8 @@ def trips_by_mode(trip_dict, trip_purps, my_project):
     trips_by_mode = {}
     init_results = {}
     
-    for mode, mode_values in mode_dict.iteritems():
-        print "Splitting trips by mode for trip purpose: " + str(mode)
+    for mode, mode_values in mode_dict.items():
+        print("Splitting trips by mode for trip purpose: " + str(mode))
         for purpose in trip_purps:
             if purpose in ['hw1', 'hw2', 'hw3', 'hw4']:
                 init_results[purpose] = mode_dict[mode]['hbw'] * trip_dict[purpose]
@@ -183,13 +186,13 @@ def trips_by_tod(trips_by_mode, trip_purps):
     ''' Distribute modal trips across times of day '''
     tod_df = {}
     trips_by_tod = {}
-    for mode, tod_shares in time_dict.iteritems():
+    for mode, tod_shares in time_dict.items():
         for tod in time_periods:
             tod_df[tod] = trips_by_mode[mode] * time_dict[mode][tod]
-            print tod
+            print(tod)
         trips_by_tod[mode] = tod_df
         tod_df = {}
-        print mode
+        print(mode)
     return trips_by_tod
 
 def distribute_trips(trip_table_in, results_dir, trip_purps, fric_facs, my_project, constraint_taz):
@@ -221,7 +224,7 @@ def sum_by_purp(trip_purps, my_project):
     ''' For error checking, sum trips by trip purpose '''
     total_sum_by_purp = {}
     for purpose in trip_purps:
-        print purpose
+        print(purpose)
         # Load Emme O-D total trip data by purpose
         matrix_id = my_project.bank.matrix(purpose + 'od').id    
         emme_matrix = my_project.bank.matrix(matrix_id)  
@@ -237,7 +240,7 @@ def summarize_all_by_purp(ext_spg_summary, gq_summary, trip_purps):
     # Select only externals and special generators
         filtered = np.zeros_like(ext_spg_summary[purpose])
         # Add only special generator rows
-        for loc_name, loc_zone in SPECIAL_GENERATORS.iteritems():
+        for loc_name, loc_zone in SPECIAL_GENERATORS.items():
             # Add rows 
             filtered[[dictZoneLookup[loc_zone]],:] = ext_spg_summary[purpose][[dictZoneLookup[loc_zone]],:]
             # Add columns 
@@ -260,7 +263,7 @@ def ext_spg_selected(trip_purps):
     ''' Select only external and special generator zones '''
     total_sum_by_purp = {}
     for purpose in trip_purps:
-        print purpose
+        print(purpose)
         # Load Emme O-D total trip data by purpose
         matrix_id = my_project.bank.matrix(purpose + 'od').id    
         emme_matrix = my_project.bank.matrix(matrix_id)  
@@ -268,7 +271,7 @@ def ext_spg_selected(trip_purps):
         emme_data = np.array(emme_data.raw_data, dtype='float64')
         filtered = np.zeros_like(emme_data)
         # Add only special generator rows
-        for loc_name, loc_zone in SPECIAL_GENERATORS.iteritems():
+        for loc_name, loc_zone in SPECIAL_GENERATORS.items():
             # Add rows (minus 1 for zero-based NumPy index)
             filtered[[dictZoneLookup[loc_zone]],:] = emme_data[[dictZoneLookup[loc_zone]],:]
             # Add columns (minus 1 for zero-based NumPy index)
@@ -308,7 +311,7 @@ def main():
     
     # Overwrite previous trip tables
     init_dir(supplemental_loc)
-    print "loading skim data..."
+    print("loading skim data...")
     # Load skim data
     path_am_skim = r'inputs\6to9.h5'
     path_pm_skim = r'inputs\1530to1830.h5'
@@ -322,7 +325,7 @@ def main():
     # Compute friction factors by trip purpose
     fric_facs = calc_fric_fac(cost_skim, dist_skim)
 
-    print "distributing ext. and sp. gen. trips..."
+    print("distributing ext. and sp. gen. trips...")
     print(trip_table.shape)
     # Create trip table for externals and special generators by purpose and summarize
 
@@ -333,14 +336,14 @@ def main():
     temp = [[ext_spg_trimmed[purpose].sum() for purpose in trip_purp_full]] #for debug - nagendra.dhakar@rsginc.com
     print(temp)
     
-    print "distributing gp trips..."
+    print("distributing gp trips...")
     # Distribute group quarters trips by purpose and summarize results
     distribute_trips(gq_trip_table, gq_directory, trip_purp_gq, fric_facs, my_project, constraint_taz = HIGH_STATION)
     gq_summary = sum_by_purp(trip_purp_gq, my_project)
     temp = [[gq_summary[purpose].sum() for purpose in trip_purp_gq]] #for debug - nagendra.dhakar@rsginc.com
     print(temp)
     
-    print "combining trips..."
+    print("combining trips...")
     # Combine external, special gen., and group quarters trips
     combined = {}
     for purp in trip_purp_full:

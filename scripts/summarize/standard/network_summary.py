@@ -43,6 +43,9 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
 from emme_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def json_to_dictionary(dict_name):
 
     #Determine the Path to the input files and load them
@@ -52,58 +55,58 @@ def json_to_dictionary(dict_name):
 
     return(my_dictionary)
  
-def calc_vmt_vht_delay_by_ft(EmmeProject):
+def calc_vmt_vht_delay_by_ft(emmeproject):
     print('calculating VMT and VHT delay by facility type')
     ###calculates vmt, vht, and delay for all links and returns a nested dictionary with key=metric(e.g. 'vmt') 
     #and value = dictionary where dictionary has key = facility type(e.g. 'highway') and value = sum of metric 
     #for that facility type
   
-     #medium trucks
-     EmmeProject.network_calculator("link_calculation", result = '@mveh', expression = '@metrk/1.5')
+    #medium trucks
+    emmeproject.network_calculator("link_calculation", result = '@mveh', expression = '@metrk/1.5')
      
      #heavy trucks:
-     EmmeProject.network_calculator("link_calculation", result = '@hveh', expression = '@hvtrk/2.0')
+    emmeproject.network_calculator("link_calculation", result = '@hveh', expression = '@hvtrk/2.0')
      
      #busses:
-     EmmeProject.network_calculator("link_calculation", result = '@bveh', expression = '@trnv3/2.0')
-     ####################still need to do*****************************
-     #hdw- number of buses:
-     #mod_spec = network_calc_spec
-     #mod_spec["result"] = "@hdw"
-     #mod_spec["expression"] = 'hdw'
-     #network_calc(mod_spec)
-     
-     #calc total vehicles, store in @tveh 
-     str_expression = '@svtl1 + @svtl2 + @svtl3 + @h2tl1 + @h2tl2 + @h2tl3 + @h3tl1\
-                                + @h3tl2 + @h3tl3 + @lttrk + @mveh + @hveh + @bveh'
-     EmmeProject.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
-     #a dictionary to hold vmt/vht/delay values:
-     results_dict = {}
-     #dictionary to hold vmts:
-     vmt_dict = {}
-     #calc vmt for all links by factilty type and get sum by ft. 
-     for key, value in fac_type_dict.iteritems():    
-        EmmeProject.network_calculator("link_calculation", result = "@vmt", expression = "@tveh * length", selections_by_link = value)
+    emmeproject.network_calculator("link_calculation", result = '@bveh', expression = '@trnv3/2.0')
+    ####################still need to do*****************************
+    #hdw- number of buses:
+    #mod_spec = network_calc_spec
+    #mod_spec["result"] = "@hdw"
+    #mod_spec["expression"] = 'hdw'
+    #network_calc(mod_spec)
+    
+    #calc total vehicles, store in @tveh 
+    str_expression = '@svtl1 + @svtl2 + @svtl3 + @h2tl1 + @h2tl2 + @h2tl3 + @h3tl1\
+                               + @h3tl2 + @h3tl3 + @lttrk + @mveh + @hveh + @bveh'
+    emmeproject.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
+    #a dictionary to hold vmt/vht/delay values:
+    results_dict = {}
+    #dictionary to hold vmts:
+    vmt_dict = {}
+    #calc vmt for all links by factilty type and get sum by ft. 
+    for key, value in fac_type_dict.items():    
+        emmeproject.network_calculator("link_calculation", result = "@vmt", expression = "@tveh * length", selections_by_link = value)
         #total vmt by ft: 
-        vmt_dict[key] = EmmeProject.network_calc_result['sum']
+        vmt_dict[key] = emmeproject.network_calc_result['sum']
      #add to results dictionary
-     results_dict['vmt'] = vmt_dict
+    results_dict['vmt'] = vmt_dict
     
      #Now do the same for VHT:
-     vht_dict = {}
-     for key, value in fac_type_dict.iteritems():    
-        EmmeProject.network_calculator("link_calculation", result = "@vht", expression = "@tveh * timau / 60", selections_by_link = value)
-        vht_dict[key] = EmmeProject.network_calc_result['sum']
-     results_dict['vht'] = vht_dict
+    vht_dict = {}
+    for key, value in fac_type_dict.items():    
+        emmeproject.network_calculator("link_calculation", result = "@vht", expression = "@tveh * timau / 60", selections_by_link = value)
+        vht_dict[key] = emmeproject.network_calc_result['sum']
+    results_dict['vht'] = vht_dict
 
      #Delay:
-     delay_dict = {}
-     for key, value in fac_type_dict.iteritems():    
-        EmmeProject.network_calculator("link_calculation",result = None, expression =  "@tveh*(timau-(length*60/ul2))/60", selections_by_link = value)
-        delay_dict[key] = EmmeProject.network_calc_result['sum']
+    delay_dict = {}
+    for key, value in fac_type_dict.items():    
+        emmeproject.network_calculator("link_calculation",result = None, expression =  "@tveh*(timau-(length*60/ul2))/60", selections_by_link = value)
+        delay_dict[key] = emmeproject.network_calc_result['sum']
      
-     results_dict['delay'] = delay_dict
-     return results_dict
+    results_dict['delay'] = delay_dict
+    return results_dict
 
 def vmt_by_user_class(EmmeProject):
     #uc_list = ['@svtl1', '@svtl2', '@svtl3', '@svnt1', '@h2tl1', '@h2tl2', '@h2tl3', '@h2nt1', '@h3tl1', '@h3tl2', '@h3tl3', '@h3nt1', '@lttrk', '@mveh', '@hveh', '@bveh']
@@ -125,12 +128,12 @@ def get_link_counts(EmmeProject, df_counts, tod):
          x = {}
          x['loop_INode'] = i
          x['loop_JNode'] = j
-         if link <> None:
+         if link != None:
             x['vol' + tod] = link['@tveh']   
          else:
             x['vol' + tod] = None
          list_model_vols.append(x)
-     print len(list_model_vols)
+     print(len(list_model_vols))
      df =  pd.DataFrame(list_model_vols)
      df = df.set_index(['loop_INode', 'loop_JNode'])
      return df
@@ -145,24 +148,24 @@ def get_aadt_volumes(EmmeProject, df_aadt_counts, vol_dict):
         if row['MIN_Oneway'] == 2:
             link1 = network.link(i,j)
             link2 = network.link(j, i)
-            if link1<>None and link2<> None:
+            if link1 != None and link2 != None:
                 vol = link1['@tveh'] + link2['@tveh']
             elif link1 == None and link2 == None:
                 vol = 0
                 #print i, j
-            elif link1 <> None and link2 == None:
+            elif link1 != None and link2 == None:
                 vol = link1['@tveh'] 
                 #print j, i
-            elif link1 == None and link2 <> None:
+            elif link1 == None and link2 != None:
                 vol = link2['@tveh'] 
 
         elif row['MIN_Oneway'] == 0:
             link1 = network.link(i,j)
-            if link1 <> None:
+            if link1 != None:
                 vol = link1['@tveh']
         else:
             link1 = network.link(j,i)
-            if link1 <> None:
+            if link1 != None:
                 vol = link1['@tveh']
 
         #hov
@@ -173,25 +176,25 @@ def get_aadt_volumes(EmmeProject, df_aadt_counts, vol_dict):
             if row['MIN_Oneway'] == 2:
                 link1 = network.link(i,j)
                 link2 = network.link(j, i)
-                if link1<>None and link2<> None:
+                if link1 != None and link2 != None:
                     vol = vol +link1['@tveh'] + link2['@tveh']
                 elif link1 == None and link2 == None:
                     vol = vol + 0
                     #print i, j
-                elif link1 <> None and link2 == None:
+                elif link1 != None and link2 == None:
                     vol = vol + link1['@tveh'] 
                     #print j, i
-                elif link1 == None and link2 <> None:
+                elif link1 == None and link2 != None:
                     vol = vol + link2['@tveh'] 
             #IJ
             elif row['MIN_Oneway'] == 0:
                 link1 = network.link(i,j)
-                if link1 <> None:
+                if link1 != None:
                     vol = vol + link1['@tveh']
             #JI
             else:
                 link1 = network.link(j,i)
-                if link1 <> None:
+                if link1 != None:
                     vol = vol + link1['@tveh']
 
 
@@ -216,24 +219,24 @@ def get_tptt_volumes(EmmeProject, df_tptt_counts, vol_dict):
         if row['Direction_'] == 'Bothways':
             link1 = network.link(i,j)
             link2 = network.link(j, i)
-            if link1<>None and link2<> None:
+            if link1 != None and link2 != None:
                 vol = link1['@tveh'] + link2['@tveh']
             elif link1 == None and link2 == None:
                 vol = 0
                 #print i, j
-            elif link1 <> None and link2 == None:
+            elif link1 != None and link2 == None:
                 vol = link1['@tveh'] 
                 #print j, i
-            elif link1 == None and link2 <> None:
+            elif link1 == None and link2 != None:
                 vol = link2['@tveh'] 
 
         elif row['Oneway'] == 0:
             link1 = network.link(i,j)
-            if link1 <> None:
+            if link1 != None:
                 vol = link1['@tveh']
         else:
             link1 = network.link(j,i)
-            if link1 <> None:
+            if link1 != None:
                 vol = link1['@tveh']
 
         if id in vol_dict.keys():
@@ -251,7 +254,7 @@ def get_unique_screenlines(EmmeProject):
     network = EmmeProject.current_scenario.get_network()
     unique_screenlines = []
     for link in network.links():
-        if link.type <> 90 and link.type not in unique_screenlines:
+        if link.type != 90 and link.type not in unique_screenlines:
             unique_screenlines.append(str(link.type))
     return unique_screenlines
 
@@ -287,7 +290,7 @@ def get_transit_boardings_time(EmmeProject):
 def calc_transit_link_volumes(EmmeProject):
     total_hours = transit_tod[EmmeProject.tod]['num_of_hours']
     my_expression = str(total_hours) + ' * vauteq * (60/hdw)'
-    print my_expression
+    print(my_expression)
     EmmeProject.transit_segment_calculator(result = '@trnv', expression = my_expression, aggregation = "+")
     
           
@@ -464,11 +467,11 @@ def get_aadt_trucks(my_project):
     
     link_list = []
 
-    for key, value in sound_cast_net_dict.iteritems():
+    for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
         
         # Create extra attributes to store link volume data
-        for name, desc in extra_attributes_dict.iteritems():
+        for name, desc in extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, desc, 'True')
         
         ## Calculate total vehicles for each link
@@ -607,13 +610,13 @@ def main():
         screenline_dict[item] = 0
 
     #loop through all tod banks and get network summaries
-    for key, value in sound_cast_net_dict.iteritems():
+    for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
-        for name, desc in extra_attributes_dict.iteritems():
+        for name, desc in extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, desc, 'True')
         #TRANSIT:
         if my_project.tod in transit_tod.keys():
-            for name, desc in transit_extra_attributes_dict.iteritems():
+            for name, desc in transit_extra_attributes_dict.items():
                 my_project.create_extra_attribute('TRANSIT_LINE', name, desc, 'True')
             #calc_transit_link_volumes(my_project)
             calc_transit_line_atts(my_project)
@@ -688,7 +691,7 @@ def main():
     col = 0
     transit_df = pd.DataFrame()
 
-    for tod, df in transit_summary_dict.iteritems():
+    for tod, df in transit_summary_dict.items():
         
        workbook = writer.book
        index_format = workbook.add_format({'align': 'left', 'bold': True, 'border': True})
@@ -701,7 +704,7 @@ def main():
         '18to5_board', '18to5_time']]
     transit_atts_df = pd.DataFrame(transit_atts)
     transit_atts_df = transit_atts_df.drop_duplicates(['id'], take_last=True)
-    print transit_atts_df.columns
+    print(transit_atts_df.columns)
     transit_df.reset_index(level=0, inplace=True)
     transit_atts_df = transit_atts_df.merge(transit_df, 'inner', right_on=['id'], left_on=['id'])
     transit_atts_df.to_excel(excel_writer = writer, sheet_name = 'Transit Summaries')
@@ -743,7 +746,7 @@ def main():
     net_summary_df['tod'] = ft_summary_dict.keys()    
     net_summary_df['TP_4k'] = net_summary_df['tod'].map(sound_cast_net_dict)
     net_summary_df = net_summary_df.set_index('tod')
-    for key, value in ft_summary_dict.iteritems():
+    for key, value in ft_summary_dict.items():
         for measure in list_of_measures:
             for factype in list_of_FTs:
                 net_summary_df[factype + '_' + measure][key] = value[measure][factype]
