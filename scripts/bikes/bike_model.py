@@ -9,6 +9,9 @@ from input_configuration import *
 from emme_configuration import *
 #from bike_configuration import *
 
+# 10/25/2021
+# modified to be compatible with python 3
+
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''
     link_dict = {}
