@@ -134,6 +134,7 @@ def build_shadow_only(iter):
             shadow_con_file.close()
             return
 
+@timed
 def run_truck_supplemental(iteration):
     ### RUN Truck Model ################################################################
     if run_truck_model:

@@ -172,7 +172,7 @@ def setup_emme_bank_folders():
     time_periods.append('TruckModel')
     time_periods.append('Supplementals')
     for period in time_periods:
-        print(eriod)
+        print(period)
         print("creating bank for time period %s" % period)
         os.makedirs(os.path.join('Banks', period))
         path = os.path.join('Banks', period, 'emmebank')

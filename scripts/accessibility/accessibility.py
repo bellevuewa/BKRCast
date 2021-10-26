@@ -52,7 +52,7 @@ def process_dist_attribute(parcels, network, name, x, y):
     parcels[res_name] = res.loc[parcels.node_ids].values
     return parcels
 
-def process_parcels(parcels, transit_df):
+def process_parcels(parcels, transit_df, net, intersections_df):
     
     # Add a field so you can compute the weighted average number of spaces later
     parcels['daily_weighted_spaces'] = parcels['PARKDY_P']*parcels['PPRICDYP']
@@ -103,7 +103,6 @@ def process_parcels(parcels, transit_df):
     parcels=process_dist_attribute(parcels, net, "park", parcels.XCOORD_P[parcel_idx_park], parcels.YCOORD_P[parcel_idx_park])
 
     return parcels
-  
 
 def clean_up(parcels):
     # we just had these columns to get the weighted average, now drop them
@@ -139,76 +138,78 @@ def clean_up(parcels):
     parcels_final[u'xcoord_p'] = parcels_final[u'xcoord_p'].astype(int)
     return parcels_final
 
+def main():
+    if run_update_parking and base_year != scenario_name:
+        input_parcels = "inputs\\accessibility\\" + parcels_file_name
+        print('open file ' + input_parcels)
+        parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
+    else: 
+        # read in data
+        parcels = pd.read_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
 
-if run_update_parking and base_year != scenario_name:
-    input_parcels = "inputs\\accessibility\\" + parcels_file_name
-    print('open file ' + input_parcels)
-    parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
-else: 
-    # read in data
-    parcels = pd.read_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
+    #capitalize field names to avoid errors
+    parcels.columns = [i.upper() for i in parcels.columns]
+    #check for missing data!
+    for col_name in parcels.columns:
+        # daysim does not use EMPRSC_P
+        if col_name != 'EMPRSC_P':
+            if parcels[col_name].sum() == 0:
+                print(col_name + ' column sum is zero! Exiting program.')
+                sys.exit(1)
 
+    # nodes must be indexed by node_id column, which is the first column
+    nodes = pd.read_csv(nodes_file_name, index_col = 'node_id')
+    links = pd.read_csv(links_file_name, index_col = None )
+    links['from_node_id'] = links['from_node_id'].astype('int')
+    links['to_node_id'] = links['to_node_id'].astype('int')
 
-#capitalize field names to avoid errors
-parcels.columns = [i.upper() for i in parcels.columns]
-#check for missing data!
-for col_name in parcels.columns:
-    # daysim does not use EMPRSC_P
-    if col_name != 'EMPRSC_P':
-        if parcels[col_name].sum() == 0:
-            print(col_name + ' column sum is zero! Exiting program.')
-            sys.exit(1)
+    # get rid of circular links
+    links = links.loc[(links.from_node_id != links.to_node_id)]
 
-# nodes must be indexed by node_id column, which is the first column
-nodes = pd.read_csv(nodes_file_name, index_col = 'node_id')
-links = pd.read_csv(links_file_name, index_col = None )
-links['from_node_id'] = links['from_node_id'].astype('int')
-links['to_node_id'] = links['to_node_id'].astype('int')
+    # assign impedance
+    imp = pd.DataFrame(links.Shape_Length)
+    imp = imp.rename(columns = {'Shape_Length':'distance'})
 
-# get rid of circular links
-links = links.loc[(links.from_node_id != links.to_node_id)]
+    # create pandana network
+    net = pdna.network.Network(nodes.x, nodes.y, links.from_node_id, links.to_node_id, imp)
+    for dist in distances:
+        net.precompute(dist)
 
-# assign impedance
-imp = pd.DataFrame(links.Shape_Length)
-imp = imp.rename(columns = {'Shape_Length':'distance'})
+    # get transit stops
+    transit_df = pd.read_csv(transit_stops_name,  index_col = None)
+    transit_df['tstops'] = 1
 
-# create pandana network
-net = pdna.network.Network(nodes.x, nodes.y, links.from_node_id, links.to_node_id, imp)
-for dist in distances:
-    net.precompute(dist)
+    # intersections:
+    # combine from and to columns
+    all_nodes = pd.DataFrame(net.edges_df['from'].append(net.edges_df.to), columns = ['node_id'])
 
-# get transit stops
-transit_df = pd.read_csv(transit_stops_name,  index_col = None)
-transit_df['tstops'] = 1
+    # get the frequency of each node, which is the number of intersecting ways
+    intersections_df = pd.DataFrame(all_nodes.node_id.value_counts())
+    intersections_df = intersections_df.rename(columns = {'node_id' : 'edge_count'})
+    intersections_df.reset_index(0, inplace = True)
+    intersections_df = intersections_df.rename(columns = {'index' : 'node_ids'})
 
-# intersections:
-# combine from and to columns
-all_nodes = pd.DataFrame(net.edges_df['from'].append(net.edges_df.to), columns = ['node_id'])
+    # add a column for each way count
+    intersections_df['nodes1'] = np.where(intersections_df['edge_count']==1, 1, 0)
+    intersections_df['nodes3'] = np.where(intersections_df['edge_count']==3, 1, 0)
+    intersections_df['nodes4'] = np.where(intersections_df['edge_count']>3, 1, 0)
 
-# get the frequency of each node, which is the number of intersecting ways
-intersections_df = pd.DataFrame(all_nodes.node_id.value_counts())
-intersections_df = intersections_df.rename(columns = {'node_id' : 'edge_count'})
-intersections_df.reset_index(0, inplace = True)
-intersections_df = intersections_df.rename(columns = {'index' : 'node_ids'})
+    # assign network nodes to parcels, for buffer variables
+    assign_nodes_to_dataset(parcels, net, 'node_ids', 'XCOORD_P', 'YCOORD_P')
 
-# add a column for each way count
-intersections_df['nodes1'] = np.where(intersections_df['edge_count']==1, 1, 0)
-intersections_df['nodes3'] = np.where(intersections_df['edge_count']==3, 1, 0)
-intersections_df['nodes4'] = np.where(intersections_df['edge_count']>3, 1, 0)
+    # assign network nodes to transit stops, for buffer variable
+    assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
 
-# assign network nodes to parcels, for buffer variables
-assign_nodes_to_dataset(parcels, net, 'node_ids', 'XCOORD_P', 'YCOORD_P')
+    # run all accibility measures
+    parcels = process_parcels(parcels, transit_df, net, intersections_df)
 
-# assign network nodes to transit stops, for buffer variable
-assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
+    parcels_done = clean_up(parcels)
+    parcels_done.to_csv(output_parcels, index = False, sep = ' ')
 
-# run all accibility measures
-parcels = process_parcels(parcels, transit_df)
+    #to a csv file
+    del col_order[6:24]
+    parcels_done = parcels_done[col_order]
+    parcels_done.to_csv(buffered_parcels_csv, index = False)
 
-parcels_done = clean_up(parcels)
-parcels_done.to_csv(output_parcels, index = False, sep = ' ')
-
-#to a csv file
-del col_order[6:24]
-parcels_done = parcels_done[col_order]
-parcels_done.to_csv(buffered_parcels_csv, index = False)
+if __name__ == '__main__':
+    main()
