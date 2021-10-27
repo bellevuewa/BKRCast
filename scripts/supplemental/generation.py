@@ -102,14 +102,14 @@ def process_inputs(file_loc, start_row, col_names, clean_column, pivot_fields, r
         df = df.pivot(pivot_fields[0], pivot_fields[1])
     # Reorder dataframe rows in numerical order
     if reorder:
-        df = pd.DataFrame(df, index = [str(i) for i in xrange(reorder[0], reorder[1] + 1)])
+        df = pd.DataFrame(df, index = [str(i) for i in range(reorder[0], reorder[1] + 1)])
     return df
 
 def puma_taz_lookup(puma_taz):
     ''' Create PUMS-TAZ lookup table '''
     # Correct PUMS formatting to match cross-class data (add extra '0' in field name) - hard coded
     
-    for x in xrange(1,len(puma_taz)):
+    for x in range(1,len(puma_taz)):
         puma_taz["puma"].loc[x] = puma_taz["puma"].loc[x].replace('gp', 'gp0')
 
     # Import TAZ household and employment data
@@ -118,7 +118,7 @@ def puma_taz_lookup(puma_taz):
                               clean_column="purpose", pivot_fields=['taz', 'purpose'], 
                               reorder=False)
     # Convert column names to string to join with PUMA data
-    taz_data.columns = [str(i) for i in xrange(101,125)]
+    taz_data.columns = [str(i) for i in range(101,125)]
 
     return taz_data
 
@@ -136,7 +136,7 @@ def load_pums():
 
     # Pivot columns and re-order columns (outside of loop)
     pums_df = pums_df.pivot('puma', 'hhtype')
-    pums_df = pums_df["num_hhs"][[str(i) for i in xrange(1,100+1)]+[str(i) for i in xrange(201,456+1)]]
+    pums_df = pums_df["num_hhs"][[str(i) for i in range(1,100+1)]+[str(i) for i in range(201,456+1)]]
 
     return pums_df
 
@@ -150,15 +150,15 @@ def calc_hhs(master_taz):
 
     for cross_class in [inc_size_workers_dict, inc_k12_dict, inc_college_dict, inc_veh_dict]:
         for key, value in cross_class.items():
-            result = master_taz[[str(i) for i in xrange(value['start'], value['end'] + 1)]]
+            result = master_taz[[str(i) for i in range(value['start'], value['end'] + 1)]]
             value['hhs'] = pd.DataFrame(result).sum(axis=1)
             taz_hh = pd.DataFrame(hhs_by_income[value['inc']]['hhs'])
             taz_hh.columns = ["col"]
             pums_hh = pd.DataFrame(value['hhs'],columns=["col"])
             share = pd.DataFrame(taz_hh/pums_hh)
             share.columns = ['col']
-            for id in xrange(value['start'], value['end']+1):
-                new_col = pd.DataFrame(master_taz[str(id)])
+            for id in range(value['start'], value['end']+1):
+                new_col = pd.DataFrame(master_taz[id])
                 new_col.columns = ['col']
                 master_taz[str(id)] = share * new_col
 
@@ -287,45 +287,45 @@ def main():
     # Compute household trip rates by TAZ and by purpose
 
     # Create a dataframe that includes only the household cross-classes
-    hhs = master_taz[[str(i) for i in xrange(hh_cols[0], hh_cols[1])]]
+    hhs = master_taz[[str(i) for i in range(hh_cols[0], hh_cols[1])]]
     # Create a dataframe that includes only the employment cross-classes
-    nonhhs = taz_data[[str(i) for i in xrange(emp_cols[0], emp_cols[1])]]
+    nonhhs = taz_data[[str(i) for i in range(emp_cols[0], emp_cols[1])]]
     # Create dataframe for only group quarter zones (columns 122 - 124, for dorm, military an other quarters)
     gq = nonhhs[['122','123','124']]
 
     # Create empty data frames to hold results
     trips_by_purpose = pd.DataFrame(np.zeros([HIGH_TAZ, 24]), 
-                                    columns = [str(i) for i in xrange(1, 24 + 1)],
+                                    columns = [str(i) for i in range(1, 24 + 1)],
                                     index = taz_data.index)
     nonhh_trips_by_purp = pd.DataFrame(np.zeros([HIGH_TAZ,24]), 
-                                    columns = [str(i) for i in xrange(1, 24 + 1)],
+                                    columns = [str(i) for i in range(1, 24 + 1)],
                                     index = taz_data.index)
     gq_trips = pd.DataFrame(np.zeros([HIGH_TAZ,24]), 
-                                    columns = [str(i) for i in xrange(1, 24 + 1)],
+                                    columns = [str(i) for i in range(1, 24 + 1)],
                                     index = taz_data.index)
 
     # Compute household trip rates by TAZ and by purpose
-    for purpose in xrange(purp_cols[0], purp_cols[1] + 1):
+    for purpose in range(purp_cols[0], purp_cols[1] + 1):
         print('Computing trip rates by purpose (of 24): ' + str(purpose))
         trip_rate = pd.DataFrame(hh_trip['rate'].loc[str(purpose)])
-        trip_rate.index = [str(i) for i in xrange(hh_cols[0], hh_cols[1])]
+        trip_rate.index = [str(i) for i in range(hh_cols[0], hh_cols[1])]
         trip_rate.columns = ['col']
         nh_trip_rate = pd.DataFrame(nonhh_trip.loc[str(purpose)])
-        nh_trip_rate.index = [str(i) for i in xrange(emp_cols[0], emp_cols[1])]
+        nh_trip_rate.index = [str(i) for i in range(emp_cols[0], emp_cols[1])]
         nh_trip_rate.columns = ['col']
         gq_trip_rate = pd.DataFrame(nh_trip_rate.loc[['122','123','124']])
-        gq_trip_rate.index = [str(i) for i in xrange(122, 124 + 1)]
+        gq_trip_rate.index = [str(i) for i in range(122, 124 + 1)]
         gq_trip_rate.columns = ['col']
-        for zone in xrange(1,HIGH_TAZ + 1):
+        for zone in range(1,HIGH_TAZ + 1):
 
             hhs1 = pd.DataFrame(hhs.loc[zone])
             
             nonhhs1 = pd.DataFrame(nonhhs.loc[zone])
             gq1 = pd.DataFrame(gq.loc[zone])
                 
-            hhs1.index = [str(i) for i in xrange(hh_cols[0], hh_cols[1])]
-            nonhhs1.index = [str(i) for i in xrange(emp_cols[0], emp_cols[1])]
-            gq1.index = [str(i) for i in xrange(122, 124 + 1)]
+            hhs1.index = [str(i) for i in range(hh_cols[0], hh_cols[1])]
+            nonhhs1.index = [str(i) for i in range(emp_cols[0], emp_cols[1])]
+            gq1.index = [str(i) for i in range(122, 124 + 1)]
             hhs1.columns = ['col']
             nonhhs1.columns = ['col']
             gq1.columns = ['col']
@@ -374,7 +374,7 @@ def main():
     base = trip_table.loc[:HIGH_TAZ] #slicing the trip table to internal zones only (including special generators)
 
     #add placeholders - PNR
-    placeholder_index = [str(i) for i in xrange(LOW_PNR,HIGH_PNR+1)]
+    placeholder_index = [str(i) for i in range(LOW_PNR,HIGH_PNR+1)]
     placeholder_rows = pd.DataFrame(index=placeholder_index,columns=trip_col)
     trip_table = base.append(placeholder_rows)
 
@@ -382,7 +382,7 @@ def main():
     trip_table = trip_table.append(externals)
 
     #add two dummy external stations
-    dummystations_index = [str(i) for i in xrange(MAX_EXTERNAL+1,1530+1)] #added for last two dummy stations
+    dummystations_index = [str(i) for i in range(MAX_EXTERNAL+1,1530+1)] #added for last two dummy stations
     dummystations_rows = pd.DataFrame(index=dummystations_index,columns=trip_col)
     trip_table = trip_table.append(dummystations_rows)
 

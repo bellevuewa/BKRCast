@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 import time
 import os,sys
-import Tkinter, tkFileDialog
 import multiprocessing as mp
 import subprocess
 from multiprocessing import Pool
@@ -26,7 +25,7 @@ from emme_configuration import *
 # modified to be compatible with python 3
 
 # Temp log file for de-bugging
-logfile = open("truck_log.txt", 'wb')
+logfile = open("truck_log.txt", 'w')
           
 def network_importer(EmmeProject):
     for scenario in list(EmmeProject.bank.scenarios()):
@@ -376,8 +375,8 @@ def create_landuse_correction():
     df_taz = df_taz[df_taz["trucks_allowed_taz"] > 0]
 
     # add some columns required for emme
-    df_taz['emme'] = ['all: 1' for x in xrange(len(df_taz))]
-    df_taz['na'] = [' ' for x in xrange(len(df_taz))]
+    df_taz['emme'] = ['all: 1' for x in range(len(df_taz))]
+    df_taz['na'] = [' ' for x in range(len(df_taz))]
     df_taz['taz'] = df_taz.index
 
     df_string = " " + df_taz['taz'].astype('str') + " " + df_taz['emme']

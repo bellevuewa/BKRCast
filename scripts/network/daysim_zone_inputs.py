@@ -14,7 +14,7 @@ df = df.loc[df['IsZone'] == 1]
 df = df.sort(columns = 'Scen_Node')
 
 # create an ordinal/index column. Daysim is 1 based. 
-df['zone_ordinal'] = [i for i in xrange(1, len(df) + 1)]
+df['zone_ordinal'] = [i for i in range(1, len(df) + 1)]
 
 # create a cost columnn for park and rides, set to 0 for now
 df['Cost'] = 0

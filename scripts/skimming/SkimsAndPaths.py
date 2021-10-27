@@ -158,7 +158,7 @@ def define_matrices(my_project):
     #transit fares, farebox & monthly matrices :
     fare_dict = json_to_dictionary('transit_fare_dictionary')
     if my_project.tod in fare_matrices_tod:
-        for value in fare_dict[my_project.tod]['Names'].itervalues():
+        for value in fare_dict[my_project.tod]['Names'].values():
              my_project.create_matrix(value, 'transit fare', "FULL")
             
     #intrazonals:
@@ -488,6 +488,7 @@ def class_specific_volumes(my_project):
 
 
 def emmeMatrix_to_numpyMatrix(matrix_name, emmebank, np_data_type, multiplier, max_value = None):
+     print(matrix_name)
      matrix_id = emmebank.matrix(matrix_name).id
      emme_matrix = emmebank.matrix(matrix_id)
      matrix_data = emme_matrix.get_data()
@@ -618,7 +619,7 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
             if average_skims:
                 matrix_value = average_matrices(np_old_matrices[matrix_name], matrix_value)
             my_store["Skims"].create_dataset(matrix_name, data=matrix_value.astype('uint16'),compression='gzip')
-            print(atrix_name +' was transferred to the HDF5 container.')
+            print(matrix_name +' was transferred to the HDF5 container.')
 
     #transit/fare
     fare_dict = json_to_dictionary('transit_fare_dictionary')
@@ -858,7 +859,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
   
   #all in-memory numpy matrices populated, now write out to emme
     if survey_seed_trips:
-        for matrix in demand_matrices.itervalues():
+        for matrix in demand_matrices.values():
             matrix = matrix.astype(np.uint16)
     for mat_name in uniqueMatrices:
         print(mat_name)
@@ -1509,8 +1510,6 @@ def main():
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
         export_to_hdf5_pool(l)
-        
-
     end_of_run = time.time()
 
     text =  "Emme Skim Creation and Export to HDF5 completed normally"

@@ -711,7 +711,7 @@ def main():
        
 
     #*******write out counts:
-    for value in counts_dict.itervalues():
+    for value in counts_dict.values():
         df_counts = df_counts.merge(value, right_index = True, left_index = True)
         df_counts = df_counts.drop_duplicates()
     

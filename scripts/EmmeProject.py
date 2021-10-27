@@ -137,7 +137,6 @@ class EmmeProject:
     def create_matrix (self, matrix_name, matrix_description, matrix_type):
         NAMESPACE = "inro.emme.data.matrix.create_matrix"
         process = self.m.tool(NAMESPACE)
-        print(self.current_scenario)
         process (matrix_id= self.bank.available_matrix_identifier(matrix_type),
                           matrix_name= matrix_name,
                           matrix_description= matrix_description,
