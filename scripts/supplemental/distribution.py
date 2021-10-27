@@ -255,7 +255,7 @@ def summarize_all_by_purp(ext_spg_summary, gq_summary, trip_purps):
     return total_sum_by_purp
 
 def write_csv(data, file_name):
-    with open(supplemental_loc + 'supplemental_summary.csv', 'wb') as f:
+    with open(supplemental_loc + 'supplemental_summary.csv', 'w') as f:
         csv_writer = csv.writer(f)
         csv_writer.writerows(data)
 

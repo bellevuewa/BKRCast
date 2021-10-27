@@ -360,7 +360,7 @@ def create_landuse_correction():
     # select truck rows only, using the allowable truck land uses
     truck_df = df[df["description"].isin(truck_uses)]
     # Add a flag for truck allowable field
-    truck_df['trucks_allowed_parcel'] = 1
+    truck_df.loc[:, 'trucks_allowed_parcel'] = 1
 
 
     # merge the truck_df back into the main df

@@ -158,7 +158,7 @@ def calc_hhs(master_taz):
             share = pd.DataFrame(taz_hh/pums_hh)
             share.columns = ['col']
             for id in range(value['start'], value['end']+1):
-                new_col = pd.DataFrame(master_taz[id])
+                new_col = pd.DataFrame(master_taz[str(id)])
                 new_col.columns = ['col']
                 master_taz[str(id)] = share * new_col
 
@@ -177,8 +177,10 @@ def add_special_gen(trip_table):
         trip_table.loc[key]["hboatt"] += value
 
     # Add 25% of airport trips to work-based attractions
-    trip_table.loc[spg_airport.keys()[0]]["hboatt"] += airport_hb_share * spg_airport.values()[0]
-    trip_table.loc[spg_airport.keys()[0]]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
+    trip_table.loc[list(spg_airport.keys())[0]]["hboatt"] += airport_hb_share * list(spg_airport.values())[0]
+    trip_table.loc[list(spg_airport.keys())[0]]["wkoatt"] += airport_wb_share * list(spg_airport.values())[0]
+    #trip_table.loc[spg_airport.keys()[0]]["hboatt"] += airport_hb_share * spg_airport.values()[0]
+    #trip_table.loc[spg_airport.keys()[0]]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
     
     # Add (unbalanced) externals
     externals = pd.DataFrame(pd.read_csv(externals_loc, index_col="taz"))
