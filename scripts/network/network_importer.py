@@ -1,6 +1,6 @@
 import pandas as pd
 import inro.emme.desktop.app as app
-import inro.modeller as _m
+#import inro.modeller as _m
 import inro.emme.matrix as ematrix
 import inro.emme.database.matrix
 import inro.emme.database.emmebank as _eb
@@ -12,124 +12,23 @@ import json
 from multiprocessing import Pool, pool
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from emme_configuration import *
 from input_configuration import *
+from EmmeProject import *
+from data_wrangling import *
 
 # 10/25/2021
 # modified to be compatible with python 3
 
-class EmmeProject:
-    def __init__(self, filepath):
-        self.desktop = app.start_dedicated(True, modeller_initial, filepath)
-        self.m = _m.Modeller(self.desktop)
-        pathlist = filepath.split("/")
-        self.fullpath = filepath
-        self.filename = pathlist.pop()
-        self.dir = "/".join(pathlist) + "/"
-        self.bank = self.m.emmebank
-        self.tod = self.bank.title
-        self.current_scenario = list(self.bank.scenarios())[0]
-        self.data_explorer = self.desktop.data_explorer()
-    def network_counts_by_element(self, element):
-        network = self.current_scenario.get_network()
-        d = network.element_totals
-        count = d[element]
-        return count
-    def change_active_database(self, database_name):
-        for database in self.data_explorer.databases():
-            #print database.title()
-            if database.title() == database_name:
-                
-                database.open()
-                print('changed')
-                self.bank = self.m.emmebank
-                self.tod = self.bank.title
-                print(self.tod)
-                self.current_scenario = list(self.bank.scenarios())[0]
-    def process_modes(self, mode_file):
-        NAMESPACE = "inro.emme.data.network.mode.mode_transaction"
-        process_modes = self.m.tool(NAMESPACE)
-        process_modes(transaction_file = mode_file,
-              revert_on_error = True,
-              scenario = self.current_scenario)
-                
-    def create_scenario(self, scenario_number, scenario_title = 'test'):
-        NAMESPACE = "inro.emme.data.scenario.create_scenario"
-        create_scenario = self.m.tool(NAMESPACE)
-        create_scenario(scenario_id=scenario_number,
-                        scenario_title= scenario_title)
-    def network_calculator(self, type, **kwargs):
-        spec = json_to_dictionary(type)
-        for name, value in kwargs.items():
-            if name == 'selections_by_link':
-                spec['selections']['link'] = value
-            else:
-                spec[name] = value
-        NAMESPACE = "inro.emme.network_calculation.network_calculator"
-        network_calc = self.m.tool(NAMESPACE)
-        self.network_calc_result = network_calc(spec)
+#def json_to_dictionary(dict_name):
 
-   
-    def delete_links(self):
-        if self.network_counts_by_element('links') > 0:
-            NAMESPACE = "inro.emme.data.network.base.delete_links"
-            delete_links = self.m.tool(NAMESPACE)
-            #delete_links(selection="@dist=9", condition="cascade")
-            delete_links(condition="cascade")
+#    #Determine the Path to the input files and load them
+#    input_filename = os.path.join('inputs/skim_params/',dict_name+'.json').replace("\\","/")
+#    my_dictionary = json.load(open(input_filename))
 
-    def delete_nodes(self):
-        if self.network_counts_by_element('regular_nodes') > 0:
-            NAMESPACE = "inro.emme.data.network.base.delete_nodes"
-            delete_nodes = self.m.tool(NAMESPACE)
-            delete_nodes(condition="cascade")
-    def process_vehicles(self,vehicle_file):
-          NAMESPACE = "inro.emme.data.network.transit.vehicle_transaction"
-          process = self.m.tool(NAMESPACE)
-          process(transaction_file = vehicle_file,
-            revert_on_error = True,
-            scenario = self.current_scenario)
+#    return(my_dictionary)
 
-    def process_base_network(self, basenet_file):
-        NAMESPACE = "inro.emme.data.network.base.base_network_transaction"
-        process = self.m.tool(NAMESPACE)
-        process(transaction_file = basenet_file,
-              revert_on_error = True,
-              scenario = self.current_scenario)
-    def process_turn(self, turn_file):
-        NAMESPACE = "inro.emme.data.network.turn.turn_transaction"
-        process = self.m.tool(NAMESPACE)
-        process(transaction_file = turn_file,
-            revert_on_error = False,
-            scenario = self.current_scenario)
-
-    def process_transit(self, transit_file):
-        NAMESPACE = "inro.emme.data.network.transit.transit_line_transaction"
-        process = self.m.tool(NAMESPACE)
-        process(transaction_file = transit_file,
-            revert_on_error = True,
-            scenario = self.current_scenario)
-    def process_shape(self, linkshape_file):
-        NAMESPACE = "inro.emme.data.network.base.link_shape_transaction"
-        process = self.m.tool(NAMESPACE)
-        process(transaction_file = linkshape_file,
-            revert_on_error = True,
-            scenario = self.current_scenario)
-    def change_scenario(self):
-
-        self.current_scenario = list(self.bank.scenarios())[0]
-
-
-    
-def json_to_dictionary(dict_name):
-
-    #Determine the Path to the input files and load them
-    input_filename = os.path.join('inputs/skim_params/',dict_name+'.json').replace("\\","/")
-    my_dictionary = json.load(open(input_filename))
-
-    return(my_dictionary)
-
-
-          
 def import_tolls(emmeProject):
     #create extra attributes:
     create_extras = emmeProject.m.tool("inro.emme.data.extra_attribute.create_extra_attribute")
@@ -182,8 +81,8 @@ def import_tolls(emmeProject):
              revert_on_error=True)
    
     # set TOD specific extra attributes
-    print("import screenline counts and local counts for period: ") + tod_4k
-    if (tod_4k == 'am'):	
+    print("import screenline counts and local counts for period: " + tod_4k)
+    if (tod_4k == 'am'):
         load_extra_attributes(emmeProject, AM_extra_attributes)
     elif (tod_4k == 'md'):
         load_extra_attributes(emmeProject, MD_extra_attributes)
@@ -240,7 +139,6 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                 test = [i[1].id for i in enumerate(link.modes)]
                 # if sov modes are allowed, they should be tolled
                 if 's' in test or 'e' in test:
-                    print(hot_rate)
                     link['@toll1'] = link['@toll1'] + (link.length * hot_rate[link['@tolllane']])
                     if ((tod_4k == 'am') or (tod_4k =='pm')):
                         link['@toll2'] = link['@toll2'] + (link.length * hot_rate[link['@tolllane']])
@@ -251,7 +149,6 @@ def distance_pricing(distance_rate, hot_rate, emmeProject):
                 test = [i[1].id for i in enumerate(link.modes)]
                 # if sov modes are allowed, they should be tolled
                 if 's' in test or 'e' in test:
-                    print(hot_rate)
                     link['@toll1'] = link['@toll1'] + (link.length * hot_rate[link['@tolllane']])
                 if 'v' in test:
                     link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate[link['@tolllane']])
@@ -274,7 +171,7 @@ def change_mode_for_no_toll_traffic(emmeProject):
 
 def run_importer(project_name):
     my_project = EmmeProject(project_name)
-    headway_df = pd.DataFrame.from_csv('inputs/networks/' + headway_file)
+    headway_df = pd.read_csv('inputs/networks/' + headway_file)
     for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
         for scenario in list(my_project.bank.scenarios()):

@@ -36,7 +36,7 @@ if not(use_simple_configuration):
     run_setup_emme_project_folders = False
     run_setup_emme_bank_folders = False
     run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
-    run_import_networks = True
+    run_import_networks = False
 
     # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
     # the model run will start with daysim
