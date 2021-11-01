@@ -573,7 +573,7 @@ def compare_summaries_options():
         for sampling_option_dest in range(0,len(sampled_destination['work_location'])):
             #open summary file
             file_path = os.path.join(dir_store, 'summaries_std_' + str(sampling_option_pop) + '_' + str(sampling_option_dest) + '.xlsx')
-            summary_all = pd.read_excel(file_path, sheetname = None)
+            summary_all = pd.read_excel(file_path, sheet_name = None)
 
             #std_tazs_bkr
             summary_taz = summary_all['std_tazs_bkr']
@@ -638,7 +638,7 @@ calculate summaries of different random seed runs of a sampling option
 '''
 def calculate_summaries_random_seed_runs(sampling_option_pop, sampling_option_dest, file_path, taz_corr):
     #read the excel file
-    summary_all = pd.read_excel(file_path, sheetname = None)
+    summary_all = pd.read_excel(file_path, sheet_name = None)
     sheet_names = summary_all.keys()
 
     df_list = []

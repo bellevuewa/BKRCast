@@ -97,7 +97,8 @@ def export_link_values(my_project):
     # Initialize a dataframe to store results
     df = pd.DataFrame(np.zeros(len(link_attr)+1)).T    # column for each attr +1 for node id (used as merge field)
     df.columns = np.insert(link_attr, 0, 'nodes')    # columns are attrs w/ node id inserted to front of array
-    
+    #'nodes'here is actually link id in string format.so we need to convert data type to string
+    df['nodes'] = df['nodes'].astype('string')
     for attr in link_attr:
         print("processing: " + str(attr))
         

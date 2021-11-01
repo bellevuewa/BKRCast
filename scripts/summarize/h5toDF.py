@@ -63,10 +63,12 @@ def get_guide(guide_file):
     j = 0
     for i in guide.sheet_names():
         if guide.sheet_names()[j][len(guide.sheet_names()[j]) - 1] == ' ':
-            fileguides.update({guide.sheet_names()[j][0:len(guide.sheet_names()[j]) - 1].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
+            #fileguides.update({guide.sheet_names()[j][0:len(guide.sheet_names()[j]) - 1].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
+            fileguides.update({guide.sheet_names()[j][0:len(guide.sheet_names()[j]) - 1] : guide.sheet_by_name(guide.sheet_names()[j])})
             j = j + 1
         else:
-            fileguides.update({guide.sheet_names()[j][0:].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
+            #fileguides.update({guide.sheet_names()[j][0:].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
+            fileguides.update({guide.sheet_names()[j][0:] : guide.sheet_by_name(guide.sheet_names()[j])})
             j = j + 1
     print('Guide import complete')
     return(fileguides)
@@ -77,7 +79,7 @@ def guide_to_dict(guide):
     catdict = {} #Main dictionary
     for file in guide:
         vnames = guide[file].row(0)
-        for var in range((len((guide[file].row(0))) + 1) / 2):
+        for var in range(int((len((guide[file].row(0))) + 1) / 2)):
             vardict = {} #Subdictionary for specific variable
             for cell_value in range(1, len(guide[file]. col(2 * var))):
                 if guide[file].cell(cell_value, 2 * var).value == '':

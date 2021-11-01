@@ -109,7 +109,7 @@ def share_compare(df, colname1, colname2): #For a mode share, converts the colum
 #Functions for importing data to pandas
     
 def get_districts(file):
-    zone_district = pd.DataFrame.from_csv(file, index_col = None)
+    zone_district = pd.read_csv(file, index_col = None)
     return(zone_district)
 
 

@@ -136,7 +136,7 @@ def group_vmt_class(my_project):
 
 
 def emissions_calc(vmt_speed_dict):
-    pollutant_rates = pd.DataFrame.from_csv(pollutant_file)
+    pollutant_rates = pd.read_csv(pollutant_file)
     vehicle_type_tons = {'Car': {'Carbon Dioxide': 0, 'Carbon Monoxide': 0, 'Nitrogen Oxide':0 , 'Volatile Organic Compound': 0, 'Particulate Matter': 0},
                          'Light Truck':{'Carbon Dioxide': 0, 'Carbon Monoxide': 0, 'Nitrogen Oxide':0 , 'Volatile Organic Compound': 0, 'Particulate Matter': 0},
                          'Medium Truck': {'Carbon Dioxide': 0, 'Carbon Monoxide': 0, 'Nitrogen Oxide':0 , 'Volatile Organic Compound': 0, 'Particulate Matter': 0},
@@ -168,7 +168,7 @@ def noise_calc(vmt_speed_dict):
 def injury_calc(injury_file, my_project):
     # For collisions, we assume a rate of collisions per VMT by facility type.
     # To do: We should also include PMT by walking and biking
-    injury_rates = pd.DataFrame.from_csv(injury_file)
+    injury_rates = pd.read_csv(injury_file)
     vmt_func_class = group_vmt_class(my_project)
 
     injury_rates_vmt = pd.merge(injury_rates, vmt_func_class, on = 'Functional Class')

@@ -23,6 +23,7 @@ import xlsxwriter
 import numpy as np
 import xlrd
 import time
+from collections import OrderedDict
 import summary_functions as scf
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
@@ -33,7 +34,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
 input_file = report_output_location+'/network_summary_detailed.xlsx'
 output_file= report_output_location+'/network_summary.xlsx'
-net_summary_df = pd.io.excel.read_excel(input_file, sheetname = 'Network Summary')
+net_summary_df = pd.io.excel.read_excel(input_file, sheet_name = 'Network Summary')
 model_run_name = 'Model Run'
 comparison_name = 'Comparison Scenario'
 comparison_scenario_file = xlrd.open_workbook('output_templates/NetworkSummaryTemplate.xlsx')
@@ -47,7 +48,7 @@ am_observed_df = pd.io.excel.read_excel('scripts/summarize/inputs//network_summa
 md_transit_key_df = pd.io.excel.read_excel('scripts/summarize/inputs/network_summary/TransitRouteKey.xlsx', 'MD').dropna()
 md_observed_df = pd.io.excel.read_excel('scripts/summarize/inputs/network_summary/ObservedBoardings.xlsx', 'MD')
 
-transit_df = pd.io.excel.read_excel(input_file, sheetname = 'Transit Summaries')
+transit_df = pd.io.excel.read_excel(input_file, sheet_name = 'Transit Summaries')
 observed_df = pd.read_csv(observed_boardings_file)
 
 summary_by_tp_4k = net_summary_df.groupby('TP_4k').sum() #Group by 4k time
@@ -173,7 +174,7 @@ transit_agency_dict = {'ET': 'Everett Transit',
 
 #Function to write a table for screenlines
 def write_screenline_tables(workbook, worksheet, screenline_type, header_format, index_format, number_format, percent_format, decimal_format, cond_format):
-    screenline_df = pd.io.excel.read_excel(input_file, sheetname = 'Screenline Volumes')
+    screenline_df = pd.io.excel.read_excel(input_file, sheet_name = 'Screenline Volumes')
     global screenline_dict
     screenline_df['Screenline Name'] = screenline_df['Screenline'].map(screenline_dict[screenline_type]) #Writes primary screenlines first, then secondary
     screenline_df = screenline_df.groupby('Screenline Name').sum()
@@ -663,7 +664,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
             if variable != 'Average Speed':
                 time_df = summary_by_tp_4k[['highway_' + variable, 'arterial_' + variable, 'connectors_' + variable]].transpose().sum() #Add up vmt, vht, and delay for times
                 time_df.loc['Total'] = time_df.sum()
-                time_df = pd.DataFrame.from_items([(model_run_name, time_df)])
+                time_df = pd.DataFrame.from_dict(OrderedDict((model_run_name, time_df)))
                 time_df[comparison_name] = np.nan
                 comparison_dict = {}
 
@@ -691,7 +692,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
                 del facility_df['connectors_' + variable]
                 facility_df = facility_df.transpose()
                 facility_df.loc['Total'] = facility_df.sum()
-                facility_df = pd.DataFrame.from_items([(model_run_name, facility_df)])
+                facility_df = pd.DataFrame.from_dict(OrderedDict((model_run_name, facility_df)))
                 comparison_dict = {}
                 for i in range(len(facilities)):
                     comparison_dict.update({comparison_scenario_sheet.cell(title_rows[variable] + 9 + i, 0).value: comparison_scenario_sheet.cell(title_rows[variable] + 9 + i, 1).value})
@@ -723,7 +724,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
         write_screenline_tables(net_summary, screenlines, 'Primary', header_format, index_format, number_format, percent_format, decimal_format, cond_format)
         write_screenline_tables(net_summary, screenlines, 'Secondary', header_format, index_format, number_format, percent_format, decimal_format, cond_format)
 
-        counts_output = pd.io.excel.read_excel(input_file, sheetname = 'Counts Output')
+        counts_output = pd.io.excel.read_excel(input_file, sheet_name = 'Counts Output')
         counts_by_tod = pd.DataFrame(columns = ['Counts (' + model_run_name + ')', 'Counts (Observed)'],
                                  index = ['5 to 9',
                                           '9 to 15', '15 to 18',
@@ -780,7 +781,7 @@ def highway_summary(network, net_summary, format_sheet, times, screenlines, coun
         
 
         
-        counts_all = pd.io.excel.read_excel(input_file, sheetname = 'Counts Output')
+        counts_all = pd.io.excel.read_excel(input_file, sheet_name = 'Counts Output')
         counts_all = counts_all.reset_index()
         counts_all = counts_all.fillna(0)
         counts_all['Total'] = counts_all['vol5to9'] + counts_all['vol9to15'] + counts_all['vol15to18'] + counts_all['vol18to5']

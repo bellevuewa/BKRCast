@@ -312,7 +312,7 @@ def time_of_day(dataset):
 
 def net_summary(net_file, fname):
     
-    net_summary_df = pd.read_excel(net_file, sheetname='Network Summary')
+    net_summary_df = pd.read_excel(net_file, sheet_name='Network Summary')
     net_summary_df.index = net_summary_df['tod']
     df = pd.DataFrame(net_summary_df.stack())
     df.reset_index(inplace=True)
@@ -336,7 +336,7 @@ def traffic_counts(net_file, fname):
     if sheetname not in pd.ExcelFile(net_file).sheet_names:
         return
     else:
-        df = pd.read_excel(net_file, sheetname=sheetname)
+        df = pd.read_excel(net_file, sheet_name=sheetname)
             
         # Get total of model @tveh
         # take min of count value because it represents potentially multiple linkes
@@ -356,7 +356,7 @@ def transit_summary(net_file, fname):
     if sheetname not in pd.ExcelFile(net_file).sheet_names:
         return
     else:
-        transit_df = pd.read_excel(net_file, sheetname=sheetname)
+        transit_df = pd.read_excel(net_file, sheet_name=sheetname)
         transit_df.index = transit_df['route_code']
 
         # Add model results
@@ -419,7 +419,7 @@ def truck_summary(net_file, fname):
     if sheetname not in pd.ExcelFile(net_file).sheet_names:
         return
     else:
-        df = pd.read_excel(net_file, sheetname='Truck Counts')
+        df = pd.read_excel(net_file, sheet_name='Truck Counts')
         df['source'] = fname.split('.xlsx')[0]
 
         # stack by medium, heavy, and total counts
@@ -445,7 +445,7 @@ def screenlines(net_file, fname):
     if sheetname not in pd.ExcelFile(net_file).sheet_names:
         return
     else:
-        df = pd.read_excel(net_file, sheetname=sheetname)
+        df = pd.read_excel(net_file, sheet_name=sheetname)
         df['source'] = fname.split('.xlsx')[0]
 
     # Load observed data and join

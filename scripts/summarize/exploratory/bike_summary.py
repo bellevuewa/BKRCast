@@ -49,7 +49,7 @@ def get_variables_trips_survey(output_df,trip_variables_survey, person_variables
 SURVEY_DAYS =2
 
 
-zone_district = pd.DataFrame.from_csv(model_dir+districtfile, index_col = None)
+zone_district = pd.read_csv(model_dir+districtfile, index_col = None)
 
 #Model Outputs
 trip_variables = ['otaz', 'dtaz', 'travtime', 'travcost',  'travdist', 'pno', 'mode', 'tour_id', 'opcl', 'dpcl', 'dorp', 'dpurp']

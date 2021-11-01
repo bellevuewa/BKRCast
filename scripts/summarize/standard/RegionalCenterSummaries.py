@@ -37,7 +37,7 @@ def recode_index(df, old_name, new_name): #Changes the index label from somethin
     return df
 
 def get_districts(file):
-    zone_district = pd.DataFrame.from_csv(file, index_col = None)
+    zone_district = pd.read_csv(file, index_col = None)
     return(zone_district)
 
 def to_percent(number): #Might be used later

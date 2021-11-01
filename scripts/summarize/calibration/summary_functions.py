@@ -30,16 +30,17 @@ def get_total(exp_fac): #Gets the total of a series of expansion factors
 
 def weighted_average(df_in, col, weights, grouper = None): #Computes the weighted average. Grouping by another column returns a series instead of a number
     if grouper == None:
-        df_in[col + '_sp'] = df_in[col].multiply(df_in[weights])
+        df_in.loc[:, col + '_sp'] = df_in.loc[:, col].multiply(df_in[weights])
         n_out = df_in[col + '_sp'].sum() / df_in[weights].sum()
         return(n_out)
     else:
-        df_in[col + '_sp'] = df_in[col].multiply(df_in[weights])
+        df_in.loc[:, col + '_sp'] = df_in.loc[:, col].multiply(df_in[weights])
         df_out = df_in.groupby(grouper).sum()
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
         return(df_out[col + '_wa'])
 
-def get_differences(df, colname1, colname2, roundto): #Computes the difference and percent difference for two specified columns in a data frame
+def get_differences(df_in, colname1, colname2, roundto): #Computes the difference and percent difference for two specified columns in a data frame
+    df = df_in.copy()
     df['Difference'] = df[colname1] - df[colname2]
     df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
     if type(roundto) == list:
@@ -48,10 +49,9 @@ def get_differences(df, colname1, colname2, roundto): #Computes the difference a
             df[colname2][i] = round(df[colname2][i], roundto[i])
             df['Difference'][i] = round(df['Difference'][i], roundto[i])
     else:
-        for i in range(len(df['Difference'])):
-            df[colname1][i] = round(df[colname1][i], roundto)
-            df[colname2][i] = round(df[colname2][i], roundto)
-            df['Difference'][i] = round(df['Difference'][i], roundto)
+        df[colname1] = df[colname1].round(roundto)
+        df[colname2] = df[colname2].round(roundto)
+        df['Difference'] = df['Difference'].round(roundto)
     return(df)
 
 def get_counts(counts_df, input_time): #Function to get counts for a SoundCast time period
@@ -112,7 +112,7 @@ def share_compare(df, colname1, colname2): #For a mode share, converts the colum
 #Functions for importing data to pandas
     
 def get_districts(file):
-    zone_district = pd.DataFrame.from_csv(file, index_col = None)
+    zone_district = pd.read_csv(file, index_col = None)
     return(zone_district)
 
 

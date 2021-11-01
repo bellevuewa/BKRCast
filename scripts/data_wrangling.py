@@ -70,7 +70,7 @@ def copy_accessibility_files():
         elif os.path.isfile(os.path.join(parcels_file_folder,'parcels.dat')):
             print('the file is ' + os.path.join(parcels_file_folder,'parcels.dat'))
             print("Parcels file is being reformatted to Daysim format")
-            parcels = pd.DataFrame.from_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
+            parcels = pd.read_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
             print('Read in unformatted parcels file')
             for col in parcels.columns:
                 print(col)

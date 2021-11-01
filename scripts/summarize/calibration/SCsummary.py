@@ -23,6 +23,7 @@ import time
 from h5toDF import *
 from xlautofit import *
 import math
+from collections import OrderedDict
 from input_configuration import *
 from summary_functions import *
 
@@ -46,8 +47,8 @@ def DistrictSummary(data1, data2, name1, name2, location, districtfile):
     trip_ok_2['Destination'] = trip_ok_2['dtaz'].map(DistrictDict)
     trip_od1 = trip_ok_1[['Origin', 'Destination', 'trexpfac']].groupby(['Origin', 'Destination']).sum()['trexpfac'].round(0)
     trip_od2 = trip_ok_2[['Origin', 'Destination', 'trexpfac']].groupby(['Origin', 'Destination']).sum()['trexpfac'].round(0)
-    trip_od1 = pd.DataFrame.from_items([('Trips', trip_od1)])
-    trip_od2 = pd.DataFrame.from_items([('Trips', trip_od2)])
+    trip_od1 = pd.DataFrame.from_dict(OrderedDict({'Trips': trip_od1}))
+    trip_od2 = pd.DataFrame.from_dict(OrderedDict({'Trips': trip_od2}))
     trip_od1 = trip_od1.reset_index()
     trip_od2 = trip_od2.reset_index()
     tripod1 = trip_od1.pivot('Origin', 'Destination', 'Trips')
@@ -102,7 +103,7 @@ def WorkFAZSummary(data1, data2, name1, name2, location, districtfile):
     merge_per_hh_1 = pd.merge(data1['Person'][['pwtaz', 'psexpfac', 'hhno', 'pwtyp']],
                               data1['Household'][['hhtaz', 'hhno']],
                               on = 'hhno')
-    worker_1 = merge_per_hh_1.query('pwtyp>0')
+    worker_1 = merge_per_hh_1.query('pwtyp != "Not a Paid Worker"')
 
     FAZ_TAZ_lookup = pd.read_excel(FAZ_TAZ)
 
@@ -204,7 +205,8 @@ def DayPattern(data1, data2, name1, name2, location):
         #Delete added column to make future iterations faster
         del PersonsDay1[tc]
         del PersonsDay2[tc]
-        toursPersPurp = pd.DataFrame.from_items([(name1, toursPersPurp1), (name2, toursPersPurp2)])
+        items = OrderedDict(((name1, toursPersPurp1), (name2, toursPersPurp2)))
+        toursPersPurp = pd.DataFrame.from_dict(items)
         toursPersPurp = get_differences(toursPersPurp, name1, name2, 2)
         toursPersPurp = recode_index(toursPersPurp, 'pptyp','Person Type')
         print(purpose + ' Tours by Person Type data frame created in ' + str(round(time.time() - dfstart, 1)) + ' seconds')
@@ -238,7 +240,8 @@ def DayPattern(data1, data2, name1, name2, location):
     ttp1 = [atp1, atl1]
     ttp2 = [atp2, atl2]
     label = ['Average Trips Per Person', 'Average Trip Length']
-    ttp = pd.DataFrame.from_items([('', label), (name1, ttp1), (name2, ttp2)])
+    items = OrderedDict((('', label), (name1, ttp1), (name2, ttp2)))
+    ttp = pd.DataFrame.from_dict(items)
     ttp = ttp.set_index('')
     ttp = get_differences(ttp, name1, name2, 2)
 
@@ -450,7 +453,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
      #Auto Ownership
 
     # read in ACS dataset
-    autos= pd.read_excel(acs_data,sheetname = 'AutosTotal')
+    autos= pd.read_excel(acs_data,sheet_name = 'AutosTotal')
     acs_auto_share = pd.DataFrame(autos['Total'] * 100)
 
     ao['Percent of Households (' + name1 + ')'] = ao1
@@ -580,8 +583,10 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     triptotal2 = weighted_average(tourtrip2[['tautodist', 'toexpfac', 'pdpurp']], 'tautodist', 'toexpfac', 'pdpurp')
 
     #Create data frame
-    atl1 = pd.DataFrame.from_items([('Average Tour Length (' + name1 + ')', triptotal1)])
-    atl2 = pd.DataFrame.from_items([('Average Tour Length (' + name2 + ')', triptotal2)])
+    #items = {'Average Tour Length (' + name1 + ')', triptotal1}
+    atl1 = pd.DataFrame.from_dict({'Average Tour Length (' + name1 + ')' : triptotal1})
+    #items = {'Average Tour Length (' + name2 + ')', triptotal2}
+    atl2 = pd.DataFrame.from_dict({'Average Tour Length (' + name2 + ')': triptotal2})
     atl = pd.merge(atl1, atl2, 'outer', left_index = True, right_index = True)
     atl = get_differences(atl, 'Average Tour Length (' + name1 + ')', 'Average Tour Length (' + name2 + ')', 2)
     atl = recode_index(atl, 'pdpurp', 'Tour Purpose')
@@ -608,8 +613,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     tourtotal2 = weighted_average(toursnotrips2, 'notrips', 'toexpfac', 'pdpurp')
 
     #Create data frame
-    nttp1 = pd.DataFrame.from_items([('Avg # Trips/Tour (' + name1 + ')', tourtotal1)])
-    nttp2 = pd.DataFrame.from_items([('Avg # Trips/Tour (' + name2 + ')', tourtotal2)])
+    nttp1 = pd.DataFrame.from_dict({'Avg # Trips/Tour (' + name1 + ')': tourtotal1})
+    nttp2 = pd.DataFrame.from_dict({'Avg # Trips/Tour (' + name2 + ')': tourtotal2})
     nttp = pd.merge(nttp1, nttp2, 'outer', left_index = True, right_index = True)
     nttp = get_differences(nttp, 'Avg # Trips/Tour (' + name1 + ')', 'Avg # Trips/Tour (' + name2 + ')', 1)
     nttp = recode_index(nttp, 'pdpurp', 'Tour Purpose')
@@ -634,8 +639,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Average Distance by Tour Mode
     triptotalm1 = weighted_average(tourtrip1, 'tautodist', 'trexpfac', 'tmodetp')
     triptotalm2 = weighted_average(tourtrip2, 'tautodist', 'trexpfac', 'tmodetp')
-    atlm1 = pd.DataFrame.from_items([('Average Trip Length (' + name1 + ')', triptotalm1)])
-    atlm2 = pd.DataFrame.from_items([('Average Trip Length (' + name2 + ')', triptotalm2)])
+    atlm1 = pd.DataFrame.from_dict(OrderedDict({'Average Trip Length (' + name1 + ')': triptotalm1}))
+    atlm2 = pd.DataFrame.from_dict(OrderedDict({'Average Trip Length (' + name2 + ')': triptotalm2}))
     atlm = pd.merge(atlm1, atlm2, 'outer', left_index = True, right_index = True)
     atlm = get_differences(atlm, 'Average Trip Length (' + name1 + ')', 'Average Trip Length (' + name2 + ')', 2)
     atlm = recode_index(atlm, 'tmodetp', 'Tour Mode')
@@ -646,8 +651,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Number of Trips by Tour Mode
     tourtotalm1 = weighted_average(toursnotrips1, 'notrips', 'toexpfac', 'tmodetp')
     tourtotalm2 = weighted_average(toursnotrips2, 'notrips', 'toexpfac', 'tmodetp')
-    nttpm1 = pd.DataFrame.from_items([('Avg # Trips/Tour (' + name1 + ')', tourtotalm1.round(2))])
-    nttpm2 = pd.DataFrame.from_items([('Avg # Trips/Tour (' + name2 + ')', tourtotalm2.round(2))])
+    nttpm1 = pd.DataFrame.from_dict(OrderedDict({'Avg # Trips/Tour (' + name1 + ')': tourtotalm1.round(2)}))
+    nttpm2 = pd.DataFrame.from_dict(OrderedDict({'Avg # Trips/Tour (' + name2 + ')': tourtotalm2.round(2)}))
     nttpm = pd.merge(nttpm1, nttpm2, 'outer', left_index = True, right_index = True)
     nttpm = get_differences(nttpm, 'Avg # Trips/Tour (' + name1 + ')', 'Avg # Trips/Tour (' + name2 + ')', 2)
     nttpm = recode_index(nttpm, 'tmodetp', 'Tour Mode')
@@ -715,7 +720,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     HHPer2 = pd.merge(data2['Person'][['hhno', 'psexpfac']], data2['Household'][['hhno', 'hhtaz']], 'outer', on = 'hhno')
     people_per_taz_1 = HHPer1.groupby('hhtaz').sum()['psexpfac']
     people_per_taz_2 = HHPer2.groupby('hhtaz').sum()['psexpfac']
-    people_per_taz = pd.DataFrame.from_items([('Number of People (' + name1 + ')', people_per_taz_1), ('Number of People (' + name2 + ')', people_per_taz_2)])
+    people_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of People (' + name1 + ')', people_per_taz_1), ('Number of People (' + name2 + ')', people_per_taz_2))))
     people_per_taz_district = pd.merge(people_per_taz, districtfile, left_index = True, right_on = 'TAZ')
     people_per_district = people_per_taz_district[['Number of People (' + name1 + ')', 'Number of People (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
     people_per_district = get_differences(people_per_district, 'Number of People (' + name1 + ')', 'Number of People (' + name2 + ')', 0)
@@ -726,7 +731,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
 
     workers_per_taz_1 = data1['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
     workers_per_taz_2 = data2['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
-    workers_per_taz = pd.DataFrame.from_items([('Number of Workers (' + name1 + ')', workers_per_taz_1), ('Number of Workers (' + name2 + ')', workers_per_taz_2)])
+    workers_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Workers (' + name1 + ')', workers_per_taz_1), ('Number of Workers (' + name2 + ')', workers_per_taz_2))))
     workers_per_taz_district = pd.merge(workers_per_taz, districtfile, left_index = True, right_on = 'TAZ')
     workers_per_district = workers_per_taz_district[['Number of Workers (' + name1 + ')', 'Number of Workers (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
     workers_per_district = get_differences(workers_per_district, 'Number of Workers (' + name1 + ')', 'Number of Workers (' + name2 + ')', 0)
@@ -737,7 +742,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
 
     students_per_taz_1 = data1['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
     students_per_taz_2 = data2['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
-    students_per_taz = pd.DataFrame.from_items([('Number of Students (' + name1 + ')', students_per_taz_1), ('Number of Students (' + name2 + ')', students_per_taz_2)])
+    students_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Students (' + name1 + ')', students_per_taz_1), ('Number of Students (' + name2 + ')', students_per_taz_2))))
     students_per_taz_district = pd.merge(students_per_taz, districtfile, left_index = True, right_on = 'TAZ')
     students_per_district = students_per_taz_district[['Number of Students (' + name1 + ')', 'Number of Students (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
     students_per_district = get_differences(students_per_district, 'Number of Students (' + name1 + ')', 'Number of Students (' + name2 + ')', 0)
@@ -855,7 +860,7 @@ def ModeChoice(data1, data2, name1, name2, location):
     value2.append(int(round(Tour_2_total, 0)))
 
 
-    vmpp = pd.DataFrame.from_items([('', label), (name1, value1), (name2, value2)])
+    vmpp = pd.DataFrame.from_dict(OrderedDict((('', label), (name1, value1), (name2, value2))))
     vmpp = get_differences(vmpp, name1, name2, 2)
     vmpp = vmpp.set_index('')
 
@@ -883,8 +888,8 @@ def ModeChoice(data1, data2, name1, name2, location):
 
 
     #Mode share by purpose
-    tourpurpmode1 = pd.DataFrame.from_items([('Purpose', tour_ok_1['pdpurp']), ('Mode', tour_ok_1['tmodetp']), ('Expansion Factor', tour_ok_1['toexpfac'])])
-    tourpurpmode2 = pd.DataFrame.from_items([('Purpose', tour_ok_2['pdpurp']), ('Mode', tour_ok_2['tmodetp']), ('Expansion Factor', tour_ok_2['toexpfac'])])
+    tourpurpmode1 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_1['pdpurp']), ('Mode', tour_ok_1['tmodetp']), ('Expansion Factor', tour_ok_1['toexpfac']))))
+    tourpurpmode2 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_2['pdpurp']), ('Mode', tour_ok_2['tmodetp']), ('Expansion Factor', tour_ok_2['toexpfac']))))
     tourpurp1 = tourpurpmode1.groupby('Purpose').sum()['Expansion Factor']
     tourpurp2 = tourpurpmode2.groupby('Purpose').sum()['Expansion Factor']
     tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
@@ -898,13 +903,16 @@ def ModeChoice(data1, data2, name1, name2, location):
     modenames = halfcols.index
     ncols = [] #Columns for new data frame
     for i in range(len(modenames)):
-        ncols.append(modenames[i].encode('ascii', 'replace') + ' (' + name1 + ')')
-        ncols.append(modenames[i].encode('ascii', 'replace') + ' (' + name2 + ')')
+        #ncols.append(modenames[i].encode('ascii', 'replace') + (' (' + name1 + ')').encode('ascii', 'replace'))
+        #ncols.append(modenames[i].encode('ascii', 'replace') + (' (' + name2 + ')').encode('ascii', 'replace'))
+        ncols.append(modenames[i] + (' (' + name1 + ')'))
+        ncols.append(modenames[i] + (' (' + name2 + ')'))
+
     mbpcdf = pd.DataFrame()
 
     #Fills in the data frame with NA
     for column in ncols:   
-        filler = pd.Series()
+        filler = pd.Series(dtype='float64')
         for purpose in nrows.index:
             filler[purpose] = float('Nan')
         mbpcdf[column] = filler
@@ -935,8 +943,10 @@ def ModeChoice(data1, data2, name1, name2, location):
     #Create pivot tables
     counts1 = tourtrip1[['Primary Tour Mode', 'Trip Mode', 'trexpfac']].groupby(['Primary Tour Mode', 'Trip Mode']).sum()['trexpfac']#creates data frame grouped by trip and primary tour mode
     counts2 = tourtrip2[['Primary Tour Mode', 'Trip Mode', 'trexpfac']].groupby(['Primary Tour Mode', 'Trip Mode']).sum()['trexpfac']
-    counts1 = pd.DataFrame.from_items([('Trips', counts1)])
-    counts2 = pd.DataFrame.from_items([('Trips', counts2)])
+    counts1 = pd.DataFrame({'Trips': counts1})
+    counts2 = pd.DataFrame({'Trips': counts2})
+    #counts1 = pd.DataFrame.from_dict(OrderedDict(('Trips', counts1)))
+    #counts2 = pd.DataFrame.from_dict(OrderedDict(('Trips', counts2)))
     counts1 = counts1.reset_index()
     counts2 = counts2.reset_index()
     counts1pivot = counts1.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
@@ -1069,8 +1079,8 @@ def ModeChoice(data1, data2, name1, name2, location):
     #Glue data frame together
     full1 = ttrips1.reset_index()
     full2 = ttrips2.reset_index()
-    tptt1 = pd.DataFrame.from_items([('Mode', full1['mode']), ('Purpose', full1['dpurp']), ('Total Trips (' + name1 + ')', full1['trexpfac']), ('Mean Time (' + name1 + ')', full1['mtt']), ('Mean Distance (' + name1 + ')', full1['mtd'])])
-    tptt2 = pd.DataFrame.from_items([('Mode', full2['mode']), ('Purpose', full2['dpurp']), ('Total Trips (' + name2 + ')', full2['trexpfac']), ('Mean Time (' + name2 + ')', full2['mtt']), ('Mean Distance (' + name2 + ')', full2['mtd'])])
+    tptt1 = pd.DataFrame.from_dict(OrderedDict((('Mode', full1['mode']), ('Purpose', full1['dpurp']), ('Total Trips (' + name1 + ')', full1['trexpfac']), ('Mean Time (' + name1 + ')', full1['mtt']), ('Mean Distance (' + name1 + ')', full1['mtd']))))
+    tptt2 = pd.DataFrame.from_dict(OrderedDict((('Mode', full2['mode']), ('Purpose', full2['dpurp']), ('Total Trips (' + name2 + ')', full2['trexpfac']), ('Mean Time (' + name2 + ')', full2['mtt']), ('Mean Distance (' + name2 + ')', full2['mtd']))))
     tptt = pd.merge(tptt1, tptt2, 'outer')
     tptt = tptt.sort_index(axis = 1, ascending = False)
     tptt = tptt.set_index(['Mode', 'Purpose'])
@@ -1223,7 +1233,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     ph[name2] = [tp2, th2, ahs2]
     ph = get_differences(ph, name1, name2, [0, 0, 2])
 
-    persons_hh_acs= pd.read_excel(acs_data,sheetname = 'Totals')
+    persons_hh_acs= pd.read_excel(acs_data,sheet_name = 'Totals')
     persons_hh_acs_df = pd.DataFrame(persons_hh_acs)
     acs_persons = persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total']
     acs_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total']
@@ -1249,7 +1259,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     work_home_2 = work_home_county_2.sum()
     wh = pd.DataFrame(index = ['Total Workers at Home', 'Total Workers', 'Share at Home (%)'])
     wh[name1] = [work_home_1, total_workers_1, work_home_1 / total_workers_1 * 100]
-    work_at_home_acs= pd.read_excel(acs_data,sheetname = 'WorkAtHome')
+    work_at_home_acs= pd.read_excel(acs_data,sheet_name = 'WorkAtHome')
     region_wah = work_at_home_acs.loc[work_at_home_acs['County'] == 'Region']
     region_wah_values = [region_wah['ACS'], region_wah['total'], region_wah['percent']]
     wh['ACS'] = region_wah_values
@@ -1425,7 +1435,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     hh_taz1 = pd.merge(districtfile, data1['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     hh_taz2 = pd.merge(districtfile, data2['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     aoc1 = hh_taz1[['County', 'hhvehs', 'hhexpfac']].groupby(['County', 'hhvehs']).sum()['hhexpfac']
-    autos_by_county= pd.read_excel(acs_data,sheetname = 'AutosCounty')
+    autos_by_county= pd.read_excel(acs_data,sheet_name = 'AutosCounty')
     acs_auto_share = pd.DataFrame(autos_by_county)
 
 
