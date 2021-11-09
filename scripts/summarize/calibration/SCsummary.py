@@ -945,8 +945,6 @@ def ModeChoice(data1, data2, name1, name2, location):
     counts2 = tourtrip2[['Primary Tour Mode', 'Trip Mode', 'trexpfac']].groupby(['Primary Tour Mode', 'Trip Mode']).sum()['trexpfac']
     counts1 = pd.DataFrame({'Trips': counts1})
     counts2 = pd.DataFrame({'Trips': counts2})
-    #counts1 = pd.DataFrame.from_dict(OrderedDict(('Trips', counts1)))
-    #counts2 = pd.DataFrame.from_dict(OrderedDict(('Trips', counts2)))
     counts1 = counts1.reset_index()
     counts2 = counts2.reset_index()
     counts1pivot = counts1.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
@@ -970,19 +968,22 @@ def ModeChoice(data1, data2, name1, name2, location):
     toursbymode2 = counts2pivot.sum()
     for tour_mode in modes:
         for trip_mode in modes:
-            try:
-                percent1pivot.loc[tour_mode, trip_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
-            except ZeroDivisionError:
+            if toursbymode1[tour_mode] == 0:
                 percent1pivot.loc[tour_mode, trip_mode] = float('nan')
-            try:
-                percent2pivot.loc[tour_mode, trip_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
-            except ZeroDivisionError:
+            else:
+                percent1pivot.loc[tour_mode, trip_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
+
+            if toursbymode2[tour_mode] == 0:
                 percent2pivot.loc[tour_mode, trip_mode] = float('nan')
+            else:
+                percent2pivot.loc[tour_mode, trip_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
             share_difference.loc[tour_mode, trip_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
-            try:
-                share_pd.loc[tour_mode, trip_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
-            except ZeroDivisionError:
+
+            if percent2pivot[tour_mode][trip_mode] == 0:
                 share_pd.loc[tour_mode, trip_mode] = float('nan')
+            else:
+                share_pd.loc[tour_mode, trip_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
+
         roundto = 2
         percent1pivot[tour_mode] = percent1pivot[tour_mode].astype('float').round(roundto)
         percent1pivot = add_index_name(percent1pivot, 'Trip_Mode')
@@ -1391,7 +1392,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #0: no pass 
     #1-6: various types of passes, but can treat them all as 1 (yes)
     #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
-    data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
+    data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
     ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()

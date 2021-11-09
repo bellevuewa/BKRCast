@@ -29,13 +29,14 @@ def get_total(exp_fac): #Gets the total of a series of expansion factors
     return(total)
 
 def weighted_average(df_in, col, weights, grouper = None): #Computes the weighted average. Grouping by another column returns a series instead of a number
+    df = df_in.copy()
     if grouper == None:
-        df_in.loc[:, col + '_sp'] = df_in.loc[:, col].multiply(df_in[weights])
-        n_out = df_in[col + '_sp'].sum() / df_in[weights].sum()
+        df[col + '_sp'] = df[col].multiply(df[weights])
+        n_out = df[col + '_sp'].sum() / df[weights].sum()
         return(n_out)
     else:
-        df_in.loc[:, col + '_sp'] = df_in.loc[:, col].multiply(df_in[weights])
-        df_out = df_in.groupby(grouper).sum()
+        df[col + '_sp'] = df[col].multiply(df[weights])
+        df_out = df.groupby(grouper).sum()
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
         return(df_out[col + '_wa'])
 
