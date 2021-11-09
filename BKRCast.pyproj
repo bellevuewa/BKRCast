@@ -156,7 +156,6 @@
     <Compile Include="scripts\summarize\standard\truck_vols.py" />
     <Compile Include="scripts\summarize\xlautofit.py" />
     <Compile Include="scripts\summarize\__init__.py" />
-    <Compile Include="scripts\summary_functions.py" />
     <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
     <Compile Include="scripts\supplemental\distribution.py" />
     <Compile Include="scripts\supplemental\generation.py" />
