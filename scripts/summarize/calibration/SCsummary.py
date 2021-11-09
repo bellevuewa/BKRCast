@@ -1261,7 +1261,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     wh[name1] = [work_home_1, total_workers_1, work_home_1 / total_workers_1 * 100]
     work_at_home_acs= pd.read_excel(acs_data,sheet_name = 'WorkAtHome')
     region_wah = work_at_home_acs.loc[work_at_home_acs['County'] == 'Region']
-    region_wah_values = [region_wah['ACS'], region_wah['total'], region_wah['percent']]
+    region_wah_values = [region_wah['ACS'].sum(), region_wah['total'].sum(), region_wah['percent'].sum()]
     wh['ACS'] = region_wah_values
 
     
@@ -1560,14 +1560,14 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     whbc.to_excel(excel_writer = writer, sheet_name = 'Workers at Home', na_rep = 'NA', startrow = 6)
     chart = workbook.add_chart({'type': 'column'})
     sheet = 'Workers at Home'
-    for col_num in range(1, 3):
+    for col_num in range(2, 4):
         chart.add_series({'name': [sheet, 6, col_num],
-                            'categories': [sheet, 8, 0, 11, 0],
-                            'values': [sheet, 8, col_num, 11, col_num],
-                            'fill': {'color': colors[col_num - 1]}})
+                            'categories': [sheet, 7, 1, 10, 1],
+                            'values': [sheet, 7, col_num, 10, col_num],
+                            'fill': {'color': colors[col_num - 2]}})
     chart.add_series({'name': [sheet, 6, 5],
-                        'categories': [sheet, 8, 0, 11, 0],
-                        'values':[sheet, 8, 5, 11, 5],
+                        'categories': [sheet, 7, 0, 10, 0],
+                        'values':[sheet, 7, 5, 10, 5],
                         'fill': {'color': '#000000'}})
     chart.set_legend({'position': 'top'})
     chart.set_x_axis({'name': 'County'})
