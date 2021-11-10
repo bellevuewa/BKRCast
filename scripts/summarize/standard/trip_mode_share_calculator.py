@@ -312,7 +312,10 @@ def main():
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
     if Output_file_trip_dist == '':
-        Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
+        fn = os.path.basename(Output_file)
+        basefn, ext = os.path.splitext(fn)      
+        Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', basefn + '_trip_distance' + ext)
+
     print 'Input file: ' + trips_file
     print 'Output file: ' + Output_file
     print 'Output trip distance file: ' + Output_file_trip_dist
