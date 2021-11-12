@@ -432,7 +432,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
 
     #Transit Pass Ownership
     ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
-    ttp2 = data2['Person']['ptpass'].multiply(data2['Person']['psexpfac']).sum()
+    ttp2 = data2['Person'].loc[data2['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ppp1 = ttp1 / Person_1_total
     ppp2 = ttp2 / Person_2_total
     tpass = pd.DataFrame(index = ['Total Passes', 'Passes per Person'])
@@ -1236,9 +1236,9 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
 
     persons_hh_acs= pd.read_excel(acs_data,sheet_name = 'Totals')
     persons_hh_acs_df = pd.DataFrame(persons_hh_acs)
-    acs_persons = persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total']
-    acs_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total']
-    acs_per_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total']
+    acs_persons = persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total'].sum()
+    acs_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Households']['Total'].sum()
+    acs_per_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='PersonHH']['Total'].sum()
     ph['ACS'] = [acs_persons, acs_hh, acs_per_hh]
 
     cp2 = time.time()
@@ -1392,11 +1392,13 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #0: no pass 
     #1-6: various types of passes, but can treat them all as 1 (yes)
     #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
-    data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
+    #data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
-    ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
-    ttp2 = data2['Person']['ptpass'].multiply(data2['Person']['psexpfac']).sum()
+
+    #ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
+    ttp1 = data1['Person'].loc[data1['Person']['ptpass'] > 0, 'psexpfac'].sum()
+    ttp2 =  data2['Person'].loc[data2['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ppp1 = ttp1 / Person_1_total
     ppp2 = ttp2 / Person_2_total
     tpass = pd.DataFrame(index = ['Total Transit Passes', 'Transit Passes per Person'])
@@ -1754,8 +1756,6 @@ def report_compile(h5_results_file,h5_results_name,
     timerstart=time.time()
     data1 = convert(h5_results_file,guidefile,h5_results_name)
     data2 = convert(h5_comparison_file,guidefile,h5_comparison_name)
-    #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
-    #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
         DaysimReport(data1,data2,h5_results_name,h5_comparison_name,report_output_location,zone_district)
