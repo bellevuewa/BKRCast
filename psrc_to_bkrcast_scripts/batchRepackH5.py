@@ -23,4 +23,4 @@ for item in matches:
     itemOut = item.replace(".h5","_repack.h5")
     cmdLine = h5repack + " %s %s" % (item, itemOut)
     os.system(cmdLine)
-    print"cmdLine"
+    print(cmdLine)
