@@ -17,7 +17,7 @@ def get_link_attribute(attr, network):
     link_dict = {}
     for i in network.links():
         link_dict[i.id] = i[attr]
-    df = pd.DataFrame({'link_id': link_dict.keys(), attr: link_dict.values()})
+    df = pd.DataFrame.from_dict({'link_id': list(link_dict.keys()), attr: list(link_dict.values())})
     print(df.head(4))
     return df
 
@@ -33,7 +33,8 @@ def bike_facility_weight(my_project, link_df):
     # Load the extra attribute data for bike facility type 
     # and replace geodb typology with the 2-tier definition
     df = get_link_attribute('@bkfac', network)
-    df = df.merge(link_df)
+    df = pd.merge(df, link_df, on = 'link_id', how = 'inner')
+    #df = df.merge(link_df)
     df = df.replace(bike_facility_crosswalk)
 
     # Replace the facility ID with the estimated  marginal rate of substituion

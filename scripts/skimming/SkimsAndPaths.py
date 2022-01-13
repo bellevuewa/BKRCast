@@ -742,7 +742,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
     if adj_trips_df is None:
-        my_store=h5py.File(hdf_filename, "r+")
+        my_store=h5py.File(hdf_filename, "r")
         #Stores in the HDF5 Container to read or write to
         daysim_set = my_store['Trip']
         print(hdf_filename + ' is used to populate trip tables.')
@@ -961,7 +961,7 @@ def create_trip_tod_indices(tod, adj_trips_df):
     if adj_trips_df is None: 
         #Now for the given tod, get the index of all the trips for that Time Period
         print(hdf5_file_path)
-        my_store = h5py.File(hdf5_file_path, "r+")
+        my_store = h5py.File(hdf5_file_path, "r")
         daysim_set = my_store["Trip"]
     else:
         daysim_set = adj_trips_df
