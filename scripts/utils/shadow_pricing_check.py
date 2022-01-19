@@ -21,6 +21,9 @@ sys.path.append(os.getcwd())
 from input_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
+# 1/18/2022
+# upgrade to python 3
+
 def get_percent_rmse(urbansim_file, daysim_file, guide_file):
     urbansim_data = pd.io.parsers.read_table(urbansim_file, sep = ' ') #Read in UrbanSim data
     jobs_by_taz = urbansim_data[['taz_p', 'emptot_p']].groupby('taz_p').sum() #Get number of jobs by TAZ
@@ -38,7 +41,7 @@ def get_percent_rmse(urbansim_file, daysim_file, guide_file):
     workers_jobs_by_taz['Squared Difference'] = workers_jobs_by_taz['Difference']**2
     rms_error = math.sqrt(workers_jobs_by_taz['Squared Difference'].mean())
     percent_rmse = rms_error / workers_jobs_by_taz['DaySim'].mean() * 100
-    print '%RMSE: ' + str(round(percent_rmse, 2)) + '%'
+    print('%RMSE: ' + str(round(percent_rmse, 2)) + '%')
     return percent_rmse
 
 def convergence_check(rmse_list, convergence_criterion, iteration): #Function not presently in use
