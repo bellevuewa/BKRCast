@@ -46,12 +46,9 @@ def volume_weight(my_project, df):
     # Separate auto volume into bins
     df['volume_wt'] = pd.cut(df['@tveh'], bins=aadt_bins, labels=aadt_labels, right=False)
     df['volume_wt'] = df['volume_wt'].astype('int')
-
-    # Replace bin label with weight value, only for links with no bike facilities.
-    over_df = df[df['facility_wt'] < 0].replace(to_replace = aadt_dict)
-    over_df['volume_wt'] = 0
-    under_df = df[df['facility_wt'] >= 0]
-    df = over_df.append(under_df)
+    df = df.replace(to_replace = aadt_dict)
+    # remove volume weight value from premium facility.
+    df.loc[df['@bkfac'] == 'premium', 'volume_wt'] = 0
 
     return df
 
@@ -123,7 +120,9 @@ def calc_bike_weight(my_project, link_df):
 	# Calculate total weights
 	# add inverse of premium bike coeffient to set baseline as a premium bike facility with no slope (removes all negative weights)
 	# add 1 so this weight can be multiplied by original link travel time to produced "perceived travel time"
-	df['total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
+	df.loc[df['@bkfac'] == 'premium', 'total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt']
+	df.loc[df['@bkfac'] != 'premium', 'total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
+	#df['total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
 
 	# Write link data for analysis
 	df.to_csv(r'outputs/bike_attr.csv')
