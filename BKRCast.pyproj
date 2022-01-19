@@ -140,9 +140,6 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
-    <Compile Include="scripts\summarize\standard\export_files_for_validation.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
     <Compile Include="scripts\summarize\standard\pacalculator.py">

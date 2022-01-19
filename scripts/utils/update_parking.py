@@ -15,6 +15,9 @@ import os, sys
 sys.path.append(os.getcwd())
 from input_configuration import *
 
+# 1/18/2022
+# upgrade to python 3
+
 input_parcels = "inputs\\accessibility\\" + parcels_file_name
 
 # Combine data columns
@@ -94,4 +97,4 @@ df.fillna(0, inplace =True)
 df.to_csv(input_parcels, sep = ' ', index = False)
 
 # End the script
-print "Parcel file updated with aggregate parking costs and lot numbers. " + str(len(replace_daily_parking_spaces)) + " parcels were updated." 
+print("Parcel file updated with aggregate parking costs and lot numbers. " + str(len(replace_daily_parking_spaces)) + " parcels were updated.")

@@ -736,7 +736,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     dictZoneLookup = dict((value,index) for index,value in enumerate(zones))
     #create an index of trips for this TOD. This prevents iterating over the entire array (all trips).
-    tod_index = create_trip_tod_indices(my_project.tod, adj_trips_df)
+    tod_index = create_trip_tod_indices(my_project.tod, hdf_filename, adj_trips_df)
 
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
@@ -948,7 +948,7 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
 
     return demand_matrix
 
-def create_trip_tod_indices(tod, adj_trips_df):
+def create_trip_tod_indices(tod, hdf5_file, adj_trips_df):
     #creates an index for those trips that belong to tod (time of day)
     tod_dict = text_to_dictionary('time_of_day')
     uniqueTOD = set(tod_dict.values())
@@ -960,8 +960,8 @@ def create_trip_tod_indices(tod, adj_trips_df):
 
     if adj_trips_df is None: 
         #Now for the given tod, get the index of all the trips for that Time Period
-        print(hdf5_file_path)
-        my_store = h5py.File(hdf5_file_path, "r")
+        print(hdf5_file)
+        my_store = h5py.File(hdf5_file, "r")
         daysim_set = my_store["Trip"]
     else:
         daysim_set = adj_trips_df
@@ -1003,18 +1003,20 @@ def matrix_controlled_rounding(my_project):
     text = 'finished matrix controlled rounding'
     logging.debug(text)
 
-def start_pool(project_list, max_num_iterations, adjusted_trips_df):
+def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration):
     #An Emme databank can only be used by one process at a time. Emme Modeler API only allows one instance of Modeler and
     #it cannot be destroyed/recreated in same script. In order to run things con-currently in the same script, must have
     #seperate projects/banks for each time period and have a pool for each project/bank.
     #Fewer pools than projects/banks will cause script to crash.
     print('inside pool: ' + str(max_num_iterations))
+    print(hdf5_file_path)
     #Doing some testing on best approaches to con-currency
     pool = Pool(processes=parallel_instances)
     # wfh_adj_trips_df does not change during parallel processing.
-    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df)
+    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration)
     pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
     pool.close()
+    pool.join()
 
 def start_delete_matrices_pool(project_list):
     pool = Pool(processes=parallel_instances)
@@ -1066,13 +1068,19 @@ def run_transit(project_name):
     my_bank.dispose()
     print("finished run_transit")
 
-def export_to_hdf5_pool(project_list):
-    
-    pool = Pool(processes=parallel_instances)
-    pool.map(start_export_to_hdf5, project_list[0:parallel_instances])
-    pool.close()
+#def export_to_hdf5_pool(project_list):
+#    pool = Pool(processes=parallel_instances)
+#    pool.map(start_export_to_hdf5, project_list[0:parallel_instances])
+#    pool.close()
 
-def start_export_to_hdf5(test):
+def export_to_hdf5_pool(project_list, survey_seed_trips, daysim_seed_trips ):
+    pool = Pool(processes=parallel_instances)
+    start_export_to_hdf5_x = partial(start_export_to_hdf5, survey_seed_trips = survey_seed_trips, daysim_seed_trips = daysim_seed_trips)
+    pool.map(start_export_to_hdf5_x, project_list[0:parallel_instances])
+    pool.close()
+    pool.join()
+
+def start_export_to_hdf5(test, survey_seed_trips, daysim_seed_trips):
     print(test)
     my_project = EmmeProject(test)
     #do not average skims if using seed_trips because we are starting the first iteration
@@ -1280,7 +1288,7 @@ def delete_matrices_parallel(project_name):
     delete_matrices(my_project, "DESTINATION")
 
 #save highway assignment results for sensitivity tests
-def store_assign_results(project_name):
+def store_assign_results(project_name, iteration):
     print('save assignment results')
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
@@ -1308,8 +1316,9 @@ def store_assign_results(project_name):
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
 
-def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
+def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_file, iteration):
     print('Inside run_assignment_parallel: ' + project_name + ' ' + str(max_iteration))
+    print(hdf5_file)
     start_of_run = time.time()
 
     my_project = EmmeProject(project_name)
@@ -1322,7 +1331,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     define_matrices(my_project)
 
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
-    hdf5_trips_to_Emme(my_project, hdf5_file_path, adj_trips_df)
+    hdf5_trips_to_Emme(my_project, hdf5_file, adj_trips_df)
     matrix_controlled_rounding(my_project)
 
     populate_intrazonals(my_project)
@@ -1349,7 +1358,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df):
     traffic_assignment(my_project, max_iteration)
     
     #save results
-    store_assign_results(my_project)
+    store_assign_results(my_project, iteration)
    
     attribute_based_skims(my_project, "Time")
 
@@ -1468,8 +1477,10 @@ def main():
         text = 'Using DAYSIM OUTPUTS'
         hdf5_file_path = h5_results_file
     print(text)
+    print(hdf5_file_path)
     logging.debug(text)
 
+    wfh_adj_trips_df = None
     if ((converted_workers_file_name) != ''):
         my_store = h5py.File(hdf5_file_path, 'r')
         wfh_adj_trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
@@ -1487,7 +1498,7 @@ def main():
         text = '% of trips for adjustment made by workers working from home: ' + str(percent)
         logging.debug(text)
 
-    start_pool(project_list, max_num_iterations, wfh_adj_trips_df)
+    start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration)
     #run_assignments_parallel(project_list[2])
     start_transit_pool(project_list)
    
@@ -1509,7 +1520,7 @@ def main():
     #export skims even if skims converged
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
-        export_to_hdf5_pool(l)
+        export_to_hdf5_pool(l, survey_seed_trips, daysim_seed_trips)
     end_of_run = time.time()
 
     text =  "Emme Skim Creation and Export to HDF5 completed normally"
