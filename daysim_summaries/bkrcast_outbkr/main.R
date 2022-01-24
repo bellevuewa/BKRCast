@@ -14,9 +14,8 @@ library(descr)
 library(Hmisc)
 library(data.table)
 library(plyr)
-library(Rcpp)
 
-setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_outbkr")
+setwd("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_outbkr")
 
 #------------------------------------
 #Source functions and config settings

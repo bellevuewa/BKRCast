@@ -1,6 +1,6 @@
 
-R version 3.3.3 (2017-03-06) -- "Another Canoe"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,15 +28,21 @@ Type 'q()' to quit R.
 > ##TODO consider local R installation, with predownloaded packages in that library
 > library(foreign)
 > library(reshape)
+Warning message:
+package 'reshape' was built under R version 4.1.2 
 > library(XLConnect)
-Loading required package: XLConnectJars
-XLConnect 0.2-15 by Mirai Solutions GmbH [aut],
+XLConnect 1.0.5 by Mirai Solutions GmbH [aut],
   Martin Studer [cre],
   The Apache Software Foundation [ctb, cph] (Apache POI),
-  Graph Builder [ctb, cph] (Curvesapi Java library)
-http://www.mirai-solutions.com
+  Graph Builder [ctb, cph] (Curvesapi Java library),
+  Brett Woolridge [ctb, cph] (SparseBitSet Java library)
+https://mirai-solutions.ch
 https://github.com/miraisolutions/xlconnect
+Warning message:
+package 'XLConnect' was built under R version 4.1.2 
 > library(descr)
+Warning message:
+package 'descr' was built under R version 4.1.2 
 > library(Hmisc)
 Loading required package: lattice
 Loading required package: survival
@@ -49,6 +55,9 @@ The following objects are masked from 'package:base':
 
     format.pval, units
 
+Warning messages:
+1: package 'Hmisc' was built under R version 4.1.2 
+2: package 'ggplot2' was built under R version 4.1.2 
 > library(data.table)
 
 Attaching package: 'data.table'
@@ -57,6 +66,8 @@ The following object is masked from 'package:reshape':
 
     melt
 
+Warning message:
+package 'data.table' was built under R version 4.1.2 
 > library(plyr)
 
 Attaching package: 'plyr'
@@ -69,8 +80,10 @@ The following objects are masked from 'package:reshape':
 
     rename, round_any
 
+Warning message:
+package 'plyr' was built under R version 4.1.2 
 > 
-> setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all")
+> setwd("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all")
 > 
 > #------------------------------------
 > #Source functions and config settings
@@ -97,7 +110,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyhhfile,"survhhdata")
 + }
-Read 69.7% of 1606356 rowsRead 1606356 rows and 21 (of 21) columns from 0.100 GB file in 00:00:03
 > 
 > progressNextStep("reading person data")
 > if(runWrkSchLocationChoice | runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode | runTripTOD)
@@ -107,7 +119,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyperfile,"survperdata")
 + }
-Read 6.9% of 3926859 rowsRead 20.1% of 3926859 rowsRead 33.4% of 3926859 rowsRead 46.3% of 3926859 rowsRead 60.4% of 3926859 rowsRead 74.9% of 3926859 rowsRead 89.1% of 3926859 rowsRead 3926859 rows and 24 (of 24) columns from 0.317 GB file in 00:00:09
 > 
 > progressNextStep("reading person day data")
 > if(runDayPattern)
@@ -117,7 +128,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveypdayfile,"survpdaydata")
 + }
-Read 23.2% of 3926859 rowsRead 51.2% of 3926859 rowsRead 78.4% of 3926859 rowsRead 3926859 rows and 31 (of 31) columns from 0.311 GB file in 00:00:05
 > 
 > progressNextStep("reading person day tour data")
 > if(runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode)
@@ -127,43 +137,7 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytourfile,"survtourdata")
 + }
-Read 0.0% of 6429761 rowsRead 5.8% of 6429761 rowsRead 11.2% of 6429761 rowsRead 16.8% of 6429761 rowsRead 22.7% of 6429761 rowsRead 28.5% of 6429761 rowsRead 34.4% of 6429761 rowsRead 40.3% of 6429761 rowsRead 46.2% of 6429761 rowsRead 52.1% of 6429761 rowsRead 57.7% of 6429761 rowsRead 63.3% of 6429761 rowsRead 68.7% of 6429761 rowsRead 75.3% of 6429761 rowsRead 81.2% of 6429761 rowsRead 87.1% of 6429761 rowsRead 92.8% of 6429761 rowsRead 98.6% of 6429761 rowsRead 6429761 rows and 33 (of 33) columns from 0.825 GB file in 00:00:20
-> 
-> progressNextStep("reading person day trip data")
-> if(runDayPattern | runTripMode | runTripTOD)
-+ {
-+   if(prepDaySim)
-+     readSaveRdata(dstripfile,"dstripdata")
-+   if(prepSurvey)
-+     readSaveRdata(surveytripfile,"survtripdata")
-+ }
-Read 0.0% of 17932803 rowsRead 1.8% of 17932803 rowsRead 3.6% of 17932803 rowsRead 5.5% of 17932803 rowsRead 7.3% of 17932803 rowsRead 9.2% of 17932803 rowsRead 10.9% of 17932803 rowsRead 12.4% of 17932803 rowsRead 14.1% of 17932803 rowsRead 15.7% of 17932803 rowsRead 17.3% of 17932803 rowsRead 19.1% of 17932803 rowsRead 20.8% of 17932803 rowsRead 22.6% of 17932803 rowsRead 24.4% of 17932803 rowsRead 26.2% of 17932803 rowsRead 28.0% of 17932803 rowsRead 29.7% of 17932803 rowsRead 31.6% of 17932803 rowsRead 33.2% of 17932803 rowsRead 34.9% of 17932803 rowsRead 36.7% of 17932803 rowsRead 38.4% of 17932803 rowsRead 40.2% of 17932803 rowsRead 42.0% of 17932803 rowsRead 43.8% of 17932803 rowsRead 45.6% of 17932803 rowsRead 47.5% of 17932803 rowsRead 49.4% of 17932803 rowsRead 51.2% of 17932803 rowsRead 53.0% of 17932803 rowsRead 54.6% of 17932803 rowsRead 56.4% of 17932803 rowsRead 58.0% of 17932803 rowsRead 59.8% of 17932803 rowsRead 61.6% of 17932803 rowsRead 63.5% of 17932803 rowsRead 65.2% of 17932803 rowsRead 67.1% of 17932803 rowsRead 68.9% of 17932803 rowsRead 70.7% of 17932803 rowsRead 72.5% of 17932803 rowsRead 74.4% of 17932803 rowsRead 76.3% of 17932803 rowsRead 78.0% of 17932803 rowsRead 79.7% of 17932803 rowsRead 81.5% of 17932803 rowsRead 83.3% of 17932803 rowsRead 85.0% of 17932803 rowsRead 86.8% of 17932803 rowsRead 88.4% of 17932803 rowsRead 90.0% of 17932803 rowsRead 91.7% of 17932803 rowsRead 93.5% of 17932803 rowsRead 95.2% of 17932803 rowsRead 97.0% of 17932803 rowsRead 98.8% of 17932803 rowsRead 17932803 rows and 28 (of 28) columns from 2.308 GB file in 00:01:04
-> 
-> #Optional tour weight adjustment
-> if(tourAdj)
-+ {
-+   touradj <- fread(tourAdjFile)
-+ }
-> 
-> #force gc()
-> gc()
-          used (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells 1459051 78.0    2637877  140.9   1770749   94.6
-Vcells 1924059 14.7  234471129 1788.9 289723072 2210.5
-> 
-> #-----------------------
-> #Run tabulations
-> #-----------------------
-> ##TODO split between preparing tables in an R object and then putting them somewhere
-> ##TODO e.g. in a spreadsheet, in a pdf report, etc.
-> 
-> #source("nonhwy.R")
-> 
-> progressNextStep("summarizing work location choice")
-> if(runWrkSchLocationChoice)
-+ {
-+   source("wrkschlocation.R")
-+ }
-[1] "Work/School Location Summary...Started"
-Error: FileNotFoundException (Java): File 'WrkLocation.xlsm' could not be found - you may specify to automatically create the file if not existing.
+Error in fread(filename) : 
+  File './data/Tour_bkr_new_skim.dat' does not exist or is non-readable. getwd()=='D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all'
+Calls: readSaveRdata -> assign -> fread
 Execution halted

@@ -1,6 +1,6 @@
 
-R version 3.3.3 (2017-03-06) -- "Another Canoe"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,15 +28,21 @@ Type 'q()' to quit R.
 > ##TODO consider local R installation, with predownloaded packages in that library
 > library(foreign)
 > library(reshape)
+Warning message:
+package 'reshape' was built under R version 4.1.2 
 > library(XLConnect)
-Loading required package: XLConnectJars
-XLConnect 0.2-15 by Mirai Solutions GmbH [aut],
+XLConnect 1.0.5 by Mirai Solutions GmbH [aut],
   Martin Studer [cre],
   The Apache Software Foundation [ctb, cph] (Apache POI),
-  Graph Builder [ctb, cph] (Curvesapi Java library)
-http://www.mirai-solutions.com
+  Graph Builder [ctb, cph] (Curvesapi Java library),
+  Brett Woolridge [ctb, cph] (SparseBitSet Java library)
+https://mirai-solutions.ch
 https://github.com/miraisolutions/xlconnect
+Warning message:
+package 'XLConnect' was built under R version 4.1.2 
 > library(descr)
+Warning message:
+package 'descr' was built under R version 4.1.2 
 > library(Hmisc)
 Loading required package: lattice
 Loading required package: survival
@@ -49,6 +55,9 @@ The following objects are masked from 'package:base':
 
     format.pval, units
 
+Warning messages:
+1: package 'Hmisc' was built under R version 4.1.2 
+2: package 'ggplot2' was built under R version 4.1.2 
 > library(data.table)
 
 Attaching package: 'data.table'
@@ -57,6 +66,8 @@ The following object is masked from 'package:reshape':
 
     melt
 
+Warning message:
+package 'data.table' was built under R version 4.1.2 
 > library(plyr)
 
 Attaching package: 'plyr'
@@ -69,8 +80,10 @@ The following objects are masked from 'package:reshape':
 
     rename, round_any
 
+Warning message:
+package 'plyr' was built under R version 4.1.2 
 > 
-> setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_outbkr")
+> setwd("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_outbkr")
 > 
 > #------------------------------------
 > #Source functions and config settings
@@ -106,7 +119,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyperfile,"survperdata")
 + }
-Read 14.4% of 2771738 rowsRead 33.6% of 2771738 rowsRead 53.4% of 2771738 rowsRead 73.2% of 2771738 rowsRead 90.9% of 2771738 rowsRead 2771738 rows and 24 (of 24) columns from 0.224 GB file in 00:00:07
 > 
 > progressNextStep("reading person day data")
 > if(runDayPattern)
@@ -116,7 +128,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveypdayfile,"survpdaydata")
 + }
-Read 57.7% of 2771738 rowsRead 94.9% of 2771738 rowsRead 2771738 rows and 31 (of 31) columns from 0.220 GB file in 00:00:04
 > 
 > progressNextStep("reading person day tour data")
 > if(runDayPattern | runTourDestination | runTourMode | runTourTOD | runTripMode)
@@ -126,7 +137,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytourfile,"survtourdata")
 + }
-Read 0.9% of 4485077 rowsRead 8.7% of 4485077 rowsRead 16.7% of 4485077 rowsRead 25.0% of 4485077 rowsRead 32.8% of 4485077 rowsRead 41.0% of 4485077 rowsRead 48.4% of 4485077 rowsRead 56.6% of 4485077 rowsRead 64.9% of 4485077 rowsRead 73.8% of 4485077 rowsRead 81.2% of 4485077 rowsRead 89.0% of 4485077 rowsRead 96.5% of 4485077 rowsRead 4485077 rows and 33 (of 33) columns from 0.578 GB file in 00:00:15
 > 
 > progressNextStep("reading person day trip data")
 > if(runDayPattern | runTripMode | runTripTOD)
@@ -136,7 +146,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytripfile,"survtripdata")
 + }
-Read 0.0% of 14913595 rowsRead 2.0% of 14913595 rowsRead 4.0% of 14913595 rowsRead 6.2% of 14913595 rowsRead 8.2% of 14913595 rowsRead 10.3% of 14913595 rowsRead 12.3% of 14913595 rowsRead 14.4% of 14913595 rowsRead 16.6% of 14913595 rowsRead 18.8% of 14913595 rowsRead 21.0% of 14913595 rowsRead 23.1% of 14913595 rowsRead 25.3% of 14913595 rowsRead 27.4% of 14913595 rowsRead 29.5% of 14913595 rowsRead 31.8% of 14913595 rowsRead 34.0% of 14913595 rowsRead 36.2% of 14913595 rowsRead 38.2% of 14913595 rowsRead 40.3% of 14913595 rowsRead 42.4% of 14913595 rowsRead 44.7% of 14913595 rowsRead 46.7% of 14913595 rowsRead 48.9% of 14913595 rowsRead 51.2% of 14913595 rowsRead 53.3% of 14913595 rowsRead 55.5% of 14913595 rowsRead 57.6% of 14913595 rowsRead 59.7% of 14913595 rowsRead 62.0% of 14913595 rowsRead 64.0% of 14913595 rowsRead 66.0% of 14913595 rowsRead 68.1% of 14913595 rowsRead 70.1% of 14913595 rowsRead 72.1% of 14913595 rowsRead 74.3% of 14913595 rowsRead 76.5% of 14913595 rowsRead 78.5% of 14913595 rowsRead 80.5% of 14913595 rowsRead 82.4% of 14913595 rowsRead 84.7% of 14913595 rowsRead 86.9% of 14913595 rowsRead 88.7% of 14913595 rowsRead 90.5% of 14913595 rowsRead 92.7% of 14913595 rowsRead 95.0% of 14913595 rowsRead 97.4% of 14913595 rowsRead 99.6% of 14913595 rowsRead 14913595 rows and 28 (of 28) columns from 1.929 GB file in 00:00:53
 > 
 > #Optional tour weight adjustment
 > if(tourAdj)
@@ -146,9 +155,9 @@ The following objects are masked from 'package:reshape':
 > 
 > #force gc()
 > gc()
-          used (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells 1459051 78.0    2637877  140.9   1770749   94.6
-Vcells 1924075 14.7  223976312 1708.9 241310187 1841.1
+            used   (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells   1893541  101.2    3714561  198.4   2596467  138.7
+Vcells 146808702 1120.1  426597394 3254.7 408035085 3113.1
 > 
 > #-----------------------
 > #Run tabulations
@@ -228,24 +237,24 @@ Vcells 1924075 14.7  223976312 1708.9 241310187 1841.1
 > 
 > progressEnd(outputsDir)
    steps                            stepnames stepruntimes cumruntimes
-1      1                      reading hh data         5.61        5.61
-2      2                  reading person data        17.79       23.40
-3      3              reading person day data        13.36       36.76
-4      4         reading person day tour data        46.71       83.47
-5      5         reading person day trip data       162.93      246.40
-6      6     summarizing work location choice        23.72      270.12
-7      7 summarizing vehicle ownership choice         4.16      274.28
-8      8              summarizing Day pattern       123.31      397.59
-9      9       summarizing Destination Choice        16.80      414.39
-10    10  summarizing Trip Destination Choice        35.56      449.95
-11    11         summarizing Tour Mode Choice        14.77      464.72
-12    12  summarizing Tour Time of Day Choice        27.31      492.03
-13    13         summarizing Trip Mode Choice        36.78      528.81
-14    14  summarizing Trip Time of Day Choice        59.36      588.17
+1      1                      reading hh data         4.52        4.52
+2      2                  reading person data        13.30       17.82
+3      3              reading person day data        12.26       30.08
+4      4         reading person day tour data        39.69       69.77
+5      5         reading person day trip data       104.98      174.75
+6      6     summarizing work location choice        14.05      188.80
+7      7 summarizing vehicle ownership choice         3.20      192.00
+8      8              summarizing Day pattern        61.55      253.55
+9      9       summarizing Destination Choice        11.19      264.74
+10    10  summarizing Trip Destination Choice        19.78      284.52
+11    11         summarizing Tour Mode Choice        10.09      294.61
+12    12  summarizing Tour Time of Day Choice        15.97      310.58
+13    13         summarizing Trip Mode Choice        22.50      333.08
+14    14  summarizing Trip Time of Day Choice        28.91      361.99
 > 
 > # Rprof(NULL)
 > # memprof <- summaryRprof()
 > 
 > proc.time()
    user  system elapsed 
- 593.62  272.92  590.46 
+ 772.12  168.57  364.84 

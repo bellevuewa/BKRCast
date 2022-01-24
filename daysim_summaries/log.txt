@@ -1,6 +1,6 @@
 
-R version 3.3.3 (2017-03-06) -- "Another Canoe"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -17,21 +17,21 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-[Previously saved workspace restored]
-
 > 
 > library(foreign)
 > library(data.table)
+Warning message:
+package 'data.table' was built under R version 4.1.2 
 > 
 > Survey = FALSE #if TRUE survey files will be processed otherwise, DaySim outputs - LODES or ESD
 > LODES = FALSE
 > ESD = TRUE
 > 
-> filter_type = "trip" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
+> filter_type = "hh" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
 > 
 > if(Survey){
 +   #survey
-+   wd <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data'
++   wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all/data'
 +   file.hhs <- 'Household_bkr_new.dat'
 +   file.persons <- 'Person_bkr_new_skim.dat'
 +   file.person_day <- 'PersonDay_bkr.dat'
@@ -58,7 +58,7 @@ Type 'q()' to quit R.
 +   
 + } else if (ESD) {
 +   #daysim - esd data
-+   wd <- 'D:/2018baseyear/BKR0V1-02/outputs'
++   wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs'
 +   file.hhs <- '_household.tsv'
 +   file.persons <- '_person.tsv' 
 +   file.person_day <- '_person_day.tsv'
@@ -69,7 +69,7 @@ Type 'q()' to quit R.
 +   file.ext_outbkr = '_outbkr.tsv'
 + }
 > 
-> file.correspondence <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data/TAZ_District_CrossWalk.csv'
+> file.correspondence <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/data/TAZ_District_CrossWalk.csv'
 > 
 > setwd(wd)
 > print("reading inputs ...")
@@ -138,7 +138,7 @@ Type 'q()' to quit R.
 +               sep = file.delim, row.names = FALSE)
 +   
 + }
-[1] "filter is trip"
+[1] "filter is hhs"
 [1] "filter trips ..."
 > 
 > ##tours
@@ -214,4 +214,4 @@ Type 'q()' to quit R.
 > 
 > proc.time()
    user  system elapsed 
-1355.12   79.71 1451.70 
+1534.56   22.21 1559.25 
