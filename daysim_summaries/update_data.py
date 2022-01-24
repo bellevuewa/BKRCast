@@ -14,9 +14,9 @@ from openpyxl.chart import (
 from openpyxl.styles import Color
 
 #data folder
-wd = r"D:/2018baseyear/BKR0V1-02/daysim_summaries"
+wd = r"D:\P3Test\2020baseyear-BKR\BKR1-20\daysim_summaries"
 
-infile_names = ["DayPattern.xlsm"]
+
 infile_names = ["DayPattern.xlsm",
                 "WrkLocation.xlsm", "SchLocation.xlsm",
                 #"VehAvailability.xlsm",
@@ -76,11 +76,11 @@ for index in range(0,len(infile_names)):
         outfile = os.path.join(wd, "compare", outfile_names[index])
         #outfile1 = os.path.join(wd, "compare", "test.xlsx")
 
-        print('Reopen file and save again')
-        xl = DispatchEx('Excel.Application')
-        xl.Visible = False
-        wb = xl.Workbooks.Open(infile)
-        wb.Close(True)
+        #print('Reopen file and save again')
+        #xl = DispatchEx('Excel.Application')
+        #xl.Visible = True
+        #wb = xl.Workbooks.Open(infile)
+        #wb.Close(True)
 
         inworkbook = xlrd.open_workbook(infile)
 
@@ -94,7 +94,7 @@ for index in range(0,len(infile_names)):
                 insheet = inworkbook.sheet_by_name(sheet_name)
                 nrows = insheet.nrows
 
-                outsheet = outworkbook.get_sheet_by_name(sheet_name)
+                outsheet = outworkbook[sheet_name]
 
                 #------- Avg Trip Length
                 #column number for avg trip length - openpyxl- row and col starts at 1
@@ -122,7 +122,7 @@ for index in range(0,len(infile_names)):
                 value = insheet.cell_value(10,11) #xlrd- row and col starts at 0
                 outsheet.cell(row=11, column=col).value = value #daysim avg trip length
 
-                if (purp=='Home' and run_name <> 'soundcast'):
+                if (purp=='Home' and run_name != 'soundcast'):
                     #add overall avg trip length
                     value = insheet.cell_value(18,25) #xlrd- row and col starts at 0
                     outsheet.cell(row=13, column=col_all).value = value #survey avg trip length                
@@ -139,7 +139,7 @@ for index in range(0,len(infile_names)):
                     elif run_name=='bkrcast_outbkr':
                         col=9
 
-                    if (nrow<>9):  #header                
+                    if (nrow!=9):  #header                
                         #get data 
                         data = [insheet.cell_value(nrow,6)]
                         data_survey = [insheet.cell_value(nrow,2)]
@@ -154,6 +154,7 @@ for index in range(0,len(infile_names)):
                                 outsheet.cell(row=nrow+1, column=3).value = value
                         
             outworkbook.save(outfile)
+            outworkbook.close()
 
         else:
             insheet = inworkbook.sheet_by_name(sheet_names[index])
@@ -164,7 +165,7 @@ for index in range(0,len(infile_names)):
             #nrows = insheet.max_row
 
             outworkbook = openpyxl.load_workbook(outfile, keep_vba=True) #, keep_vba=True
-            outsheet = outworkbook.get_sheet_by_name(run_name)
+            outsheet = outworkbook[run_name]
 
             for nrow in range(0,nrows):
                 #get data
@@ -176,11 +177,12 @@ for index in range(0,len(infile_names)):
                     outsheet.cell(row=nrow+1, column=col+1).value = value
 
             outworkbook.save(outfile)
+            outworkbook.close()
             
         if (infile_names[index]=="WrkLocation.xlsm" or infile_names[index]=="SchLocation.xlsm"):
             
             outworkbook = openpyxl.load_workbook(outfile, keep_vba=True) #, keep_vba=True
-            outsheet = outworkbook.get_sheet_by_name("TLFD")
+            outsheet = outworkbook["TLFD"]
 
             print("adding chart")
             
@@ -190,36 +192,40 @@ for index in range(0,len(infile_names)):
                 add_chart(outsheet, "Home to School Distance", "Distance (mile)", "% Students", 10, 100, 15, 19 ,"U18")
                 
             outworkbook.save(outfile)
+            outworkbook.close()
 
         elif (infile_names[index]=="TourDestination_Escort.xlsm" or infile_names[index]=="TourDestination_Meal.xlsm"
               or infile_names[index]=="TourDestination_PerBus.xlsm" or infile_names[index]=="TourDestination_Shop.xlsm"
               or infile_names[index]=="TourDestination_SocRec.xlsm"):
             
             outworkbook = openpyxl.load_workbook(outfile, keep_vba=True) #, keep_vba=True
-            outsheet = outworkbook.get_sheet_by_name("TLFD")
+            outsheet = outworkbook["TLFD"]
 
             print("adding chart")
             add_chart(outsheet, "Tour Length Frequency Distribution", "Tour Length (mile)", "% Tours", 10, 100, 7, 11 ,"M15")
                 
             outworkbook.save(outfile)
+            outworkbook.close()
             
         elif (infile_names[index]=="TourDestination_WrkBased.xlsm"):
             outworkbook = openpyxl.load_workbook(outfile, keep_vba=True) #, keep_vba=True
-            outsheet = outworkbook.get_sheet_by_name("TLFD")
+            outsheet = outworkbook["TLFD"]
 
             print("adding chart")
             add_chart(outsheet, "Tour Length Frequency Distribution", "Tour Length (mile)", "% Tours", 10, 100, 13, 17 ,"S18")
                 
             outworkbook.save(outfile)
+            outworkbook.close()
             
         elif (infile_names[index]=="TripDestination.xlsm"):
             outworkbook = openpyxl.load_workbook(outfile, keep_vba=True) #, keep_vba=True
             for purp in purpose:
                 print(purp)
                 sheet_name = "TLFD_" + purp
-                outsheet = outworkbook.get_sheet_by_name(sheet_name)
+                outsheet = outworkbook[sheet_name]
 
                 print("adding chart")
                 add_chart(outsheet, purp, "Trip Length (mile)", "% Trips", 10, 100, 7, 11 ,"M15")
                     
-            outworkbook.save(outfile)            
+            outworkbook.save(outfile)  
+            outworkbook.close()

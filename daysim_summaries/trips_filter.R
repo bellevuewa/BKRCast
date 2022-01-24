@@ -6,11 +6,11 @@ Survey = FALSE #if TRUE survey files will be processed otherwise, DaySim outputs
 LODES = FALSE
 ESD = TRUE
 
-filter_type = "trip" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
+filter_type = "hh" #hh or trip. if hh - households in/outside bkr will filtered. if trip - households with trips in/outside bkr will be filtered.
 
 if(Survey){
   #survey
-  wd <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data'
+  wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all/data'
   file.hhs <- 'Household_bkr_new.dat'
   file.persons <- 'Person_bkr_new_skim.dat'
   file.person_day <- 'PersonDay_bkr.dat'
@@ -37,7 +37,7 @@ if(Survey){
   
 } else if (ESD) {
   #daysim - esd data
-  wd <- 'D:/2018baseyear/BKR0V1-02/outputs'
+  wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs'
   file.hhs <- '_household.tsv'
   file.persons <- '_person.tsv' 
   file.person_day <- '_person_day.tsv'
@@ -48,7 +48,7 @@ if(Survey){
   file.ext_outbkr = '_outbkr.tsv'
 }
 
-file.correspondence <- 'D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_all/data/TAZ_District_CrossWalk.csv'
+file.correspondence <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/data/TAZ_District_CrossWalk.csv'
 
 setwd(wd)
 print("reading inputs ...")

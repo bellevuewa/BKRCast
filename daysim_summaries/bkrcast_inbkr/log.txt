@@ -1,6 +1,6 @@
 
-R version 3.3.3 (2017-03-06) -- "Another Canoe"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,15 +28,21 @@ Type 'q()' to quit R.
 > ##TODO consider local R installation, with predownloaded packages in that library
 > library(foreign)
 > library(reshape)
+Warning message:
+package 'reshape' was built under R version 4.1.2 
 > library(XLConnect)
-Loading required package: XLConnectJars
-XLConnect 0.2-15 by Mirai Solutions GmbH [aut],
+XLConnect 1.0.5 by Mirai Solutions GmbH [aut],
   Martin Studer [cre],
   The Apache Software Foundation [ctb, cph] (Apache POI),
-  Graph Builder [ctb, cph] (Curvesapi Java library)
-http://www.mirai-solutions.com
+  Graph Builder [ctb, cph] (Curvesapi Java library),
+  Brett Woolridge [ctb, cph] (SparseBitSet Java library)
+https://mirai-solutions.ch
 https://github.com/miraisolutions/xlconnect
+Warning message:
+package 'XLConnect' was built under R version 4.1.2 
 > library(descr)
+Warning message:
+package 'descr' was built under R version 4.1.2 
 > library(Hmisc)
 Loading required package: lattice
 Loading required package: survival
@@ -49,6 +55,9 @@ The following objects are masked from 'package:base':
 
     format.pval, units
 
+Warning messages:
+1: package 'Hmisc' was built under R version 4.1.2 
+2: package 'ggplot2' was built under R version 4.1.2 
 > library(data.table)
 
 Attaching package: 'data.table'
@@ -57,6 +66,8 @@ The following object is masked from 'package:reshape':
 
     melt
 
+Warning message:
+package 'data.table' was built under R version 4.1.2 
 > library(plyr)
 
 Attaching package: 'plyr'
@@ -69,8 +80,10 @@ The following objects are masked from 'package:reshape':
 
     rename, round_any
 
+Warning message:
+package 'plyr' was built under R version 4.1.2 
 > 
-> setwd("D:/2018baseyear/BKR0V1-02/daysim_summaries/bkrcast_inbkr")
+> setwd("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_inbkr")
 > 
 > #------------------------------------
 > #Source functions and config settings
@@ -106,7 +119,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveyperfile,"survperdata")
 + }
-Read 34.6% of 1155121 rowsRead 77.0% of 1155121 rowsRead 1155121 rows and 24 (of 24) columns from 0.093 GB file in 00:00:04
 > 
 > progressNextStep("reading person day data")
 > if(runDayPattern)
@@ -125,7 +137,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytourfile,"survtourdata")
 + }
-Read 15.9% of 1944684 rowsRead 33.9% of 1944684 rowsRead 52.5% of 1944684 rowsRead 69.4% of 1944684 rowsRead 86.9% of 1944684 rowsRead 1944684 rows and 33 (of 33) columns from 0.247 GB file in 00:00:07
 > 
 > progressNextStep("reading person day trip data")
 > if(runDayPattern | runTripMode | runTripTOD)
@@ -135,7 +146,6 @@ The following objects are masked from 'package:reshape':
 +   if(prepSurvey)
 +     readSaveRdata(surveytripfile,"survtripdata")
 + }
-Read 6.1% of 2781380 rowsRead 17.6% of 2781380 rowsRead 28.8% of 2781380 rowsRead 40.3% of 2781380 rowsRead 51.8% of 2781380 rowsRead 63.3% of 2781380 rowsRead 74.1% of 2781380 rowsRead 84.1% of 2781380 rowsRead 94.2% of 2781380 rowsRead 2781380 rows and 28 (of 28) columns from 0.349 GB file in 00:00:11
 > 
 > #Optional tour weight adjustment
 > if(tourAdj)
@@ -145,9 +155,9 @@ The following objects are masked from 'package:reshape':
 > 
 > #force gc()
 > gc()
-          used (Mb) gc trigger  (Mb) max used  (Mb)
-Ncells 1459051 78.0    2637877 140.9  1770749  94.6
-Vcells 1924075 14.7   43448941 331.5 46513231 354.9
+           used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  1893541 101.2    3720881 198.8  2596467 138.7
+Vcells 14742312 112.5   53449780 407.8 49390907 376.9
 > 
 > #-----------------------
 > #Run tabulations
@@ -227,24 +237,24 @@ Vcells 1924075 14.7   43448941 331.5 46513231 354.9
 > 
 > progressEnd(outputsDir)
    steps                            stepnames stepruntimes cumruntimes
-1      1                      reading hh data         2.00        2.00
-2      2                  reading person data         8.44       10.44
-3      3              reading person day data         6.06       16.50
-4      4         reading person day tour data        22.16       38.66
-5      5         reading person day trip data        31.44       70.10
-6      6     summarizing work location choice        12.21       82.31
-7      7 summarizing vehicle ownership choice         1.97       84.28
-8      8              summarizing Day pattern        42.50      126.78
-9      9       summarizing Destination Choice         9.71      136.49
-10    10  summarizing Trip Destination Choice         8.67      145.16
-11    11         summarizing Tour Mode Choice         7.36      152.52
-12    12  summarizing Tour Time of Day Choice        10.39      162.91
-13    13         summarizing Trip Mode Choice        10.44      173.35
-14    14  summarizing Trip Time of Day Choice        12.15      185.50
+1      1                      reading hh data         0.72        0.72
+2      2                  reading person data         2.13        2.85
+3      3              reading person day data         1.86        4.71
+4      4         reading person day tour data         6.12       10.83
+5      5         reading person day trip data        19.05       29.88
+6      6     summarizing work location choice         5.78       35.66
+7      7 summarizing vehicle ownership choice         1.14       36.80
+8      8              summarizing Day pattern        18.56       55.36
+9      9       summarizing Destination Choice         3.89       59.25
+10    10  summarizing Trip Destination Choice         4.49       63.74
+11    11         summarizing Tour Mode Choice         2.68       66.42
+12    12  summarizing Tour Time of Day Choice         4.97       71.39
+13    13         summarizing Trip Mode Choice         4.86       76.25
+14    14  summarizing Trip Time of Day Choice         7.24       83.49
 > 
 > # Rprof(NULL)
 > # memprof <- summaryRprof()
 > 
 > proc.time()
    user  system elapsed 
- 222.87   92.12  188.06 
+ 126.03   56.64   86.20 
