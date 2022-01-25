@@ -27,6 +27,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="daysim_configuration_template.properties" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\PersonDay_bkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Person_bkr_new.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Person_bkr_new_skim.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Person_bkr_new_skim_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\Person_bkr_new_skim_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_all\data\taz_districts_bkr.csv" />
+    <Content Include="daysim_summaries\bkrcast_all\data\TAZ_District_CrossWalk.csv" />
+    <Content Include="daysim_summaries\bkrcast_all\data\zone_districts.csv" />
     <Content Include="daysim_summaries\bkrcast_all\daypattern.R" />
     <Content Include="daysim_summaries\bkrcast_all\daysim-output.Rproj" />
     <Content Include="daysim_summaries\bkrcast_all\daysim_output_config.R" />
@@ -74,6 +85,14 @@
     <Content Include="daysim_summaries\bkrcast_all\utilfunc.R" />
     <Content Include="daysim_summaries\bkrcast_all\vehavailability.R" />
     <Content Include="daysim_summaries\bkrcast_all\wrkschlocation.R" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\Household_bkr_new_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\PersonDay_bkr_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\Person_bkr_new_skim_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\taz_districts_bkr.csv" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\TAZ_District_CrossWalk.csv" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\Tour_bkr_new_skim_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\Trip_bkr_new_skim_inbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_inbkr\data\zone_districts.csv" />
     <Content Include="daysim_summaries\bkrcast_inbkr\daypattern.R" />
     <Content Include="daysim_summaries\bkrcast_inbkr\daysim-output.Rproj" />
     <Content Include="daysim_summaries\bkrcast_inbkr\daysim_output_config.R" />
@@ -120,6 +139,14 @@
     <Content Include="daysim_summaries\bkrcast_inbkr\utilfunc.R" />
     <Content Include="daysim_summaries\bkrcast_inbkr\vehavailability.R" />
     <Content Include="daysim_summaries\bkrcast_inbkr\wrkschlocation.R" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\Household_bkr_new_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\PersonDay_bkr_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\Person_bkr_new_skim_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\taz_districts_bkr.csv" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\TAZ_District_CrossWalk.csv" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\Tour_bkr_new_skim_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\Trip_bkr_new_skim_outbkr.dat" />
+    <Content Include="daysim_summaries\bkrcast_outbkr\data\zone_districts.csv" />
     <Content Include="daysim_summaries\bkrcast_outbkr\daypattern.R" />
     <Content Include="daysim_summaries\bkrcast_outbkr\daysim-output.Rproj" />
     <Content Include="daysim_summaries\bkrcast_outbkr\daysim_output_config.R" />
@@ -367,12 +394,15 @@
   <ItemGroup>
     <Folder Include="daysim_summaries\" />
     <Folder Include="daysim_summaries\bkrcast_all\" />
+    <Folder Include="daysim_summaries\bkrcast_all\data\" />
     <Folder Include="daysim_summaries\bkrcast_all\output\" />
     <Folder Include="daysim_summaries\bkrcast_all\templates\" />
     <Folder Include="daysim_summaries\bkrcast_inbkr\" />
+    <Folder Include="daysim_summaries\bkrcast_inbkr\data\" />
     <Folder Include="daysim_summaries\bkrcast_inbkr\output\" />
     <Folder Include="daysim_summaries\bkrcast_inbkr\templates\" />
     <Folder Include="daysim_summaries\bkrcast_outbkr\" />
+    <Folder Include="daysim_summaries\bkrcast_outbkr\data\" />
     <Folder Include="daysim_summaries\bkrcast_outbkr\output\" />
     <Folder Include="daysim_summaries\bkrcast_outbkr\templates\" />
     <Folder Include="daysim_summaries\calibration_batch_files\" />
