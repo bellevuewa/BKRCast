@@ -148,6 +148,7 @@
     <Compile Include="scripts\network\daysim_zone_inputs.py" />
     <Compile Include="scripts\network\network_importer.py" />
     <Compile Include="scripts\popsampler.py" />
+    <Compile Include="scripts\skimming\SkimsAndPaths-testDTA.py" />
     <Compile Include="scripts\skimming\SkimsAndPaths.py" />
     <Compile Include="scripts\summarize\benefit_cost\benefit_cost.py" />
     <Compile Include="scripts\summarize\calibration\daysim_summary.py" />
