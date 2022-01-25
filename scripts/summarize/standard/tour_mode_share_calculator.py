@@ -24,6 +24,9 @@ import input_configuration as prj
 # allow calculate mode share by either end in the subarea.
 # add options to command line.
 
+# 11/10/2021
+# Change transit to Transit Walk Access.
+# Change park-n-ride to Transit Auto Access
 # 10/25/2021
 # modified to be compatible with python 3
 
@@ -37,7 +40,7 @@ tour_purpose = {0: 'all',
                 5: 'shopping',
                 6: 'meal',
                 7: 'social'}
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit', 7: 'Park_n_Ride', 8:'School_Bus'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit_walk_access', 7: 'Transit_auto_access', 8:'School_Bus'}
 time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 #purpose: 0: all purpose, 1: work, 2:school,3:escort, 4: personal buz, 5: shopping, 6: meal, 7: social/recreational, 8: not defined, 9: not defined
 def CalModeSharebyPurpose(purpose, tour_df, Output_file, overwritten=False, comments=''):

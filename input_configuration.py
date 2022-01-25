@@ -273,7 +273,8 @@ bike_assignment_tod = ['6to9', '1530to1830', '9to1530', '1830to6']
 aadt_dict = {'volume_wt': {1: 0.368, 2: 1.40, 3: 7.157}}
 
 # AADT segmentation breaks to apply volume penalties
-aadt_bins = [0,10000,20000,30000,9999999]
+# old values are aadt_bins = [0,10000,20000,30000,9999999]. AADT usually refers to bidirectional. But in EMME it is directional. so use half of it.
+aadt_bins = [0,5000,10000,15000,9999999]
 aadt_labels = [0,1,2,3] # Corresponding "bucket" labels for AADT segmentation for aadt_dict
 
 # Crosswalk of bicycle facilities from geodatabase to a 2-tier typology - premium, standard (and none)
@@ -283,9 +284,9 @@ bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'premium', 2:'standard',
                                         3:'standard', 4:'standard'}}
 
 # Perception factor values corresponding to these tiers, from Broch et al., 2012
-facility_dict = {'facility_wt': {	'premium': -0.160,
+facility_dict = {'facility_wt': {	'premium': -0.860,
                                     'standard': -0.108, 
-                                    'none': 0}}
+                                    'none': 0.5}}
 
 # Perception factor values for 3-tiered measure of elevation gain per link
 slope_dict = {'slope_wt': {1: .371,     # between 2-4% grade
