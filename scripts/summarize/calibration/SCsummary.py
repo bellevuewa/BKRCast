@@ -663,12 +663,12 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Average Distance by Trip Mode
     atripdist1m = weighted_average(trip_ok_1, 'travdist', 'trexpfac', 'mode')
     atripdist2m = weighted_average(trip_ok_2, 'travdist', 'trexpfac', 'mode')
-    atripdistm = pd.DataFrame()
-    atripdistm['Average Distance (' + name1 + ')'] = atripdist1m
-    atripdistm['Average Distance (' + name2 + ')'] = atripdist2m
+    atripdistm = pd.concat([atripdist1m.rename('Average Distance (' + name1 + ')'), 
+                            atripdist2m.rename('Average Distance (' + name2 + ')')],
+                            axis=1,
+                            join='outer')
     atripdistm = get_differences(atripdistm, 'Average Distance (' + name1 + ')', 'Average Distance (' + name2 + ')', 1)
-    atripdistm = recode_index(atripdistm, 'mode', 'Trip Mode')
-
+    atripdistm.index.name = 'Trip Mode'
     cp7 = time.time()
     print('Average Distance by Trip Mode data frame created in ' + str(round(cp7 - cp6, 1)) + ' seconds')
 
@@ -951,39 +951,39 @@ def ModeChoice(data1, data2, name1, name2, location):
     counts2pivot = counts2.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
     if 'Other' not in counts1pivot.columns.tolist():
         counts1pivot['Other'] = np.nan
-    counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
-    counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
+    if 'PRS' not in counts2pivot.columns.tolist():
+        counts2pivot['PRS'] = np.nan
+    counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'PRS']]
+    counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'PRS']]
     counts1pivot = counts1pivot.fillna(0).transpose().copy()
     counts2pivot = counts2pivot.fillna(0).transpose().copy()
     counts_difference = counts1pivot - counts2pivot
     counts_pd = 100*counts_difference/counts2pivot
 
-    modes = counts1pivot.columns.tolist()
+    tour_modes = counts1pivot.columns.tolist()
+    trip_modes = counts1pivot.index.tolist()
 
-    percent1pivot = pd.DataFrame(index = modes, columns = modes)
-    percent2pivot = pd.DataFrame(index = modes, columns = modes)
-    share_difference = pd.DataFrame(index = modes, columns = modes)
-    share_pd = pd.DataFrame(index = modes, columns = modes)
+    percent1pivot = pd.DataFrame(index = trip_modes, columns = tour_modes)
+    percent2pivot = pd.DataFrame(index = trip_modes, columns = tour_modes)
+    share_difference = pd.DataFrame(index = trip_modes, columns = tour_modes)
+    share_pd = pd.DataFrame(index = trip_modes, columns = tour_modes)
     toursbymode1 = counts1pivot.sum()
     toursbymode2 = counts2pivot.sum()
-    for tour_mode in modes:
-        for trip_mode in modes:
-            if toursbymode1[tour_mode] == 0:
-                percent1pivot.loc[tour_mode, trip_mode] = float('nan')
-            else:
-                percent1pivot.loc[tour_mode, trip_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
-
-            if toursbymode2[tour_mode] == 0:
-                percent2pivot.loc[tour_mode, trip_mode] = float('nan')
-            else:
-                percent2pivot.loc[tour_mode, trip_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
-            share_difference.loc[tour_mode, trip_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
-
-            if percent2pivot[tour_mode][trip_mode] == 0:
-                share_pd.loc[tour_mode, trip_mode] = float('nan')
-            else:
-                share_pd.loc[tour_mode, trip_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
-
+    for tour_mode in tour_modes:
+        for trip_mode in trip_modes:
+            try:
+                percent1pivot.loc[trip_mode, tour_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
+            except ZeroDivisionError:
+                percent1pivot.loc[trip_mode, tour_mode] = float('nan')
+            try:
+                percent2pivot.loc[trip_mode, tour_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
+            except ZeroDivisionError:
+                percent2pivot.loc[trip_mode, tour_mode] = float('nan')
+            share_difference.loc[trip_mode, tour_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
+            try:
+                share_pd.loc[trip_mode, tour_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
+            except ZeroDivisionError:
+                share_pd.loc[trip_mode, tour_mode] = float('nan')
         roundto = 2
         percent1pivot[tour_mode] = percent1pivot[tour_mode].astype('float').round(roundto)
         percent1pivot = add_index_name(percent1pivot, 'Trip_Mode')
@@ -992,6 +992,7 @@ def ModeChoice(data1, data2, name1, name2, location):
         share_difference[tour_mode] = share_difference[tour_mode].astype('float').round(roundto)
         share_difference = add_index_name(share_difference, 'Trip_Mode')
         share_pd[tour_mode] = share_pd[tour_mode].astype('float').round(roundto)
+        share_pd[tour_mode] = share_pd[tour_mode].replace(np.inf, np.nan)
         share_pd = add_index_name(share_pd, 'Trip_Mode')
 
     for column in counts1pivot.columns:
@@ -999,6 +1000,7 @@ def ModeChoice(data1, data2, name1, name2, location):
         counts2pivot[column] = counts2pivot[column].round(0)
         counts_difference[column] = counts_difference[column].round(0)
         counts_pd[column] = counts_pd[column].round(2)
+        counts_pd[column] = counts_pd[column].replace(np.inf, np.nan)
 
     cp4 = time.time()
     print('Trip Mode by Tour Mode data frames created in '+str(round(cp4 - cp3, 1))+' seconds')
@@ -1392,7 +1394,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #0: no pass 
     #1-6: various types of passes, but can treat them all as 1 (yes)
     #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
-    #data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
+    data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
 
@@ -1756,6 +1758,10 @@ def report_compile(h5_results_file,h5_results_name,
     timerstart=time.time()
     data1 = convert(h5_results_file,guidefile,h5_results_name)
     data2 = convert(h5_comparison_file,guidefile,h5_comparison_name)
+    # Recode 'PRS' mode in survey data to 'Other'
+    data2['Trip']['mode']=data2['Trip']['mode'].replace('PRS','Other')
+    #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
+    #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
         DaysimReport(data1,data2,h5_results_name,h5_comparison_name,report_output_location,zone_district)

@@ -73,6 +73,16 @@ prep_trmode_DaySim <- function(tripdata)
   tripdata[mode==2,tripmode:= 10]
   #Walk
   tripdata[mode==1,tripmode:= 11]
+  #PaidRideShare 2
+  tripdata[mode==9 & dorp==11,tripmode:= 12]
+  #PaidRideShare 3
+  tripdata[mode==9 & dorp %in% c(12,13),tripmode:= 12]
+  #AV drive alone
+  tripdata[mode==9 & dorp==21,tripmode:= 13]
+  #AV PaidRideShare 2
+  tripdata[mode==9 & dorp==22,tripmode:= 13]
+  #AV PaidRideShare 3
+  tripdata[mode==9 & dorp==23,tripmode:= 13]
   
   return(tripdata)
 }
@@ -102,6 +112,16 @@ prep_trmode_NHTS <- function(tripdata)
   tripdata[mode==2,tripmode:= 10]
   #Walk
   tripdata[mode==1,tripmode:= 11]
+  #PaidRideShare 2
+  tripdata[mode==9 & dorp==11,tripmode:= 12]
+  #PaidRideShare 3
+  tripdata[mode==9 & dorp %in% c(12,13),tripmode:= 12]
+  #AV drive alone
+  tripdata[mode==9 & dorp==21,tripmode:= 13]
+  #AV PaidRideShare 2
+  tripdata[mode==9 & dorp==22,tripmode:= 13]
+  #AV PaidRideShare 3
+  tripdata[mode==9 & dorp==23,tripmode:= 13]
 
   return(tripdata)
 }
@@ -125,6 +145,18 @@ prep_tripdata <- function(tripdata,tourdata,perdata,prepsrc)
   }
   tourdata <- tourdata[,list(hhno,pno,tour,tourmode,pdpurp2,pptyp,psexpfac)]
   tripdata <- merge(tripdata,tourdata,by=c("hhno","pno","tour"),all.x=T)
+  # PRS trip mode does not have any tour mode assigned so current fix it to set the value
+  # of tourmode based on dorp values
+  #PaidRideShare 2
+  tripdata[tripmode==12 & dorp==11,tourmode:= 2]
+  #PaidRideShare 3
+  tripdata[tripmode==12 & dorp %in% c(12,13),tourmode:= 3]
+  #AV drive alone
+  tripdata[tripmode==13 & dorp==21,tourmode:= 1]
+  #AV PaidRideShare 2
+  tripdata[tripmode==13 & dorp==22,tourmode:= 2]
+  #AV PaidRideShare 3
+  tripdata[tripmode==13 & dorp==23,tourmode:= 3]
   if(excludeChildren5)
     tripdata <- tripdata[pptyp<8]
   return(tripdata)

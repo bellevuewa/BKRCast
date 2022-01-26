@@ -11,12 +11,21 @@ from emme_configuration import *
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 from EmmeProject import *
+import logging
+import datetime
 from input_configuration import *
+import time
 
 # 10/25/2021
 # modified to be compatible with python 3
 
 # Global variable to hold taz id/index; populated in main
+#Create a logging file to report model progress
+logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
+
+#Report model starting
+current_time = str(time.strftime("%H:%M:%S"))
+logging.debug('----Began Supplemental Trip Distribution script at ' + current_time)
 dictZoneLookup = {}
 
 def json_to_dictionary(dict_name):
@@ -127,8 +136,9 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
         matrix_id = my_project.bank.matrix(purpose + "fri").id    
         my_project.bank.matrix(matrix_id).set_data(emme_matrix, my_project.current_scenario)
                   
-def balance_matrices(trip_purps, my_project, constraint_taz):
+def balance_matrices(trip_purps, my_project, constraint_taz, cutoff_level=1e-20):
     ''' Balances productions and attractions by purpose for all internal zones '''
+    zones = my_project.current_scenario.zone_numbers
     for purpose in trip_purps:
         # For friction factors, have to make sure 0s in Externals are actually 0, otherwise you will get intrazonal trips - added by stefan coe
         my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = '0', 
@@ -142,6 +152,31 @@ def balance_matrices(trip_purps, my_project, constraint_taz):
                                     destination_totals = 'md' + purpose + 'att', 
                                     constraint_by_zone_destinations = '1-' + str(constraint_taz), 
                                     constraint_by_zone_origins = '1-' + str(constraint_taz))
+        print "Validating balanced trips" #Debugging statement by aditya.gore@rsginc.com
+        dis_mat = my_project.bank.matrix('mf' + purpose + 'dis').get_numpy_data()
+        remove_trips = 0
+        while (np.isnan(dis_mat).sum() > 0) and (cutoff_level < 1e-2):
+            print("Modifying friction factors")
+            fri_matrix_id = my_project.bank.matrix(purpose + "fri").id
+            fri_mat = my_project.bank.matrix(fri_matrix_id).get_numpy_data()
+            remove_trips += fri_mat[fri_mat < cutoff_level].sum()
+            text = "Removing {} from friction factors {}".format(remove_trips,
+                  purpose)
+            print(text) #Debugging statement by aditya.gore@rsginc.com
+            logging.debug(text)
+            fri_mat[fri_mat < cutoff_level] = 0
+            emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')    # Access Matrix API
+            emme_matrix.raw_data = [_array.array('f',row) for row in fri_mat]
+            my_project.bank.matrix(fri_matrix_id).set_data(emme_matrix, my_project.current_scenario)
+            my_project.matrix_balancing(results_od_balanced_values = 'mf' + purpose + 'dis', 
+                                    od_values_to_balance = 'mf' + purpose + 'fri', 
+                                    origin_totals = 'mo' + purpose + 'pro', 
+                                    destination_totals = 'md' + purpose + 'att', 
+                                    constraint_by_zone_destinations = '1-' + str(constraint_taz), 
+                                    constraint_by_zone_origins = '1-' + str(constraint_taz))
+            dis_mat = my_project.bank.matrix('mf' + purpose + 'dis').get_numpy_data()
+            cutoff_level = cutoff_level*10
+        
 
 def calculate_daily_trips(trip_purps, my_project):
     # Accounting for out- and in-bound trips.
@@ -354,6 +389,9 @@ def main():
 
     # Split by mode and TOD
     split_by_mode_tod = split_trips(combined, trip_purp_full, my_project)
+    for mode, tod_dict in split_by_mode_tod.iteritems():
+        for tod, trip_array in tod_dict.iteritems():
+            print('Mode: {}, TOD: {}, Trips: {}'.format(mode, tod, trip_array.sum())) #Debugging statement by aditya.gore@rsginc.com
 
     # Export results to H5
     export_trips(split_by_mode_tod, output_dir = 'outputs/supplemental')

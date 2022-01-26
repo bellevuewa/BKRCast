@@ -55,6 +55,7 @@ if not(use_simple_configuration):
     run_bkrcast_summary =  True
     run_create_daily_bank = True
     run_truck_summary = False
+    run_prs_mode = False
 
     # Specific reports to run
     run_daysim_report = True
@@ -116,6 +117,7 @@ else:
         run_long_term_report = True
         run_time_choice_report = True
         run_district_summary_report = True
+        run_prs_mode = True
     else:
         run_soundcast_summary = False
         run_daysim_report = False
@@ -125,6 +127,7 @@ else:
         run_long_term_report = False
         run_time_choice_report = False
         run_district_summary_report = True
+        run_prs_mode = True
 
     if should_build_shadow_price:
         shadow_work = [1, 1]

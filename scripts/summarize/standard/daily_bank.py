@@ -112,6 +112,19 @@ def export_link_values(my_project):
 
             
     df.to_csv(daily_network_fname)
+    
+def create_daily_project_folder():
+    if os.path.exists(os.path.join('projects/daily')):
+        print 'Delete Project Folder'
+        shutil.rmtree('projects/daily')
+
+    project = app.create_project('projects', 'daily')
+    desktop = app.start_dedicated(False, modeller_initial, project)
+    data_explorer = desktop.data_explorer()
+    database = data_explorer.add_database('Banks/daily/emmebank')
+    database.open()
+    desktop.project.save()
+    desktop.close()
 
 def main():
     print('creating daily bank')
@@ -134,7 +147,8 @@ def main():
        
     ################ create new matrices in daily emmebank for trip tables only ##############
 
-    for unique_name in uniqueMatrices:
+    for unique_name in sorted(uniqueMatrices):
+        print(unique_name)
         daily_matrix = daily_emmebank.create_matrix(daily_emmebank.available_matrix_identifier('FULL')) #'FULL' means the full-type of trip table
         daily_matrix.name = unique_name
 
@@ -232,18 +246,6 @@ def main():
     export_link_values(my_project)
     create_daily_project_folder()
 
-def create_daily_project_folder():
-    if os.path.exists(os.path.join('projects/daily')):
-        print('Delete Project Folder')
-        shutil.rmtree('projects/daily')
-
-    project = app.create_project('projects', 'daily')
-    desktop = app.start_dedicated(False, modeller_initial, project)
-    data_explorer = desktop.data_explorer()
-    database = data_explorer.add_database('Banks/daily/emmebank')
-    database.open()
-    desktop.project.save()
-    desktop.close()
 
 if __name__ == '__main__':
     main()

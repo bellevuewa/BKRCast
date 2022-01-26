@@ -113,9 +113,12 @@ def modify_config(config_vals):
      sys.exit(1)
     
 @timed
-def build_shadow_only(iter):
+def build_shadow_only(iter, include_prs_mode):
      for shad_iter in range(0, len(shadow_work)):
-        modify_config([("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")])
+        modify_config([("$SHADOW_PRICE", "true"),
+                               ("$INCLUDE_PRS" , str(include_prs_mode)),
+                               ("$SAMPLE",shadow_work[shad_iter]),
+                               ("$RUN_ALL", "false")])
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
         logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
@@ -375,6 +378,11 @@ def main():
         #run daysim popsampler
         if run_daysim_popsampler:
             daysim_popsampler(sampling_option)
+        
+        if run_prs_mode and run_daysim:
+            include_prs_mode = "true"
+        else:
+            include_prs_mode = "false"
        
         for iteration in range(len(pop_sample)):
             print("We're on iteration %d" % (iteration))
@@ -395,18 +403,27 @@ def main():
                         sys.exit(1)
 
                 # Set up your Daysim Configration
-                modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                modify_config([("$SHADOW_PRICE" ,"true"),
+                               ("$INCLUDE_PRS" , str(include_prs_mode)),
+                               ("$SAMPLE",pop_sample[iteration]),
+                               ("$RUN_ALL", "true")])
 
             else:
                 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
                 # 3 daysim iterations
-                build_shadow_only(iteration)             
+                build_shadow_only(iteration, str(include_prs_mode))             
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    modify_config([("$SHADOW_PRICE" ,"false"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    modify_config([("$SHADOW_PRICE" ,"false"),
+                               ("$INCLUDE_PRS" , str(include_prs_mode)),
+                               ("$SAMPLE",pop_sample[iteration]),
+                               ("$RUN_ALL", "true")])
                 else:
-                    modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    modify_config([("$SHADOW_PRICE" ,"true"),
+                               ("$INCLUDE_PRS" , str(include_prs_mode)),
+                               ("$SAMPLE",pop_sample[iteration]),
+                               ("$RUN_ALL", "true")])
             
             ## Run Skimming and/or Daysim
             daysim_assignment(iteration)

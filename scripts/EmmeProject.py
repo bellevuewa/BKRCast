@@ -282,6 +282,15 @@ class EmmeProject:
                 ret = {'VMT': VMT, 'VHT': VHT, 'VDT': VDT, 'TotalVol':total_vol, 'LinkLength':total_length}
 
         return ret
+    
+    def export_matrices(self, output_mat_file):
+        matrix_dict = text_to_dictionary('demand_matrix_dictionary')
+        uniqueMatrices = set(matrix_dict.values())
+        NAMESPACE = "inro.emme.data.matrix.export_to_omx"
+        export_to_omx = self.m.tool(NAMESPACE)
+        export_to_omx(uniqueMatrices, output_mat_file, append_to_file=False,
+                      scenario=self.current_scenario,
+                      omx_key = 'NAME')
 
     def CloseDesktop(self):
         self.desktop.close()
@@ -299,4 +308,17 @@ def json_to_dictionary(dict_name):
     my_dictionary = json.load(open(input_filename))
 
     return(my_dictionary)
+
+def text_to_dictionary(dict_name):
+
+    input_filename = os.path.join('inputs/skim_params/',dict_name+'.json').replace("\\","/")
+    my_file=open(input_filename)
+    my_dictionary = {}
+
+    for line in my_file:
+        k, v = line.split(':')
+        my_dictionary[eval(k)] = v.strip()
+
+    return(my_dictionary)
+
 
