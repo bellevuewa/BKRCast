@@ -115,7 +115,7 @@ def export_link_values(my_project):
     
 def create_daily_project_folder():
     if os.path.exists(os.path.join('projects/daily')):
-        print 'Delete Project Folder'
+        print('Delete Project Folder')
         shutil.rmtree('projects/daily')
 
     project = app.create_project('projects', 'daily')

@@ -152,7 +152,7 @@ def balance_matrices(trip_purps, my_project, constraint_taz, cutoff_level=1e-20)
                                     destination_totals = 'md' + purpose + 'att', 
                                     constraint_by_zone_destinations = '1-' + str(constraint_taz), 
                                     constraint_by_zone_origins = '1-' + str(constraint_taz))
-        print "Validating balanced trips" #Debugging statement by aditya.gore@rsginc.com
+        print("Validating balanced trips") #Debugging statement by aditya.gore@rsginc.com
         dis_mat = my_project.bank.matrix('mf' + purpose + 'dis').get_numpy_data()
         remove_trips = 0
         while (np.isnan(dis_mat).sum() > 0) and (cutoff_level < 1e-2):
@@ -389,8 +389,8 @@ def main():
 
     # Split by mode and TOD
     split_by_mode_tod = split_trips(combined, trip_purp_full, my_project)
-    for mode, tod_dict in split_by_mode_tod.iteritems():
-        for tod, trip_array in tod_dict.iteritems():
+    for mode, tod_dict in split_by_mode_tod.items():
+        for tod, trip_array in tod_dict.items():
             print('Mode: {}, TOD: {}, Trips: {}'.format(mode, tod, trip_array.sum())) #Debugging statement by aditya.gore@rsginc.com
 
     # Export results to H5

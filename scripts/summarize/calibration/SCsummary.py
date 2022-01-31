@@ -665,7 +665,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     atripdist2m = weighted_average(trip_ok_2, 'travdist', 'trexpfac', 'mode')
     atripdistm = pd.concat([atripdist1m.rename('Average Distance (' + name1 + ')'), 
                             atripdist2m.rename('Average Distance (' + name2 + ')')],
-                            axis=1,
+                            axis=1, sort = True,
                             join='outer')
     atripdistm = get_differences(atripdistm, 'Average Distance (' + name1 + ')', 'Average Distance (' + name2 + ')', 1)
     atripdistm.index.name = 'Trip Mode'
@@ -1394,7 +1394,8 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #0: no pass 
     #1-6: various types of passes, but can treat them all as 1 (yes)
     #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
-    data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
+    #data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
+    data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6]), 'ptpass'] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
 

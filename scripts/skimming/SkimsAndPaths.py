@@ -11,6 +11,7 @@ import os,sys
 import h5py
 from multiprocessing import Pool
 from functools import partial
+from functools import reduce
 import logging
 import getopt
 sys.path.append(os.getcwd())
@@ -273,7 +274,7 @@ def traffic_assignment(my_project, max_iteration):
     
     # Add PRS trips to Auto trips
     logging.debug('Adding PRS trips to Auto trips')
-    for prs_mat_name, auto_mat_name in prs_auto_map.iteritems():
+    for prs_mat_name, auto_mat_name in prs_auto_map.items():
         prs_mat_id = my_project.bank.matrix(prs_mat_name).id
         auto_mat_id = my_project.bank.matrix(auto_mat_name).id
         my_project.matrix_calculator(result = auto_mat_id,
@@ -1328,24 +1329,18 @@ def store_assign_results(project_name, iteration, prefix=''):
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
     
-    link_attr = ['link_id']
-    my_user_classes = json_to_dictionary('user_classes')
-    mod_skim = json_to_dictionary("general_path_based_volume")
-    for x in range(0, len(mod_skim["classes"])):
-        link_attr.append( "@" + my_user_classes["Highway"][x]["Name"])
-    
-    #empty list to save link data
-    link_attr.extend(['length', 'auto_volume', 'auto_time', 'data1', 'data2', 
-    '@bvol', '@bkwt', '@ovol', '@trnv', '@trnv3', 'additional_volume'])
-    link_all_attr = network.attributes('LINK')
-    link_attr = [attr for attr in link_attr if attr in link_all_attr]
-    
-    
-    attr_ls = network.get_attribute_values('LINK', link_attr[1:])[1:]
-    link_data_df = reduce((lambda df1, df2: pd.merge(df1,df2,how='outer',on='nodes')),
-                     [pd.DataFrame({'nodes':attr.keys(), 'values':attr.values()}) for attr in attr_ls])
-    link_data_df.columns = link_attr
-    
+    link_attrs = network.attributes('LINK')
+    attr_ls = network.get_attribute_values('LINK', link_attrs)
+    link_data = []
+    for link in network.links():
+        dict = {}
+        dict['link_id'] = link.id
+        for attr in link_attrs:
+            val = link[attr]
+            dict[attr] = val
+        link_data.append(dict)
+
+    link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
     #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
         os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
@@ -1353,6 +1348,38 @@ def store_assign_results(project_name, iteration, prefix=''):
     #write out hwy assignment results    
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '_'+prefix+ '.csv')
     link_data_df.to_csv(file_path, index = False)
+
+#save highway assignment results for sensitivity tests
+#def store_assign_results(project_name, iteration, prefix=''):
+#    print('save assignment results')
+#    tod = project_name.tod
+#    network = project_name.current_scenario.get_network()
+    
+#    link_attr = ['link_id']
+#    my_user_classes = json_to_dictionary('user_classes')
+#    mod_skim = json_to_dictionary("general_path_based_volume")
+#    for x in range(0, len(mod_skim["classes"])):
+#        link_attr.append( "@" + my_user_classes["Highway"][x]["Name"])
+    
+#    #empty list to save link data
+#    link_attr.extend(['length', 'auto_volume', 'auto_time', 'data1', 'data2', 
+#    '@bvol', '@bkwt', '@ovol', '@trnv', '@trnv3', 'additional_volume'])
+#    link_all_attr = network.attributes('LINK')
+#    link_attr = [attr for attr in link_attr if attr in link_all_attr]
+    
+    
+#    attr_ls = network.get_attribute_values('LINK', link_attr[1:])[1:]
+#    link_data_df = reduce((lambda df1, df2: pd.merge(df1,df2,how='outer',on='nodes')),
+#                     [pd.DataFrame({'nodes':attr.keys(), 'values':attr.values()}) for attr in attr_ls])
+#    link_data_df.columns = link_attr
+    
+#    #make a directory in outputs folder
+#    if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
+#        os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
+    
+#    #write out hwy assignment results    
+#    file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '_'+prefix+ '.csv')
+#    link_data_df.to_csv(file_path, index = False)
 
 def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_file, iteration):
     print('Inside run_assignment_parallel: ' + project_name + ' ' + str(max_iteration))
