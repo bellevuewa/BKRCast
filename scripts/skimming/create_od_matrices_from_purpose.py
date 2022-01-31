@@ -325,8 +325,8 @@ def traffic_assignment(my_project):
 
     end_traffic_assignment = time.time()
 
-    print 'It took', round((end_traffic_assignment-start_traffic_assignment)/60,2), 'minutes to run the assignment.'
     text = 'It took ' + str(round((end_traffic_assignment-start_traffic_assignment)/60,2)) + ' minutes to run the traffic assignment.'
+    print(text)
     logging.debug(text)
 
 def transit_assignment(my_project):
@@ -342,7 +342,7 @@ def transit_assignment(my_project):
 
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("extended_transit_assignment")
-    print "modify constant for certain nodes"
+    print("modify constant for certain nodes")
     
     #modify constants for certain nodes:
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
@@ -351,7 +351,7 @@ def transit_assignment(my_project):
     assign_transit(assignment_specification)
 
     end_transit_assignment = time.time()
-    print 'It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the transit assignment.'
+    print('It took', round((end_transit_assignment-start_transit_assignment)/60,2), 'minutes to run the transit assignment.')
 
 def transit_skims(my_project):
 
