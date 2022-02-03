@@ -79,7 +79,7 @@ def guide_to_dict(guide):
     catdict = {} #Main dictionary
     for file in guide:
         vnames = guide[file].row(0)
-        for var in range((len((guide[file].row(0))) + 1) / 2):
+        for var in range(int((len((guide[file].row(0))) + 1) / 2)):
             vardict = {} #Subdictionary for specific variable
             for cell_value in range(1, len(guide[file]. col(2 * var))):
                 if guide[file].cell(cell_value, 2 * var).value == '':

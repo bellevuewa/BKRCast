@@ -25,7 +25,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 # upgrade to python 3
 
 def get_percent_rmse(urbansim_file, daysim_file, guide_file):
-    urbansim_data = pd.io.parsers.read_table(urbansim_file, sep = ' ') #Read in UrbanSim data
+    urbansim_data = pd.read_csv(urbansim_file, sep = ' ') #Read in UrbanSim data
     jobs_by_taz = urbansim_data[['taz_p', 'emptot_p']].groupby('taz_p').sum() #Get number of jobs by TAZ
     daysim_data = h5toDF.convert_single(daysim_file, guide_file, 'Daysim Outputs', 'Person') #Read in person file from DaySim data
     workers_by_taz = daysim_data['Person'][['pwtaz', 'psexpfac']].query('pwtaz > 0').groupby('pwtaz').sum() #Get number of workers by TAZ
