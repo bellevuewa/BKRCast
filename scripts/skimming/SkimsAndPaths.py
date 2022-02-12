@@ -848,7 +848,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     #some missing Os&Ds in seed trips!
                     if dictZoneLookup.has_key[otaz[x]] and dictZoneLookup.has_key[dtaz[x]]:
                         myOtaz = dictZoneLookup[otaz[x]]
-                        myDtaz = dictZoneLookupd[dtaz[x]]
+                        myDtaz = dictZoneLookup[dtaz[x]]
                         print(myOtaz, myDtaz) 
                         trips = np.asscalar(np.float32(trexpfac[x]))
                         trips = round(trips, 2)
