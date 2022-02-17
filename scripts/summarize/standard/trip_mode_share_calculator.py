@@ -37,9 +37,13 @@ import input_configuration as prj
 
 # 10/25/2021
 # modified to be compatible with python 3
+
+# 2/16/2022
+# add PRS mode
+
 #################################################################################################################
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
-purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
+#mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'PRS'}
+#purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 
 
@@ -121,7 +125,7 @@ def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=F
     model_df['share'] = model_df['trexpfac'] / model_df['trexpfac'].sum()
     model_df['avgdist'] = model_df['travdist'] / model_df['trexpfac']
     model_df.reset_index(inplace = True)
-    model_df.replace({'mode': mode_dict}, inplace = True)
+    model_df.replace({'mode': prj.mode_dict}, inplace = True)
     model_df.columns = ['mode', 'trips', 'total_dist', 'share', 'avgdist']
     model_df['trips'] = model_df['trips'].astype(int)
     model_df['total_dist'] = model_df['total_dist'].map('{:.1f}'.format)
@@ -135,7 +139,7 @@ def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=F
 
     with open(Output_file, filemode) as output:
         output.write(comments + '\n')
-        output.write('Mode Share from trips, ' + purp_dict[purpose] + '\n')
+        output.write('Mode Share from trips, ' + prj.purp_trip_dict[purpose] + '\n')
         output.write('%s' % model_df)
         output.write('\n\n')     
 
@@ -168,7 +172,7 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
     trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
     trips_by_purpose.reset_index(inplace = True)
-    trips_by_purpose.replace({'dpurp' : purp_dict}, inplace = True)
+    trips_by_purpose.replace({'dpurp' : prj.purp_trip_dict}, inplace = True)
     trips_by_purpose.columns = ['purp', 'dist', 'trips', 'share', 'avgdist']
     trips_by_purpose['avgdist'] = trips_by_purpose['avgdist'].map('{:.1f}'.format)
     trips_by_purpose['dist'] = trips_by_purpose['dist'].map('{:.1f}'.format)
