@@ -30,6 +30,9 @@ import input_configuration as prj
 # 10/25/2021
 # modified to be compatible with python 3
 
+# 3/1/2022
+# new features: calculate mode share by business locations.
+
 
 
 tour_purpose = {0: 'all',
@@ -135,6 +138,16 @@ def select_tours_by_residence(hhs_df, tours_df, subarea_taz_df):
 
 def select_tours_by_workplace(tours_df, subarea_taz_df):
     tours_work_purpose_df = tours_df.loc[(tours_df['parent'] == 0) & (tours_df['pdpurp'] == 1)]
+    if subarea_taz_df.empty == False:
+        tours_work_purpose_df = tours_work_purpose_df.merge(subarea_taz_df, how = 'inner', left_on = 'tdtaz', right_on= 'TAZ')
+    return tours_work_purpose_df
+
+def select_tours_by_purpose(tours_df, subarea_taz_df, purpose):
+    '''
+    select tours by purpose code. 1: work, 2: school, 3: escort, 4: personal business, 5. shopping, 6: meal, 7: social
+    subtours from workplace are also included in this selection.
+    '''
+    tours_work_purpose_df = tours_df.loc[tours_df['pdpurp'] == purpose]
     if subarea_taz_df.empty == False:
         tours_work_purpose_df = tours_work_purpose_df.merge(subarea_taz_df, how = 'inner', left_on = 'tdtaz', right_on= 'TAZ')
     return tours_work_purpose_df
@@ -295,8 +308,38 @@ def main():
     CalModeSharebyPurpose(0, work_subtours_df, Output_file, comments='Subtours at Workplace Only')        
     for purpose in [1,2,3,4,5,6,7]:
         CalModeSharebyPurpose(purpose, work_subtours_df, Output_file, comments='Subtours at Workplace Only')
-
     print('Tour mode share by subtours at workplace is finished.')
+
+    # school by destination
+    tours_school_df = select_tours_by_purpose(tours_df, subarea_taz_df, 2)
+    CalModeSharebyPurpose(0, tours_school_df, Output_file, comments='By School Locations')    
+    print('Tour mode share by school locations is finished.')
+
+    #school by destination
+    tours_escort_df = select_tours_by_purpose(tours_df, subarea_taz_df, 3)
+    CalModeSharebyPurpose(0, tours_escort_df, Output_file, comments='By Escort Locations')    
+    print('Tour mode share by escort locations is finished.')
+
+    # personal business by destination 
+    tours_person_biz_df = select_tours_by_purpose(tours_df, subarea_taz_df, 4)
+    CalModeSharebyPurpose(0, tours_person_biz_df, Output_file, comments='By Personal Biz Locations')    
+    print('Tour mode share by personal business locations is finished.')
+   
+    # shopping by destination
+    tours_shopping_df = select_tours_by_purpose(tours_df, subarea_taz_df, 5)
+    CalModeSharebyPurpose(0, tours_shopping_df, Output_file, comments='By Shopping Locations')    
+    print('Tour mode share by shopping locations is finished.')
+
+    # meal by destination
+    tours_meal_df = select_tours_by_purpose(tours_df, subarea_taz_df, 6)
+    CalModeSharebyPurpose(0, tours_meal_df, Output_file, comments='By Meal Locations')    
+    print('Tour mode share by meal locations is finished.')
+
+    #social by destination
+    tours_social_df = select_tours_by_purpose(tours_df, subarea_taz_df, 7)
+    CalModeSharebyPurpose(0, tours_social_df, Output_file, comments='By Social Locations')    
+    print('Tour mode share by social locations is finished.')
+
     print('Done.')
 
 
