@@ -107,10 +107,6 @@ def process_inputs(file_loc, start_row, col_names, clean_column, pivot_fields, r
 
 def puma_taz_lookup(puma_taz):
     ''' Create PUMS-TAZ lookup table '''
-    # Correct PUMS formatting to match cross-class data (add extra '0' in field name) - hard coded
-    
-    for x in range(1,len(puma_taz)):
-        puma_taz["puma"].loc[x] = puma_taz["puma"].loc[x].replace('gp', 'gp0')
 
     # Import TAZ household and employment data
     rate_cols = ["taz","purpose", "value"]
@@ -272,6 +268,11 @@ def main():
     puma_taz = pd.DataFrame(puma_taz[["puma", "taz"]])
 
     puma_taz=puma_taz.dropna()
+
+    # Correct PUMS formatting to match cross-class data (add extra '0' in field name) - hard coded
+    #for x in range(1,len(puma_taz)):
+    #    puma_taz["puma"].loc[x] = puma_taz["puma"].loc[x].replace('gp', 'gp0')
+    puma_taz['puma'] = puma_taz['puma'].replace('gp', 'gp0', regex = True)
 
     # Join PUMA data to TAZ data
     taz_data = puma_taz_lookup(puma_taz)
