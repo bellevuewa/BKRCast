@@ -31,7 +31,7 @@ def main():
             ret = my_project.calculate_VHT_subarea(flag, val, 1002)
             temp.update({value:ret})
         metrics.update({flag:temp})
-    my_project.CloseDesktop()
+    my_project.closeDesktop()
     print(metrics)    
 
     outputfile = os.path.join(project_folder, report_output_location, outputfilename)

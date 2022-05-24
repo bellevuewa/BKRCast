@@ -283,7 +283,8 @@ class EmmeProject:
 
         return ret
 
-    def CloseDesktop(self):
+    def closeDesktop(self):
+        self.bank.dispose()
         self.desktop.close()
 
     def import_attribute_values(self, file_path, scen_id, field_seperator, revert_on_error):

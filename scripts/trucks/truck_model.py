@@ -418,7 +418,7 @@ def main():
     calculate_daily_trips(my_project)
     skims_to_hdf5(my_project)
     write_summary(my_project)
-    my_project.CloseDesktop()
+    my_project.closeDesktop()
 
 
 if __name__ == "__main__":
