@@ -5,14 +5,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\summarize_land_use_inputs.py</StartupFile>
+    <StartupFile>scripts\accessibility\accessibility.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <InterpreterId />
+    <InterpreterId>Global|VisualStudio|BKRCastVE</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <CommandLineArguments>-i 0</CommandLineArguments>
     <InterpreterArguments>
@@ -342,6 +342,7 @@
     <Compile Include="reset_model_structure.py" />
     <Compile Include="run_bkrcast.py" />
     <Compile Include="scripts\accessibility\accessibility.py" />
+    <Compile Include="scripts\accessibility\accessibility_configuration.py" />
     <Compile Include="scripts\archive\archive.py" />
     <Compile Include="scripts\archive\revive.py" />
     <Compile Include="scripts\bikes\bike_model.py" />
@@ -443,6 +444,9 @@
     <Folder Include="scripts\supplemental" />
     <Folder Include="scripts\trucks" />
     <Folder Include="scripts\utils" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|BKRCastVE" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

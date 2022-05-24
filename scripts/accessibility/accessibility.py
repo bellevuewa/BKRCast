@@ -1,12 +1,13 @@
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
-from input_configuration import *
-from emme_configuration import *
 import pandas as pd
 import numpy as np
 import re
 from pyproj import Proj, transform
+from input_configuration import *
+from emme_configuration import *
+from accessibility_configuration import *
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -96,12 +97,18 @@ def process_parcels(parcels, transit_df, net, intersections_df):
         print(new_name)
         # get the records/locations that have this type of transit:
         transit_type_df = transit_df.loc[(transit_df[attr] == 1)]
-        parcels=process_dist_attribute(parcels, net, new_name, transit_type_df["x"], transit_type_df["y"])
+        if transit_type_df[attr].sum() > 0:
+            parcels=process_dist_attribute(parcels, net, new_name, transit_type_df["x"], transit_type_df["y"])
+        else:
+            parcels['dist_%s' % new_name] = 999 # use max dist if no stops exist for this submode
+        # some parcels share the same network node and therefore have 0 distance. Recode this to 0.01
+        field_name = 'dist_%s' % new_name
+        parcels.loc[parcels[field_name] == 0, field_name] = 0.01
 
     # distance to park
-    parcel_idx_park = np.where(parcels.NPARKS > 0)[0]
-    parcels=process_dist_attribute(parcels, net, "park", parcels.XCOORD_P[parcel_idx_park], parcels.YCOORD_P[parcel_idx_park])
-
+    #parcel_idx_park = np.where(parcels.NPARKS > 0)[0]
+    #parcels=process_dist_attribute(parcels, net, "park", parcels.XCOORD_P[parcel_idx_park], parcels.YCOORD_P[parcel_idx_park])
+    parcels['dist_park'] = 999.0
     return parcels
 
 def clean_up(parcels):
@@ -157,18 +164,21 @@ def main():
                 print(col_name + ' column sum is zero! Exiting program.')
                 sys.exit(1)
 
+    # not using. causes bug in daysim (copied from soundcast)
+    parcels['APARKS'] = 0
+    parcels['NPARKS'] = 0
+
     # nodes must be indexed by node_id column, which is the first column
     nodes = pd.read_csv(nodes_file_name, index_col = 'node_id')
     links = pd.read_csv(links_file_name, index_col = None )
-    links['from_node_id'] = links['from_node_id'].astype('int')
-    links['to_node_id'] = links['to_node_id'].astype('int')
-
     # get rid of circular links
     links = links.loc[(links.from_node_id != links.to_node_id)]
-
     # assign impedance
     imp = pd.DataFrame(links.Shape_Length)
     imp = imp.rename(columns = {'Shape_Length':'distance'})
+
+    links['from_node_id'] = links['from_node_id'].astype('int')
+    links['to_node_id'] = links['to_node_id'].astype('int')
 
     # create pandana network
     net = pdna.network.Network(nodes.x, nodes.y, links.from_node_id, links.to_node_id, imp)
@@ -203,6 +213,13 @@ def main():
     # run all accibility measures
     parcels = process_parcels(parcels, transit_df, net, intersections_df)
 
+    # Report a raw distance to HCT and all transit before calibration
+    parcels['raw_dist_hct'] = parcels[[ 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt', 'dist_brt']].min(axis=1)
+    parcels['raw_dist_transit'] = parcels[['dist_lbus','dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt', 'dist_brt']].min(axis=1)
+
+    # reduce perceived walk distance for light rail and ferry. This is used to calibrate to 2014 boarding and transfer rates
+    parcels.loc[parcels['dist_lrt'] <= 1, 'dist_lrt'] = parcels['dist_lrt'] * 0.5
+    parcels.loc[parcels['dist_fry'] <= 2, 'dist_fry'] = parcels['dist_fry'] * 0.5
     parcels_done = clean_up(parcels)
     parcels_done.to_csv(output_parcels, index = False, sep = ' ')
 
