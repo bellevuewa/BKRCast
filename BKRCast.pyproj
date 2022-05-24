@@ -285,6 +285,11 @@
     <Content Include="inputs\skim_params\demand_matrix_dictionary.json" />
     <Content Include="inputs\skim_params\emme_bank_dimensions.json" />
     <Content Include="inputs\skim_params\extended_transit_assignment.json" />
+    <Content Include="inputs\skim_params\extended_transit_assignment_bus.json" />
+    <Content Include="inputs\skim_params\extended_transit_assignment_commuter_rail.json" />
+    <Content Include="inputs\skim_params\extended_transit_assignment_ferry.json" />
+    <Content Include="inputs\skim_params\extended_transit_assignment_light_rail.json" />
+    <Content Include="inputs\skim_params\extended_transit_assignment_passenger_ferry.json" />
     <Content Include="inputs\skim_params\general_attribute_based_skim.json" />
     <Content Include="inputs\skim_params\general_generalized_cost_skim.json" />
     <Content Include="inputs\skim_params\general_path_based_assignment.json" />
