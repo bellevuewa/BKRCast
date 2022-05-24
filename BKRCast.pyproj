@@ -310,6 +310,11 @@
     <Content Include="inputs\skim_params\transit_segment_calculation.json" />
     <Content Include="inputs\skim_params\transit_skim_aggregate_matrix_names.json" />
     <Content Include="inputs\skim_params\transit_skim_setup.json" />
+    <Content Include="inputs\skim_params\transit_skim_setup_bus.json" />
+    <Content Include="inputs\skim_params\transit_skim_setup_commuter_rail.json" />
+    <Content Include="inputs\skim_params\transit_skim_setup_ferry.json" />
+    <Content Include="inputs\skim_params\transit_skim_setup_light_rail.json" />
+    <Content Include="inputs\skim_params\transit_skim_setup_passenger_ferry.json" />
     <Content Include="inputs\skim_params\truck_model.json" />
     <Content Include="inputs\skim_params\user_classes.json" />
     <Content Include="projects\1830to6\Worksheets\Test_1830to6.txt" />
