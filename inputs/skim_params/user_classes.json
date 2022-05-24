@@ -29,5 +29,17 @@
 ],
 "Transit": [
 {"Name": "trnst", "Description": "Transit Trips","Mode": "t","Time": "@timau","Distance": "@dist"} 
+],
+"LightRail": [
+{"Name": "litrat", "Description": "Light Rail Trips","Mode": "t","Time": "@timau","Distance": "@dist"} 
+],
+"Ferry": [
+{"Name": "ferry", "Description": "Ferry Trips","Mode": "t","Time": "@timau","Distance": "@dist"}
+], 
+"PassengerFerry": [
+{"Name": "passenger_ferry", "Description": "Passenger Ferry Trips","Mode": "t","Time": "@timau","Distance": "@dist"}
+], 
+"CommuterRail": [
+{"Name": "commuter_rail", "Description": "Commuter Rail Trips","Mode": "t","Time": "@timau","Distance": "@dist"}
 ]
 }
