@@ -7,7 +7,7 @@ import re
 from pyproj import Proj, transform
 from input_configuration import *
 from emme_configuration import *
-from accessibility_configuration import *
+
 
 # 10/25/2021
 # modified to be compatible with python 3
