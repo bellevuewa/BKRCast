@@ -324,7 +324,33 @@
     <Content Include="projects\TruckModel\Worksheets\Test_truck.txt" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
+    <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
+    <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
+    <Content Include="scripts\summarize\inputs\calibration\ACS_2014.xlsx" />
+    <Content Include="scripts\summarize\inputs\calibration\CatVarDict.xlsx" />
+    <Content Include="scripts\summarize\inputs\calibration\district_lookup.csv" />
+    <Content Include="scripts\summarize\inputs\calibration\FAZ_TAZ.xlsx" />
+    <Content Include="scripts\summarize\inputs\calibration\HFAZ_WFAZ_LEHD2014.xlsx" />
+    <Content Include="scripts\summarize\inputs\calibration\survey.h5" />
+    <Content Include="scripts\summarize\inputs\calibration\SurveyWorkFlow.csv" />
+    <Content Include="scripts\summarize\inputs\calibration\TAZ_TAD_County.csv" />
+    <Content Include="scripts\summarize\inputs\calibration\variable_labels.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\am_transit.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\CatVarDict.xlsx" />
+    <Content Include="scripts\summarize\inputs\network_summary\CTPP.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\injury_rates.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\network_summary.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\ObservedBoardings.xlsx" />
+    <Content Include="scripts\summarize\inputs\network_summary\observed_screenline_volumes.json" />
+    <Content Include="scripts\summarize\inputs\network_summary\route_id.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\soundcast_aadt.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\soundcast_tptt.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\TrafficCounts_Mid.txt" />
+    <Content Include="scripts\summarize\inputs\network_summary\TransitRouteKey.xlsx" />
+    <Content Include="scripts\summarize\inputs\network_summary\transit_agency_dict.json" />
+    <Content Include="scripts\summarize\inputs\network_summary\transit_boardings_2014.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\transit_counts.csv" />
+    <Content Include="scripts\summarize\inputs\network_summary\uc_vmt.csv" />
     <Content Include="scripts\summarize\mapping\dframe_explorer.html" />
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +474,8 @@
     <Folder Include="scripts\summarize\calibration" />
     <Folder Include="scripts\summarize\exploratory" />
     <Folder Include="scripts\summarize\inputs\" />
+    <Folder Include="scripts\summarize\inputs\benefit_cost\" />
+    <Folder Include="scripts\summarize\inputs\calibration\" />
     <Folder Include="scripts\summarize\inputs\network_summary" />
     <Folder Include="scripts\summarize\mapping" />
     <Folder Include="scripts\summarize\standard" />
