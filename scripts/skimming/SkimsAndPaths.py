@@ -138,14 +138,14 @@ def define_matrices(my_project):
             my_project.create_matrix(value + 'g', "Generalized Cost Skim: " + key, "FULL")
 
     #Create empty Transit Skim matrices in Emme only for tod in transit_skim_tod list
-    # Actual In Vehicle Times by Mode
+    # Actual In Vehicle Times by Mode on specific path
     if my_project.tod in transit_skim_tod:
         for item in transit_submodes:
-            my_project.create_matrix('ivtwa' + item, "Actual IVTs by Mode: " + item, "FULL")
-            my_project.create_matrix('ivtwr' + item, "Actual IVTs by Mode, Light Rail Assignment: " + item, "FULL")
-            my_project.create_matrix('ivtwf' + item, "Actual IVTs by Mode, Ferry Assignment: " + item, "FULL")
-            my_project.create_matrix('ivtwc' + item, "Actual IVTs by Mode, Commuter Rail: " + item, "FULL")
-            my_project.create_matrix('ivtwp' + item, "Actual IVTs by Mode, Passenger Ferry Assignment: " + item, "FULL")
+            my_project.create_matrix('ivtwa' + item, "Actual IVTs on bus path by Mode: " + item, "FULL")
+            my_project.create_matrix('ivtwr' + item, "Actual IVTs on LRT path by Mode: " + item, "FULL")
+            my_project.create_matrix('ivtwf' + item, "Actual IVTs on ferry path by Mode: " + item, "FULL")
+            my_project.create_matrix('ivtwc' + item, "Actual IVTs on CRT path by Mode: " + item, "FULL")
+            my_project.create_matrix('ivtwp' + item, "Actual IVTs on passenger ferry path by Mode: " + item, "FULL")
              
         #Transit, All Modes:
         dct_aggregate_transit_skim_names = json_to_dictionary('transit_skim_aggregate_matrix_names')
