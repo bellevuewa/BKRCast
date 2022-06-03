@@ -16,10 +16,13 @@ import h5py
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
+sys.path.append(os.path.join(os.getcwd(),"scripts/accessibility"))
 
 from EmmeProject import * 
+from truck_configuration import *
 from input_configuration import *
 from emme_configuration import *
+from accessibility_configuration import * 
 
 # 10/25/2021
 # modified to be compatible with python 3
