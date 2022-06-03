@@ -1,4 +1,3 @@
-from input_configuration_simple import *
 
 # This file contains model input parameters imported by BKRCast scripts.   
 
@@ -26,149 +25,58 @@ modeller_initial = "hd"
 
 #################################### SUB-PROCESS FLAGS  ####################################
 
-if not(use_simple_configuration):
     
-    # For Overriding the simple configuration, when you want to run things in more detail:
-    run_update_parking = False #Only update parking for future-year analysis!
-    run_accessibility_calcs = True
-    run_copy_daysim_code = False
-    run_copy_input_files = False
-    run_setup_emme_project_folders = False
-    run_setup_emme_bank_folders = False
-    run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
-    run_import_networks = False
+# For Overriding the simple configuration, when you want to run things in more detail:
+run_update_parking = False #Only update parking for future-year analysis!
+run_accessibility_calcs = True
+run_copy_daysim_code = False
+run_copy_input_files = False
+run_setup_emme_project_folders = False
+run_setup_emme_bank_folders = False
+run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
+run_import_networks = False
 
-    # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
-    # the model run will start with daysim
-    run_copy_seed_skims = False   
-    create_no_toll_network = True
-    run_skims_and_paths_seed_trips = False
+# if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
+# the model run will start with daysim
+run_copy_seed_skims = False   
+create_no_toll_network = True
+run_skims_and_paths_seed_trips = False
 
-    ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
-    should_build_shadow_price = True
-    run_skims_and_paths = True
-    run_truck_model = True
-    run_supplemental_trips = True
-    run_daysim = True
-    run_daysim_popsampler = False
-    run_accessibility_summary = True
-    run_bkrcast_summary =  True
-    run_create_daily_bank = True
-    run_truck_summary = False
+##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
+should_build_shadow_price = True
+run_skims_and_paths = True
+run_truck_model = True
+run_supplemental_trips = True
+run_daysim = True
+run_daysim_popsampler = False
+run_accessibility_summary = True
+run_bkrcast_summary =  True
+run_create_daily_bank = True
+run_truck_summary = False
 
-    # Specific reports to run
-    run_daysim_report = True
-    run_day_pattern_report = True
-    run_mode_choice_report = True
-    run_dest_choice_report = True
-    run_long_term_report = True
-    run_time_choice_report = True
-    run_district_summary_report = True
-    run_landuse_summary = True
+# Specific reports to run
+run_daysim_report = True
+run_day_pattern_report = True
+run_mode_choice_report = True
+run_dest_choice_report = True
+run_long_term_report = True
+run_time_choice_report = True
+run_district_summary_report = True
+run_landuse_summary = True
     
-    #delete parcel files from the project directory
-    delete_parcel_data = False
+#delete parcel files from the project directory
+delete_parcel_data = False
 
-    # DaySim - household sampling rate input
-    pop_sample = [1, 1, 1]
+# DaySim - household sampling rate input
+pop_sample = [1, 1, 1]
     
-    # Assignment Iterations:
-    max_iterations_list = [50, 100, 100]
-    min_pop_sample_convergence_test = 10
+# Assignment Iterations:
+max_iterations_list = [50, 100, 100]
+min_pop_sample_convergence_test = 10
     
-    # start building shadow prices - only run work locations
-    shadow_work = [1, 1, 1]
-    shadow_con = 30 #%RMSE for shadow pricing to consider being converged
-
-else:
-    create_no_toll_network = False
-    run_ben_cost = False
-    run_tableau_db = False
-    min_pop_sample_convergence_test = 10
-    
-    if run_setup:
-        if base_year == scenario_name:
-            run_update_parking = False
-        else:
-            run_update_parking = True
-
-        run_accessibility_calcs = True
-        run_accessibility_summary = True
-        run_copy_daysim_code = True
-        run_setup_emme_project_folders = True
-        run_setup_emme_bank_folders = True
-        run_landuse_summary = True
-    else:
-        run_update_parking = False
-        run_accessibility_calcs = False
-        run_accessibility_summary = False
-        run_copy_daysim_code = False
-        run_setup_emme_project_folders = False
-        run_setup_emme_bank_folders = False
-        run_landuse_summary = False
-
-    if run_daysim:
-        run_soundcast_summary = True
-        run_daysim_report = True
-        run_day_pattern_report = True
-        run_mode_choice_report = True
-        run_dest_choice_report = True
-        run_long_term_report = True
-        run_time_choice_report = True
-        run_district_summary_report = True
-    else:
-        run_soundcast_summary = False
-        run_daysim_report = False
-        run_day_pattern_report = False
-        run_mode_choice_report = False
-        run_dest_choice_report = False
-        run_long_term_report = False
-        run_time_choice_report = False
-        run_district_summary_report = True
-
-    if should_build_shadow_price:
-        shadow_work = [1, 1]
-        shadow_con = 30 #%RMSE for shadow pricing to consider being converged
-        feedback_iterations = feedback_iterations - 1 # when building shadow prices a final iteration happens automatically
-
-    if start_with_seed_skims:
-        run_copy_seed_skims = True
-        run_skims_and_paths_seed_trips = False
-    else:
-        run_copy_seed_skims = False
-        run_skims_and_paths_seed_trips = True
-        run_import_networks = True
-        run_truck_model = True
-        run_supplemental_trips = True
-        run_create_daily_bank = True
-
-    if run_skims_and_paths:
-            run_import_networks = True
-            run_truck_model = True
-            run_supplemental_trips = True
-            run_create_daily_bank = True
-    else:
-            run_import_networks = False
-            run_truck_model = False
-            run_supplemental_trips = False
-            run_create_daily_bank = False
-
-    pop_sample = []
-    max_iterations_list = []
-
-    while feedback_iterations > 0:
-        # feedback iterations remaining
-        if feedback_iterations == 1:
-            pop_sample.append(2)
-            max_iterations_list. append(100)
-        elif feedback_iterations == 2:
-            pop_sample.append(5)
-            max_iterations_list.append(100)
-        else:
-            pop_sample.append(20)
-            max_iterations_list.append(10)
-
-        feedback_iterations -=1 
+# start building shadow prices - only run work locations
+shadow_work = [1, 1, 1]
+shadow_con = 30 #%RMSE for shadow pricing to consider being converged
 
 #################################### LOG FILES  ####################################
 
@@ -177,63 +85,6 @@ main_log_file = 'bkrcast_log.txt'
 
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]
-
-#################################### ACCESSIBILITY ####################################
-max_dist = 24140.2 # 3 miles in meters
-distances = { # in meters; 
-              # keys correspond to suffices of the resulting parcel columns
-              # ORIGINAL VALUES !!
-             1: 2640, # 0.5 mile
-             2: 5280 # 1 mile
-             }
-
-
-parcels_file_name = 'parcels_urbansim.txt'
-buffered_parcels = 'buffered_parcels.dat'
-output_parcels = 'inputs/' + buffered_parcels
-buffered_parcels_csv = 'inputs/' + 'buffered_parcels.csv'
-transit_stops_name = 'inputs/accessibility/transit_stops_2014.csv'
-nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
-links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
-military_file = "inputs\\accessibility\\parcels_military.csv"
-jblm_file = "inputs\\accessibility\\\distribute_jblm_jobs.csv"
-daily_parking_cost = "inputs\\accessibility\\daily_parking_costs.csv"
-hourly_parking_cost = "inputs\\accessibility\\hourly_parking_costs.csv"
-
-
-# These will be disaggregated from the parcel data to the network.
-# Keys are the functions applied when aggregating over buffers.
-
-parcel_attributes = {
-              "sum": ["HH_P", "STUGRD_P", "STUHGH_P", "STUUNI_P", 
-                      "EMPMED_P", "EMPOFC_P", "EMPEDU_P", "EMPFOO_P", "EMPGOV_P", "EMPIND_P", 
-                      "EMPSVC_P", "EMPOTH_P", "EMPTOT_P", "EMPRET_P",
-                      "PARKDY_P", "PARKHR_P", "NPARKS", "APARKS", "daily_weighted_spaces", "hourly_weighted_spaces"],
-              "ave": [ "PPRICDYP", "PPRICHRP"],
-              }
-
-col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype_p', u'hh_p',
-       u'stugrd_p', u'stuhgh_p', u'stuuni_p', u'empedu_p', u'empfoo_p',
-       u'empgov_p', u'empind_p', u'empmed_p', u'empofc_p', u'empret_p',
-       u'empsvc_p', u'empoth_p', u'emptot_p', u'parkdy_p', u'parkhr_p',
-       u'ppricdyp', u'pprichrp', u'hh_1', u'stugrd_1', u'stuhgh_1',
-       u'stuuni_1', u'empedu_1', u'empfoo_1', u'empgov_1', u'empind_1',
-       u'empmed_1', u'empofc_1', u'empret_1', u'empsvc_1', u'empoth_1',
-       u'emptot_1', u'parkdy_1', u'parkhr_1', u'ppricdy1', u'pprichr1',
-       u'nodes1_1', u'nodes3_1', u'nodes4_1', u'tstops_1', u'nparks_1',
-       u'aparks_1', u'hh_2', u'stugrd_2', u'stuhgh_2', u'stuuni_2',
-       u'empedu_2', u'empfoo_2', u'empgov_2', u'empind_2', u'empmed_2',
-       u'empofc_2', u'empret_2', u'empsvc_2', u'empoth_2', u'emptot_2',
-       u'parkdy_2', u'parkhr_2', u'ppricdy2', u'pprichr2', u'nodes1_2',
-       u'nodes3_2', u'nodes4_2', u'tstops_2', u'nparks_2', u'aparks_2',
-       u'dist_lbus', u'dist_ebus', u'dist_crt', u'dist_fry', u'dist_lrt',
-       u'dist_park', u'raw_dist_hct', u'raw_dist_transit']
-
-# These are already on network (from add-ons).
-# Keys correspond to the resulting parcel columns (minus suffix).
-# Values correspond the names in the add-on dataset.
-transit_attributes = ["tstops"]
-intersections = ["nodes1", "nodes3", "nodes4"]
 
 transit_modes = {"lbus": "bus", "ebus": "express", 
        "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail", 'brt':'brt'} # will compute nearest distance to these

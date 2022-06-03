@@ -59,5 +59,3 @@ col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype
 transit_attributes = ["tstops"]
 intersections = ["nodes1", "nodes3", "nodes4"]
 
-transit_modes = {"lbus": "bus", "ebus": "express", 
-       "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail", 'brt':'brt'} # will compute nearest distance to these
