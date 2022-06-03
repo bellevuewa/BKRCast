@@ -35,7 +35,7 @@ current_time = str(time.strftime("%H:%M:%S"))
 logging.debug('----Began SkimsAndPaths script at ' + current_time)
 
 survey_seed_trips = False
-daysim_seed_trips= False
+free_flow_skims= False
 hdf5_file_path = h5_results_file
 #feedback iteration
 iteration = 0
@@ -317,7 +317,7 @@ def transit_assignment(my_project, spec, keep_exisiting_volumes, class_name=None
     assign_transit(assignment_specification,  add_volumes=keep_exisiting_volumes, class_name=class_name)
 
     end_transit_assignment = time.time()
-    print('It took' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + 'minutes to run the transit assignment.')
+    print('It took ' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + 'minutes to run the transit assignment.')
 
 def transit_skims(my_project, spec, class_name=None):
 
@@ -1007,7 +1007,7 @@ def matrix_controlled_rounding(my_project):
     text = 'finished matrix controlled rounding'
     logging.debug(text)
 
-def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration):
+def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration, free_flow_skims):
     #An Emme databank can only be used by one process at a time. Emme Modeler API only allows one instance of Modeler and
     #it cannot be destroyed/recreated in same script. In order to run things con-currently in the same script, must have
     #seperate projects/banks for each time period and have a pool for each project/bank.
@@ -1017,7 +1017,7 @@ def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration):
     #Doing some testing on best approaches to con-currency
     pool = Pool(processes=parallel_instances)
     # wfh_adj_trips_df does not change during parallel processing.
-    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration)
+    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration, free_flow_skims = free_flow_skims)
     pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
     pool.close()
     pool.join()
@@ -1087,23 +1087,18 @@ def run_transit(project_name):
     my_project.closeDesktop()
     print("finished run_transit")
 
-#def export_to_hdf5_pool(project_list):
-#    pool = Pool(processes=parallel_instances)
-#    pool.map(start_export_to_hdf5, project_list[0:parallel_instances])
-#    pool.close()
-
-def export_to_hdf5_pool(project_list, survey_seed_trips, daysim_seed_trips ):
+def export_to_hdf5_pool(project_list, survey_seed_trips, free_flow_skims ):
     pool = Pool(processes=parallel_instances)
-    start_export_to_hdf5_x = partial(start_export_to_hdf5, survey_seed_trips = survey_seed_trips, daysim_seed_trips = daysim_seed_trips)
+    start_export_to_hdf5_x = partial(start_export_to_hdf5, survey_seed_trips = survey_seed_trips, free_flow_skims = free_flow_skims)
     pool.map(start_export_to_hdf5_x, project_list[0:parallel_instances])
     pool.close()
     pool.join()
 
-def start_export_to_hdf5(test, survey_seed_trips, daysim_seed_trips):
+def start_export_to_hdf5(test, survey_seed_trips, free_flow_skims):
     print(test)
     my_project = EmmeProject(test)
     #do not average skims if using seed_trips because we are starting the first iteration
-    if survey_seed_trips or daysim_seed_trips:
+    if survey_seed_trips or free_flow_skims:
         average_skims_to_hdf5_concurrent(my_project, False)
     else:
         average_skims_to_hdf5_concurrent(my_project, True) #debug - was set to True
@@ -1335,7 +1330,7 @@ def store_assign_results(project_name, iteration):
     file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
     link_data_df.to_csv(file_path, index = False)
 
-def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_file, iteration):
+def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_file, iteration, free_flow_skims):
     print('Inside run_assignment_parallel: ' + project_name + ' ' + str(max_iteration))
     print(hdf5_file)
     start_of_run = time.time()
@@ -1349,8 +1344,9 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     define_matrices(my_project)
 
     ###import demand/trip tables to emme. this is actually quite fast con-currently.
-    hdf5_trips_to_Emme(my_project, hdf5_file, adj_trips_df)
-    matrix_controlled_rounding(my_project)
+    if not free_flow_skims:
+        hdf5_trips_to_Emme(my_project, hdf5_file, adj_trips_df)
+        matrix_controlled_rounding(my_project)
 
     populate_intrazonals(my_project)
    
@@ -1413,7 +1409,7 @@ def help():
     print('      -p: fraction of trips starting in core business hours to be removed. These trips are made by workers who are converted from full time workers to non-workers')
     print('      trip_table_flag:')
     print('         use_survey_seed_trips: Use survey seed trips instead of trips generated by Daysim') 
-    print('         use_daysim_output_seed_trips: use Daysim seed trips instead of trips generated by Daysim')
+    print('         build_free_flow_skims: buid free flow skims using zero demand')
     print('')
 
 def main():
@@ -1430,7 +1426,7 @@ def main():
     wfh_adj_trips_df = None
     # global variables below
     global survey_seed_trips
-    global daysim_seed_trips
+    global free_flow_skims
     global iteration
     global hdf5_file_path
 
@@ -1475,22 +1471,22 @@ def main():
         # result from using the latest assignment and skimming.
         if arg == 'use_survey_seed_trips':
             survey_seed_trips = True
-            daysim_seed_trips= False
-        elif arg == 'use_daysim_output_seed_trips':
+            free_flow_skims= False
+        elif arg == 'build_free_flow_skims':
             survey_seed_trips = False
-            daysim_seed_trips= True
+            free_flow_skims= True
         else:
             survey_seed_trips = False
-            daysim_seed_trips= False
+            free_flow_skims= False
 
     print('survey_seed_trips = ' + str(survey_seed_trips))
-    print('daysim_seed_trips = ' + str(daysim_seed_trips))
+    print('free_flow_skims = ' + str(free_flow_skims))
     if survey_seed_trips:
         text =  'Using SURVEY SEED TRIPS.'
         hdf5_file_path = base_inputs + '/' + scenario_name + '/etc/survey_seed_trips.h5'
-    elif daysim_seed_trips:
-        text = 'Using DAYSIM OUTPUT SEED TRIPS'
-        hdf5_file_path = 'inputs/etc/daysim_outputs_seed_trips.h5'
+    elif free_flow_skims:
+        text = 'Building free flow skims using zero demand'
+        hdf5_file_path = ''
     else:
         text = 'Using DAYSIM OUTPUTS'
         hdf5_file_path = h5_results_file
@@ -1522,14 +1518,14 @@ def main():
         text = '% of trips for adjustment made by workers working from home: ' + str(percent)
         logging.debug(text)
 
-    start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration)
+    start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
     #run_assignments_parallel(project_list[2])
     start_transit_pool(project_list)
    
     f = open('inputs/converge.txt', 'w')
    
     #If using seed_trips, we are starting the first iteration and do not want to compare skims from another run. 
-    if (survey_seed_trips == False and daysim_seed_trips == False):
+    if (survey_seed_trips == False and free_flow_skims == False):
            #run feedback check 
           if feedback_check(feedback_list) == False:
               go = 'continue'
@@ -1544,7 +1540,7 @@ def main():
     #export skims even if skims converged
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
-        export_to_hdf5_pool(l, survey_seed_trips, daysim_seed_trips)
+        export_to_hdf5_pool(l, survey_seed_trips, free_flow_skims)
     end_of_run = time.time()
 
     text =  "Emme Skim Creation and Export to HDF5 completed normally"

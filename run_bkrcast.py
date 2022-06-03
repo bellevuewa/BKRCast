@@ -76,7 +76,7 @@ def build_seed_skims(max_iterations):
     returncode = subprocess.call([sys.executable,
         'scripts/skimming/SkimsAndPaths.py', '-i',
         str(max_iterations),
-        'use_daysim_output_seed_trips'])
+        'build_free_flow_skims'])
     if returncode != 0:
         sys.exit(1)
          
