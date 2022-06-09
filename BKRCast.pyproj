@@ -317,6 +317,15 @@
     <Content Include="inputs\skim_params\transit_skim_setup_passenger_ferry.json" />
     <Content Include="inputs\skim_params\truck_model.json" />
     <Content Include="inputs\skim_params\user_classes.json" />
+    <Content Include="projects\1530to1830\Worksheets\Boarding_Alighting.emt" />
+    <Content Include="projects\1530to1830\Worksheets\Compare_traffic_volume_and_times.emw" />
+    <Content Include="projects\1530to1830\Worksheets\General_worksheet.emw" />
+    <Content Include="projects\1530to1830\Worksheets\Links_table.emt" />
+    <Content Include="projects\1530to1830\Worksheets\Local_Count_Scatterplot.emw" />
+    <Content Include="projects\1530to1830\Worksheets\Local_Count_Scatterplot_BelCBD.emw" />
+    <Content Include="projects\1530to1830\Worksheets\Screenline_Scatterplot.emw" />
+    <Content Include="projects\1530to1830\Worksheets\Select_link_analysis.emw" />
+    <Content Include="projects\1530to1830\Worksheets\Transit_lines.emt" />
     <Content Include="projects\1830to6\Worksheets\Test_1830to6.txt" />
     <Content Include="projects\6to9\Worksheets\Test_6to9.txt" />
     <Content Include="projects\9to1530\Worksheets\Test_9to1530.txt" />
@@ -453,6 +462,8 @@
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\skim_params\" />
     <Folder Include="projects\" />
+    <Folder Include="projects\1530to1830\" />
+    <Folder Include="projects\1530to1830\Worksheets\" />
     <Folder Include="projects\1830to6\" />
     <Folder Include="projects\1830to6\Worksheets" />
     <Folder Include="projects\6to9\" />
