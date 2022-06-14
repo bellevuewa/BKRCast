@@ -394,6 +394,12 @@
     <Compile Include="scripts\data_wrangling.py" />
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
+    <Compile Include="scripts\modeller\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\Pathbased_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\PopulateNetwork.py" />
+    <Compile Include="scripts\modeller\PopulateNetwork2.py" />
+    <Compile Include="scripts\modeller\SOLA_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\TM611Util.py" />
     <Compile Include="scripts\network\daysim_zone_inputs.py" />
     <Compile Include="scripts\network\network_importer.py" />
     <Compile Include="scripts\popsampler.py" />
@@ -480,6 +486,7 @@
     <Folder Include="scripts\archive" />
     <Folder Include="scripts\bikes" />
     <Folder Include="scripts\network" />
+    <Folder Include="scripts\modeller\" />
     <Folder Include="scripts\skimming" />
     <Folder Include="scripts\summarize" />
     <Folder Include="scripts\summarize\benefit_cost" />
