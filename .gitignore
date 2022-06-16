@@ -16,3 +16,6 @@ Daysim/last-run.log
 /UpgradeLog.htm
 /scripts/summarize/standard/export_files_for_validation.py
 /daysim_summaries/.Rproj.user
+*.mtbx
+*.mtbx-wal
+*.mtbx-shm
