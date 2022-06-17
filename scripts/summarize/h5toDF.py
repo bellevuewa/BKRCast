@@ -102,7 +102,7 @@ def convert(filename, guidefile, name):
     if guidefile[L-4:L] == 'json':
         print('---Begin ' + name + ' conversion---')
         ts = time.time()
-        input = h5py.File(filename, 'r+')
+        input = h5py.File(filename, 'r')
         with open(guidefile, 'rb') as fp:
             categorical_dict = json.load(fp)
         output = {}
@@ -133,7 +133,7 @@ def convert(filename, guidefile, name):
     elif guidefile[L-4:L] == 'xlsx':
         print('---Begin ' + name + ' conversion---')
         ts = time.time()
-        input = h5py.File(filename, 'r+')
+        input = h5py.File(filename, 'r')
         guides = get_guide(guidefile)
         categorical_dict = guide_to_dict(guides)
         output = {}
@@ -179,7 +179,7 @@ def convert_single(filename, guidefile, name, table):
     has_negative_expansion_factors = False
     L = len(guidefile)
     if guidefile[L-4:L] == 'json':
-        input = h5py.File(filename, 'r+')
+        input = h5py.File(filename, 'r')
         with open(guidefile, 'rb') as fp:
             categorical_dict = json.load(fp)
         output = {}
@@ -206,7 +206,7 @@ def convert_single(filename, guidefile, name, table):
         output.update({f: df})
         return(output)
     elif guidefile[L-4:L] == 'xlsx':
-        input = h5py.File(filename, 'r+')
+        input = h5py.File(filename, 'r')
         guides = get_guide(guidefile)
         categorical_dict = guide_to_dict(guides)
         output = {}
