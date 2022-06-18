@@ -6,6 +6,7 @@ import itertools as _itertools
 import datetime
 import os
 from shutil import copyfile
+import pandas as pd
 
 class BKRCastExportNetwork(_modeller.Tool()):
     '''
@@ -23,8 +24,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
             @exist_modes and @imp_modes 
     1.3.0 upgrade to python 3.7, compatible with EMME4.5.1
     1.3.1 add existing and improved turn penalty, turn lane, and turn adjustment factor. @exist_tpf, @imp_tpf, @exist_turn_lane, @imp_turn_lane, @exist_turn_factor, @imp_turn_factor
+    1.3.2 export bus stop file.
     '''
-    version = "1.3.1" # this is the version
+    version = "1.3.2" # this is the version
     default_path = ""
     tool_run_message = ""
     outputFolder = _modeller.Attribute(object)
@@ -291,13 +293,69 @@ class BKRCastExportNetwork(_modeller.Tool()):
             self.exportVDF(pm_vdf_name)
             self.exportVDF(ni_vdf_name)    
 
+        # export a list of bus stop with transit submodes and coordinates.
+        with _modeller.logbook_trace(name = "Export bus stops", value = ""):
+            busstop_name = os.path.join(self.outputFolder, 'transit_stops_' + str(self.horizon_year) + '.csv')
+            self.exportBusStop(busstop_name, horizon_scen)
+
     def exportTransit(self, tempFileName, scen, selection):
         NAMESPACE = "inro.emme.data.network.transit.export_transit_lines"
         export_transitlines = _modeller.Modeller().tool(NAMESPACE)
         emmebank_dir = os.path.dirname(_modeller.Modeller().emmebank.path)
         line_file = os.path.join(emmebank_dir, tempFileName)
         export_transitlines(export_file = line_file, selection = selection, scenario = scen)
-            
+    
+    def exportBusStop(self, bus_file_name, scen):
+        network = scen.get_network()
+        transit_segments = network.transit_segments()
+        busstops = []
+        busstops_err = []
+        segments  = []
+        for seg in transit_segments:
+            mode = seg.line.mode.id
+            i_node = seg.i_node.id
+            i_node_x = seg.i_node.x
+            i_node_y = seg.i_node.y
+            if mode == 'b':
+                dict = {'bus':1, 'stop': i_node}
+                busstops.append(dict)
+            elif mode == 'c':
+                dict = {'commuter_rail':1, 'stop': i_node}
+                busstops.append(dict)
+            elif mode == 'r':
+                dict = {'light_rail':1, 'stop': i_node}
+                busstops.append(dict)
+            elif mode == 'n':
+                dict = {'brt':1, 'stop': i_node}
+                busstops.append(dict)
+            elif mode == 'f':
+                dict = {'ferry':1, 'stop': i_node}
+                busstops.append(dict)
+            elif mode == 'p':
+                dict = {'express':1, 'stop': i_node}
+                busstops.append(dict)
+            else:
+                dict = {mode: 1, 'stop': i_node}
+                busstops_err.append(dict)
+            segments.append({'i':seg.i_node, 'j':seg.j_node, 'line':seg.line.id, 'mode': seg.line.mode.id})
+
+        busstops_df = pd.DataFrame(busstops)
+        busstops_df = busstops_df.groupby('stop').sum()
+        for col in ['ferry', 'light_rail', 'bus', 'express', 'commuter_rail']:
+            busstops_df[col] = busstops_df[col].astype(int)
+            busstops_df.loc[busstops_df[col] > 1, col] = 1
+        
+        nodes = network.nodes
+        nodes_list = []
+        for node in nodes():
+            dict = {'node': node.id, 'x': node.x, 'y': node.y}
+            nodes_list.append(dict)
+        nodes_df = pd.DataFrame(nodes_list)
+        busstops_df = pd.merge(busstops_df, nodes_df, left_on = 'stop', right_on = 'node', how = 'left')
+        busstops_df.to_csv(bus_file_name, index = False)
+        busstops_err_df = pd.DataFrame(busstops_err)
+        busstops_err_df.to_csv('error.txt')
+
     def tLineNetCalculator(self, result, expression, sel):
         NAMESPACE = "inro.emme.network_calculation.network_calculator"
         specs = {

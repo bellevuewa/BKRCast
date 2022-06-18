@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\accessibility\accessibility.py</StartupFile>
+    <StartupFile>scripts\modeller\generate_bus_stops.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="daysim_configuration_template.properties" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new.dat" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new_inbkr.dat" />
@@ -395,6 +396,7 @@
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\generate_bus_stops.py" />
     <Compile Include="scripts\modeller\Pathbased_assignment_on_multiple_scenarios.py" />
     <Compile Include="scripts\modeller\PopulateNetwork.py" />
     <Compile Include="scripts\modeller\PopulateNetwork2.py" />
