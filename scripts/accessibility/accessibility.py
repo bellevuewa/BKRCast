@@ -187,7 +187,7 @@ def main():
         net.precompute(dist)
 
     # get transit stops
-    transit_df = pd.read_csv(transit_stops_name,  index_col = None)
+    transit_df = pd.read_csv(os.path.join(main_inputs_folder, 'networks', transit_stops_name),  index_col = None)
     transit_df['tstops'] = 1
 
     # intersections:
