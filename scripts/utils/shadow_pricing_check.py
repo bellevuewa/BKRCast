@@ -16,11 +16,10 @@ import pandas as pd
 import h5toDF
 import math
 import os, sys
+import os.path
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(),"scripts"))
-sys.path.append(os.path.join(os.getcwd(),"scripts/accessibility"))
-from accessibility.accessibility_configuration import *
 from input_configuration import *
+from accessibility.accessibility_configuration import *
 
 # 1/18/2022
 # upgrade to python 3
