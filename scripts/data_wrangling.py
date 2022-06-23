@@ -127,15 +127,6 @@ def copy_accessibility_files():
             print('error copying parking file at' + base_inputs+'/landuse/' + ' either hourly or daily parking costs')
             sys.exit(1)
 
-@timed
-def copy_seed_skims():
-    print('You have decided to start your run by copying seed skims that Daysim will use on the first iteration. Interesting choice! This will probably take around 15 minutes because the files are big. Starting now...')
-    if not(os.path.isdir(base_inputs+'/seed_skims')):
-           print('It looks like you do not hava directory called' + base_inputs+'/seed_skims, where the code is expecting the files to be. Please make sure to put your seed_skims there.')
-    for filename in glob.glob(os.path.join(base_inputs+'/seed_skims', '*.*')):
-        shutil.copy(filename, 'inputs')
-    print('Done copying seed skims.')
-
 def text_to_dictionary(dict_name):
 
     input_filename = os.path.join('inputs/skim_params/',dict_name+'.json').replace("\\","/")

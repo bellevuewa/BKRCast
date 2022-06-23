@@ -361,10 +361,6 @@ def main():
         if returncode != 0:
             sys.exit(1)
 
-    # either you build seed skims or you copy them, or neither, but it wouldn't make sense to do both
-    elif run_copy_seed_skims:
-        copy_seed_skims()
-
     # Check all inputs have been created or copied
     check_inputs()
 
