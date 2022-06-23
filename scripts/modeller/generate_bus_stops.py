@@ -95,7 +95,7 @@ class BKRCastGenerateBusStops(_modeller.Tool()):
 
         busstops_df = pd.DataFrame(busstops)
         busstops_df = busstops_df.groupby('stop').sum()
-        for col in ['ferry', 'light_rail', 'bus', 'express', 'commuter_rail']:
+        for col in busstops_df.columns.values.tolist():
             busstops_df[col] = busstops_df[col].astype(int)
             busstops_df.loc[busstops_df[col] > 1, col] = 1
         

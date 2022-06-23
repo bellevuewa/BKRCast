@@ -25,6 +25,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
     1.3.0 upgrade to python 3.7, compatible with EMME4.5.1
     1.3.1 add existing and improved turn penalty, turn lane, and turn adjustment factor. @exist_tpf, @imp_tpf, @exist_turn_lane, @imp_turn_lane, @exist_turn_factor, @imp_turn_factor
     1.3.2 export bus stop file.
+    1.3.3 export vehicle file. 
     '''
     version = "1.3.2" # this is the version
     default_path = ""
@@ -298,6 +299,13 @@ class BKRCastExportNetwork(_modeller.Tool()):
             busstop_name = os.path.join(self.outputFolder, 'transit_stops_' + str(self.horizon_year) + '.csv')
             self.exportBusStop(busstop_name, horizon_scen)
 
+        with _modeller.logbook_trace(name = "Export vehicles", value = ""):
+            NAMESPACE = 'inro.emme.data.network.transit.export_vehicles'
+            export_vehicle = _modeller.Modeller().tool(NAMESPACE)
+            path = os.path.join(self.outputFolder, 'vehicles.txt')
+            export_vehicle(scenario = horizon_scen, export_file = path, field_separator = ' ')    
+
+
     def exportTransit(self, tempFileName, scen, selection):
         NAMESPACE = "inro.emme.data.network.transit.export_transit_lines"
         export_transitlines = _modeller.Modeller().tool(NAMESPACE)
@@ -341,7 +349,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
 
         busstops_df = pd.DataFrame(busstops)
         busstops_df = busstops_df.groupby('stop').sum()
-        for col in ['ferry', 'light_rail', 'bus', 'express', 'commuter_rail']:
+        for col in busstops_df.columns.values.tolist():
             busstops_df[col] = busstops_df[col].astype(int)
             busstops_df.loc[busstops_df[col] > 1, col] = 1
         
