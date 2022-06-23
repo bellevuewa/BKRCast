@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\modeller\generate_bus_stops.py</StartupFile>
+    <StartupFile>scripts\utils\shadow_pricing_check.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -389,6 +389,7 @@
     <Compile Include="run_bkrcast.py" />
     <Compile Include="scripts\accessibility\accessibility.py" />
     <Compile Include="scripts\accessibility\accessibility_configuration.py" />
+    <Compile Include="scripts\accessibility\__init__.py" />
     <Compile Include="scripts\archive\archive.py" />
     <Compile Include="scripts\archive\revive.py" />
     <Compile Include="scripts\bikes\bike_model.py" />
@@ -440,6 +441,7 @@
     <Compile Include="scripts\supplemental\military_parcel_loading.py" />
     <Compile Include="scripts\trucks\truck_configuration.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
+    <Compile Include="scripts\trucks\__init__.py" />
     <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
     <Compile Include="scripts\utils\create_extra_attributes.py" />
     <Compile Include="scripts\utils\create_node_to_node_index.py" />
@@ -468,6 +470,7 @@
     <Folder Include="daysim_summaries\templates\" />
     <Folder Include="inputs\" />
     <Folder Include="inputs\coefficients\" />
+    <Folder Include="inputs\NewFolder1\" />
     <Folder Include="inputs\skim_params\" />
     <Folder Include="projects\" />
     <Folder Include="projects\1530to1830\" />
