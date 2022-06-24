@@ -1,9 +1,12 @@
 import os, sys
 sys.path.append(os.getcwd())
-from input_configuration import *
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import pandas as pd
 import h5py
 import numpy as np
+from input_configuration import *
+from accessibility.accessibility_configuration import *
+
 
 # 10/25/2021
 # modified to be compatible with python 3
