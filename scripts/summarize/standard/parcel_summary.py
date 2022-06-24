@@ -3,7 +3,10 @@ import pandas as pd
 import numpy as np
 import os, sys
 sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+
 from input_configuration import *# Import as a module to access inputs as a dictionary
+from accessibility.accessibility_configuration import *
 
 # 10/25/2021
 # modified to be compatible with python 3
