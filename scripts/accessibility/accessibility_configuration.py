@@ -50,7 +50,7 @@ col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype
        u'empofc_2', u'empret_2', u'empsvc_2', u'empoth_2', u'emptot_2',
        u'parkdy_2', u'parkhr_2', u'ppricdy2', u'pprichr2', u'nodes1_2',
        u'nodes3_2', u'nodes4_2', u'tstops_2', u'nparks_2', u'aparks_2',
-       u'dist_lbus', u'dist_ebus', u'dist_crt', u'dist_fry', u'dist_lrt',
+       u'dist_lbus', u'dist_crt', u'dist_fry', u'dist_lrt',
        u'dist_park', u'raw_dist_hct', u'raw_dist_transit']
 
 # These are already on network (from add-ons).
