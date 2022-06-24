@@ -341,7 +341,6 @@
     <Content Include="scripts\summarize\inputs\calibration\district_lookup.csv" />
     <Content Include="scripts\summarize\inputs\calibration\FAZ_TAZ.xlsx" />
     <Content Include="scripts\summarize\inputs\calibration\HFAZ_WFAZ_LEHD2014.xlsx" />
-    <Content Include="scripts\summarize\inputs\calibration\survey.h5" />
     <Content Include="scripts\summarize\inputs\calibration\SurveyWorkFlow.csv" />
     <Content Include="scripts\summarize\inputs\calibration\TAZ_TAD_County.csv" />
     <Content Include="scripts\summarize\inputs\calibration\variable_labels.csv" />
