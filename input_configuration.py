@@ -86,7 +86,7 @@ main_log_file = 'bkrcast_log.txt'
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]
 
  # in the future if we want to add express bus or brt to the transit mode, add {"ebus": "express"} {'brt':'brt'}to the transit_modes.  
-transit_modes = {"lbus": "bus", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
+transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
 
 input_ensemble = "inputs\\parking_gz.csv"
 

@@ -137,8 +137,8 @@ def clean_up(parcels):
     
     # currently Daysim just uses dist_lbus as actually meaning the minimum distance to transit, so we will match that setup for now.
     print('updating the distance to local bus field to actually hold the minimum to any transit because that is how Daysim is currently reading the field')
-    #parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
-    parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
+    parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
+
 
 
     for col in col_order:
