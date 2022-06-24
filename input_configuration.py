@@ -85,8 +85,8 @@ main_log_file = 'bkrcast_log.txt'
 #This is what you get if the model runs cleanly, but it's random:
 good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap","venti cinnamon dolce latte"]
 
- # in the future if we want to add express bus to the transit mode, add {"ebus": "express"} to the transit_modes.  
-transit_modes = {"lbus": "bus", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail", 'brt':'brt'} # will compute nearest distance to these
+ # in the future if we want to add express bus or brt to the transit mode, add {"ebus": "express"} {'brt':'brt'}to the transit_modes.  
+transit_modes = {"lbus": "bus", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
 
 input_ensemble = "inputs\\parking_gz.csv"
 
