@@ -12,6 +12,7 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+from this import s
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import inro.emme.matrix as ematrix
@@ -85,6 +86,17 @@ class EmmeProject:
             NAMESPACE = "inro.emme.data.network.base.delete_nodes"
             delete_nodes = self.m.tool(NAMESPACE)
             delete_nodes(condition="cascade")
+
+    def delete_all_functions(self):
+        NAMESPACE = "inro.emme.data.function.delete_function"
+        delete_function = self.m.tool(NAMESPACE)
+        for i in range(1,99):
+            for ftype in ['fd', 'ft', 'fp']:
+                fid = ftype + str(i)
+                func = self.m.emmebank.function(fid)
+                if func is not None:
+                    delete_function(func)
+
     def process_vehicles(self,vehicle_file):
           NAMESPACE = "inro.emme.data.network.transit.vehicle_transaction"
           process = self.m.tool(NAMESPACE)

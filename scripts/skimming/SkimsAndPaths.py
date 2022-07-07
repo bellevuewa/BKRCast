@@ -93,6 +93,7 @@ def json_to_dictionary(dict_name):
 
 
 def vdf_initial(my_project):
+    my_project.delete_all_functions()
 
     #Point to input file for the VDF's and Read them in
     function_file = 'inputs/vdfs/vdfs' + my_project.tod + '.txt'
