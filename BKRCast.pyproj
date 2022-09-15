@@ -427,6 +427,7 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\parcel_summary.py" />
     <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
+    <Compile Include="scripts\summarize\standard\reset_project_folders.py" />
     <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
     <Compile Include="scripts\summarize\standard\tour_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\trip_mode_share_calculator.py" />
