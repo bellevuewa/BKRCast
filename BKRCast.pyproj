@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\parcel_summary.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\summarize_daysim_hhs_and_persons.py</StartupFile>
     <SearchPath>..\BKRCast;scripts;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-i 0</CommandLineArguments>
+    <CommandLineArguments>-m 3</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -317,6 +317,27 @@
     <Content Include="inputs\skim_params\transit_skim_setup_passenger_ferry.json" />
     <Content Include="inputs\skim_params\truck_model.json" />
     <Content Include="inputs\skim_params\user_classes.json" />
+    <Content Include="inputs\subarea_definition\BellevueDTTAZ.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_1.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_10.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_11.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_12.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_13.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_14.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_2.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_3.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_4.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_5.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_6.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_7.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_8.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_MMA_9.txt" />
+    <Content Include="inputs\subarea_definition\Bellevue_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\BKR_+Fringe_area_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\BKR_only_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\Redmond_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\Regional.txt" />
+    <Content Include="inputs\subarea_definition\TAZ_subarea.csv" />
     <Content Include="projects\1530to1830\Worksheets\Boarding_Alighting.emt" />
     <Content Include="projects\1530to1830\Worksheets\Compare_traffic_volume_and_times.emw" />
     <Content Include="projects\1530to1830\Worksheets\General_worksheet.emw" />
@@ -427,7 +448,8 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\parcel_summary.py" />
     <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
-    <Compile Include="scripts\summarize\standard\reset_project_folders.py" />
+    <Compile Include="reset_project_folders.py" />
+    <Compile Include="scripts\summarize\standard\summarize_daysim_hhs_and_persons.py" />
     <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
     <Compile Include="scripts\summarize\standard\tour_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\trip_mode_share_calculator.py" />
@@ -471,6 +493,7 @@
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\NewFolder1\" />
     <Folder Include="inputs\skim_params\" />
+    <Folder Include="inputs\subarea_definition\" />
     <Folder Include="projects\" />
     <Folder Include="projects\1530to1830\" />
     <Folder Include="projects\1530to1830\Worksheets\" />
@@ -507,6 +530,7 @@
     <Folder Include="scripts\utils" />
   </ItemGroup>
   <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|BKRCast" />
     <InterpreterReference Include="Global|VisualStudio|BKRCast" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
