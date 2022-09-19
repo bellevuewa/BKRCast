@@ -13,7 +13,8 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-m 3</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
