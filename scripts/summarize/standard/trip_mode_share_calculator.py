@@ -91,22 +91,22 @@ def get_time_period_by_minutes(period):
         exit()
     return start_time, end_time
 
-def write_file_header(output_file, overwritten = False):
-    if overwritten:
-        file_mode = 'w'
-    else:
-        file_mode = 'a'
+#def write_file_header(output_file, overwritten = False):
+#    if overwritten:
+#        file_mode = 'w'
+#    else:
+#        file_mode = 'a'
     
-    with open(output_file, file_mode) as output:
-        output.write(str(datetime.datetime.now()) + '\n')
-        output.write(trips_file + '\n')
-        output.write(hhs_file + '\n')
-        output.write(subarea_taz_file + '\n')
-        output.write('Start time: ' + str(start_time) + '\n')
-        output.write('End time: ' + str(end_time) + '\n')
-        output.write('From the subarea: ' + str(trips_from_only) + '\n')
-        output.write('To the subarea: ' + str(trips_end_only) + '\n')
-        output.write('\n')
+#    with open(output_file, file_mode) as output:
+#        output.write(str(datetime.datetime.now()) + '\n')
+#        output.write(trips_file + '\n')
+#        output.write(hhs_file + '\n')
+#        output.write(subarea_taz_file + '\n')
+#        output.write('Start time: ' + str(start_time) + '\n')
+#        output.write('End time: ' + str(end_time) + '\n')
+#        output.write('From the subarea: ' + str(trips_from_only) + '\n')
+#        output.write('To the subarea: ' + str(trips_end_only) + '\n')
+#        output.write('\n')
 
 def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=False, comments=''):
     if purpose == -1:
