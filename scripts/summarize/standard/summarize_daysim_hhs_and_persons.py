@@ -18,7 +18,7 @@ def summarize_hhs(output_file, customized_location_file = ''):
     hhs_df = pd.read_csv(os.path.join(prj.project_folder,  prj.report_output_location, daysim_hhs_output_file), sep = '\t')
     taz_subarea_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'subarea_definition', 'TAZ_subarea.csv'))
     hhs_df = pd.merge(hhs_df, taz_subarea_df, left_on = 'hhtaz', right_on = 'BKRCastTAZ', how = 'left')
-    hh_summary_list = ['hhsize','hhvehs', 'hhwkrs', 'hhftw', 'hhptw', 'hhwhome','hhret', 'hhoad', 'hhuni', 'hhhsc', 'hh515', 'hhcu5']
+    hh_summary_list = ['hhsize', 'hhvehs', 'hhwkrs', 'hhftw', 'hhptw', 'hhwhome','hhret', 'hhoad', 'hhuni', 'hhhsc', 'hh515', 'hhcu5']
 
     persons_df = pd.read_csv(os.path.join(prj.project_folder, prj.report_output_location, daysim_persons_output_file), sep = '\t')
     persons_df = pd.merge(persons_df, hhs_df[['hhno', 'hhparcel']], on = 'hhno', how = 'left')
@@ -30,11 +30,13 @@ def summarize_hhs(output_file, customized_location_file = ''):
     hhs_by_subarea_df = hhs_df.groupby('Subarea')[hh_summary_list].sum()
     hhs_by_jurisdiction_df = hhs_df.groupby('Jurisdiction')[hh_summary_list].sum()
 
+    hhs_by_restype_df = hhs_df.groupby('hrestype')[['hhexpfac']].sum()
     
     if customized_location_file != '':
         customized_tazs = pd.read_csv(customized_location_file)
         customized_hhs_df = pd.merge(hhs_df, customized_tazs, left_on = 'hhtaz', right_on = 'TAZ', how = 'inner')
         cust_hhs_by_subarea_df = customized_hhs_df[hh_summary_list].sum()
+        cust_hhs_by_restype_df = customized_hhs_df.groupby('hrestype')[['hhexpfac']].sum()
 
     with open(os.path.join(prj.project_folder, prj.report_output_location, output_file), 'w') as f:
         f.write('%s\n' % str(datetime.datetime.now()))   
@@ -48,10 +50,17 @@ def summarize_hhs(output_file, customized_location_file = ''):
             f.write('%s\n\n' % customized_location_file)
             dfstring = cust_hhs_by_subarea_df.to_string()
             f.write('%s\n\n' % dfstring)       
+            f.write(f'Households by Residence Type\n')
+            dfstring = cust_hhs_by_restype_df.to_string()
+            f.write(f'{dfstring}\n')
 
         f.write('Households by Jurisdiction\n') 
         dfstring = hhs_by_jurisdiction_df.to_string()
         f.write('%s\n\n' % dfstring)
+
+        f.write('Households by Residence Type\n')
+        dfstring = hhs_by_restype_df.to_string()
+        f.write(f'{dfstring}\n')
 
         f.write('Households by Subarea\n') 
         dfstring = hhs_by_subarea_df.to_string()
@@ -66,7 +75,6 @@ def summarize_persons(output_file, customized_location_file):
     persons_df = pd.read_csv(os.path.join(prj.project_folder, prj.report_output_location, daysim_persons_output_file), sep = '\t')
     hhs_df = pd.read_csv(os.path.join(prj.project_folder,  prj.report_output_location, daysim_hhs_output_file), sep = '\t')
     taz_subarea_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'subarea_definition', 'TAZ_subarea.csv'))
-    hh_summary_list = ['hhsize','hhvehs', 'hhwkrs', 'hhftw', 'hhptw', 'hhret', 'hhoad', 'hhuni', 'hhhsc', 'hh515', 'hhcu5']
     persons_df = pd.merge(persons_df, hhs_df[['hhno', 'hhtaz', 'hhparcel']], on = 'hhno', how = 'left')
     persons_df = pd.merge(persons_df, taz_subarea_df[['BKRCastTAZ', 'Subarea', 'PMA_ID', 'Jurisdiction']]   , left_on = 'hhtaz', right_on = 'BKRCastTAZ', how = 'left')
     bellevue_persons_df = persons_df.loc[persons_df['Jurisdiction'] == 'BELLEVUE']
@@ -211,7 +219,7 @@ def help():
     print('         Redmond')
     print('         Kirkland\n')
     print('Household summary always includes jurisdiction, subarea and TAZ level report. If any option is used, it is an addition to the household summary report.')
-    print('Person summary only includes regional level, plus customized location if it is specified in the option.')
+    print('Person summary only includes regional and Bellevue, plus customized location if it is specified in the option.')
 
 def main():
     subarea_code = -1
