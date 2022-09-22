@@ -1,3 +1,4 @@
+from pickle import TRUE
 import pandas as pd
 import os
 import sys
@@ -16,8 +17,16 @@ This tool is calculating person trips aggregated by origin and destination.
 # generate Ps and As by trip purpose.
 
 def help():
-    print('This program is used to calculate person trips aggregated by origin and destination taz.')
-    print('The results are saved in an outputs/named scenario_name_daily_person_trips_by_OD.txt.')
+    print(' This program is used to calculate person trip ends aggregated by origin and destination taz.')
+    print(' The results are saved in an outputs/named scenario_name_daily_person_trips_by_OD.txt.')
+    print(' Inside the output file:')
+    print('    Three columns are associated with each purpose. They are production, attraction, and total trip ends for each purpose.')
+    print('    for example: ')
+    print('        all_prod: production of all purposes')
+    print('        all_attr: attraction of all purposes')
+    print('        all:      all_prod + all_attr')
+    print('    others: trip ends sum of four purposes: escort, shopping, personal_biz, social')
+    print('    ')
     print('python pacalculator.py -h')
     print('    -h: help')
     print('')
@@ -44,12 +53,13 @@ def main() :
     taz_df.columns = ['taz']
 
     prod_df = total_trips_df[['otaz', 'trexpfac']].groupby('otaz').sum().reset_index()
-    prod_df.rename(columns = {'trexpfac':'All_prod'}, inplace = True)
+    prod_df.rename(columns = {'trexpfac':'all_prod'}, inplace = True)
     attr_df = total_trips_df[['dtaz', 'trexpfac']].groupby('dtaz').sum().reset_index()
-    attr_df.rename(columns = {'trexpfac':'All_attr'}, inplace = True)
+    attr_df.rename(columns = {'trexpfac':'all_attr'}, inplace = True)
     combined_df = pd.merge(taz_df, prod_df, left_on = 'taz', right_on = 'otaz', how = 'left') 
     combined_df = pd.merge(combined_df, attr_df, left_on = 'taz', right_on = 'dtaz', how = 'left') 
     combined_df.drop(['otaz', 'dtaz'], axis = 1, inplace = True)
+    combined_df['all'] = combined_df['all_prod'] +combined_df['all_attr']
 
     for dpurp, dpurp_name in prj.purp_trip_dict.items():
         print(f'{dpurp_name}')
@@ -64,7 +74,10 @@ def main() :
             attr_by_purp_df.rename(columns = {'trexpfac': dpurp_name + '_attr'}, inplace = True)
             combined_df = pd.merge(combined_df, attr_by_purp_df, left_on = 'taz', right_on = 'dtaz', how = 'left')
             combined_df.drop(['dtaz', 'dpurp'], axis = 1, inplace = True)
+            combined_df.fillna({dpurp_name + '_prod': 0, dpurp_name + '_attr': 0}, inplace = True)
+            combined_df[dpurp_name] = combined_df[dpurp_name + '_prod'] + combined_df[dpurp_name + '_attr']
 
+    combined_df['others'] = combined_df['escort'] + combined_df['personal_biz'] + combined_df['shopping'] + combined_df['social']
     combined_df.fillna(0, inplace = True)
     outputfilename = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + 'daily_person_trips_by_OD.txt')
 
@@ -72,7 +85,7 @@ def main() :
         output.write(str(datetime.datetime.now()) + '\n')
         output.write(trips_file + '\n')
         output.write('Daily person trips by origin and destination\n')
-        dfstr = combined_df.to_string()
+        dfstr = combined_df.to_string(index = False)
         output.write(dfstr)
 
     print('done')
