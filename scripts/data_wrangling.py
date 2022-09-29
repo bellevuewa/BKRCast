@@ -366,3 +366,10 @@ def get_hhs_df_from_synpop():
     hhs = h5_to_df(poph5, 'Household')
     persons = h5_to_df(poph5, 'Person')
     return hhs, persons
+
+def get_current_commit_hash():
+    try:
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+    except:
+        commit = '0000000'
+    return commit
