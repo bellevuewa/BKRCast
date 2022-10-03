@@ -431,7 +431,7 @@ if __name__ == "__main__":
     commit_hash = get_current_commit_hash()
     commit_info = f'BKRCast commit: {commit_hash}'
     print(commit_info)
-    logger.info(commit_hash)
+    logger.info(commit_info)
 
     main()
 
