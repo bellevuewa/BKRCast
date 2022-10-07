@@ -50,6 +50,16 @@ from data_wrangling import *
 def accessibility_calcs():
     copy_accessibility_files()
 
+    print('adding military jobs to regular jobs')
+    print('adding JBLM workers to external workers')
+    print('adjusting non-work externals')
+    print('creating ixxi file for Daysim')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
+    if returncode != 0:
+        print('Military Job loading failed')
+        sys.exit(1)
+    print('military jobs loaded')
+
     if run_update_parking:
         if base_year == scenario_name:
             print("----- This is a base-year analysis. Parking parcels are NOT being updated! Input for 'run_update_parking' is over-ridden. -----")

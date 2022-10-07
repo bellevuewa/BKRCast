@@ -19,7 +19,6 @@ import accessibility_configuration as access_config
 # modified to be compatible with python 3
 
 output_dir = r'outputs/supplemental/'
-#my_project = EmmeProject(r'projects\Supplementals\Supplementals.emp')
 
 tod_factors = {'6to9':0.281, '9to1530':0.3215, '1530to1830':0.2625, '1830to6':0.135}
 
@@ -28,11 +27,6 @@ jblm_taz_list = [1319]
 
 # dictionary to hold taz id and total enlisted to use to update externals
 jbml_enlisted_taz_dict = {}
-
-# it might make sense to put these file locations in a config somewhere
-parcel_file_dir =  'Z:/Modeling Group/BKRCast/2035Parcel_Sqft_based'
-military_file = 'inputs/2014/landuse/enlisted_personnel.csv'
-#non_worker_file = 'inputs/scenario/supplemental/generation/externals_unadjusted.csv'
 
 parcel_emp_cols = parcel_attributes =["EMPMED_P", "EMPOFC_P", "EMPEDU_P", "EMPFOO_P", "EMPGOV_P", "EMPIND_P", "EMPSVC_P", "EMPOTH_P", "EMPTOT_P", "EMPRET_P"]
 
@@ -74,9 +68,10 @@ def main():
     network_importer(my_project)
 
     parcels_military = pd.read_csv('inputs/supplemental/enlisted_personnel_bkr.csv')
+    parcels_military = parcels_military.loc[parcels_military['year'] == int(bkr_config.base_year)]
     parcels_urbansim = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
-
     parcels_urbansim.index = parcels_urbansim['PARCELID']
+
     # FIXME: uniform upper/lower
     # Convert columns to upper case for now
     parcels_urbansim.columns = [i.upper() for i in parcels_urbansim.columns]
@@ -217,7 +212,7 @@ def main():
             final_df.drop(col_name, axis=1, inplace=True)
     final_df = final_df.round(3)
 
-    final_df.to_csv('outputs/psrc_worker_ixxifractions.dat', sep = '\t', index = False, header = False)
+    final_df.to_csv(os.path.join(output_dir, 'psrc_worker_ixxifractions.dat'), sep = '\t', index = False, header = False)
     #parcels_urbansim.to_csv(r'inputs/scenario/landuse/parcels_urbansim.txt',  sep = ' ', index = False)
 
 if __name__ == '__main__':

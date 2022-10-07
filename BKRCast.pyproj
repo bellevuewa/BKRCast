@@ -6,7 +6,7 @@
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
     <StartupFile>scripts\supplemental\create_ixxi_work_trips.py</StartupFile>
-    <SearchPath>scripts;scripts\trucks;..\BKRCast</SearchPath>
+    <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility;C:\Program Files\INRO\Emme\Emme 4\Emme-4.6.0\Python37\modeller</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
@@ -532,6 +532,7 @@
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|BKRCast" />
+    <InterpreterReference Include="Global|VisualStudio|BKRCast" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
