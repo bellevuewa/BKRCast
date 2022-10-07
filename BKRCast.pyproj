@@ -5,8 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\summarize_daysim_hhs_and_persons.py</StartupFile>
-    <SearchPath>..\BKRCast;scripts;scripts\accessibility</SearchPath>
+    <StartupFile>scripts\supplemental\create_ixxi_work_trips.py</StartupFile>
+    <SearchPath>scripts;scripts\trucks;..\BKRCast</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
@@ -532,7 +532,6 @@
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|BKRCast" />
-    <InterpreterReference Include="Global|VisualStudio|BKRCast" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

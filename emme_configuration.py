@@ -93,6 +93,7 @@ MAX_EXTERNAL = 1528      #zone of externals
 HIGH_TAZ = 1359
 LOW_PNR = 1360 #external dummy is also included
 HIGH_PNR = 1510
+EXTERNALS_DONT_GROW=[1511]
 
 SPECIAL_GENERATORS = {"SeaTac":1356,"Tacoma Dome":1357,"exhibition center":1359, "Seattle Center":1358}
 feedback_list = ['Banks/6to9/emmebank','Banks/1530to1830/emmebank']
