@@ -373,3 +373,8 @@ def get_current_commit_hash():
     except:
         commit = '0000000'
     return commit
+
+def build_output_dirs():
+    for path in ['outputs',r'outputs/daysim','outputs/bike','outputs/network','outputs/transit', 'outputs/landuse','outputs/emissions', r'outputs/trucks', 'outputs/supplemental']:
+        if not os.path.exists(path):
+            os.makedirs(path)

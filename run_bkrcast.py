@@ -329,6 +329,8 @@ def main():
         exit(-1)
 
 ## SET UP INPUTS ##########################################################
+
+    build_output_dirs()
     if run_copy_input_files:
         copy_large_inputs()
     
