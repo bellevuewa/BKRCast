@@ -139,8 +139,6 @@ def clean_up(parcels):
     print('updating the distance to local bus field to actually hold the minimum to any transit because that is how Daysim is currently reading the field')
     parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
 
-
-
     for col in col_order:
         parcels_final[col] = parcels[col]
     
@@ -221,17 +219,11 @@ def main():
     parcels['raw_dist_hct'] = parcels[['dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
     parcels['raw_dist_transit'] = parcels[['dist_lbus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
 
-
     # reduce perceived walk distance for light rail and ferry. This is used to calibrate to 2014 boarding and transfer rates
     parcels.loc[parcels['dist_lrt'] <= 1, 'dist_lrt'] = parcels['dist_lrt'] * 0.5
     parcels.loc[parcels['dist_fry'] <= 2, 'dist_fry'] = parcels['dist_fry'] * 0.5
     parcels_done = clean_up(parcels)
     parcels_done.to_csv(output_parcels, index = False, sep = ' ')
-
-    #to a csv file
-    del col_order[6:24]
-    parcels_done = parcels_done[col_order]
-    parcels_done.to_csv(buffered_parcels_csv, index = False)
 
 if __name__ == '__main__':
     main()
