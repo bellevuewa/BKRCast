@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\supplemental\generation.py</StartupFile>
+    <StartupFile>scripts\supplemental\create_airport_trips.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -457,7 +457,9 @@
     <Compile Include="scripts\summarize\standard\truck_vols.py" />
     <Compile Include="scripts\summarize\xlautofit.py" />
     <Compile Include="scripts\summarize\__init__.py" />
+    <Compile Include="scripts\supplemental\create_airport_trips.py" />
     <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
+    <Compile Include="scripts\supplemental\distribute_non_work_ixxi.py" />
     <Compile Include="scripts\supplemental\distribution.py" />
     <Compile Include="scripts\supplemental\generation.py" />
     <Compile Include="scripts\supplemental\military_parcel_loading.py" />

@@ -175,36 +175,38 @@ puma_taz_loc = '/supplemental/generation/ensembles/puma00.ens'
 taz_data_loc = '/supplemental/generation/landuse/tazdata.in'
 pums_data_loc = '/supplemental/generation/pums/' 
 externals_loc = '/supplemental/generation/externals.csv'
-# Special generator zones and demand (dictionary key is TAZ, value is demand)
-spg_general = {1357: 1761,
-               1359: 7921,
-               1358: 14668} # updated on 1/10/2020, PSRC   
-spg_airport = {1356: 105240} # updated on 1/10/2020, PSRC
-## growth rates are provided by PSRC
-## Adjust auto special generators to HORIZON_YEAR, by scaling up 2014 daily trips.
-for key in spg_airport:
-    spg_airport_rate = 1
-    if HORIZON_YEAR > 2030 and HORIZON_YEAR <= 2040:
-        spg_airport_rate = pow(1 + 2.18/100, HORIZON_YEAR - 2030) * pow(1 + 2.69/100, 2030 - 2020) * pow(1 + 3.65/100, 2020 - 2014)
-    elif HORIZON_YEAR > 2020:
-        spg_airport_rate = pow (1 + 2.69/100, HORIZON_YEAR - 2020) * pow(1 + 3.65/100, 2020 - 2014)
-    elif HORIZON_YEAR >= 2014: 
-        spg_airport_rate = pow(1 + 3.65/100, HORIZON_YEAR - 2014)
-    else:
-        print('Your HORIZON_YEAR is not valid.')
-        sys.exit(-1)    
-    spg_airport[key] = spg_airport[key] * spg_airport_rate
 
-for key in spg_general:
-    spg_general_rate = 1
-    if HORIZON_YEAR > 2025 and HORIZON_YEAR <=2040:
-        spg_general_rate = pow(1 + 0.77/100, HORIZON_YEAR - 2025) * pow(1 + 1.14/100, 2025 - 2014)
-    elif HORIZON_YEAR >= 2014:
-        spg_general_rate = pow(1 + 1.14/100, HORIZON_YEAR - 2014)  
-    else: 
-        print('Your HORIZON_YEAR is not valid') 
-        sys.exit(-1)
-    spg_general[key] =  spg_general[key] * spg_general_rate
+#Special generators are now handled in generation.py of suplemental module. 
+## Special generator zones and demand (dictionary key is TAZ, value is demand)
+#spg_general = {1357: 1761,
+#               1359: 7921,
+#               1358: 14668} # updated on 1/10/2020, PSRC   
+#spg_airport = {1356: 105240} # updated on 1/10/2020, PSRC
+### growth rates are provided by PSRC
+### Adjust auto special generators to HORIZON_YEAR, by scaling up 2014 daily trips.
+#for key in spg_airport:
+#    spg_airport_rate = 1
+#    if HORIZON_YEAR > 2030 and HORIZON_YEAR <= 2040:
+#        spg_airport_rate = pow(1 + 2.18/100, HORIZON_YEAR - 2030) * pow(1 + 2.69/100, 2030 - 2020) * pow(1 + 3.65/100, 2020 - 2014)
+#    elif HORIZON_YEAR > 2020:
+#        spg_airport_rate = pow (1 + 2.69/100, HORIZON_YEAR - 2020) * pow(1 + 3.65/100, 2020 - 2014)
+#    elif HORIZON_YEAR >= 2014: 
+#        spg_airport_rate = pow(1 + 3.65/100, HORIZON_YEAR - 2014)
+#    else:
+#        print('Your HORIZON_YEAR is not valid.')
+#        sys.exit(-1)    
+#    spg_airport[key] = spg_airport[key] * spg_airport_rate
+
+#for key in spg_general:
+#    spg_general_rate = 1
+#    if HORIZON_YEAR > 2025 and HORIZON_YEAR <=2040:
+#        spg_general_rate = pow(1 + 0.77/100, HORIZON_YEAR - 2025) * pow(1 + 1.14/100, 2025 - 2014)
+#    elif HORIZON_YEAR >= 2014:
+#        spg_general_rate = pow(1 + 1.14/100, HORIZON_YEAR - 2014)  
+#    else: 
+#        print('Your HORIZON_YEAR is not valid') 
+#        sys.exit(-1)
+#    spg_general[key] =  spg_general[key] * spg_general_rate
 
 # Using one AM and one PM time period to represent AM and PM skims
 am_skim_file_loc = 'inputs/6to9.h5'
