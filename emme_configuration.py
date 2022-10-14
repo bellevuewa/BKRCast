@@ -223,3 +223,6 @@ avotda = 0.0303    # VOT
 
 # Change modes for toll links
 toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmvutbpwl', 'ahdimjbp' : 'admbp'}
+
+# Home delivery trips, must be > 0
+total_delivery_trips = 1 

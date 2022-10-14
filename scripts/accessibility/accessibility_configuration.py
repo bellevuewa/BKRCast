@@ -14,7 +14,7 @@ distances = { # in meters;
 
 parcels_file_name = 'parcels_urbansim.txt'
 buffered_parcels = 'buffered_parcels.txt'
-output_parcels = 'outputs/landuse' + buffered_parcels
+output_parcels = 'outputs/landuse/' + buffered_parcels
 transit_stops_name = 'transit_stops.csv'
 nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
