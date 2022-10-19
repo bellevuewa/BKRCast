@@ -68,7 +68,7 @@ def main():
     network_importer(my_project)
 
     parcels_military = pd.read_csv('inputs/supplemental/enlisted_personnel_bkr.csv')
-    parcels_military = parcels_military.loc[parcels_military['year'] == int(bkr_config.base_year)]
+    parcels_military = parcels_military.loc[parcels_military['year'] == int(bkr_config.model_year)]
     parcels_urbansim = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
     parcels_urbansim.index = parcels_urbansim['PARCELID']
 
@@ -116,7 +116,7 @@ def main():
     base_year_scaling = pd.read_csv('inputs/supplemental/base_year_scaling.csv')
 
      # Base year employment
-    base_year_totemp = base_year_scaling[(base_year_scaling['year'] == int(bkr_config.base_year)) & 
+    base_year_totemp = base_year_scaling[(base_year_scaling['year'] == int(bkr_config.supplemental_module_base_year)) & 
                                          (base_year_scaling['field'] == 'emptot_p')]['value'].values[0]
     model_year_totemp = parcels_urbansim['EMPTOT_P'].sum()
     emp_scaling = model_year_totemp/base_year_totemp

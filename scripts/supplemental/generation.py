@@ -304,13 +304,13 @@ def main():
     heavy_trucks_taz = heavy_trucks_taz.loc[:,['BKRCastTAZ','htkpro','htkatt']]
 
     ###########################################################
-    # SeaTac Airport 
-    ###########################################################
+    # SeaTac Airport enplanment value up to year of 2050
+    ############################################################
     df_seatac = pd.read_csv('inputs/supplemental/seatac_bkr.csv')
     seatac_enplanements = df_seatac[df_seatac['year'] == int(bkr_config.model_year)]['enplanements'].values[0]
 
     ###########################################################
-    ## Special Generators
+    ## Special Generators  , up to year of 2010
     ###########################################################
 
     # Special generator trips are assumed of type HBO

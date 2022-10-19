@@ -61,7 +61,7 @@ def accessibility_calcs():
     print('military jobs loaded')
 
     if run_update_parking:
-        if base_year == scenario_name:
+        if base_year == model_year:
             print("----- This is a base-year analysis. Parking parcels are NOT being updated! Input for 'run_update_parking' is over-ridden. -----")
         else:
             print('Starting to update UrbanSim parcel data with 4k parking data file')
