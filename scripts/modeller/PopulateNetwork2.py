@@ -296,7 +296,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
 
         # export a list of bus stop with transit submodes and coordinates.
         with _modeller.logbook_trace(name = "Export bus stops", value = ""):
-            busstop_name = os.path.join(self.outputFolder, 'transit_stops_' + str(self.horizon_year) + '.csv')
+            busstop_name = os.path.join(self.outputFolder, 'transit_stops' + '.csv')
             self.exportBusStop(busstop_name, horizon_scen)
 
         with _modeller.logbook_trace(name = "Export vehicles", value = ""):
