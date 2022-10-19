@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import os,sys
 import h5py
-from sqlalchemy import create_engine
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.getcwd())
 import emme_configuration as emme_config
@@ -28,11 +27,11 @@ def load_skim_data():
     skim_dict = {}
 
     # Skim for cost, time, and distance for all auto modes
-    for skim_type in ['cost', 'time', 'distance']:
+    for skim_type in ['c', 't', 'd']:
         skim_dict[skim_type] = {}
-        for mode in ['sov', 'hov2', 'hov3']:
+        for mode in ['svtl2', 'h2tl2', 'h3tl2']:
             # For auto skims, use the average of AM and PM peak periods
-            skim_name = mode+'_inc2'+skim_type[0]
+            skim_name = mode + skim_type[0]
             am_skim = load_skims(emme_config.am_skim_file_loc, 
                     table=skim_name, divide_by_100=True)
             pm_skim = load_skims(emme_config.pm_skim_file_loc, 
@@ -40,9 +39,9 @@ def load_skim_data():
             skim_dict[skim_type][mode] = (am_skim + pm_skim) * .5
 
         # Get walk time skims, they are in the AM time period
-        if skim_type == 'time':
+        if skim_type == 't':
             for mode in ['walk', 'bike']:
-                skim_dict['time'][mode] = load_skims(emme_config.am_skim_file_loc, table=mode+'t', divide_by_100=True)
+                skim_dict['t'][mode] = load_skims(emme_config.am_skim_file_loc, table=mode+'t', divide_by_100=True)
 
     # Skim for transit
     skim_list = ['ivtw','iwtw','ndbw','xfrw','auxw']
@@ -70,12 +69,12 @@ def calculate_auto_cost(trip_purpose, skim_dict, parking_cost_array, parameters_
     # Auto operating cost is assumed same across auto modes (SOV, HOV2, HOV3+)
     auto_op_cost = parameters_df[(parameters_df['purpose'] == trip_purpose) & (parameters_df['variable'] == 'autoop')]['value'].values[0]
 
-    occupancy_factor = {'sov': 1,
-                        'hov2': 2,
-                        'hov3': 3.5}
+    occupancy_factor = {'svtl2': 1,
+                        'h2tl2': 2,
+                        'h3tl2': 3.5}
 
-    for mode in ['sov','hov2','hov3']:
-        auto_cost_dict[mode] = skim_dict['distance'][mode]*auto_op_cost + (skim_dict['cost'][mode])/occupancy_factor[mode]
+    for mode in ['svtl2', 'h2tl2', 'h3tl2']:
+        auto_cost_dict[mode] = skim_dict['d'][mode]*auto_op_cost + (skim_dict['c'][mode])/occupancy_factor[mode]
                                                                   
     return auto_cost_dict
 
@@ -97,9 +96,8 @@ def calculate_mode_shares(trip_purpose, mode_utilities_dict):
 
 def destination_parking_costs(df, zone_lookup_dict):
     """Calculate average daily parking price per zone."""
-
     np_array = np.zeros(len(zone_lookup_dict))
-    df = df[df.PPRICDYP > 0]
+    df = df.loc[df['PPRICDYP'] > 0]
     df = df.groupby('TAZ_P').mean()[['PPRICDYP']].reset_index()
     df['zone_index'] = df.TAZ_P.apply(lambda x: zone_lookup_dict[x])
     np_array[df.zone_index] = df['PPRICDYP']
@@ -125,10 +123,10 @@ def calculate_mode_utilties(trip_purpose, skim_dict, auto_cost_dict, params_df, 
     
     # Filter parameters for given trip purpose
     params_df = params_df[params_df['purpose'] == trip_purpose]
-
-    asc_dict = {'sov': 0,    # SOV is the reference mode so ASC=0
-                'hov2': 'asccs2',
-                'hov3': 'asccs3',
+    
+    asc_dict = {'svtl2': 0,    # SOV is the reference mode so ASC=0
+                'h2tl2': 'asccs2',
+                'h3tl2': 'asccs3',
                 'transit': 'ascctw',
                 'walk': 'asccwk',
                 'bike': 'asccbk'}
@@ -141,18 +139,18 @@ def calculate_mode_utilties(trip_purpose, skim_dict, auto_cost_dict, params_df, 
 
     # Calcualte utility for all modes
     
-    for mode in ['sov','hov2','hov3','walk','bike']:
+    for mode in ['svtl2','h2tl2','h3tl2','walk','bike']:
 
-        if mode != 'sov':
+        if mode != 'svtl2':
             asc = get_param(params_df, asc_dict[mode])
         else:
             asc = 0
         #utility_matrices[mode] = calculate_utility(mode, asc, skim_dict, auto_cost_dict)
         if mode not in ['walk','bike']:
-            util = np.exp(asc + get_param(params_df, 'autivt') * skim_dict['time'][mode] +\
+            util = np.exp(asc + get_param(params_df, 'autivt') * skim_dict['t'][mode] +\
             get_param(params_df, 'autcos') * auto_cost_dict[mode])
         else:
-            util = np.exp(asc + get_param(params_df, mode+'tm') * skim_dict['time'][mode])
+            util = np.exp(asc + get_param(params_df, mode+'tm') * skim_dict['t'][mode])
         utility_matrices[mode] = clip_matrix(util, 0, zone_lookup_dict[emme_config.LOW_PNR])
 
     # Calculate Walk to Transit Utility for all submodes
@@ -227,7 +225,7 @@ def calculate_trips(daysim, parcel, control_total):
     adj_factor = control_total/trips['airport_trips'].sum()
     trips['adj_trips'] = trips['airport_trips']*adj_factor
     trips = trips[['BKRCastTAZ', 'adj_trips']]
-    trips['SeaTac_Taz'] = emme_config.SEATAC
+    trips['SeaTac_Taz'] = emme_config.SPECIAL_GENERATORS['SeaTac']
 
     return trips
 
@@ -312,13 +310,12 @@ def split_tod_internal(total_trips_by_mode, tod_factors_df):
 
 # Output trips
 def output_trips(path, matrix_dict):
+    mode_lookup = {'sov':'svtl', 'hov2':'h2tl','hov3':'h3tl', 'walk':'walk', 'bike':'bike', 'commuter_rail':'commuter_rail', 'litrat':'litrat', 'passenger_ferry':'passenger_ferry','trnst':'trnst', 'ferry':'ferry'}
     for tod in matrix_dict.keys():
         print("Exporting supplemental trips for time period: " + str(tod))
         my_store = h5py.File(path + str(tod) + '.h5', "w")
         for mode, value in matrix_dict[tod].items():
-            if mode in ['sov','hov2','hov3']:
-                mode = mode + '_inc2'
-            my_store.create_dataset(str(mode), data=value, compression='gzip')
+            my_store.create_dataset(str(mode_lookup[mode]), data=value, compression='gzip')
         my_store.close()
 
 def summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airport_matrix_dict,  output_dir):
@@ -355,7 +352,7 @@ def main():
     zones = my_project.current_scenario.zone_numbers
     zonesDim = len(my_project.current_scenario.zone_numbers)
 
-    parcel = pd.read_csv(access_config.output_parcels, delim_whitespace=True)
+    parcel = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), delim_whitespace=True)
 
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     zone_lookup_dict = dict((value,index) for index,value in enumerate(zones))
@@ -387,7 +384,7 @@ def main():
     airport_trips = calculate_trips(daysim, parcel, airport_control_total)
     demand_matrix = np.zeros((len(zone_lookup_dict), len(zone_lookup_dict)), np.float64)
     origin_index = [zone_lookup_dict[i] for i in airport_trips['BKRCastTAZ'].values]
-    destination_index = zone_lookup_dict[emme_config.SEATAC]
+    destination_index = zone_lookup_dict[emme_config.SPECIAL_GENERATORS['SeaTac']]
     demand_matrix[origin_index,destination_index] = airport_trips['adj_trips'].values
     # Account for both directions of travel (from/to airport) by transposing the productions matrix
     trips_to_airport = demand_matrix/2
@@ -409,9 +406,9 @@ def main():
     # Add external non-work trips to airport trips
     # Export as income class 
     total_trips_by_mode = airport_trips_by_mode.copy()
-    total_trips_by_mode['sov'] = airport_trips_by_mode['sov'] + ext_trip_table_dict['sov']
-    total_trips_by_mode['hov2'] = airport_trips_by_mode['hov2'] + ext_trip_table_dict['hov2']
-    total_trips_by_mode['hov3'] = airport_trips_by_mode['hov3'] + ext_trip_table_dict['hov3']
+    total_trips_by_mode['sov'] = airport_trips_by_mode['svtl2'] + ext_trip_table_dict['sov']
+    total_trips_by_mode['hov2'] = airport_trips_by_mode['h2tl2'] + ext_trip_table_dict['hov2']
+    total_trips_by_mode['hov3'] = airport_trips_by_mode['h3tl2'] + ext_trip_table_dict['hov3']
 
     # Apply time of day factors
     airport_matrix_dict = split_tod_internal(total_trips_by_mode, tod_factors_df)

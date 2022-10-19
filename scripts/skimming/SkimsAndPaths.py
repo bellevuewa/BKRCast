@@ -806,7 +806,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
 
     # Load in supplemental trips
     # We're assuming all trips are only for income 2, toll classes
-    for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk']:
+    for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk', 'ferry', 'passenger_ferry', 'litrat', 'commuter_rail']:
         demand_matrix = load_supplemental_trips(my_project, matrix_name, zonesDim)
         demand_matrices.update({matrix_name : demand_matrix})
 
@@ -938,7 +938,7 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
     demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
     hdf_file = h5py.File(supplemental_loc + tod + '.h5', "r")
     # Call correct mode name by removing income class value when needed
-    if matrix_name not in ['bike', 'trnst', 'walk']:
+    if matrix_name in ['svtl2', 'h2tl2', 'h3tl2']:
         mode_name = matrix_name[:-1]
     else:
         mode_name = matrix_name

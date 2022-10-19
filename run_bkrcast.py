@@ -146,11 +146,6 @@ def build_shadow_only(iter):
 
 @timed
 def run_truck_supplemental(iteration):
-    ### RUN Truck Model ################################################################
-    if run_truck_model:
-        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
-        if returncode != 0:
-            sys.exit(1)
 
     ### RUN Supplemental Trips
     ##########################################################
@@ -163,12 +158,23 @@ def run_truck_supplemental(iteration):
                 sys.exit(1)
 
         #run distribution
-        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribution.py'])
+        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
+        if returncode != 0:
+            sys.exit(1)
+
+        returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
         if returncode != 0:
             sys.exit(1)
 
         #copy supplemental output
         shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
+
+    ### RUN Truck Model ################################################################
+    if run_truck_model:
+        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
+        if returncode != 0:
+            sys.exit(1)
+
         
 @timed
 def daysim_assignment(iteration):
