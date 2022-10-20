@@ -19,10 +19,13 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts\\utils"))
+
+import trucks.truck_configuration as truck_config
 from emme_configuration import *
 from EmmeProject import *
 from input_configuration import *
 import data_wrangling
+
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -801,7 +804,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     demand_matrices={}
    
     for matrix_name in ['lttrk','metrk','hvtrk']:
-        demand_matrix = load_trucks_external(my_project, matrix_name, zonesDim)
+        demand_matrix = load_trucks(my_project, matrix_name, zonesDim)
         demand_matrices.update({matrix_name : demand_matrix})
 
     # Load in supplemental trips
@@ -881,6 +884,31 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     text = 'It took ' + str(round((end_time-start_time)/60,2)) + ' minutes to import trip tables to emme.'
     print(text)
     logging.debug(text)
+
+def load_trucks(my_project, matrix_name, zonesDim):
+    demand_matrix = np.zeros((zonesDim, zonesDim), np.float16)
+    hdf_file = h5py.File(truck_config.truck_trips_h5_filename, "r")
+    tod = my_project.tod
+
+    truck_matrix_name_dict = {'metrk': 'medtrk_trips',
+                              'hvtrk': 'hvytrk_trips',
+                              'lttrk': 'deltrk_trips'}
+
+    time_dictionary = json_to_dictionary('time_of_day_crosswalk_ab_4k_dictionary')
+    # Prepend an aggregate time period (e.g., AM, PM, NI) to the truck demand matrix to import from h5
+    aggregate_time_period = time_dictionary[tod]['TripBasedTime']
+    truck_demand_matrix_name = 'mf' + aggregate_time_period + '_' + truck_matrix_name_dict[matrix_name]
+    np_matrix = np.matrix(hdf_file[aggregate_time_period][truck_demand_matrix_name]).astype(float)
+
+    sub_demand_matrix = np_matrix[0:zonesDim, 0:zonesDim]
+    
+    # The timefactor here are 1 for all time periods. there is no need to apply additional time factors, because the 
+    # inside the truck_trips_h5_filename, truck trips by time period are already calculated from daily truck trips.
+     
+    demand_matrix = sub_demand_matrix * time_dictionary[tod]['TimeFactor']
+    demand_matrix = np.squeeze(np.asarray(demand_matrix))
+
+    return demand_matrix
 
 def load_trucks_external(my_project, matrix_name, zonesDim):
 

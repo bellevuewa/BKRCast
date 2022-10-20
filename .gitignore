@@ -19,3 +19,5 @@ Daysim/last-run.log
 *.mtbx
 *.mtbx-wal
 *.mtbx-shm
+/scripts/trucks/truck_model_old.py
+/scripts/trucks/truck_configuration_old.py

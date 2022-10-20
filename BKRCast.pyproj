@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\supplemental\create_airport_trips.py</StartupFile>
+    <StartupFile>scripts\trucks\truck_model.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -464,7 +464,9 @@
     <Compile Include="scripts\supplemental\generation.py" />
     <Compile Include="scripts\supplemental\military_parcel_loading.py" />
     <Compile Include="scripts\trucks\truck_configuration.py" />
+    <Compile Include="scripts\trucks\truck_configuration_old.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
+    <Compile Include="scripts\trucks\truck_model_old.py" />
     <Compile Include="scripts\trucks\__init__.py" />
     <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
     <Compile Include="scripts\utils\create_extra_attributes.py" />

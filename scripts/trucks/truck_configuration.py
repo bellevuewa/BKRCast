@@ -6,7 +6,7 @@ from input_configuration import *
 
 truck_model_project = 'Projects/TruckModel/TruckModel.emp'
 districts_file = 'districts19_ga.ens'
-truck_trips_h5_filename = 'inputs/4k/auto.h5'
+truck_trips_h5_filename = 'outputs/trucks/truck_trips.h5'
 truck_base_net_name = 'am_roadway.in'
 
 #TOD to create Bi-Dir skims (AM/EV Peak)
@@ -24,3 +24,4 @@ truck_adjustment_factor = {'ltpro': 0.544,
 							'mtatt': 0.75,
 							'htatt': 1.0}
 
+operating_cost_rate = 0.015
