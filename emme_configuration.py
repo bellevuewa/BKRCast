@@ -4,8 +4,6 @@ import sys
 # 10/25/2021
 # modified to be compatible with python 3
 
-HORIZON_YEAR = 2018   ## range = [2014, 2040]
-
 ###### Distance-based pricing######
 add_distance_pricing = False # usually set to False unless we want to test VMT tax
 # rate below includes 3.5 cent carbon tax, PSRC

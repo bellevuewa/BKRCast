@@ -460,13 +460,10 @@
     <Compile Include="scripts\supplemental\create_airport_trips.py" />
     <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
     <Compile Include="scripts\supplemental\distribute_non_work_ixxi.py" />
-    <Compile Include="scripts\supplemental\distribution.py" />
     <Compile Include="scripts\supplemental\generation.py" />
     <Compile Include="scripts\supplemental\military_parcel_loading.py" />
     <Compile Include="scripts\trucks\truck_configuration.py" />
-    <Compile Include="scripts\trucks\truck_configuration_old.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
-    <Compile Include="scripts\trucks\truck_model_old.py" />
     <Compile Include="scripts\trucks\__init__.py" />
     <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
     <Compile Include="scripts\utils\create_extra_attributes.py" />
