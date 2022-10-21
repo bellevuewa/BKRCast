@@ -212,7 +212,7 @@ def main():
             final_df.drop(col_name, axis=1, inplace=True)
     final_df = final_df.round(3)
 
-    final_df.to_csv(os.path.join(output_dir, 'psrc_worker_ixxifractions.dat'), sep = '\t', index = False, header = False)
+    final_df.to_csv(os.path.join(access_config.land_use_output_folder, 'bkr_worker_ixxifractions.dat'), sep = '\t', index = False, header = False)
     #parcels_urbansim.to_csv(r'inputs/scenario/landuse/parcels_urbansim.txt',  sep = ' ', index = False)
 
 if __name__ == '__main__':
