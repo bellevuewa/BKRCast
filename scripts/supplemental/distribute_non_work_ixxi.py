@@ -191,6 +191,7 @@ def main():
         ixxi_h5.create_dataset(mode, data=ixxi_data)
 
     ixxi_h5.close()
+    my_project.closeDesktop()
 
 if __name__ == "__main__":
     main()

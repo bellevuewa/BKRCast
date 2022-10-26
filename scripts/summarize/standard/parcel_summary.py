@@ -19,7 +19,7 @@ file_out = 'parcel_summary.xlsx'    # summary output file name
 # Load files in pandas
 main_dir = os.path.abspath('')
 try:
-    parcels = pd.read_csv(main_dir + "/inputs/" + buffered_parcels, sep=' ')
+    parcels = pd.read_csv(os.path.join(project_folder, output_parcels), sep=' ')
 except:
     print("Missing 'buffered_parcels.dat'")
 

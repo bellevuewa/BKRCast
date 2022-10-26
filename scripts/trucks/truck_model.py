@@ -109,8 +109,8 @@ def load_data_to_emme(balanced_prod_att, my_project, zones):
         print(mat_name)
         op_cost = op_cost_df[op_cost_df['truck_type'] == truck_type]['cents_per_mile'].astype('float').values[0]
         print(op_cost)
-        print(matrix_id)
         matrix_id = my_project.bank.matrix(str(mat_name)).id
+        print(matrix_id)
         my_project.bank.matrix(matrix_id).set_numpy_data(op_cost, my_project.current_scenario)
 
 def import_skims(my_project, input_skims, zones, zonesDim):
@@ -332,7 +332,13 @@ def main():
     zones = my_project.current_scenario.zone_numbers
     zonesDim = len(zones)
 
-    # Load zone partitions (used to identify external zones)
+    # BKRCastTAZ field in 7_balance_trip_ends.csv is not consecutive numbers, while zone system in emme requires consecutive numbers.
+    zones_df = pd.DataFrame(zones, columns = {'BKRCastTAZ'})
+    balanced_prod_att = pd.merge(zones_df, balanced_prod_att, on = 'BKRCastTAZ', how = 'left')
+    balanced_prod_att.fillna(0, inplace = True)
+
+    #  
+    #     # Load zone partitions (used to identify external zones)
     my_project.initialize_zone_partition('ga')
     my_project.process_zone_partition('inputs/trucks/' + truck_config.districts_file)
     
@@ -346,6 +352,8 @@ def main():
     calculate_daily_trips(my_project)
     write_truck_trips(my_project)
     write_summary(my_project)
+
+    my_project.closeDesktop()
 
 if __name__ == "__main__":
     main()
