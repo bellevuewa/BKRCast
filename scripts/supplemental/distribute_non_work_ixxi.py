@@ -144,7 +144,7 @@ def emme_matrix_to_np(trip_purp_list, my_project):
 def main():
 
     # Load the trip productions and attractions
-    trip_table = pd.read_csv(emme_config.trip_table_loc, index_col="taz")  # total 4K Ps and As by trip purpose
+    trip_table = pd.read_csv(emme_config.trip_table_loc, index_col="BKRCastTAZ")  # total 4K Ps and As by trip purpose
 
     # Import gravity model coefficients by trip purpose from db
     coeff_df = pd.read_csv('inputs/supplemental/gravity_model_coefficients.csv')
@@ -152,12 +152,12 @@ def main():
     # All Non-work external trips assumed as single purpose HSP (home-based shopping trips)
     trip_purpose_list = ['hsp']
 
-    output_dir = os.path.join(os.getcwd(),r'outputs\supplemental')
-
-    my_project = EmmeProject(r'projects\Supplementals\Supplementals.emp')
-
-    global dictZoneLookup
-    dictZoneLookup = dict((value,index) for index,value in enumerate(my_project.current_scenario.zone_numbers))
+    my_project = EmmeProject(emme_config.supplemental_project)
+    
+    # BKRCastTAZ field in trip_table is not consecutive number. Must reformat it to be compatible with EMME matrix
+    zones_df = pd.DataFrame(my_project.current_scenario.zone_numbers, columns = {'BKRCastTAZ'})         
+    trip_table = pd.merge(zones_df, trip_table, on = 'BKRCastTAZ', how = 'left') 
+    trip_table.fillna(0, inplace = True)
     
     # Load skim data
     am_cost_skim = load_skims(emme_config.am_skim_file_loc, mode_name='svtl2g')
@@ -183,7 +183,7 @@ def main():
     ixxi_trips = ixxi_trips['hsp']
 
     ixxi_mode_share_df = pd.read_csv('inputs/supplemental/ixxi_mode_share.csv')
-    ixxi_h5 = h5py.File(output_dir + '/' + 'external_non_work' + '.h5', "w")
+    ixxi_h5 = h5py.File(supplemental_non_work_file, "w")
 
     for mode in ['sov','hov2','hov3']:
         mode_share = ixxi_mode_share_df.loc[ixxi_mode_share_df['mode']==mode,'ixxi_mode_share'].values[0]
