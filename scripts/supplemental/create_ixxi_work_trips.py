@@ -18,7 +18,6 @@ import accessibility_configuration as access_config
 # 10/25/2021
 # modified to be compatible with python 3
 
-output_dir = r'outputs/supplemental/'
 
 tod_factors = {'6to9':0.281, '9to1530':0.3215, '1530to1830':0.2625, '1830to6':0.135}
 
@@ -153,11 +152,11 @@ def main():
     matrix_dict = {'sov' : sov, 'hov2' : hov2, 'hov3' : hov3}
 
     # Create h5 files for export
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(me_config.supplemental_output_dir):
+        os.makedirs(me_config.supplemental_output_dir)
 
     for tod, factor in tod_factors.items():
-        my_store = h5py.File(output_dir + '/' + 'external_work_' + tod + '.h5', "w")
+        my_store = h5py.File(me_config.supplemental_output_dir + '/' + 'external_work_' + tod + '.h5', "w")
         for mode, matrix in matrix_dict.items():
             matrix = matrix * factor
             my_store.create_dataset(str(mode), data=matrix)
@@ -214,6 +213,8 @@ def main():
 
     final_df.to_csv(os.path.join(access_config.land_use_output_folder, 'bkr_worker_ixxifractions.dat'), sep = '\t', index = False, header = False)
     #parcels_urbansim.to_csv(r'inputs/scenario/landuse/parcels_urbansim.txt',  sep = ' ', index = False)
+
+    my_project.closeDesktop()
 
 if __name__ == '__main__':
     main()

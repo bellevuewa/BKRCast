@@ -4,7 +4,6 @@ import pandas as pd
 import os,sys
 import h5py
 import sqlite3
-from sqlalchemy import create_engine
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 sys.path.append(os.getcwd())
@@ -92,11 +91,6 @@ def main():
     employment_categories = ['retail','food-services','government','office','services','industrial','education','medical','other','university','total-hh','total-jobs','total-people']
 
     parcel_file = os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name)
-
-    output_directory = 'outputs/supplemental'
-
-    #my_project = EmmeProject(supplemental_project)   
-
 
     ###########################################################
     # PSRC Zone System for TAZ joining
@@ -217,7 +211,7 @@ def main():
         jblm_df['trips'] = jblm_df['trips'] * growth_rate
     
     # Create JBLM Input File for use in Emme, but the exported file jblm.in is not used. there is no need to export. 
-    working_file = open(output_directory+'/jblm.in', "w")
+    working_file = open(supplemental_loc+'/jblm.in', "w")
     working_file.write('c ' + str(bkr_config.model_year) + ' Trip Generation' + '\n')
     working_file.write('c JBLM trips are based on gate counts, blue tooth and zipcode survey data' + '\n')
     working_file.write('t matrices' + '\n')
@@ -512,27 +506,27 @@ def main():
     # Clean up dataframe for further calculations as well as output
     df_taz.set_index('BKRCastTAZ', inplace=True)
     df_taz = df_taz.loc[:,trip_productions + ['cvhpro','mtkpro','htkpro','dtkpro'] + trip_attractions + ['cvhatt','mtkatt','htkatt','dtkatt','airport','kitsap','jblm']]
-    df_taz.to_csv(output_directory+'/1_unadjusted_unbalanced.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/1_unadjusted_unbalanced.csv',index=True)
 
     # Add in the Group Quarters to Trip Productions   
     for purpose in trip_productions:
         df_taz[purpose] = df_taz[purpose] + group_quarters_taz[purpose]
-    df_taz.to_csv(output_directory+'/2_add_group_quarters.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/2_add_group_quarters.csv',index=True)
 
     # Add in the Enlisted Personnel to Trip Attractions
     for purpose in trip_attractions:
         df_taz[purpose] = df_taz[purpose] + enlisted_taz[purpose]
-    df_taz.to_csv(output_directory+'/3_add_enlisted_personnel.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/3_add_enlisted_personnel.csv',index=True)
 
     # Add in the Special Generators to Trip Attractions
     df_taz['hboatt'] = df_taz['hboatt'] + special_generators_taz['hboatt']
-    df_taz.to_csv(output_directory+'/4_add_special_generators.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/4_add_special_generators.csv',index=True)
 
     # Add in the External Trips
     all_purposes = trip_productions + trip_attractions
     for purpose in all_purposes:
         df_taz[purpose] = df_taz[purpose] + revised_external_taz[purpose]
-    df_taz.to_csv(output_directory+'/5_add_externals.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/5_add_externals.csv',index=True)
 
     #Soundcast uses pre-determined HSP trips to meet external counts. Need to adjust these here for non-work-ixxi:
     external_trip_table =  pd.read_csv('inputs/supplemental/externals_unadjusted_bkr.csv') 
@@ -559,12 +553,12 @@ def main():
         df_taz[purpose] = df_taz[purpose] * [df_rate_adjustments.loc[purpose,'regional']]
         df_taz[purpose] = df_taz[purpose] + (df_taz[purpose] * [df_rate_adjustments.loc[purpose,'kitsap']]*df_taz['kitsap'])
 
-    df_taz.to_csv(output_directory+'/6_adjust_trip_ends.csv',index=True)
+    df_taz.to_csv(supplemental_loc+'/6_adjust_trip_ends.csv',index=True)
 
     # Balance the taz dataframe
     balanced_df = balance_trips(df_taz, balance_to_productions, 'pro')
     balanced_df = balance_trips(df_taz, balance_to_attractions, 'att')
-    balanced_df.to_csv(output_directory+'/7_balance_trip_ends.csv',index=True)
+    balanced_df.to_csv(supplemental_loc+'/7_balance_trip_ends.csv',index=True)
 
 
 if __name__ == "__main__":

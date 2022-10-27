@@ -176,7 +176,7 @@ def calculate_mode_utilties(trip_purpose, skim_dict, auto_cost_dict, params_df, 
         
 def mode_choice_to_h5(trip_purpose, mode_shares_dict, output_dir):
 
-    my_store = h5py.File(output_dir + '/mode_shares.h5', "w")
+    my_store = h5py.File(os.path.join(output_dir, 'mode_shares.h5'), "w")
     grp = my_store.create_group(trip_purpose)
     for mode in mode_shares_dict.keys():
         grp.create_dataset(mode, data = mode_shares_dict[mode])
@@ -346,9 +346,7 @@ def summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airp
 
 def main():
 
-    output_dir = r'outputs/supplemental/'
-
-    my_project = EmmeProject(r'projects/Supplementals/Supplementals.emp')
+    my_project = EmmeProject(emme_config.supplemental_project)
     zones = my_project.current_scenario.zone_numbers
     zonesDim = len(my_project.current_scenario.zone_numbers)
 
@@ -373,7 +371,7 @@ def main():
     auto_cost_dict = calculate_auto_cost(trip_purpose, skim_dict, parking_costs, parameters_df)
     mode_utilities_dict = calculate_mode_utilties(trip_purpose, skim_dict, auto_cost_dict, parameters_df, zone_lookup_dict)
     mode_shares_dict = calculate_mode_shares(trip_purpose, mode_utilities_dict)
-    mode_choice_to_h5(trip_purpose, mode_shares_dict, output_dir)
+    mode_choice_to_h5(trip_purpose, mode_shares_dict, emme_config.supplemental_output_dir)
 
     # Create airport trip tables
     daysim = h5py.File(bkr_config.households_persons_file,'r')
@@ -395,7 +393,7 @@ def main():
     airport_trips_by_mode = split_trips_into_modes(airport_trips, mode_shares_dict)
 
     # Add airport trips to external trip table for auto modes:
-    ixxi_non_work_store = h5py.File('outputs/supplemental/external_non_work.h5', 'r')
+    ixxi_non_work_store = h5py.File(emme_config.supplemental_non_work_file, 'r')
     external_modes = ['sov', 'hov2', 'hov3']
     ext_trip_table_dict = {}
     ext_tod_dict = {}
@@ -413,10 +411,12 @@ def main():
     # Apply time of day factors
     airport_matrix_dict = split_tod_internal(total_trips_by_mode, tod_factors_df)
 
-    summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airport_matrix_dict, output_dir)
+    summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airport_matrix_dict, emme_config.supplemental_output_dir)
 
     # Output final trip tables, by time of the day and trip mode. 
-    output_trips(output_dir, airport_matrix_dict)
+    output_trips(emme_config.supplemental_output_dir, airport_matrix_dict)
+
+    my_project.closeDesktop()
 
 
 if __name__ == "__main__":
