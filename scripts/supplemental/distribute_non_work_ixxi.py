@@ -183,7 +183,7 @@ def main():
     ixxi_trips = ixxi_trips['hsp']
 
     ixxi_mode_share_df = pd.read_csv('inputs/supplemental/ixxi_mode_share.csv')
-    ixxi_h5 = h5py.File(supplemental_non_work_file, "w")
+    ixxi_h5 = h5py.File(emme_config.supplemental_non_work_file, "w")
 
     for mode in ['sov','hov2','hov3']:
         mode_share = ixxi_mode_share_df.loc[ixxi_mode_share_df['mode']==mode,'ixxi_mode_share'].values[0]
