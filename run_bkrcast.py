@@ -336,19 +336,13 @@ def main():
 
 ## SET UP INPUTS ##########################################################
 
+    if not os.path.exists('outputs'):
+        os.makedirs('outputs')
+
     build_output_dirs()
     if run_copy_input_files:
         copy_large_inputs()
     
-    if run_accessibility_calcs:
-        accessibility_calcs()
-
-    if run_accessibility_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
-
-    if not os.path.exists('outputs'):
-        os.makedirs('outputs')
-
     if run_copy_seed_supplemental_trips:
         copy_seed_supplemental_trips()
 
@@ -371,6 +365,13 @@ def main():
         time_network = datetime.datetime.now()
         if returncode != 0:
            sys.exit(1)
+
+    if run_accessibility_calcs:
+        accessibility_calcs()
+
+    if run_accessibility_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
+
 
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
