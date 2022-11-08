@@ -155,13 +155,25 @@ def main():
     if not os.path.exists(me_config.supplemental_output_dir):
         os.makedirs(me_config.supplemental_output_dir)
 
-    for tod, factor in tod_factors.items():
-        my_store = h5py.File(me_config.supplemental_output_dir + '/' + 'external_work_' + tod + '.h5', "w")
-        for mode, matrix in matrix_dict.items():
-            matrix = matrix * factor
-            my_store.create_dataset(str(mode), data=matrix)
-        my_store.close()	
-
+    with open(os.path.join(me_config.supplemental_output_dir, 'ixxi_work_trips_summary.txt'), 'w') as fp:
+        fp.write(f'{bkr_config.project_folder}\n')
+        daily_trips = 0
+        for tod, factor in tod_factors.items():
+            my_store = h5py.File(me_config.supplemental_output_dir + '/' + 'external_work_' + tod + '.h5', "w")
+            todtrips = 0
+            fp.write(f'{tod}\n')
+            for mode, matrix in matrix_dict.items():
+                matrix = matrix * factor
+                my_store.create_dataset(str(mode), data=matrix)
+                fp.write(f'  {mode}: {matrix.sum()}\n')
+                todtrips += matrix.sum()
+            print(f'total ixxi work trips in {tod}: {todtrips}')
+            fp.write(f'  subtotal: {todtrips}\n')
+            daily_trips += todtrips
+            my_store.close()	
+        print(f'daily ixxi work trips: {daily_trips}')
+        fp.write('\n')
+        fp.write(f'daily ixxi work trips: {daily_trips}')
     ##################################################
     # Create "psrc_worker_ixxifractions" file
     # Update numworkers per TAZ
