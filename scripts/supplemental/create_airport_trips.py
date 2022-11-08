@@ -321,13 +321,16 @@ def output_trips(path, matrix_dict):
 def summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airport_matrix_dict,  output_dir):
     df_shares = pd.DataFrame()
     df_airport = pd.DataFrame(index=list(mode_shares_dict.keys()))
+    df_airport.index.names = ['mode']
     df_total= pd.DataFrame(index=list(mode_shares_dict.keys()))
+    df_total.index.names = ['mode']
     for mode in mode_shares_dict.keys():
         if mode != 'util_sum':
             df_shares[mode]= mode_shares_dict[mode].mean(axis=0)
             df_airport.loc[mode,'total'] = airport_trips_by_mode[mode].sum().sum()
             df_total.loc[mode,'total'] = total_trips_by_mode[mode].sum().sum()
-    df_shares.to_csv(os.path.join(output_dir,'avg_mode_shares_origins.csv'))
+    df_shares['BKRCastTAZ'] = df_shares.index + 1 # numpy is 0-based TAZ starts from 1
+    df_shares.to_csv(os.path.join(output_dir,'avg_mode_shares_origins.csv'), index = False)
     # Total trips by mode adjusted for average vehicle occupancy (HOV2/2, HOV3/3.5)
     df_airport.to_csv(os.path.join(output_dir,'airport_veh_trips.csv'))  
     # Total trips by mode, including externals
@@ -337,6 +340,7 @@ def summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airp
     df = pd.DataFrame()
     for tod in airport_matrix_dict.keys():
         _df = pd.DataFrame(index=list(airport_matrix_dict[tod].keys()))
+        _df.index.names = ['mode']
         _df['tod'] = tod
         for mode in airport_matrix_dict[tod].keys():
             total = airport_matrix_dict[tod][mode].sum().sum()

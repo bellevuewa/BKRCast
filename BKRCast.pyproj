@@ -461,7 +461,7 @@
     <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
     <Compile Include="scripts\supplemental\distribute_non_work_ixxi.py" />
     <Compile Include="scripts\supplemental\generation.py" />
-    <Compile Include="scripts\supplemental\military_parcel_loading.py" />
+    <Compile Include="scripts\supplemental\mode_choice_supplemental.py" />
     <Compile Include="scripts\trucks\truck_configuration.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
     <Compile Include="scripts\trucks\__init__.py" />

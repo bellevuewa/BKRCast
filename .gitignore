@@ -21,3 +21,4 @@ Daysim/last-run.log
 *.mtbx-shm
 /scripts/trucks/truck_model_old.py
 /scripts/trucks/truck_configuration_old.py
+/scripts/supplemental/mode_choice_supplemental.py
