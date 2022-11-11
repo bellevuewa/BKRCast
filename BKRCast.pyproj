@@ -357,6 +357,7 @@
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
     <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
+    <Content Include="scripts\summarize\inputs\calibration\.gitignore" />
     <Content Include="scripts\summarize\inputs\calibration\ACS_2014.xlsx" />
     <Content Include="scripts\summarize\inputs\calibration\CatVarDict.xlsx" />
     <Content Include="scripts\summarize\inputs\calibration\district_lookup.csv" />
