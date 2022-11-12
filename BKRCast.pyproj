@@ -252,8 +252,6 @@
     <Content Include="daysim_summaries\templates\VehAvailability.csv" />
     <Content Include="daysim_summaries\templates\WrkLocation.csv" />
     <Content Include="daysim_summaries\trips_filter.R" />
-    <Content Include="inputs\bkr-roster.combinations.csv" />
-    <Content Include="inputs\bkr_roster.csv" />
     <Content Include="inputs\coefficients\AutoOwnershipModel_psrcper1.F12" />
     <Content Include="inputs\coefficients\EscortTourModeModel.F12" />
     <Content Include="inputs\coefficients\IndividualPersonDayPatternModel.F12" />
@@ -277,6 +275,7 @@
     <Content Include="inputs\coefficients\WorkTourDestinationModel_psrcper1.F12" />
     <Content Include="inputs\coefficients\WorkTourModeModel.F12" />
     <Content Include="inputs\coefficients\WorkTourTimeModel.F12" />
+    <Content Include="inputs\model\.gitignore" />
     <Content Include="inputs\model\bkr-roster.combinations.csv" />
     <Content Include="inputs\model\bkr_roster.csv" />
     <Content Include="inputs\model\node_index_2014.txt" />

@@ -63,61 +63,6 @@ def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
         os.makedirs('inputs/accessibility')
     
-    print('Copying UrbanSim parcel file')
-    try:
-        if os.path.isfile(os.path.join(parcels_file_folder,parcels_file_name)):
-            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accessibility')
-        # the file may need to be reformatted- like this coming right out of urbansim
-        elif os.path.isfile(os.path.join(parcels_file_folder,'parcels.dat')):
-            print('the file is ' + os.path.join(parcels_file_folder,'parcels.dat'))
-            print("Parcels file is being reformatted to Daysim format")
-            parcels = pd.read_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
-            print('Read in unformatted parcels file')
-            for col in parcels.columns:
-                print(col)
-                new_col = [x.upper() for x in col]
-                new_col = ''.join(new_col)
-                parcels=parcels.rename(columns = {col:new_col})
-                print(new_col)
-            parcels.to_csv(os.path.join(parcels_file_folder,parcels_file_name), sep = " ")
-            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accesibility')
-
-    except Exception as ex:
-        template = "An exception of type {0} occured. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-        print(message)
-        sys.exit(1)
-
-
-    print('Copying Military parcel file')
-    try:
-        shcopy(base_inputs+'/landuse/parcels_military.csv','inputs/accessibility')
-    except:
-        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
-        sys.exit(1)
-
-    try:
-        shcopy(base_inputs+'/landuse/distribute_jblm_jobs.csv','inputs/accessibility')
-    except:
-        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
-        sys.exit(1)
-
-    print('Copy parking ensemble file')
-    try:
-        shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
-    except:
-        print('error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv')
-        sys.exit(1)
-
-    print('Copy all street network files')
-    try:
-        shcopy(base_inputs + '/accessibility/all_streets_links_2014.csv', 'inputs/accessibility')
-        shcopy(base_inputs + '/accessibility/all_streets_nodes_2014.csv', 'inputs/accessibility')
-    except:
-        print('error copying all street network files from ' + base_inputs + '/accessibility folder')
-        sys.exit(1)
-
-
     print('Copying Hourly and Daily Parking Files')
     if run_update_parking: 
         try:
@@ -255,8 +200,8 @@ def copy_large_inputs():
     print('  supplemental..')
     dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
-    shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
-    shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
+    dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
+    dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
     print('  survey..')
     shcopy(main_inputs_folder + '/model/survey.h5','scripts/summarize/inputs/calibration')
     print('  park and ride capacity..')

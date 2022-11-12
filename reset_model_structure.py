@@ -18,8 +18,8 @@ def removeFile(path):
 
 
 dirs_for_removal = ['inputs/4k', 'inputs/supplemental', 'outputs', 'inputs/bikes', 'inputs/accessibility', 'inputs/trucks', 'inputs/Fares', 'inputs/IntraZonals', 'inputs/vdfs', 'inputs/tolls',
-                    'inputs/extra_attributes', 'inputs/observed', 'inputs/networks', 'projects', 'banks', 'daysim', 'working']
-files_for_removal = ['inputs/parking_gz.csv', 'inputs/lu_type.csv', 'inputs/p_r_nodes.csv', households_persons_file, 'inputs/6to9.h5', 'inputs/9to1530.h5', 'inputs/1530to1830.h5', 'inputs/1830to6.h5', 'inputs/buffered_parcels.txt', 'inputs/buffered_parcels.csv']
+                    'inputs/extra_attributes', 'inputs/observed', 'inputs/networks', 'projects', 'banks', 'daysim', 'working', 'inputs/popsim']
+files_for_removal = ['inputs/6to9.h5', 'inputs/9to1530.h5', 'inputs/1530to1830.h5', 'inputs/1830to6.h5', 'inputs/buffered_parcels.txt', 'inputs/buffered_parcels.csv']
 
 print('Please confirm the model folder: ' + project_folder)
 enter = input('Press Y to continue')

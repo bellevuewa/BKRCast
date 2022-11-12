@@ -35,7 +35,6 @@ run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-#run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
 run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
@@ -90,7 +89,7 @@ good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap"
  # in the future if we want to add express bus or brt to the transit mode, add {"ebus": "express"} {'brt':'brt'}to the transit_modes.  
 transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
 
-input_ensemble = "inputs\\parking_gz.csv"
+input_ensemble = r"inputs/landuse/parking_gz.csv"
 
 # daysim mode definition
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
@@ -104,7 +103,7 @@ purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'esco
 commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
 
 #################################### DAYSIM ####################################
-households_persons_file = r'inputs\hh_and_persons.h5'
+households_persons_file = r'inputs/popsim/hh_and_persons.h5'
 # Popsampler - super/sub-sampling in population synthesis
 sampling_option = 1 #1-3: five options available - each option is a column in pop_sample_district below
 pop_sample_district = {'BKR':[1,4,2],
