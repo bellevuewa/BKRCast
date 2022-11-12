@@ -310,18 +310,18 @@ def main():
         time_period = str(start_time) + '-' + str(end_time)
 
     if trips_file == '':
-        trips_file = os.path.join(prj.project_folder, 'outputs', '_trip.tsv')
+        trips_file = os.path.join(prj.project_folder, 'outputs\daysim', '_trip.tsv')
 
     if Output_file == '':
-        Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
+        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
     if Output_file_trip_dist == '':
-        Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
+        Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
     print('Input file: ' + trips_file)
     print('Output file: ' + Output_file)
     print('Output trip distance file: ' + Output_file_trip_dist)
     print('subarea definition file: ' + subarea_taz_file)
 
-    hhs_file = os.path.join(prj.project_folder, 'outputs', '_household.tsv')
+    hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
     subarea_taz_df.reset_index(inplace = True)

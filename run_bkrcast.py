@@ -166,8 +166,6 @@ def run_truck_supplemental(iteration):
         if returncode != 0:
             sys.exit(1)
 
-        #copy supplemental output
-        shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
@@ -343,8 +341,8 @@ def main():
     if run_copy_input_files:
         copy_large_inputs()
     
-    if run_copy_seed_supplemental_trips:
-        copy_seed_supplemental_trips()
+    #if run_copy_seed_supplemental_trips:
+    #    copy_seed_supplemental_trips()
 
     if run_copy_daysim_code:
         copy_daysim_code()

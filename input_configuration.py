@@ -30,12 +30,12 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True
+run_accessibility_calcs = False
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
+#run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
 run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
@@ -153,7 +153,7 @@ slope_labels = [0,1,2,3]
 avg_bike_speed = 10 # miles per hour
 
 # Outputs directory
-bike_link_vol = 'outputs/bike_volumes.csv'
+bike_link_vol = 'outputs/bikes/bike_volumes.csv'
 bike_count_data = 'inputs/bikes/bike_counts.csv'
 #edges_file = 'inputs/bikes/edges_0.txt'
 
@@ -174,7 +174,7 @@ transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'trans
 #################################### CALIBRATION/VALIDATION ####################################
 
 # Calibration Summary Configuration
-h5_results_file = 'outputs/daysim_outputs.h5'
+h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
 h5_comparison_file = 'scripts/summarize/inputs/calibration/survey.h5'
 h5_comparison_name = 'Survey'
@@ -184,4 +184,9 @@ FAZ_TAZ = 'scripts/summarize/inputs/calibration/FAZ_TAZ.xlsx'
 LEHD_work_flows = 'scripts/summarize/inputs/calibration/HFAZ_WFAZ_LEHD2014.xlsx'
 
 acs_data = 'scripts/summarize/inputs/calibration/ACS_2014.xlsx'
-report_output_location = 'outputs'
+
+report_output_location = 'outputs/daysim'
+report_lu_output_location = 'outputs/landuse'
+report_bikes_output_location = 'outputs/bike'
+report_net_output_location = 'outputs/network'
+report_summary_output_location = 'outputs/summary'

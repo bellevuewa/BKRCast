@@ -242,12 +242,12 @@ def main():
         time_period = str(start_time) + '-' + str(end_time)
 
     if Output_file == '':
-        Output_file = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.txt')
+        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.txt')
     print('Output file: ' + Output_file)
     print('subarea definition file: ' + subarea_taz_file)
 
-    tours_file = os.path.join(prj.project_folder, 'outputs', '_tour.tsv')
-    hhs_file = os.path.join(prj.project_folder, 'outputs', '_household.tsv')
+    tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')
+    hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
     total_tours_df = pd.read_csv(tours_file, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
     subarea_taz_df.reset_index(inplace = True)

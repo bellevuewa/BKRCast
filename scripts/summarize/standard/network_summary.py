@@ -26,7 +26,7 @@ import json
 import numpy as np
 import time
 import h5py
-import Tkinter, tkFileDialog
+#import Tkinter, tkFileDialog
 import multiprocessing as mp
 import subprocess
 import csv
@@ -574,7 +574,7 @@ def main():
     #export_corridor_results(my_project)
 
     
-    writer = pd.ExcelWriter('outputs/network_summary_detailed.xlsx', engine='xlsxwriter')    
+    writer = pd.ExcelWriter('outputs/network/network_summary_detailed.xlsx', engine='xlsxwriter')    
        
     # Read observed count data
     df_counts = pd.read_csv('scripts/summarize/inputs/network_summary/' + counts_file, index_col=['loop_INode', 'loop_JNode'])
@@ -585,9 +585,7 @@ def main():
     #daily_counts(writer)
 
     if run_truck_summary:
-    	truck_summary(df_counts=df_truck_counts, my_project=my_project, writer=writer)
-
-
+        truck_summary(df_counts=df_truck_counts, my_project=my_project, writer=writer)   
 
     counts_dict = {}
     uc_vmt_dict = {}

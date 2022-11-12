@@ -188,7 +188,7 @@ def main():
     for mode in ['sov','hov2','hov3']:
         mode_share = ixxi_mode_share_df.loc[ixxi_mode_share_df['mode']==mode,'ixxi_mode_share'].values[0]
         ixxi_data = ixxi_trips * mode_share
-        ixxi_h5.create_dataset(mode, data=ixxi_data)
+        ixxi_h5.create_dataset(mode, data=ixxi_data, compression = 'gzip')
 
     ixxi_h5.close()
     my_project.closeDesktop()

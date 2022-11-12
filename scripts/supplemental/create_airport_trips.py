@@ -179,7 +179,7 @@ def mode_choice_to_h5(trip_purpose, mode_shares_dict, output_dir):
     my_store = h5py.File(os.path.join(output_dir, 'mode_shares.h5'), "w")
     grp = my_store.create_group(trip_purpose)
     for mode in mode_shares_dict.keys():
-        grp.create_dataset(mode, data = mode_shares_dict[mode])
+        grp.create_dataset(mode, data = mode_shares_dict[mode], compression = 'gzip')
         print(mode)
     my_store.close()
 

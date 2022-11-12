@@ -45,7 +45,7 @@ def main() :
             sys.exit(0)
 
     print('Loading trip file...')
-    trips_file = os.path.join(prj.project_folder, 'outputs', '_trip.tsv')
+    trips_file = os.path.join(prj.project_folder, 'outputs/daysim', '_trip.tsv')
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
     taz = pd.unique(total_trips_df[['otaz', 'dtaz']].values.ravel('K'))
     taz.sort()
@@ -79,7 +79,7 @@ def main() :
 
     combined_df['others'] = combined_df['escort'] + combined_df['personal_biz'] + combined_df['shopping'] + combined_df['social']
     combined_df.fillna(0, inplace = True)
-    outputfilename = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + 'daily_person_trips_by_OD.txt')
+    outputfilename = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + 'daily_person_trips_by_OD.txt')
 
     with open(outputfilename, 'w') as output:
         output.write(str(datetime.datetime.now()) + '\n')

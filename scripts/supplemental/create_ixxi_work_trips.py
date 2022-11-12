@@ -164,7 +164,7 @@ def main():
             fp.write(f'{tod}\n')
             for mode, matrix in matrix_dict.items():
                 matrix = matrix * factor
-                my_store.create_dataset(str(mode), data=matrix)
+                my_store.create_dataset(str(mode), data=matrix, compression = 'gzip')
                 fp.write(f'  {mode}: {matrix.sum()}\n')
                 todtrips += matrix.sum()
             print(f'total ixxi work trips in {tod}: {todtrips}')

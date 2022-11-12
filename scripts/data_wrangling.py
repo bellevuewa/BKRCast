@@ -182,7 +182,6 @@ def setup_emme_bank_folders():
 
 @timed
 def setup_emme_project_folders():
-    #tod_dict = json.load(open(os.path.join('inputs', 'skim_params', 'time_of_day.json')))
 
     tod_dict = text_to_dictionary('time_of_day')
     tod_list = list(set(tod_dict.values()))
@@ -215,12 +214,12 @@ def setup_emme_project_folders():
         desktop.close()
         
         #copy worksheets
-        wspath = os.path.join('inputs/etc/worksheets/', tod)
+        wspath = os.path.join('inputs/model/worksheets/', tod)
         destpath = os.path.join('projects/', tod, 'Worksheets')
         copyfiles(wspath, destpath)
         # copy media files
         destpath = os.path.join('projects/', tod, 'Media')
-        copyfiles('inputs/etc/Media/', destpath)
+        copyfiles('inputs/model/Media/', destpath)
 
         
 def copyfiles(sourceFolder, destFolder):
@@ -255,23 +254,21 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
     print('  supplemental..')
     dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
-    print('  4k..')
-    dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
     print('  land use..')
     shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
     shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
     print('  survey..')
-    shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
+    shcopy(main_inputs_folder + '/model/survey.h5','scripts/summarize/inputs/calibration')
     print('  park and ride capacity..')
-    shcopy(base_inputs +'/pnr/p_r_nodes.csv','inputs')
+    dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
-@timed
-def copy_seed_supplemental_trips():
-    print('Copying seed supplemental trips')
-    if not os.path.exists('outputs/supplemental'):
-       os.makedirs('outputs/supplemental')
-    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
-        shutil.copy(filename, project_folder+'/outputs/supplemental')
+#@timed
+#def copy_seed_supplemental_trips():
+#    print('Copying seed supplemental trips')
+#    if not os.path.exists('outputs/supplemental'):
+#       os.makedirs('outputs/supplemental')
+#    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
+#        shutil.copy(filename, project_folder+'/outputs/supplemental')
     
 @timed
 def rename_network_outs(iter):
@@ -375,6 +372,6 @@ def get_current_commit_hash():
     return commit
 
 def build_output_dirs():
-    for path in ['outputs',r'outputs/daysim','outputs/bike','outputs/network','outputs/transit', 'outputs/landuse','outputs/emissions', r'outputs/trucks', 'outputs/supplemental']:
+    for path in ['outputs',r'outputs/daysim','outputs/bikes','outputs/network','outputs/transit', 'outputs/landuse','outputs/emissions', r'outputs/trucks', 'outputs/supplemental', 'outputs/summary']:
         if not os.path.exists(path):
             os.makedirs(path)

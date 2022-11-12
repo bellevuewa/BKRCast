@@ -19,7 +19,7 @@ from EmmeProject import *
 
 print(os.getcwd())
 
-daily_network_fname = 'outputs/daily_network_results.csv'
+daily_network_fname = 'outputs/network/daily_network_results.csv'
 keep_atts = ['@type']
 def json_to_dictionary(dict_name):
 
