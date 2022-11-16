@@ -175,14 +175,14 @@ transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'trans
 # Calibration Summary Configuration
 h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
-h5_comparison_file = 'scripts/summarize/inputs/calibration/survey.h5'
+h5_comparison_file = 'inputs/model/survey/survey.h5'
 h5_comparison_name = 'Survey'
-guidefile = 'scripts/summarize/inputs/calibration/CatVarDict.xlsx'
-districtfile = 'scripts/summarize/inputs/calibration/TAZ_TAD_County.csv'
-FAZ_TAZ = 'scripts/summarize/inputs/calibration/FAZ_TAZ.xlsx'
-LEHD_work_flows = 'scripts/summarize/inputs/calibration/HFAZ_WFAZ_LEHD2014.xlsx'
+guidefile = 'inputs/model/CatVarDict.xlsx'
+districtfile = 'inputs/model/TAZ_TAD_County.csv'
+FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
+LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
 
-acs_data = 'scripts/summarize/inputs/calibration/ACS_2014.xlsx'
+acs_data = 'inputs/model/survey/ACS_2014.xlsx'
 
 report_output_location = 'outputs/daysim'
 report_lu_output_location = 'outputs/landuse'

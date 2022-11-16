@@ -202,8 +202,6 @@ def copy_large_inputs():
     print('  land use..')
     dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
     dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
-    print('  survey..')
-    shcopy(main_inputs_folder + '/model/survey.h5','scripts/summarize/inputs/calibration')
     print('  park and ride capacity..')
     dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
