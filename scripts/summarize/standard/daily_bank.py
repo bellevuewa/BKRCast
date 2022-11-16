@@ -17,6 +17,9 @@ from EmmeProject import *
 # 10/25/2021
 # modified to be compatible with python 3
 
+# 11/16/2022
+# export daily network to shape file.
+
 print(os.getcwd())
 
 daily_network_fname = 'outputs/network/daily_network_results.csv'
@@ -113,6 +116,13 @@ def export_link_values(my_project):
             
     df.to_csv(daily_network_fname)
 
+    # Export shapefile
+    shapefile_dir = r'outputs/network/shapefile'
+    if not os.path.exists(shapefile_dir):
+        os.makedirs(shapefile_dir)
+    network_to_shapefile = my_project.m.tool('inro.emme.data.network.export_network_as_shapefile')
+    network_to_shapefile(export_path=shapefile_dir, scenario=my_project.current_scenario)
+
 def main():
     print('creating daily bank')
     #Use a copy of an existing bank for the daily bank
@@ -204,27 +214,6 @@ def main():
             link['@tveh'] = link['@tveh'] + link['@v' + item[:4]]
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 
-    ######################## Validate results ##########################
-
-    zone1 = 100
-    zone2 = 100
-
-    print('from zone', zone1, 'to zone', zone2)
-    for matrix1 in daily_emmebank.matrices():
-        NAME = matrix1.name
-        print(NAME)
-        print('daily:' , matrix1.get_numpy_data()[zone1][zone2])
-        a = 0
-        for tod, time_period in sound_cast_net_dict.items():
-            path = os.path.join('banks', tod, 'emmebank')
-            bank = _emmebank.Emmebank(path)
-            for matrix2 in bank.matrices():
-                if matrix2.name == NAME:
-                    my_arr = matrix2.get_numpy_data()
-                    a += my_arr[zone1][zone2]
-        print('hourly total:', a)
-
-
     print('daily bank created')
 
     # Write daily link-level results
@@ -244,6 +233,7 @@ def create_daily_project_folder():
     database.open()
     desktop.project.save()
     desktop.close()
+    print('daily project folder is created.')
 
 if __name__ == '__main__':
     main()
