@@ -279,11 +279,13 @@
     <Content Include="inputs\model\bkr-roster.combinations.csv" />
     <Content Include="inputs\model\bkr_roster.csv" />
     <Content Include="inputs\model\CatVarDict.xlsx" />
+    <Content Include="inputs\model\HFAZ_WFAZ_LEHD2014.xlsx" />
     <Content Include="inputs\model\node_index_2014.txt" />
     <Content Include="inputs\model\node_to_node_distance_2014.h5" />
     <Content Include="inputs\model\parcel_nodes_2014.txt" />
     <Content Include="inputs\model\survey\.gitignore" />
     <Content Include="inputs\model\survey\ACS_2014.xlsx" />
+    <Content Include="inputs\model\survey\SurveyWorkFlow.csv" />
     <Content Include="inputs\model\TAZIndex.txt" />
     <Content Include="inputs\model\TAZ_District_CrossWalk.csv" />
     <Content Include="inputs\model\TAZ_TAD_County.csv" />
