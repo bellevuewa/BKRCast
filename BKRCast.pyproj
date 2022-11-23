@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\calibration\SCsummary.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\landuse_summary.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility;C:\Users\hdong\Anaconda3\envs\BKRCast\Lib\site-packages</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -435,6 +435,7 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
+    <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
     <Compile Include="scripts\summarize\standard\pacalculator.py">
