@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import h5py
 import getopt
+import datetime
 import input_configuration as prj
 import accessibility.accessibility_configuration as access_config
 import data_wrangling as utility
@@ -102,6 +103,13 @@ def main():
     
     Output_Field = ['EMPEDU_P', 'EMPFOO_P', 'EMPGOV_P', 'EMPIND_P', 'EMPMED_P', 'EMPOFC_P', 'EMPOTH_P', 'EMPRET_P', 'EMPSVC_P', 'EMPTOT_P', 'STUGRD_P', 'STUHGH_P', 'STUUNI_P', 'HH_P']
     writer = pd.ExcelWriter(os.path.join(prj.report_summary_output_location, "land_use_summary_report.xlsx"), engine = 'xlsxwriter')
+    wksheet = writer.book.add_worksheet('readme')
+    wksheet.write(0, 0, str(datetime.datetime.now()))
+    wksheet.write(1, 0, 'model folder')
+    wksheet.write(1, 1, prj.project_folder)
+    wksheet.write(2, 0, 'parcel file')
+    wksheet.write(2, 1, prj.parcels_file_folder)
+
     taz_subarea = pd.read_csv(os.path.join(prj.main_inputs_folder, 'model','TAZ_Subarea.csv'), sep = ',')
     parcels_df = pd.read_csv(os.path.join(prj.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
     lookup_parcels_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
