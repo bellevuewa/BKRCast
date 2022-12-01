@@ -445,9 +445,11 @@ if __name__ == "__main__":
     logger = logcontroller.setup_custom_logger('main_logger')
     logger.info('------------------------NEW RUN STARTING----------------------------------------------')
     start_time = datetime.datetime.now()
+    branch = get_current_branch()
     commit_hash = get_current_commit_hash()
     commit_info = f'BKRCast commit: {commit_hash}'
-    print(commit_info)
+    branch_info = f'BKRCast Branch: {branch}'
+    logger.info(branch_info)
     logger.info(commit_info)
 
     main()

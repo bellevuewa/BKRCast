@@ -318,3 +318,14 @@ def build_output_dirs():
     for path in ['outputs',r'outputs/daysim','outputs/bikes','outputs/network','outputs/transit', 'outputs/landuse','outputs/emissions', r'outputs/trucks', 'outputs/supplemental', 'outputs/summary']:
         if not os.path.exists(path):
             os.makedirs(path)
+
+def get_current_branch():  
+    try:
+        branch_match = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', 'HEAD']).decode().strip()
+    except:
+        branch_match = 'no git is found.'  
+  
+    if branch_match == "HEAD":
+            return None
+    else:
+        return os.path.basename(branch_match) 
