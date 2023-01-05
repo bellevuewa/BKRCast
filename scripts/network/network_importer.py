@@ -174,12 +174,14 @@ def run_importer(project_name):
     headway_df = pd.read_csv('inputs/networks/' + headway_file)
     for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
-        for scenario in list(my_project.bank.scenarios()):
-            my_project.bank.delete_scenario(scenario)
+        # no longer delete all scenarios. only 1002 if it exists.
+        s1002 = my_project.bank.scenario(1002)
+        if s1002 != None:
+            my_project.bank.delete_scenario(s1002)
         
         #create scenario
-        my_project.bank.create_scenario(1002)
-        my_project.change_scenario()
+        s1002 = my_project.bank.create_scenario(1002)
+        my_project.change_scenario(s1002)
         
         #delete existing links and nodes
         my_project.delete_links()
