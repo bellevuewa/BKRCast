@@ -33,8 +33,8 @@ def network_importer(EmmeProject):
     for scenario in list(EmmeProject.bank.scenarios()):
             EmmeProject.bank.delete_scenario(scenario)
         #create scenario
-    EmmeProject.bank.create_scenario(1002)
-    EmmeProject.change_scenario(1002)
+    s1002 = EmmeProject.bank.create_scenario(1002)
+    EmmeProject.change_scenario(s1002)
         #print key
     EmmeProject.delete_links()
     EmmeProject.delete_nodes()

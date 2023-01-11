@@ -24,8 +24,8 @@ def network_importer(my_project):
            my_project.bank.delete_scenario(scenario)
     
     #create scenario
-    my_project.bank.create_scenario(1002)
-    my_project.change_scenario()
+    s1002 = my_project.bank.create_scenario(1002)
+    my_project.change_scenario(s1002)
     my_project.delete_links()
     my_project.delete_nodes()
     my_project.process_modes('inputs/networks/modes.txt')
