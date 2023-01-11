@@ -34,7 +34,7 @@ def network_importer(EmmeProject):
             EmmeProject.bank.delete_scenario(scenario)
         #create scenario
     EmmeProject.bank.create_scenario(1002)
-    EmmeProject.change_scenario()
+    EmmeProject.change_scenario(1002)
         #print key
     EmmeProject.delete_links()
     EmmeProject.delete_nodes()
