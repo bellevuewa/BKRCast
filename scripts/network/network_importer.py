@@ -1,15 +1,8 @@
 import pandas as pd
-import inro.emme.desktop.app as app
-#import inro.modeller as _m
-import inro.emme.matrix as ematrix
-import inro.emme.database.matrix
-import inro.emme.database.emmebank as _eb
 import os, sys
 import re 
-import multiprocessing as mp
-import subprocess
-import json
-from multiprocessing import Pool, pool
+
+import getopt
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
@@ -169,19 +162,26 @@ def change_mode_for_no_toll_traffic(emmeProject):
                 link.modes -= set([network.mode('h')])
         emmeProject.current_scenario.publish_network(network)
 
-def run_importer(project_name):
+def run_importer(project_name, delete_all_scenarios = True):
     my_project = EmmeProject(project_name)
     headway_df = pd.read_csv('inputs/networks/' + headway_file)
     for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
-        # no longer delete all scenarios. only 1002 if it exists.
-        s1002 = my_project.bank.scenario(1002)
-        if s1002 != None:
-            my_project.bank.delete_scenario(s1002)
+        if delete_all_scenarios == True:
+            for scenario in list(my_project.bank.scenarios()):
+                my_project.bank.delete_scenario(scenario)
+            print(f'All scenarios in {value} databank are deleted.')
+        else:
+            # no longer delete all scenarios. only 1002 if it exists.
+            s1002 = my_project.bank.scenario(1002)
+            if s1002 != None:
+                my_project.bank.delete_scenario(s1002)
+                print('Only Scenario 1002 in {value} databank is deleted.')
         
         #create scenario
         s1002 = my_project.bank.create_scenario(1002)
         my_project.change_scenario(s1002)
+        print(f'Scenario 1002 in {value} databank is created.')
         
         #delete existing links and nodes
         my_project.delete_links()
@@ -216,9 +216,34 @@ def run_importer(project_name):
         if create_no_toll_network == True:
             change_mode_for_no_toll_traffic(my_project)
 
+def help():
+    print('  Import networks into all time periods. By default, all scenarios in databank will be deleted before new network is imported into scenario 1002. You have option ')
+    print('  to keep scenarios other than S1002.')
+    print('')
+    print('  network_importer.py -h -k')
+    print('     -h: help')
+    print('     -k: keep all scenarios other than S1002')
+    print('')
+    
+
 def main():
+    delete_all_scenarios = True
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hk')
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+        elif opt == '-k':
+            delete_all_scenarios = False
+            
     print(network_summary_project)
-    run_importer(network_summary_project)
+    
+    run_importer(network_summary_project, delete_all_scenarios)
     # comment out for now - nagendra.dhakar@rsginc.com
     #returncode = subprocess.call([sys.executable,'scripts/network/daysim_zone_inputs.py'])
     returncode=0
