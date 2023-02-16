@@ -1,10 +1,8 @@
 import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as app
-import inro.modeller as _m
-import inro.emme.matrix as ematrix
-import inro.emme.database.matrix
 import os, sys
 import numpy as np
+import pandas as pd
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
@@ -88,9 +86,6 @@ def merge_networks(master_network, merge_network):
 def export_link_values(my_project):
     ''' Extract link attribute values for a given scenario and emmebank (i.e., time period) '''
 
-    # Change active database to daily bank
-    my_project.change_active_database('daily')
-
     network = my_project.current_scenario.get_network()
     link_type = 'LINK'
 
@@ -98,22 +93,18 @@ def export_link_values(my_project):
     link_attr = network.attributes(link_type)
 
     # Initialize a dataframe to store results
-    df = pd.DataFrame(np.zeros(len(link_attr)+1)).T    # column for each attr +1 for node id (used as merge field)
-    df.columns = np.insert(link_attr, 0, 'nodes')    # columns are attrs w/ node id inserted to front of array
-    #'nodes'here is actually link id in string format.so we need to convert data type to string
-    df['nodes'] = df['nodes'].astype(str)
+    df = pd.DataFrame()
     for attr in link_attr:
         print("processing: " + str(attr))
         
         # store values and node id for a single attr in a temp df 
         df_attr = pd.DataFrame([network.get_attribute_values(link_type, [attr])[1].keys(),
                           network.get_attribute_values(link_type, [attr])[1].values()]).T
-        df_attr.columns = ['nodes',attr]
+        df_attr.columns = ['nodes', 'value']
+        df_attr['measure'] = str(attr)
+        df = df.append(df_attr)
         
-        # merge temp df with the 'master df' that is filled iteratively
-        df = pd.merge(df_attr,df,how='outer',on='nodes')
-
-            
+    df = df.pivot(index='nodes',columns='measure',values='value').reset_index()
     df.to_csv(daily_network_fname)
 
     # Export shapefile
@@ -186,10 +177,11 @@ def main():
 
 
     for extra_attribute in daily_scenario.extra_attributes():
-        print(extra_attribute)
+        print(f'{extra_attribute} is removed from daily databank')
         if extra_attribute not in keep_atts:
             daily_scenario.delete_extra_attribute(extra_attribute)
     daily_volume_attr = daily_scenario.create_extra_attribute('LINK', '@tveh')
+    daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
     daily_network = daily_scenario.get_network()
 
     for tod, time_period in sound_cast_net_dict.items():
@@ -200,26 +192,42 @@ def main():
         network = scenario.get_network()
         if daily_scenario.extra_attribute('@v' + tod[:4]):
             daily_scenario.delete_extra_attribute('@v' + tod[:4])
+        if daily_scenario.extra_attribute('@bvol' + tod[:4]):
+            daily_scenario.delete_extra_attribuet('@bvol' + tod[:4])
+        if daily_scenario.extra_attribute('@bvoldaily'):
+            daily_scenario.delete_extra_attribute('@bvoldaily')
+
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod[:4])
         values = scenario.get_attribute_values('LINK', ['@tveh'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
-        #daily_scenario.publish_network(daily_network)
-        #daily_network = daily_scenario.get_network()
 
+        # create bike volume for each TOD
+        attr = daily_scenario.create_extra_attribute('LINK', '@bvol' + tod[:4])
+        values = scenario.get_attribute_values('LINK', ['@bvol'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+
+    daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
     daily_network = daily_scenario.get_network()
     attr_list = ['@tv' + x for x in tods]
+    attr_list.extend(['@bvol' + x for x in tods])
 
     for link in daily_network.links():
         for item in tods:
             link['@tveh'] = link['@tveh'] + link['@v' + item[:4]]
+            link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item[:4]]
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 
+    print('The following extra attributes are updated: ')
+    print(str(attr_list))
     print('daily bank created')
 
+    create_daily_project_folder()  
     # Write daily link-level results
-    my_project = EmmeProject(network_summary_project)
+    my_project = EmmeProject('projects/daily/daily.emp')
+
     export_link_values(my_project)
-    create_daily_project_folder()
+
 
 def create_daily_project_folder():
     if os.path.exists(os.path.join('projects/daily')):
