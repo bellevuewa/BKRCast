@@ -19,7 +19,7 @@ file_out = 'parcel_summary.xlsx'    # summary output file name
 # Load files in pandas
 main_dir = os.path.abspath('')
 try:
-    parcels = pd.read_csv(main_dir + "/inputs/" + buffered_parcels, sep=' ')
+    parcels = pd.read_csv(os.path.join(project_folder, output_parcels), sep=' ')
 except:
     print("Missing 'buffered_parcels.dat'")
 
@@ -40,7 +40,7 @@ max_by_urbcen = pd.DataFrame(parcels.groupby('NAME').max())
 std_by_urbcen = pd.DataFrame(parcels.groupby('NAME').std())
 
 # Write results to separate worksheets in an Excel file
-excel_writer = pd.ExcelWriter(main_dir + '/outputs/' + file_out)
+excel_writer = pd.ExcelWriter(main_dir + '/outputs/summary' + file_out)
 
 mean_by_urbcen.to_excel(excel_writer=excel_writer, sheet_name='Mean')
 min_by_urbcen.to_excel(excel_writer=excel_writer, sheet_name='Min')

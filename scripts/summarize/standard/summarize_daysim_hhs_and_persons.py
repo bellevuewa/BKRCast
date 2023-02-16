@@ -38,7 +38,7 @@ def summarize_hhs(output_file, customized_location_file = ''):
         cust_hhs_by_subarea_df = customized_hhs_df[hh_summary_list].sum()
         cust_hhs_by_restype_df = customized_hhs_df.groupby('hrestype')[['hhexpfac']].sum()
 
-    with open(os.path.join(prj.project_folder, prj.report_output_location, output_file), 'w') as f:
+    with open(os.path.join(prj.project_folder, prj.report_lu_output_location, output_file), 'w') as f:
         f.write('%s\n' % str(datetime.datetime.now()))   
         f.write('%s\n' % prj.project_folder)
         f.write('    %s\n' % daysim_hhs_output_file)
@@ -82,7 +82,7 @@ def summarize_persons(output_file, customized_location_file):
         customized_tazs = pd.read_csv(customized_location_file)
         customized_persons_df = pd.merge(persons_df, customized_tazs, left_on = 'hhtaz', right_on = 'TAZ', how = 'inner')
 
-    output_file = os.path.join(prj.project_folder, prj.report_output_location, output_file)
+    output_file = os.path.join(prj.project_folder, prj.report_lu_output_location, output_file)
     with open(output_file, 'w') as f:
         f.write('%s\n' % str(datetime.datetime.now()))   
         f.write('%s\n' % prj.project_folder)

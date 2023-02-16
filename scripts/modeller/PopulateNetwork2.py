@@ -296,7 +296,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
 
         # export a list of bus stop with transit submodes and coordinates.
         with _modeller.logbook_trace(name = "Export bus stops", value = ""):
-            busstop_name = os.path.join(self.outputFolder, 'transit_stops_' + str(self.horizon_year) + '.csv')
+            busstop_name = os.path.join(self.outputFolder, 'transit_stops' + '.csv')
             self.exportBusStop(busstop_name, horizon_scen)
 
         with _modeller.logbook_trace(name = "Export vehicles", value = ""):
@@ -360,6 +360,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
             nodes_list.append(dict)
         nodes_df = pd.DataFrame(nodes_list)
         busstops_df = pd.merge(busstops_df, nodes_df, left_on = 'stop', right_on = 'node', how = 'left')
+        # if express is not in the transit df, add this column with all zeros.
+        if 'express' not in busstops_df.columns:
+            busstops_df['express'] = 0
         busstops_df.to_csv(bus_file_name, index = False)
         busstops_err_df = pd.DataFrame(busstops_err)
         busstops_err_df.to_csv('error.txt')

@@ -63,61 +63,6 @@ def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
         os.makedirs('inputs/accessibility')
     
-    print('Copying UrbanSim parcel file')
-    try:
-        if os.path.isfile(os.path.join(parcels_file_folder,parcels_file_name)):
-            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accessibility')
-        # the file may need to be reformatted- like this coming right out of urbansim
-        elif os.path.isfile(os.path.join(parcels_file_folder,'parcels.dat')):
-            print('the file is ' + os.path.join(parcels_file_folder,'parcels.dat'))
-            print("Parcels file is being reformatted to Daysim format")
-            parcels = pd.read_csv(os.path.join(parcels_file_folder,'parcels.dat'),sep=" " )
-            print('Read in unformatted parcels file')
-            for col in parcels.columns:
-                print(col)
-                new_col = [x.upper() for x in col]
-                new_col = ''.join(new_col)
-                parcels=parcels.rename(columns = {col:new_col})
-                print(new_col)
-            parcels.to_csv(os.path.join(parcels_file_folder,parcels_file_name), sep = " ")
-            shcopy(os.path.join(parcels_file_folder,parcels_file_name),'inputs/accesibility')
-
-    except Exception as ex:
-        template = "An exception of type {0} occured. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-        print(message)
-        sys.exit(1)
-
-
-    print('Copying Military parcel file')
-    try:
-        shcopy(base_inputs+'/landuse/parcels_military.csv','inputs/accessibility')
-    except:
-        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
-        sys.exit(1)
-
-    try:
-        shcopy(base_inputs+'/landuse/distribute_jblm_jobs.csv','inputs/accessibility')
-    except:
-        print('error copying military parcel file at ' + base_inputs+'/landuse/parcels_military.csv')
-        sys.exit(1)
-
-    print('Copy parking ensemble file')
-    try:
-        shcopy(base_inputs + '/landuse/parking_gz.csv', 'inputs')
-    except:
-        print('error copying parking ensemble file ' + base_inputs + '/landuse/parking_gz.csv')
-        sys.exit(1)
-
-    print('Copy all street network files')
-    try:
-        shcopy(base_inputs + '/accessibility/all_streets_links_2014.csv', 'inputs/accessibility')
-        shcopy(base_inputs + '/accessibility/all_streets_nodes_2014.csv', 'inputs/accessibility')
-    except:
-        print('error copying all street network files from ' + base_inputs + '/accessibility folder')
-        sys.exit(1)
-
-
     print('Copying Hourly and Daily Parking Files')
     if run_update_parking: 
         try:
@@ -182,7 +127,6 @@ def setup_emme_bank_folders():
 
 @timed
 def setup_emme_project_folders():
-    #tod_dict = json.load(open(os.path.join('inputs', 'skim_params', 'time_of_day.json')))
 
     tod_dict = text_to_dictionary('time_of_day')
     tod_list = list(set(tod_dict.values()))
@@ -215,12 +159,12 @@ def setup_emme_project_folders():
         desktop.close()
         
         #copy worksheets
-        wspath = os.path.join('inputs/etc/worksheets/', tod)
+        wspath = os.path.join('inputs/model/worksheets/', tod)
         destpath = os.path.join('projects/', tod, 'Worksheets')
         copyfiles(wspath, destpath)
         # copy media files
         destpath = os.path.join('projects/', tod, 'Media')
-        copyfiles('inputs/etc/Media/', destpath)
+        copyfiles('inputs/model/Media/', destpath)
 
         
 def copyfiles(sourceFolder, destFolder):
@@ -255,23 +199,19 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
     print('  supplemental..')
     dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
-    print('  4k..')
-    dir_util.copy_tree(base_inputs+'/4k','inputs/4k')
     print('  land use..')
-    shcopy(base_inputs+'/popsim/hh_and_persons.h5','inputs')
-    shcopy(base_inputs + '/landuse/lu_type.csv', 'inputs')
-    print('  survey..')
-    shcopy(main_inputs_folder + '/etc/survey.h5','scripts/summarize/inputs/calibration')
+    dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
+    dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
     print('  park and ride capacity..')
-    shcopy(base_inputs +'/pnr/p_r_nodes.csv','inputs')
+    dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
-@timed
-def copy_seed_supplemental_trips():
-    print('Copying seed supplemental trips')
-    if not os.path.exists('outputs/supplemental'):
-       os.makedirs('outputs/supplemental')
-    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
-        shutil.copy(filename, project_folder+'/outputs/supplemental')
+#@timed
+#def copy_seed_supplemental_trips():
+#    print('Copying seed supplemental trips')
+#    if not os.path.exists('outputs/supplemental'):
+#       os.makedirs('outputs/supplemental')
+#    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
+#        shutil.copy(filename, project_folder+'/outputs/supplemental')
     
 @timed
 def rename_network_outs(iter):
@@ -373,3 +313,19 @@ def get_current_commit_hash():
     except:
         commit = '0000000'
     return commit
+
+def build_output_dirs():
+    for path in ['outputs',r'outputs/daysim','outputs/bikes','outputs/network','outputs/transit', 'outputs/landuse','outputs/emissions', r'outputs/trucks', 'outputs/supplemental', 'outputs/summary']:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+def get_current_branch():  
+    try:
+        branch_match = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', 'HEAD']).decode().strip()
+    except:
+        branch_match = 'no git is found.'  
+  
+    if branch_match == "HEAD":
+            return None
+    else:
+        return os.path.basename(branch_match) 

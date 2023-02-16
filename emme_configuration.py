@@ -4,8 +4,6 @@ import sys
 # 10/25/2021
 # modified to be compatible with python 3
 
-HORIZON_YEAR = 2018   ## range = [2014, 2040]
-
 ###### Distance-based pricing######
 add_distance_pricing = False # usually set to False unless we want to test VMT tax
 # rate below includes 3.5 cent carbon tax, PSRC
@@ -93,6 +91,7 @@ MAX_EXTERNAL = 1528      #zone of externals
 HIGH_TAZ = 1359
 LOW_PNR = 1360 #external dummy is also included
 HIGH_PNR = 1510
+EXTERNALS_DONT_GROW=[1511]
 
 SPECIAL_GENERATORS = {"SeaTac":1356,"Tacoma Dome":1357,"exhibition center":1359, "Seattle Center":1358}
 feedback_list = ['Banks/6to9/emmebank','Banks/1530to1830/emmebank']
@@ -163,56 +162,13 @@ destination_tt_file = 'inputs/intrazonals/destination_tt.in'
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
 supplemental_loc = 'outputs/supplemental/'
-hdf_auto_filename = 'inputs/4k/auto.h5'
-hdf_transit_filename = 'inputs/4k/transit.h5' 
-group_quarters_trips = 'outputs/supplemental/group_quarters/'
-ext_spg_trips = 'outputs/supplemental/ext_spg/'
-supplemental_modes = ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk', 'lttrk','metrk','hvtrk']
-hh_trip_loc = '/supplemental/generation/rates/hh_triprates.in'
-nonhh_trip_loc = '/supplemental/generation/rates/nonhh_triprates.in'
-puma_taz_loc = '/supplemental/generation/ensembles/puma00.ens'
-taz_data_loc = '/supplemental/generation/landuse/tazdata.in'
-pums_data_loc = '/supplemental/generation/pums/' 
-externals_loc = '/supplemental/generation/externals.csv'
-# Special generator zones and demand (dictionary key is TAZ, value is demand)
-spg_general = {1357: 1761,
-               1359: 7921,
-               1358: 14668} # updated on 1/10/2020, PSRC   
-spg_airport = {1356: 105240} # updated on 1/10/2020, PSRC
-## growth rates are provided by PSRC
-## Adjust auto special generators to HORIZON_YEAR, by scaling up 2014 daily trips.
-for key in spg_airport:
-    spg_airport_rate = 1
-    if HORIZON_YEAR > 2030 and HORIZON_YEAR <= 2040:
-        spg_airport_rate = pow(1 + 2.18/100, HORIZON_YEAR - 2030) * pow(1 + 2.69/100, 2030 - 2020) * pow(1 + 3.65/100, 2020 - 2014)
-    elif HORIZON_YEAR > 2020:
-        spg_airport_rate = pow (1 + 2.69/100, HORIZON_YEAR - 2020) * pow(1 + 3.65/100, 2020 - 2014)
-    elif HORIZON_YEAR >= 2014: 
-        spg_airport_rate = pow(1 + 3.65/100, HORIZON_YEAR - 2014)
-    else:
-        print('Your HORIZON_YEAR is not valid.')
-        sys.exit(-1)    
-    spg_airport[key] = spg_airport[key] * spg_airport_rate
-
-for key in spg_general:
-    spg_general_rate = 1
-    if HORIZON_YEAR > 2025 and HORIZON_YEAR <=2040:
-        spg_general_rate = pow(1 + 0.77/100, HORIZON_YEAR - 2025) * pow(1 + 1.14/100, 2025 - 2014)
-    elif HORIZON_YEAR >= 2014:
-        spg_general_rate = pow(1 + 1.14/100, HORIZON_YEAR - 2014)  
-    else: 
-        print('Your HORIZON_YEAR is not valid') 
-        sys.exit(-1)
-    spg_general[key] =  spg_general[key] * spg_general_rate
 
 # Using one AM and one PM time period to represent AM and PM skims
 am_skim_file_loc = 'inputs/6to9.h5'
 pm_skim_file_loc = 'inputs/1530to1830.h5'
-trip_table_loc = 'outputs/prod_att.csv'
-output_dir = 'outputs/supplemental/'
-ext_spg_dir = 'outputs/supplemental/ext_spg'
-gq_directory = 'outputs/supplemental/group_quarters'
-gq_trips_loc = 'outputs/gq_prod_att.csv'
+trip_table_loc = 'outputs/supplemental/7_balance_trip_ends.csv'
+supplemental_output_dir = 'outputs/supplemental/'
+supplemental_non_work_file = 'outputs/supplemental/external_non_work.h5'
 supplemental_project = 'projects/supplementals/supplementals.emp'
 # Iterations for fratar process in trip distribution
 bal_iters = 5
@@ -222,3 +178,6 @@ avotda = 0.0303    # VOT
 
 # Change modes for toll links
 toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmvutbpwl', 'ahdimjbp' : 'admbp'}
+
+# Home delivery trips, must be > 0
+total_delivery_trips = 1 

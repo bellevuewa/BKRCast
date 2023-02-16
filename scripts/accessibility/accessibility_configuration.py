@@ -13,14 +13,12 @@ distances = { # in meters;
 
 
 parcels_file_name = 'parcels_urbansim.txt'
-buffered_parcels = 'buffered_parcels.dat'
-output_parcels = 'inputs/' + buffered_parcels
-buffered_parcels_csv = 'inputs/' + 'buffered_parcels.csv'
+buffered_parcels = 'buffered_parcels.txt'
+land_use_output_folder = 'outputs/landuse/'
+output_parcels = 'outputs/landuse/' + buffered_parcels
 transit_stops_name = 'transit_stops.csv'
 nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
-military_file = "inputs\\accessibility\\parcels_military.csv"
-jblm_file = "inputs\\accessibility\\\distribute_jblm_jobs.csv"
 daily_parking_cost = "inputs\\accessibility\\daily_parking_costs.csv"
 hourly_parking_cost = "inputs\\accessibility\\hourly_parking_costs.csv"
 

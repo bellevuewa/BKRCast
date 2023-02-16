@@ -1,4 +1,5 @@
 from pickle import TRUE
+from tokenize import triple_quoted
 import pandas as pd
 import os
 import sys
@@ -27,14 +28,15 @@ def help():
     print('        all:      all_prod + all_attr')
     print('    others: trip ends sum of four purposes: escort, shopping, personal_biz, social')
     print('    ')
-    print('python pacalculator.py -h')
+    print('python pacalculator.py -h -f <trip_filename.tsv>')
     print('    -h: help')
+    print('    -f: name of a file equivalent to _trip.tsv')
     print('')
 
 def main() :
-
+    trip_file_name = ''
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'h')
+        opts, args = getopt.getopt(sys.argv[1:], 'hf:')
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -43,9 +45,17 @@ def main() :
         if opt == '-h':
             help()
             sys.exit(0)
+        elif opt == '-f':
+            if arg == None:
+                print('a trip file is missing from the command. Please use -h option for details.')
+                sys.exit(2)
+            trip_file_name = arg
 
     print('Loading trip file...')
-    trips_file = os.path.join(prj.project_folder, 'outputs', '_trip.tsv')
+    if trip_file_name == '':
+        trips_file = os.path.join(prj.project_folder, 'outputs/daysim', '_trip.tsv')
+    else:
+        trips_file = os.path.join(prj.project_folder, 'outputs/daysim', trip_file_name)
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
     taz = pd.unique(total_trips_df[['otaz', 'dtaz']].values.ravel('K'))
     taz.sort()
@@ -79,7 +89,7 @@ def main() :
 
     combined_df['others'] = combined_df['escort'] + combined_df['personal_biz'] + combined_df['shopping'] + combined_df['social']
     combined_df.fillna(0, inplace = True)
-    outputfilename = os.path.join(prj.project_folder, 'outputs', prj.scenario_name + '_' + 'daily_person_trips_by_OD.txt')
+    outputfilename = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + 'daily_person_trips_by_OD.txt')
 
     with open(outputfilename, 'w') as output:
         output.write(str(datetime.datetime.now()) + '\n')

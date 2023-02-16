@@ -2,7 +2,7 @@
   "6to9": {
     "TripBasedTime": "am",
     "TripTimeLetter": "a",
-    "TimeFactor": 0.35
+    "TimeFactor": 1
   },
   "1830to6": {
     "TripBasedTime": "ni",
@@ -12,14 +12,14 @@
   "9to1530": {
     "TripBasedTime": "md",
     "TripTimeLetter": "m",
-    "TimeFactor": 0.5,
+    "TimeFactor": 1,
     "TransitTripTime": "am",
     "TransitTripLetter": "a"
   },
   "1530to1830": {
     "TripBasedTime": "pm",
     "TripTimeLetter": "p",
-    "TimeFactor": 0.35,
+    "TimeFactor": 1,
     "TransitTripTime": "am",
     "TransitTripLetter": "a"
   }

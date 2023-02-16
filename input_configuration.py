@@ -12,7 +12,9 @@
 #for a new setup, update the four settings below
 project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # This should always be 2014 unless the base year changes
+base_year = '2018'  # BKRCast base year
+model_year = '2018'
+supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
 scenario_name = '2018' #name of the folder with scenario data
 
 #settings automatically assigned
@@ -28,12 +30,11 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True
+run_accessibility_calcs = False
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_copy_seed_supplemental_trips = False #generally set to True unless you already have trips under 'outputs/supplemental'
 run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
@@ -88,7 +89,7 @@ good_thing = ["cookie", "run", "puppy", "seal sighting",  "beer", "snack", "nap"
  # in the future if we want to add express bus or brt to the transit mode, add {"ebus": "express"} {'brt':'brt'}to the transit_modes.  
 transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commuter_rail", "lrt": "light_rail"} # will compute nearest distance to these
 
-input_ensemble = "inputs\\parking_gz.csv"
+input_ensemble = r"inputs/landuse/parking_gz.csv"
 
 # daysim mode definition
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
@@ -102,7 +103,7 @@ purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'esco
 commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
 
 #################################### DAYSIM ####################################
-households_persons_file = r'inputs\hh_and_persons.h5'
+households_persons_file = r'inputs/popsim/hh_and_persons.h5'
 # Popsampler - super/sub-sampling in population synthesis
 sampling_option = 1 #1-3: five options available - each option is a column in pop_sample_district below
 pop_sample_district = {'BKR':[1,4,2],
@@ -151,7 +152,7 @@ slope_labels = [0,1,2,3]
 avg_bike_speed = 10 # miles per hour
 
 # Outputs directory
-bike_link_vol = 'outputs/bike_volumes.csv'
+bike_link_vol = 'outputs/bikes/bike_volumes.csv'
 bike_count_data = 'inputs/bikes/bike_counts.csv'
 #edges_file = 'inputs/bikes/edges_0.txt'
 
@@ -172,14 +173,19 @@ transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'trans
 #################################### CALIBRATION/VALIDATION ####################################
 
 # Calibration Summary Configuration
-h5_results_file = 'outputs/daysim_outputs.h5'
+h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
-h5_comparison_file = 'scripts/summarize/inputs/calibration/survey.h5'
+h5_comparison_file = 'inputs/model/survey/survey.h5'
 h5_comparison_name = 'Survey'
-guidefile = 'scripts/summarize/inputs/calibration/CatVarDict.xlsx'
-districtfile = 'scripts/summarize/inputs/calibration/TAZ_TAD_County.csv'
-FAZ_TAZ = 'scripts/summarize/inputs/calibration/FAZ_TAZ.xlsx'
-LEHD_work_flows = 'scripts/summarize/inputs/calibration/HFAZ_WFAZ_LEHD2014.xlsx'
+guidefile = 'inputs/model/CatVarDict.xlsx'
+districtfile = 'inputs/model/TAZ_TAD_County.csv'
+FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
+LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
 
-acs_data = 'scripts/summarize/inputs/calibration/ACS_2014.xlsx'
-report_output_location = 'outputs'
+acs_data = 'inputs/model/survey/ACS_2014.xlsx'
+
+report_output_location = 'outputs/daysim'
+report_lu_output_location = 'outputs/landuse'
+report_bikes_output_location = 'outputs/bike'
+report_net_output_location = 'outputs/network'
+report_summary_output_location = 'outputs/summary'

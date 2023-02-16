@@ -5,16 +5,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\summarize_daysim_hhs_and_persons.py</StartupFile>
-    <SearchPath>..\BKRCast;scripts;scripts\accessibility</SearchPath>
+    <StartupFile>scripts\summarize\standard\pacalculator.py</StartupFile>
+    <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <InterpreterId>CondaEnv|CondaEnv|BKRCast</InterpreterId>
+    <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>-f</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -252,8 +251,6 @@
     <Content Include="daysim_summaries\templates\VehAvailability.csv" />
     <Content Include="daysim_summaries\templates\WrkLocation.csv" />
     <Content Include="daysim_summaries\trips_filter.R" />
-    <Content Include="inputs\bkr-roster.combinations.csv" />
-    <Content Include="inputs\bkr_roster.csv" />
     <Content Include="inputs\coefficients\AutoOwnershipModel_psrcper1.F12" />
     <Content Include="inputs\coefficients\EscortTourModeModel.F12" />
     <Content Include="inputs\coefficients\IndividualPersonDayPatternModel.F12" />
@@ -277,6 +274,24 @@
     <Content Include="inputs\coefficients\WorkTourDestinationModel_psrcper1.F12" />
     <Content Include="inputs\coefficients\WorkTourModeModel.F12" />
     <Content Include="inputs\coefficients\WorkTourTimeModel.F12" />
+    <Content Include="inputs\model\.gitignore" />
+    <Content Include="inputs\model\bkr-roster.combinations.csv" />
+    <Content Include="inputs\model\bkr_roster.csv" />
+    <Content Include="inputs\model\CatVarDict.xlsx" />
+    <Content Include="inputs\model\FAZ_TAZ.xlsx" />
+    <Content Include="inputs\model\HFAZ_WFAZ_LEHD2014.xlsx" />
+    <Content Include="inputs\model\node_index_2014.txt" />
+    <Content Include="inputs\model\node_to_node_distance_2014.h5" />
+    <Content Include="inputs\model\parcel_nodes_2014.txt" />
+    <Content Include="inputs\model\parcel_TAZ_2014_lookup.csv" />
+    <Content Include="inputs\model\survey\.gitignore" />
+    <Content Include="inputs\model\survey\ACS_2014.xlsx" />
+    <Content Include="inputs\model\survey\SurveyWorkFlow.csv" />
+    <Content Include="inputs\model\TAZIndex.txt" />
+    <Content Include="inputs\model\TAZ_District_CrossWalk.csv" />
+    <Content Include="inputs\model\TAZ_TAD_County.csv" />
+    <Content Include="inputs\model\transit_agency_dict.json" />
+    <Content Include="inputs\model\variable_labels.csv" />
     <Content Include="inputs\skim_params\bike_assignment.json" />
     <Content Include="inputs\skim_params\bike_network_setup.json" />
     <Content Include="inputs\skim_params\bike_skim_setup.json" />
@@ -339,32 +354,10 @@
     <Content Include="inputs\subarea_definition\Redmond_TAZ.txt" />
     <Content Include="inputs\subarea_definition\Regional.txt" />
     <Content Include="inputs\subarea_definition\TAZ_subarea.csv" />
-    <Content Include="projects\1530to1830\Worksheets\Boarding_Alighting.emt" />
-    <Content Include="projects\1530to1830\Worksheets\Compare_traffic_volume_and_times.emw" />
-    <Content Include="projects\1530to1830\Worksheets\General_worksheet.emw" />
-    <Content Include="projects\1530to1830\Worksheets\Links_table.emt" />
-    <Content Include="projects\1530to1830\Worksheets\Local_Count_Scatterplot.emw" />
-    <Content Include="projects\1530to1830\Worksheets\Local_Count_Scatterplot_BelCBD.emw" />
-    <Content Include="projects\1530to1830\Worksheets\Screenline_Scatterplot.emw" />
-    <Content Include="projects\1530to1830\Worksheets\Select_link_analysis.emw" />
-    <Content Include="projects\1530to1830\Worksheets\Transit_lines.emt" />
-    <Content Include="projects\1830to6\Worksheets\Test_1830to6.txt" />
-    <Content Include="projects\6to9\Worksheets\Test_6to9.txt" />
-    <Content Include="projects\9to1530\Worksheets\Test_9to1530.txt" />
-    <Content Include="projects\Supplementals\Worksheets\Test_supplemental.txt" />
-    <Content Include="projects\TruckModel\Worksheets\Test_truck.txt" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
     <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
-    <Content Include="scripts\summarize\inputs\calibration\ACS_2014.xlsx" />
-    <Content Include="scripts\summarize\inputs\calibration\CatVarDict.xlsx" />
-    <Content Include="scripts\summarize\inputs\calibration\district_lookup.csv" />
-    <Content Include="scripts\summarize\inputs\calibration\FAZ_TAZ.xlsx" />
-    <Content Include="scripts\summarize\inputs\calibration\HFAZ_WFAZ_LEHD2014.xlsx" />
-    <Content Include="scripts\summarize\inputs\calibration\SurveyWorkFlow.csv" />
-    <Content Include="scripts\summarize\inputs\calibration\TAZ_TAD_County.csv" />
-    <Content Include="scripts\summarize\inputs\calibration\variable_labels.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\am_transit.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\CatVarDict.xlsx" />
     <Content Include="scripts\summarize\inputs\network_summary\CTPP.csv" />
@@ -442,6 +435,7 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
+    <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
     <Compile Include="scripts\summarize\standard\pacalculator.py">
@@ -457,10 +451,11 @@
     <Compile Include="scripts\summarize\standard\truck_vols.py" />
     <Compile Include="scripts\summarize\xlautofit.py" />
     <Compile Include="scripts\summarize\__init__.py" />
+    <Compile Include="scripts\supplemental\create_airport_trips.py" />
     <Compile Include="scripts\supplemental\create_ixxi_work_trips.py" />
-    <Compile Include="scripts\supplemental\distribution.py" />
+    <Compile Include="scripts\supplemental\distribute_non_work_ixxi.py" />
     <Compile Include="scripts\supplemental\generation.py" />
-    <Compile Include="scripts\supplemental\military_parcel_loading.py" />
+    <Compile Include="scripts\supplemental\mode_choice_supplemental.py" />
     <Compile Include="scripts\trucks\truck_configuration.py" />
     <Compile Include="scripts\trucks\truck_model.py" />
     <Compile Include="scripts\trucks\__init__.py" />
@@ -492,22 +487,10 @@
     <Folder Include="daysim_summaries\templates\" />
     <Folder Include="inputs\" />
     <Folder Include="inputs\coefficients\" />
-    <Folder Include="inputs\NewFolder1\" />
+    <Folder Include="inputs\model\" />
+    <Folder Include="inputs\model\survey\" />
     <Folder Include="inputs\skim_params\" />
     <Folder Include="inputs\subarea_definition\" />
-    <Folder Include="projects\" />
-    <Folder Include="projects\1530to1830\" />
-    <Folder Include="projects\1530to1830\Worksheets\" />
-    <Folder Include="projects\1830to6\" />
-    <Folder Include="projects\1830to6\Worksheets" />
-    <Folder Include="projects\6to9\" />
-    <Folder Include="projects\6to9\Worksheets" />
-    <Folder Include="projects\9to1530\" />
-    <Folder Include="projects\9to1530\Worksheets" />
-    <Folder Include="projects\Supplementals\" />
-    <Folder Include="projects\Supplementals\Worksheets" />
-    <Folder Include="projects\TruckModel\" />
-    <Folder Include="projects\TruckModel\Worksheets" />
     <Folder Include="psrc_to_bkrcast_scripts" />
     <Folder Include="scripts" />
     <Folder Include="scripts\accessibility" />
@@ -522,7 +505,6 @@
     <Folder Include="scripts\summarize\exploratory" />
     <Folder Include="scripts\summarize\inputs\" />
     <Folder Include="scripts\summarize\inputs\benefit_cost\" />
-    <Folder Include="scripts\summarize\inputs\calibration\" />
     <Folder Include="scripts\summarize\inputs\network_summary" />
     <Folder Include="scripts\summarize\mapping" />
     <Folder Include="scripts\summarize\standard" />

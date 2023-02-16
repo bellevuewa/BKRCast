@@ -19,10 +19,13 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts\\utils"))
+
+import trucks.truck_configuration as truck_config
 from emme_configuration import *
 from EmmeProject import *
 from input_configuration import *
 import data_wrangling
+
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -801,12 +804,12 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     demand_matrices={}
    
     for matrix_name in ['lttrk','metrk','hvtrk']:
-        demand_matrix = load_trucks_external(my_project, matrix_name, zonesDim)
+        demand_matrix = load_trucks(my_project, matrix_name, zonesDim)
         demand_matrices.update({matrix_name : demand_matrix})
 
     # Load in supplemental trips
     # We're assuming all trips are only for income 2, toll classes
-    for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk']:
+    for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk', 'ferry', 'passenger_ferry', 'litrat', 'commuter_rail']:
         demand_matrix = load_supplemental_trips(my_project, matrix_name, zonesDim)
         demand_matrices.update({matrix_name : demand_matrix})
 
@@ -882,51 +885,31 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     print(text)
     logging.debug(text)
 
-def load_trucks_external(my_project, matrix_name, zonesDim):
-
-    demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
-    hdf_file = h5py.File(hdf_auto_filename, "r")
+def load_trucks(my_project, matrix_name, zonesDim):
+    demand_matrix = np.zeros((zonesDim, zonesDim), np.float16)
+    hdf_file = h5py.File(truck_config.truck_trips_h5_filename, "r")
     tod = my_project.tod
 
+    truck_matrix_name_dict = {'metrk': 'medtrk_trips',
+                              'hvtrk': 'hvytrk_trips',
+                              'lttrk': 'deltrk_trips'}
+
     time_dictionary = json_to_dictionary('time_of_day_crosswalk_ab_4k_dictionary')
-    class_dictionary = json_to_dictionary('demand_crosswalk_ab_4k_dictionary')
+    # Prepend an aggregate time period (e.g., AM, PM, NI) to the truck demand matrix to import from h5
+    aggregate_time_period = time_dictionary[tod]['TripBasedTime']
+    truck_demand_matrix_name = 'mf' + aggregate_time_period + '_' + truck_matrix_name_dict[matrix_name]
+    np_matrix = np.matrix(hdf_file[aggregate_time_period][truck_demand_matrix_name]).astype(float)
 
-    # don't do anything for the classes not in the dictionary
-    if matrix_name not in class_dictionary:
-        return demand_matrix
+    sub_demand_matrix = np_matrix[0:zonesDim, 0:zonesDim]
+    
+    # The timefactor here are 1 for all time periods. there is no need to apply additional time factors, because the 
+    # inside the truck_trips_h5_filename, truck trips by time period are already calculated from daily truck trips.
+     
+    demand_matrix = sub_demand_matrix * time_dictionary[tod]['TimeFactor']
+    demand_matrix = np.squeeze(np.asarray(demand_matrix))
 
-    this_time_dictionary = time_dictionary[tod]
-    this_class_dictionary = class_dictionary[matrix_name]
-    trip_time= this_time_dictionary['TripBasedTime']
-
-    #now we are constructing the name of the trip-based matrices needed for this matrix_name
-
-    #replace the third letter for the time period in the trip based model
-    time_class_name_1 = list(this_class_dictionary['FirstTripBasedClass'])
-
-    #pm transit gets an am name
-    if this_class_dictionary['TripBasedMode']=='transit' and this_time_dictionary['TripBasedTime'] == 'pm':
-         time_class_name_1[0]=this_time_dictionary['TransitTripLetter']
-         trip_time= this_time_dictionary['TransitTripTime']
-    else:
-        time_class_name_1[0]=this_time_dictionary['TripTimeLetter']
-
-   
-    trip_name_1=''.join(time_class_name_1)
-
-    matrix_4k_1 = hdf_file[trip_time][trip_name_1]
-    np_matrix_1 = np.matrix(matrix_4k_1)
-    np_matrix_1 = np_matrix_1.astype(float)
-
-    # Copy truck trip tables with a time of day factor
-    if matrix_name == "lttrk" or matrix_name == "metrk" or matrix_name == "hvtrk":
-       print(matrix_name + str(np_matrix_1.shape))
-       sub_demand_matrix= np_matrix_1[0:zonesDim, 0:zonesDim]
-       #hdf5 matrix is brought into numpy as a matrix, need to put back into emme as an arry
-       np_matrix =  sub_demand_matrix*this_time_dictionary['TimeFactor']
-       demand_matrix = np.squeeze(np.asarray(np_matrix))
-       
     return demand_matrix
+
 
 def load_supplemental_trips(my_project, matrix_name, zonesDim):
     ''' Load externals, special generator, and group quarters trips
@@ -938,7 +921,7 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
     demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
     hdf_file = h5py.File(supplemental_loc + tod + '.h5', "r")
     # Call correct mode name by removing income class value when needed
-    if matrix_name not in ['bike', 'trnst', 'walk']:
+    if matrix_name in ['svtl2', 'h2tl2', 'h3tl2']:
         mode_name = matrix_name[:-1]
     else:
         mode_name = matrix_name

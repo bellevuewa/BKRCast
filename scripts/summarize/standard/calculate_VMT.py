@@ -34,7 +34,7 @@ def main():
     my_project.closeDesktop()
     print(metrics)    
 
-    outputfile = os.path.join(project_folder, report_output_location, outputfilename)
+    outputfile = os.path.join(project_folder, 'outputs/network', outputfilename)
 
     # export to file also calculate daily VMT/VHT/VDT
     with open(outputfile, 'w')  as f:

@@ -50,8 +50,18 @@ from data_wrangling import *
 def accessibility_calcs():
     copy_accessibility_files()
 
+    print('adding military jobs to regular jobs')
+    print('adding JBLM workers to external workers')
+    print('adjusting non-work externals')
+    print('creating ixxi file for Daysim')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
+    if returncode != 0:
+        print('Military Job loading failed')
+        sys.exit(1)
+    print('military jobs loaded')
+
     if run_update_parking:
-        if base_year == scenario_name:
+        if base_year == model_year:
             print("----- This is a base-year analysis. Parking parcels are NOT being updated! Input for 'run_update_parking' is over-ridden. -----")
         else:
             print('Starting to update UrbanSim parcel data with 4k parking data file')
@@ -136,11 +146,6 @@ def build_shadow_only(iter):
 
 @timed
 def run_truck_supplemental(iteration):
-    ### RUN Truck Model ################################################################
-    if run_truck_model:
-        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
-        if returncode != 0:
-            sys.exit(1)
 
     ### RUN Supplemental Trips
     ##########################################################
@@ -153,12 +158,21 @@ def run_truck_supplemental(iteration):
                 sys.exit(1)
 
         #run distribution
-        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribution.py'])
+        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
         if returncode != 0:
             sys.exit(1)
 
-        #copy supplemental output
-        shcopy('outputs/supplemental/supplemental_summary.csv', 'outputs/supplemental_summary_' + str(iteration) + '.csv')
+        returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
+        if returncode != 0:
+            sys.exit(1)
+
+
+    ### RUN Truck Model ################################################################
+    if run_truck_model:
+        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
+        if returncode != 0:
+            sys.exit(1)
+
         
 @timed
 def daysim_assignment(iteration):
@@ -319,20 +333,16 @@ def main():
         exit(-1)
 
 ## SET UP INPUTS ##########################################################
-    if run_copy_input_files:
-        copy_large_inputs()
-    
-    if run_accessibility_calcs:
-        accessibility_calcs()
-
-    if run_accessibility_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
 
     if not os.path.exists('outputs'):
         os.makedirs('outputs')
 
-    if run_copy_seed_supplemental_trips:
-        copy_seed_supplemental_trips()
+    build_output_dirs()
+    if run_copy_input_files:
+        copy_large_inputs()
+    
+    #if run_copy_seed_supplemental_trips:
+    #    copy_seed_supplemental_trips()
 
     if run_copy_daysim_code:
         copy_daysim_code()
@@ -353,6 +363,13 @@ def main():
         time_network = datetime.datetime.now()
         if returncode != 0:
            sys.exit(1)
+
+    if run_accessibility_calcs:
+        accessibility_calcs()
+
+    if run_accessibility_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
+
 
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
@@ -428,9 +445,11 @@ if __name__ == "__main__":
     logger = logcontroller.setup_custom_logger('main_logger')
     logger.info('------------------------NEW RUN STARTING----------------------------------------------')
     start_time = datetime.datetime.now()
+    branch = get_current_branch()
     commit_hash = get_current_commit_hash()
     commit_info = f'BKRCast commit: {commit_hash}'
-    print(commit_info)
+    branch_info = f'BKRCast Branch: {branch}'
+    logger.info(branch_info)
     logger.info(commit_info)
 
     main()

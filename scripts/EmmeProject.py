@@ -128,8 +128,9 @@ class EmmeProject:
         process(transaction_file = linkshape_file,
             revert_on_error = True,
             scenario = self.current_scenario)
-    def change_scenario(self):
-        self.current_scenario = list(self.bank.scenarios())[0]
+
+    def change_scenario(self, scen):
+        self.current_scenario = scen
 
     def delete_matrix(self, matrix):
         NAMESPACE = "inro.emme.data.matrix.delete_matrix"

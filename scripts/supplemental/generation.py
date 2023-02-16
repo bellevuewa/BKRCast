@@ -3,400 +3,563 @@ import numpy as np
 import pandas as pd
 import os,sys
 import h5py
-sys.path.append(os.getcwd())
+import sqlite3
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
-from trucks.truck_configuration import *
+sys.path.append(os.getcwd())
 from emme_configuration import *
-from EmmeProject import *
-from input_configuration import *
+import input_configuration as bkr_config
+import accessibility.accessibility_configuration as access_config
+from data_wrangling import *
 
-# 10/25/2021
-# modified to be compatible with python 3
-
-# Global variable to hold taz id/index; populated in main
-dictZoneLookup = {}
-
-# Initialize working dictionaries
-hhs_by_income = {"inc1" : { "column" : "102", "hhs" : []},
-                 "inc2" : { "column" : "103", "hhs" : []},
-                 "inc3" : { "column" : "104", "hhs" : []},
-                 "inc4" : { "column" : "105", "hhs" : []}}
-
-# Trip purposes for column names
-trip_col = ["hbwpro", "colpro", "hsppro", "hbopro", "schpro", "wkopro", "otopro", "empty1",
-            "hbwatt", "colatt", "hspatt", "hboatt", "schatt", "wkoatt", "otoatt", "empty2",
-            "hw1pro", "hw2pro", "hw3pro", "hw4pro", "hw1att", "hw2att", "hw3att", "hw4att"]
-
-trip_purp_col = {"hbwpro": "hbwatt", "colpro": "colatt", "hsppro": "hspatt",
-                 "hbopro": "hboatt", "schpro": "schatt", "wkopro": "wkoatt",
-                 "otopro": "otoatt", "empty1": "empty2", "hw1pro": "hw1att", 
-                 "hw2pro": "hw2att", "hw3pro": "hw3att", "hw4pro": "hw4att"}
-
-# Order column titles so otopro and wkopro columns are filled with otoatt and wkoatt data
-column_set = ["hbwpro", "colpro", "hsppro", "hbopro",
-                "schpro", "wkoatt", "otoatt", "empty1",
-                "hbwatt", "colatt", "hspatt", "hboatt", 
-                "schatt", "wkoatt", "otoatt", "empty2",
-                "hw1pro", "hw2pro", "hw3pro", "hw4pro", 
-                "hw1att", "hw2att", "hw3att", "hw4att"]
-
-rate_cols = ['hhtype', 'purpose', 'rate']
-pivot_fields = ["purpose", "hhtype"]
-
-pums_list = ['pumshhxc_income-collegestudents.in',
-             'pumshhxc_income-k12students.in',
-             'pumshhxc_income-size-workers.in',
-             'pumshhxc_income-size-workers-vehicles.in']
-
-bal_to_attractions = ["colpro"]
-
-# Input locations
-hh_trip_loc = 'inputs/supplemental/generation/rates/hh_triprates.in'
-nonhh_trip_loc = 'inputs/supplemental/generation/rates/nonhh_triprates.in'
-puma_taz_loc = 'inputs/supplemental/generation/ensembles/puma00.ens'
-taz_data_loc = 'inputs/supplemental/generation/landuse/tazdata.in'
-pums_data_loc = 'inputs/supplemental/generation/pums/' 
-externals_loc = 'inputs/supplemental/generation/externals.csv'
-
-# Number of header lines for input files (keep these standard for all scenarios)
-tazdata_header_len = 5      
-pums_header_len = 6
-
-# Define column values for household and employment data
-hh_cols = [1, 101]    # Begin and end column numbers for all household-related cross classification data in HHEMP
-emp_cols = [109, 125]    # Begin and end columns for all employement-related cross class data in HHEMP
-
-# Trip purpose columns
-purp_cols = [1, 24] # Begin and end column numbers for 12 trip purposes (including productions and attractions)
-
-def json_to_dictionary(dict_name):
-    ''' loads JSON input as dictionary '''
-    input_filename = os.path.join('inputs/supplemental/',dict_name+'.json').replace("\\","/")
-    my_dictionary = json.load(open(input_filename))
-    return(my_dictionary)
-
-def network_importer(EmmeProject):
-    for scenario in list(EmmeProject.bank.scenarios()):
-            EmmeProject.bank.delete_scenario(scenario)
-        #create scenario
-    EmmeProject.bank.create_scenario(1002)
-    EmmeProject.change_scenario()
-        #print key
-    EmmeProject.delete_links()
-    EmmeProject.delete_nodes()
-    EmmeProject.process_modes('inputs/networks/' + mode_file)
-    EmmeProject.process_base_network('inputs/networks/' + truck_base_net_name)
-
-def init_dir(filename):
-    try:
-        os.remove(filename)
-    except OSError:
-        pass
-
-def process_inputs(file_loc, start_row, col_names, clean_column, pivot_fields, reorder):
-    ''' Load Emme-formated input files as cleaned dataframe '''
-    df = pd.read_csv(file_loc, delim_whitespace=True, skiprows=start_row, names=col_names)
-    df[clean_column] = [each.strip(":") for each in df[clean_column]]
-    # Reformat input from 'long' to 'wide' format
-    if pivot_fields:
-        df = df.pivot(pivot_fields[0], pivot_fields[1])
-    # Reorder dataframe rows in numerical order
-    if reorder:
-        df = pd.DataFrame(df, index = [str(i) for i in range(reorder[0], reorder[1] + 1)])
+def balance_trips(df, trip_purposes, balanced_to):
+    """ Balance trips to productions or attractions."""
+    if balanced_to == 'pro':
+        to_balance = 'att'
+        
+    else:
+        to_balance = 'pro'
+        
+    for purposes in trip_purposes:
+        total_to_match = sum(df[purposes+balanced_to])
+        total_to_balance = sum(df[purposes+to_balance])
+        ratio = total_to_match / total_to_balance
+        df[purposes+to_balance] = df[purposes+to_balance] * ratio
+    
     return df
 
-def puma_taz_lookup(puma_taz):
-    ''' Create PUMS-TAZ lookup table '''
+def calc_heavy_truck_restrictions():
+    '''Restrict truck trips by land use type.'''
 
-    # Import TAZ household and employment data
-    rate_cols = ["taz","purpose", "value"]
-    taz_data = process_inputs(taz_data_loc, start_row=tazdata_header_len, col_names=rate_cols, 
-                              clean_column="purpose", pivot_fields=['taz', 'purpose'], 
-                              reorder=False)
-    # Convert column names to string to join with PUMA data
-    taz_data.columns = [str(i) for i in range(101,125)]
+    #  Load land use type from parcels and a lookup for landuse type codes
+    parcels = pd.read_csv(access_config.output_parcels, delim_whitespace=True)
+    df = parcels.merge(pd.read_csv(r'inputs/landuse/lu_type.csv'),left_on='lutype_p',right_on='land_use_type_id')
 
-    return taz_data
+    # The following list of land use types are allowed to be accessed by heavy trucks
+    truck_uses = ['agriculture','forest','industrial','military','mining','warehousing']
 
-def load_pums():
-    ''' Loads demographic PUMS data to dataframe '''
-    pums_df = pd.DataFrame()
-    list = []
-    pums_cols = ['puma', 'hhtype', 'num_hhs']
+    truck_df = df[df['land_use_name'].isin(truck_uses)]
+    truck_df['taz_p'].value_counts().index.values
+    allowed_tazs = truck_df['taz_p'].value_counts().index.values
 
-    for file in pums_list:
-        df = process_inputs(pums_data_loc + file, start_row=pums_header_len, col_names=pums_cols, 
-                            clean_column='hhtype', pivot_fields=False, reorder=False)
-        list.append(df)
-    pums_df = pd.concat(list)
-
-    # Pivot columns and re-order columns (outside of loop)
-    pums_df = pums_df.pivot('puma', 'hhtype')
-    pums_df = pums_df["num_hhs"][[str(i) for i in range(1,100+1)]+[str(i) for i in range(201,456+1)]]
-
-    return pums_df
-
-def calc_hhs(master_taz):
-    ''' Calculates total number of households per PUMA '''
-    for key, value in hhs_by_income.items():
-        value['hhs'] = pd.DataFrame(master_taz[value['column']])
-
-    # Create a new data frame for results
-    results_df = pd.DataFrame()
-
-    for cross_class in [inc_size_workers_dict, inc_k12_dict, inc_college_dict, inc_veh_dict]:
-        for key, value in cross_class.items():
-            result = master_taz[[str(i) for i in range(value['start'], value['end'] + 1)]]
-            value['hhs'] = pd.DataFrame(result).sum(axis=1)
-            taz_hh = pd.DataFrame(hhs_by_income[value['inc']]['hhs'])
-            taz_hh.columns = ["col"]
-            pums_hh = pd.DataFrame(value['hhs'],columns=["col"])
-            share = pd.DataFrame(taz_hh/pums_hh)
-            share.columns = ['col']
-            for id in range(value['start'], value['end']+1):
-                new_col = pd.DataFrame(master_taz[str(id)])
-                new_col.columns = ['col']
-                master_taz[str(id)] = share * new_col
-
-    return master_taz
-
-def add_special_gen(trip_table):
-    ''' Loads additional productions and attraction values for special generator zones. '''
-    # Note: Airport trips are assumed 75% home-based and 25% work-based
-    airport_hb_share = 0.75
-    airport_wb_share = 1 - airport_hb_share
-
-    # Add special generator home-based (spghbo) other and 75% of airport (spgapt) trips
-    # to general home-based attractions (hboatt)
-    
-    for key, value in spg_general.items():
-        trip_table.loc[key]["hboatt"] += value
-
-    # Add 25% of airport trips to work-based attractions
-    trip_table.loc[list(spg_airport.keys())[0]]["hboatt"] += airport_hb_share * list(spg_airport.values())[0]
-    trip_table.loc[list(spg_airport.keys())[0]]["wkoatt"] += airport_wb_share * list(spg_airport.values())[0]
-    #trip_table.loc[spg_airport.keys()[0]]["hboatt"] += airport_hb_share * spg_airport.values()[0]
-    #trip_table.loc[spg_airport.keys()[0]]["wkoatt"] += airport_wb_share * spg_airport.values()[0]
-    
-    # Add (unbalanced) externals
-    externals = pd.DataFrame(pd.read_csv(externals_loc, index_col="taz"))
-    externals.columns = trip_col
-    trip_table = trip_table.append(externals)
-
-    return trip_table
-
-# Balance Trips
-def balance_trips(trip_table, bal_to_attractions, include_ext):
-    print(trip_table.head())
-    for key, value in trip_purp_col.items():
-        
-        print(key)
-
-        # don't balance placeholder columns; avoid divide-by-zero error
-        # hbwpro isn't used
-        if key not in ['hbwpro', 'empty1']:
-
-            # Balance attractions to productions for most trip purposes
-            if key not in bal_to_attractions:
-                prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                print("before, production: " + str(prod) + " and attraction: " + str(att))
-                if include_ext:
-                    ext = trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
-                    #dictZoneLookup
-                else:
-                    ext = 0
-                bal_factor = (prod - ext)/(att - ext)
-
-
-                trip_table[value].loc[1:HIGH_TAZ] *= bal_factor
-
-                print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
-                print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
-                print("external attr: " + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-                print("external prod:" + str(trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-
-                print("key " + key + ", " + value + ' ' + str(bal_factor))
-
-            # Balance productions to attractions for college trips
-            else:
-                prod = trip_table[key].sum() ; att = trip_table[value].sum()
-                print("before, production: " + str(prod) + " and attraction: " + str(att))
-                if include_ext:
-                    ext = trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()
-                else:
-                    ext = 0
-                bal_factor = (att - ext)/(prod - ext)
-
-                trip_table[key].loc[1:HIGH_TAZ] *= bal_factor
-
-                print("internal attr: " + str(trip_table[key].loc[1:HIGH_TAZ].sum()))
-                print("internal prod: " + str(trip_table[value].loc[1:HIGH_TAZ].sum()))
-                print("external attr: " + str(trip_table[key].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-                print("external prod: " + str(trip_table[value].loc[MIN_EXTERNAL:MAX_EXTERNAL].sum()))
-                print("value " + value + ", " +key + ' ' + str(bal_factor))
-
-
-# Load household PUMS data
-inc_size_workers_dict = json_to_dictionary('inc_size_workers_dict')
-inc_k12_dict = json_to_dictionary('inc_k12_dict')
-inc_college_dict = json_to_dictionary('inc_college_dict')
-inc_veh_dict = json_to_dictionary('inc_veh_dict')
-
-my_project = EmmeProject(supplemental_project)   
-
+    return allowed_tazs
 
 def main():
-    print('Calculating supplemental trips generated by exterals, special generators, and group quarters.')
-    global dictZoneLookup
-     
-    network_importer(my_project)
+    print("Calculating supplemental trips generated by exterals, special generators, and group quarters.")
 
+    # Store these in a config:
+    trip_productions = ['hbw1pro','hbw2pro','hbw3pro','hbw4pro','colpro','hsppro','hbopro','schpro','otopro','wtopro']
+    trip_attractions = ['hbw1att','hbw2att','hbw3att','hbw4att','colatt','hspatt','hboatt','schatt','otoatt','wtoatt']
 
-    #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
-    dictZoneLookup = dict((value,index) for index,value in enumerate(my_project.current_scenario.zone_numbers))
-    # Initialize directory
-    for file in [trip_table_loc, gq_trips_loc]:
-        init_dir(file)
+    # List of columns that should be balanced to productions or attractions
+    balance_to_productions = ['hbw1','hbw2','hbw3','hbw4','hsp','hbo','oto','wto','mtk','htk','cvh','dtk']
+    balance_to_attractions = ['col','sch']
 
-    # Load household and attractors trip rates
-    hh_trip = process_inputs(hh_trip_loc, start_row=7, col_names=rate_cols, 
-                             clean_column="purpose", pivot_fields=pivot_fields, reorder = [1,24])
-    nonhh_trip = process_inputs(nonhh_trip_loc, start_row=7, col_names=rate_cols, 
-                                clean_column="purpose", pivot_fields=pivot_fields, reorder = [1,24])
-    puma_taz = process_inputs(puma_taz_loc, start_row=0, col_names=['scrap', 'puma', 'taz'],
-                              clean_column="puma", pivot_fields=False, reorder=False)
-    puma_taz = pd.DataFrame(puma_taz[["puma", "taz"]])
+    # Growth Rates to use for adjsuting input files for specific forecast years
+    # Some of these should be calculated and logged in the model directly
+    special_generator_rate = 0.0135
+    group_quarters_rate = 0.0034
+    enlisted_personnel_rate = 0.0000
+    jblm_rate = 0.0000
+    external_rate = 0.0096
+    truck_rate = 0.0135
 
-    puma_taz=puma_taz.dropna()
+    # Zone system Inputs
+    hightaz = 1360 # 
+    lowstation = 1511
+    highstation = 1528
+    lowpnr = 1361
+    highpnr = 1494
 
-    # Correct PUMS formatting to match cross-class data (add extra '0' in field name) - hard coded
-    #for x in range(1,len(puma_taz)):
-    #    puma_taz["puma"].loc[x] = puma_taz["puma"].loc[x].replace('gp', 'gp0')
-    puma_taz['puma'] = puma_taz['puma'].replace('gp', 'gp0', regex = True)
+    i5_station = 1511
 
-    # Join PUMA data to TAZ data
-    taz_data = puma_taz_lookup(puma_taz)
+    # Break points for classifications
+    # Income in 2014 $'s
+    low_income = 37000
+    medium_income = 74000
+    high_income = 111000
+
+    # Aiport Trip Rates
+    air_people = 0.02112
+    air_jobs = 0.01486
     
-    #set taz as index - nagendra.dhakar@rsginc.com
-    puma_taz = puma_taz.set_index("taz")
-    master_taz = taz_data.join(puma_taz)
 
-    pums_df = load_pums()
-    master_taz = master_taz.join(pums_df,"puma")
+    # Lists for HH and Person Files
+    hh_variables=['hhno','hhsize','hhparcel','hhincome']
+    person_variables=['pno','hhno','pptyp']
+
+    employment_categories = ['retail','food-services','government','office','services','industrial','education','medical','other','university','total-hh','total-jobs','total-people']
+
+    parcel_file = os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name)
+
+    ###########################################################
+    # PSRC Zone System for TAZ joining
+    ###########################################################
+    df_psrc = pd.read_csv('inputs/supplemental/BKR_zones.csv')
+    df_psrc['BKRCastTAZ'] = df_psrc['BKRCastTAZ'].astype(int)
+    df_psrc = df_psrc.loc[:,['BKRCastTAZ','county','jblm','external']]
+
+    ###########################################################
+    # Auto External Stations
+    ###########################################################
+    df_external = pd.read_csv('inputs/supplemental/auto_externals_bkr.csv')
+    df_external['BKRCastTAZ'] = df_external['BKRCastTAZ'].astype(int)
+    df_external = df_external.loc[:,['BKRCastTAZ','year'] + trip_productions + trip_attractions]
+    data_year = int(df_external['year'][0])
+
+    # NOTE: need to scale these measures from a base year
+
+    # Join to full TAZ file to ensure final merging works
+    df_external = pd.merge(df_psrc, df_external, on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    df_external.fillna(0,inplace=True)
+    df_external.set_index('BKRCastTAZ', inplace=True)
+    df_external = df_external.loc[:,['year'] + trip_productions + trip_attractions]
+    df_external = df_external.astype(float)
+
+    # Calculate the Inputs for the Year of the model      
+    if int(bkr_config.model_year) > data_year:   
+        growth_rate = (1+(external_rate*(int(bkr_config.model_year)-data_year)))
+        df_external = df_external * growth_rate
+
+    external_taz = df_external.loc[:,trip_productions + trip_attractions]
+
+    ###########################################################
+    # Enlisted Personnel
+    ###########################################################
+    df_enlisted = pd.read_csv('inputs/supplemental/enlisted_personnel_bkr.csv')
+
+
+    # Select data for model year only
+    df_enlisted = df_enlisted[df_enlisted['year'] == int(bkr_config.model_year)][['BKRCastTAZ','military_jobs']]
+
+    # Aggregate enlisted personnel by TAZ
+    enlisted_taz = df_enlisted.groupby('BKRCastTAZ').sum().reset_index()
+    enlisted_taz['BKRCastTAZ'] = enlisted_taz['BKRCastTAZ'].astype('int')
+
+    # Read in rates and calculate Enlisted Personnel related trips by Purpose
+    df_rates = pd.read_csv('inputs/supplemental/trip_rates.csv')
+
+    df_enlisted_rates = df_rates[df_rates['group'] == 'enlisted']
+  
+    for purpose in trip_attractions:
+        enlisted_taz[purpose] = enlisted_taz['military_jobs'] * df_enlisted_rates[purpose].values[0]
+
+
+    # Join to full TAZ file to ensure final merging works
+    enlisted_taz = pd.merge(df_psrc, enlisted_taz, on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    enlisted_taz.fillna(0,inplace=True)
+    enlisted_taz.set_index('BKRCastTAZ', inplace=True)
+    enlisted_taz = enlisted_taz.loc[:,trip_attractions]
+
+    ###########################################################
+    # Group Quarters
+    ###########################################################
+    total_gq_df = pd.read_csv('inputs/supplemental/group_quarters_bkr.csv')
+    total_gq_df[['dorm_share','military_share','other_share']] = total_gq_df[['dorm_share','military_share','other_share']].astype('float')
+
+    # Calculate the Inputs for the Year of the model
+    max_input_year = total_gq_df['year'].max()
+
+    if int(bkr_config.model_year) <= max_input_year:
+        total_gq_df = total_gq_df[total_gq_df['year'] == int(bkr_config.model_year)]
+        
+    else:
+        # Factor group quarters at an annual rate
+        total_gq_df = total_gq_df[total_gq_df['year'] == int(max_input_year)]
+        total_gq_df['group_quarters'] = total_gq_df['group_quarters'] * (1+(group_quarters_rate*(int(bkr_config.model_year)-max_input_year)))
+
+    total_gq_df = total_gq_df[['BKRCastTAZ', 'dorm_share', 'military_share', 'other_share', 'group_quarters']]
+
+    total_gq_df['dorms'] = total_gq_df['group_quarters'] * total_gq_df['dorm_share']
+    total_gq_df['military'] = total_gq_df['group_quarters'] * total_gq_df['military_share']
+    total_gq_df['other'] = total_gq_df['group_quarters'] * total_gq_df['other_share']
+   
+    # Merge with the Block/Taz dataframe and trim down the columns
+    total_gq_df = total_gq_df[['BKRCastTAZ','dorms','military','other']]
+
+    # Read in rates and calculate total Group Quarters related trips
+    df_gq_rates = df_rates[df_rates['group'] == 'group_quarters']
+
+    for purpose in trip_productions:
+        for gq_type in ['dorms','military','other']:
+            total_gq_df[purpose] = total_gq_df[gq_type] * df_gq_rates[df_gq_rates['segmentation'] == gq_type][purpose].values[0]
+
+    # Consolidate Group Quarters data to TAZ for output to travel model
+    group_quarters_taz = total_gq_df.groupby('BKRCastTAZ').sum()
+    group_quarters_taz = group_quarters_taz.reset_index()
+    group_quarters_taz['BKRCastTAZ'] = group_quarters_taz['BKRCastTAZ'].apply(int)
+
+    # Join to full TAZ file to ensure final merging works
+    group_quarters_taz = pd.merge(df_psrc, group_quarters_taz, on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    group_quarters_taz.fillna(0,inplace=True)
+    group_quarters_taz.set_index('BKRCastTAZ', inplace=True)
+    group_quarters_taz = group_quarters_taz[trip_productions]
+
+    ###########################################################
+    ### Joint Base Lewis McChord
+    ###########################################################
+    jblm_df = pd.read_csv('inputs/supplemental/jblm_trips_bkr.csv')
+    jblm_matrix = int(jblm_df['matrix_id'][0])
+    data_year = int(jblm_df['year'][0])
+
+    keep_columns = ['origin_zone','destination_zone','trips']
+    jblm_df = jblm_df.loc[:,keep_columns]
+    jblm_df['trips'] = jblm_df['trips'].apply(float)
+       
+    if int(bkr_config.model_year) > data_year:   
+        growth_rate = (1+(jblm_rate*(int(bkr_config.model_year)-data_year)))
+        jblm_df['trips'] = jblm_df['trips'] * growth_rate
     
-    # Calculate households by taz
-    master_taz = calc_hhs(master_taz)
-
-    # Compute household trip rates by TAZ and by purpose
-
-    # Create a dataframe that includes only the household cross-classes
-    hhs = master_taz[[str(i) for i in range(hh_cols[0], hh_cols[1])]]
-    # Create a dataframe that includes only the employment cross-classes
-    nonhhs = taz_data[[str(i) for i in range(emp_cols[0], emp_cols[1])]]
-    # Create dataframe for only group quarter zones (columns 122 - 124, for dorm, military an other quarters)
-    gq = nonhhs[['122','123','124']]
-
-    # Create empty data frames to hold results
-    trips_by_purpose = pd.DataFrame(np.zeros([HIGH_TAZ, 24]), 
-                                    columns = [str(i) for i in range(1, 24 + 1)],
-                                    index = taz_data.index)
-    nonhh_trips_by_purp = pd.DataFrame(np.zeros([HIGH_TAZ,24]), 
-                                    columns = [str(i) for i in range(1, 24 + 1)],
-                                    index = taz_data.index)
-    gq_trips = pd.DataFrame(np.zeros([HIGH_TAZ,24]), 
-                                    columns = [str(i) for i in range(1, 24 + 1)],
-                                    index = taz_data.index)
-
-    # Compute household trip rates by TAZ and by purpose
-    for purpose in range(purp_cols[0], purp_cols[1] + 1):
-        print('Computing trip rates by purpose (of 24): ' + str(purpose))
-        trip_rate = pd.DataFrame(hh_trip['rate'].loc[str(purpose)])
-        trip_rate.index = [str(i) for i in range(hh_cols[0], hh_cols[1])]
-        trip_rate.columns = ['col']
-        nh_trip_rate = pd.DataFrame(nonhh_trip.loc[str(purpose)])
-        nh_trip_rate.index = [str(i) for i in range(emp_cols[0], emp_cols[1])]
-        nh_trip_rate.columns = ['col']
-        gq_trip_rate = pd.DataFrame(nh_trip_rate.loc[['122','123','124']])
-        gq_trip_rate.index = [str(i) for i in range(122, 124 + 1)]
-        gq_trip_rate.columns = ['col']
-        for zone in range(1,HIGH_TAZ + 1):
-
-            hhs1 = pd.DataFrame(hhs.loc[zone])
+    # Create JBLM Input File for use in Emme, but the exported file jblm.in is not used. there is no need to export. 
+    working_file = open(supplemental_loc+'/jblm.in', "w")
+    working_file.write('c ' + str(bkr_config.model_year) + ' Trip Generation' + '\n')
+    working_file.write('c JBLM trips are based on gate counts, blue tooth and zipcode survey data' + '\n')
+    working_file.write('t matrices' + '\n')
+    working_file.write('a matrix=mf' + str(jblm_matrix) + ' jblm ' + '0 JBLM Trips' + '\n')
+        
+    for rows in range(0, (len(jblm_df))):
             
-            nonhhs1 = pd.DataFrame(nonhhs.loc[zone])
-            gq1 = pd.DataFrame(gq.loc[zone])
-                
-            hhs1.index = [str(i) for i in range(hh_cols[0], hh_cols[1])]
-            nonhhs1.index = [str(i) for i in range(emp_cols[0], emp_cols[1])]
-            gq1.index = [str(i) for i in range(122, 124 + 1)]
-            hhs1.columns = ['col']
-            nonhhs1.columns = ['col']
-            gq1.columns = ['col']
-            # make sure to select only a single column, can't have more than one array selected per frame
-            dot1 = trip_rate['col'].dot(hhs1['col'])
-            dot2 = nh_trip_rate['col'].dot(nonhhs1['col'])
-            dot3 = gq_trip_rate['col'].dot(gq1['col'])
-            
-            trips_by_purpose[str(purpose)].loc[zone] = dot1
-            nonhh_trips_by_purp[str(purpose)].loc[zone] = dot2
-            gq_trips[str(purpose)].loc[zone] = dot3
-            
-            trip_table = trips_by_purpose + nonhh_trips_by_purp
+        origin_zone = jblm_df['origin_zone'][rows]
+        destination_zone = jblm_df['destination_zone'][rows]
+        working_file.write(' '+str(origin_zone) + ' ' + str(destination_zone) + ' : ' + str(jblm_df['trips'][rows]) + '\n')
 
+    working_file.close()
+
+    ###########################################################
+    # Remove JBLM Externals from the Externals dataframe 
+    ###########################################################
+
+    # Calculate amount of JBLM traffic that is from/to an external and remove it from the External Station df
+    jblm_df['origin_zone'] = jblm_df['origin_zone'].apply(int)
+    jblm_df['destination_zone'] = jblm_df['destination_zone'].apply(int)
+
+    jblm_external = jblm_df[(jblm_df['origin_zone'] >=lowstation)]
+    jblm_ext_productions = sum(jblm_external['trips'])
+
+    jblm_external = jblm_df[(jblm_df['destination_zone'] >=lowstation)]
+    jblm_ext_attractions = sum(jblm_external['trips'])
+
+    # Calculate the total trip productions and attractions for the I-5 Zone
+    i5_ext_productions = 0
+    for purposes in trip_productions:
+        i5_ext_productions = i5_ext_productions + external_taz[purposes][i5_station]
+
+    i5_ext_attractions = 0
+    for purposes in trip_attractions:
+        i5_ext_attractions = i5_ext_attractions + external_taz[purposes][i5_station]
+
+    # Scale the I-5 station volumes by purpose
+    i5_revised_productions = i5_ext_productions - jblm_ext_productions
+    i5_revised_attractions = i5_ext_attractions - jblm_ext_attractions
+
+    revised_external_taz = external_taz
+    for purposes in trip_productions:
     
-    # Rename columns
-    trip_table.columns = trip_col
-    gq_trips.columns = trip_col
-    gq_trips.index = trip_table.index
+        ratio = revised_external_taz[purposes][i5_station] / i5_ext_productions
+        revised_external_taz[purposes][i5_station] = i5_revised_productions * ratio
 
-    # Add attractions into group quarters trip table to balance trips
-    gq_prod = pd.DataFrame(gq_trips[['hbwpro','colpro','hsppro','hbopro','schpro','wkopro',
-                                            'otopro','empty1','hw1pro','hw2pro','hw3pro','hw4pro']])
-    all_trips_att = pd.DataFrame(trip_table[['hbwatt','colatt','hspatt','hboatt','schatt',
-                                                                'wkoatt','otoatt','empty2','hw1att','hw2att',
-                                                                'hw3att','hw4att']])
-    gq_append = pd.DataFrame(gq_prod.join(all_trips_att))
-
-    trip_table = add_special_gen(trip_table)
+    for purposes in trip_attractions:
     
-    print("balance trips - excluding colpro")
-    balance_trips(trip_table, bal_to_attractions = ['colpro'], include_ext=True)
-    print("balance group quarter trips - all")
-    balance_trips(gq_append, bal_to_attractions = [], include_ext=False)
+        ratio = revised_external_taz[purposes][i5_station] / i5_ext_attractions
+        revised_external_taz[purposes][i5_station] = i5_revised_attractions * ratio
 
-    # set zonal nhb work-other productions equal to zonal nhb work-other attractions
-    # set zonal nhb other-other productions equal to zonal nhb other-other attractions
+    ###########################################################
+    # Heavy Truck Productions, grown from ATRI data
+    ###########################################################
+    heavy_trucks = pd.read_csv('inputs/supplemental/heavy_trucks_bkr.csv')
+    heavy_trucks = heavy_trucks[['BKRCastTAZ','year','htkpro','htkatt']]
 
-    trip_table = pd.DataFrame(trip_table,columns=column_set)
-    trip_table.columns = trip_col
+    # Calculate the Inputs for the Year of the model
+    data_year = int(heavy_trucks['year'][0])
+    heavy_trucks = heavy_trucks.drop('year',axis=1)
+    heavy_trucks['htkpro'] = heavy_trucks['htkpro'].apply(float)
+    heavy_trucks['htkatt'] = heavy_trucks['htkatt'].apply(float)
+       
+    if int(bkr_config.model_year) > data_year:   
+        growth_rate = (1+(truck_rate*(int(bkr_config.model_year)-data_year)))
+        heavy_trucks['htkpro'] = heavy_trucks['htkpro'] * growth_rate
+        heavy_trucks['htkatt'] = heavy_trucks['htkatt'] * growth_rate
 
-    # Fill empty rows with placeholder zeros
-    externals = trip_table.loc[MIN_EXTERNAL:MAX_EXTERNAL] #slicing the trip table for external zones only
+    # Make the TAZ field the index
+    heavy_trucks_taz = heavy_trucks.groupby('BKRCastTAZ').sum()
+    heavy_trucks_taz = heavy_trucks_taz.reset_index()
+    heavy_trucks_taz['BKRCastTAZ'] = heavy_trucks_taz['BKRCastTAZ'].apply(int)
 
-    #assemble a trip table for all BKR zones - start with internal and special generator zones
-    base = trip_table.loc[:HIGH_TAZ] #slicing the trip table to internal zones only (including special generators)
+    # Apply land-use restrictions for productions/attraction in TAZs without appropriate industrial uses
+    allowed_tazs = calc_heavy_truck_restrictions()
+    external_taz_list = list(range(MIN_EXTERNAL, MAX_EXTERNAL + 1))
+    allowed_tazs = allowed_tazs.tolist() + external_taz_list
 
-    #add placeholders - PNR
-    placeholder_index = [str(i) for i in range(LOW_PNR,HIGH_PNR+1)]
-    placeholder_rows = pd.DataFrame(index=placeholder_index,columns=trip_col)
-    trip_table = base.append(placeholder_rows)
+    heavy_trucks_taz = heavy_trucks_taz[heavy_trucks_taz['BKRCastTAZ'].isin(allowed_tazs)]
 
-    #add externals
-    trip_table = trip_table.append(externals)
+    # Join to full TAZ file to ensure final merging works
+    heavy_trucks_taz = pd.merge(df_psrc, heavy_trucks_taz, on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    heavy_trucks_taz.fillna(0,inplace=True)
+    heavy_trucks_taz = heavy_trucks_taz.loc[:,['BKRCastTAZ','htkpro','htkatt']]
 
-    #add two dummy external stations
-    dummystations_index = [str(i) for i in range(MAX_EXTERNAL+1,1530+1)] #added for last two dummy stations
-    dummystations_rows = pd.DataFrame(index=dummystations_index,columns=trip_col)
-    trip_table = trip_table.append(dummystations_rows)
+    ###########################################################
+    # SeaTac Airport enplanment value up to year of 2050
+    ############################################################
+    df_seatac = pd.read_csv('inputs/supplemental/seatac_bkr.csv')
+    seatac_enplanements = df_seatac[df_seatac['year'] == int(bkr_config.model_year)]['enplanements'].values[0]
 
-    # Replace "NaN" values with zeros
-    gq_append = gq_append.fillna(0)
-    trip_table = trip_table.fillna(0)
+    ###########################################################
+    ## Special Generators  , up to year of 2010
+    ###########################################################
 
-    # Write results to CSV
-    trip_table.to_csv(trip_table_loc, index_label="taz")
-    gq_append.to_csv(gq_trips_loc, index_label="taz")
+    # Special generator trips are assumed of type HBO
+    df_special = pd.read_csv('inputs/supplemental/special_generators_bkr.csv')
+
+    # Calculate the Inputs for the Year of the model
+    max_input_year = df_special['year'].max()
+
+    if int(bkr_config.model_year) <= max_input_year:
+        df_special = df_special[df_special['year'] == bkr_config.model_year]
+        df_special['hboatt'] = df_special['trips'].astype('float')
+        
+    else:
+        df_special = df_special[df_special['year'] == max_input_year]
+        df_special['hboatt'] = df_special[df_special['year'] == max_input_year]['trips'].astype('float')
+        df_special['hboatt'] = df_special['hboatt'] * (1+(special_generator_rate*(int(bkr_config.model_year)-max_input_year)))
+
+    df_special = df_special[['BKRCastTAZ','hboatt']]
+                            
+    # Consolidate Special Generator data to TAZ
+    special_generators_taz = df_special.groupby('BKRCastTAZ').sum()
+    special_generators_taz = special_generators_taz.reset_index()
+    special_generators_taz['BKRCastTAZ'] = special_generators_taz['BKRCastTAZ'].apply(int)
+
+    # Join to full TAZ file to ensure final merging works
+    special_generators_taz = pd.merge(df_psrc, special_generators_taz, on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    special_generators_taz.fillna(0,inplace=True)
+    special_generators_taz.set_index('BKRCastTAZ', inplace=True)
+    special_generators_taz = special_generators_taz.loc[:,['hboatt']]
+
+    ###########################################################
+    # Load Household, Person and Parcel files 
+    ###########################################################
+
+    #### FIXME, fix this
+    # Parcel Columns to use and what to rename them
+    original_parcel_columns =  ['parcelid','xcoord_p','ycoord_p','taz_p','empedu_p','empfoo_p','empgov_p','empind_p','empmed_p','empofc_p','empret_p','emprsc_p','empsvc_p','empoth_p','emptot_p','stugrd_p','stuhgh_p','stuuni_p']
+    updated_parcel_columns = ['parcel-id','xcoord','ycoord','taz','education','food-services','government','industrial','medical','office','retail','resources','services','other','total-jobs','k-8','high-school','university']
+
+    hh_person = bkr_config.households_persons_file
+    hh_people = h5py.File(hh_person,'r') 
+    hh_df = h5_to_df(hh_people, 'Household')
+    hh_df = hh_df[hh_variables]
+    person_df = h5_to_df(hh_people, 'Person')
+    person_df = person_df[person_variables]
+
+    parcels = pd.read_csv(parcel_file, sep = ' ')
+    parcels.columns = parcels.columns.str.lower()
+    parcels = parcels.loc[:,original_parcel_columns]
+    parcels.columns = updated_parcel_columns
+
+    ###########################################################
+    # Create a Household file with cross classifications
+    # using the person and household file
+    ###########################################################
+
+    person_df['people'] = 1
+
+    # Flag if the person has a full or part-time job
+    person_df['workers'] = 0
+    person_df.loc[person_df['pptyp'] == 1, 'workers'] = 1
+    person_df.loc[person_df['pptyp'] == 2, 'workers'] = 1 
+
+    # Flag if the person is a school age kid
+    person_df['school-age'] = 0
+    person_df.loc[person_df['pptyp'] == 6, 'school-age'] = 1
+    person_df.loc[person_df['pptyp'] == 7, 'school-age'] = 1   
+
+    # Flag if the person is a college student
+    person_df['college-student'] = 0
+    person_df.loc[person_df['pptyp'] == 5, 'college-student'] = 1
+             
+    # Remove a couple columns
+    fields_to_remove=['pno','pptyp']
+    person_df = person_df.drop(fields_to_remove,axis=1)
+             
+    # Create a HH file by grouping the person file by household number 
+    df_hh = person_df.groupby('hhno').sum()
+    df_hh = df_hh.reset_index()
+
+    # Merge the HH File created from the persons with the original HH file from H5
+    df_hh = pd.merge(df_hh,hh_df,on='hhno',suffixes=('_x','_y'),how='left')
+
+    # Create a Column for Household sizes 1, 2, 3 or 4+
+    df_hh['household-class'] = df_hh['hhsize']
+    df_hh.loc[df_hh['household-class'] > 4, 'household-class'] = 4
+         
+    # Create a Column for workers 0, 1, 2 or 3+
+    df_hh['worker-class'] = df_hh['workers']
+    df_hh.loc[df_hh['worker-class'] > 3, 'worker-class'] = 3       
+
+    # Create a Column for Income 1, 2 ,3 or 4
+    df_hh['income-class'] = 0
+    df_hh.loc[df_hh['hhincome'] <= low_income, 'income-class'] = 1 
+    df_hh.loc[(df_hh['hhincome'] > low_income) & (df_hh['hhincome'] <= medium_income), 'income-class'] = 2 
+    df_hh.loc[(df_hh['hhincome'] > medium_income) & (df_hh['hhincome'] <= high_income), 'income-class'] = 3         
+    df_hh.loc[df_hh['hhincome'] > high_income, 'income-class'] = 4
+         
+    # Create a Column for school age children 0, 1, 2 or 3+
+    df_hh['school-class'] = df_hh['school-age']
+    df_hh.loc[df_hh['school-class'] > 3, 'school-class'] = 3          
+
+    # Create a Column for college age persons 0, 1, 2+ 
+    df_hh['college-class'] = df_hh['college-student']
+    df_hh.loc[df_hh['college-class'] > 2, 'college-class'] = 2          
+         
+    # Create a Columns for Household - Work - Income Cross-Classification, Income & School and Income and College
+    df_hh['hwi'] = 'h'+ df_hh['household-class'].apply(str) + 'w' + df_hh['worker-class'].apply(str) + 'i' + df_hh['income-class'].apply(str)
+    df_hh['si'] = 's'+ df_hh['school-class'].apply(str) + 'i' + df_hh['income-class'].apply(str)
+    df_hh['ci'] = 'c'+ df_hh['college-class'].apply(str) + 'i' + df_hh['income-class'].apply(str)
+
+    ###########################################################
+    # Household trip production
+    ###########################################################
+    df_hh_rates = df_rates[df_rates['group'] == 'household'].drop(['schpro','schatt','colpro','colatt'], axis=1)
+    df_sch_rates = df_rates[df_rates['group'] == 'school'][['segmentation','schpro','schatt']]
+    df_coll_rates = df_rates[df_rates['group'] == 'college'][['segmentation','colpro','colatt']]
+
+
+    # Merge Rates with Households by Cross-Classification so we end up with total household productions
+    df_hh = pd.merge(df_hh,df_hh_rates,left_on='hwi',right_on='segmentation',suffixes=('_x','_y'),how='left')
+    df_hh = pd.merge(df_hh,df_sch_rates,left_on='si',right_on='segmentation',suffixes=('_x','_y'),how='left')
+    df_hh = pd.merge(df_hh,df_coll_rates,left_on='si',right_on='segmentation',suffixes=('_x','_y'),how='left')
+    df_hh = df_hh.loc[:,trip_productions + trip_attractions + ['hhparcel','people']]
+    df_hh['total-hh'] = 1
+
+    ###########################################################
+    # Combine HH Trip Generation with Parcels
+    ###########################################################
+    df_parcel_hh_pa = df_hh.groupby('hhparcel').sum()
+    df_parcel_hh_pa = df_parcel_hh_pa.reset_index()
+    df_parcel_hh_pa.rename(columns={'hhparcel': 'parcel-id','people': 'total-people'}, inplace=True)
+
+    ###########################################################
+    # Parcel trip attractions
+    ###########################################################
+    df_parcels = pd.merge(parcels, df_parcel_hh_pa, on='parcel-id', suffixes=('_x','_y'), how='left')
+    df_parcels.fillna(0,inplace=True)
+
+    # Create a couple columns for trip attractions for parcels
+    df_parcels['education'] = df_parcels['k-8'] + df_parcels['high-school']
+    df_parcels['mtkpro'] = 0
+    df_parcels['mtkatt'] = 0
+    df_parcels['cvhpro'] = 0
+    df_parcels['cvhatt'] = 0
+    df_parcels['dtkatt'] = 0
+    df_parcels['dtkpro'] = 0
+
+    # Trip Attractions based on employment categories
+    df_job_attraction_rates = pd.read_csv('inputs/supplemental/job_attractions.csv')
+    df_job_attraction_rates.set_index('employment-type', inplace=True)
+    attraction_purposes = trip_attractions + ['cvhatt','mtkatt','dtkatt']
+
+    for purpose in attraction_purposes:
+    
+        for jobs in employment_categories:
+            df_parcels[purpose] = df_parcels[purpose] + (df_parcels[jobs] * df_job_attraction_rates.loc[jobs,purpose])
+
+    # Trip Productions based on employment categories
+    df_job_production_rates = pd.read_csv('inputs/supplemental/job_productions.csv')
+    df_job_production_rates.set_index('employment-type', inplace=True)
+    productions_purposes = trip_productions + ['cvhpro','mtkpro','dtkpro']
+
+    for purpose in productions_purposes:
+    
+        for jobs in employment_categories:
+            df_parcels[purpose] = df_parcels[purpose] + (df_parcels[jobs] * df_job_production_rates.loc[jobs,purpose])
+
+    # Scale delivery productions based on a target number of delivery trips
+    df_parcels['dtkpro'] = total_delivery_trips*(df_parcels['dtkpro']/df_parcels['dtkpro'].sum())
+
+    ###########################################################
+    # SeaTac Airport trip generation
+    ###########################################################
+    df_parcels['airport'] = (df_parcels['total-jobs']*air_jobs) + (df_parcels['total-people']*air_people)
+    aiport_balancing = seatac_enplanements / sum(df_parcels['airport'])
+    df_parcels['airport'] = df_parcels['airport']*aiport_balancing
+
+    ###########################################################
+    # Create TAZ Input files
+    ###########################################################
+    df_taz = df_parcels.groupby('taz').sum()
+    df_taz = df_taz.reset_index()
+    df_taz.fillna(0,inplace=True)
+    df_taz['taz'] = df_taz['taz'].apply(int)
+
+    # Join to full TAZ file to ensure final merging works
+    df_taz = pd.merge(df_psrc, df_taz, left_on = 'BKRCastTAZ', right_on='taz', suffixes=('_x','_y'), how='left')
+    df_taz.fillna(0,inplace=True)
+
+    # Create a Kitsap County flag for use in Kitsap Adjustments
+    df_taz['kitsap']=0
+    df_taz.loc[df_taz['county'] == 'Kitsap', 'kitsap'] = 1
+
+    # Add in Heavy Truck Productions and Attractions
+    df_taz = pd.merge(df_taz, heavy_trucks_taz, left_on = 'BKRCastTAZ', right_on='BKRCastTAZ', suffixes=('_x','_y'), how='left')
+    df_taz.fillna(0,inplace=True)
+
+    # Clean up dataframe for further calculations as well as output
+    df_taz.set_index('BKRCastTAZ', inplace=True)
+    df_taz = df_taz.loc[:,trip_productions + ['cvhpro','mtkpro','htkpro','dtkpro'] + trip_attractions + ['cvhatt','mtkatt','htkatt','dtkatt','airport','kitsap','jblm']]
+    df_taz.to_csv(supplemental_loc+'/1_unadjusted_unbalanced.csv',index=True)
+
+    # Add in the Group Quarters to Trip Productions   
+    for purpose in trip_productions:
+        df_taz[purpose] = df_taz[purpose] + group_quarters_taz[purpose]
+    df_taz.to_csv(supplemental_loc+'/2_add_group_quarters.csv',index=True)
+
+    # Add in the Enlisted Personnel to Trip Attractions
+    for purpose in trip_attractions:
+        df_taz[purpose] = df_taz[purpose] + enlisted_taz[purpose]
+    df_taz.to_csv(supplemental_loc+'/3_add_enlisted_personnel.csv',index=True)
+
+    # Add in the Special Generators to Trip Attractions
+    df_taz['hboatt'] = df_taz['hboatt'] + special_generators_taz['hboatt']
+    df_taz.to_csv(supplemental_loc+'/4_add_special_generators.csv',index=True)
+
+    # Add in the External Trips
+    all_purposes = trip_productions + trip_attractions
+    for purpose in all_purposes:
+        df_taz[purpose] = df_taz[purpose] + revised_external_taz[purpose]
+    df_taz.to_csv(supplemental_loc+'/5_add_externals.csv',index=True)
+
+    #Soundcast uses pre-determined HSP trips to meet external counts. Need to adjust these here for non-work-ixxi:
+    external_trip_table =  pd.read_csv('inputs/supplemental/externals_unadjusted_bkr.csv') 
+    external_trip_table.set_index('BKRCastTAZ', inplace = True)
+    external_trip_table = external_trip_table[['hsppro', 'hspatt']]
+    df_taz.update(external_trip_table)
+
+
+    # Zero out JBLM trips that were generated above (so only inlcude Shopping, HBO, OtO and WtO)
+    df_taz['jblm'] = df_taz['jblm'].apply(int)
+    jblm_purposes = ['hbw1pro','hbw2pro','hbw3pro','hbw4pro','colpro','schpro','cvhpro','mtkpro','htkpro',
+                     'hbw1att','hbw2att','hbw3att','hbw4att','colatt','schatt','cvhatt','mtkatt','htkatt']
+
+    for purposes in jblm_purposes:
+        df_taz.loc[df_taz['jblm'] == 1, purposes] = 0
+
+    # Adjust the taz level data based on trip rate adjustments
+    df_rate_adjustments = pd.read_csv('inputs/supplemental/rate_adjustments.csv')
+    df_rate_adjustments.set_index('trip-purpose', inplace=True)
+    all_purposes = trip_productions + ['cvhpro','mtkpro','htkpro'] + trip_attractions + ['cvhatt','mtkatt','htkatt']
+
+    # Adjust Productions and Attractions by Adjustment Factors
+    for purpose in all_purposes:
+        df_taz[purpose] = df_taz[purpose] * [df_rate_adjustments.loc[purpose,'regional']]
+        df_taz[purpose] = df_taz[purpose] + (df_taz[purpose] * [df_rate_adjustments.loc[purpose,'kitsap']]*df_taz['kitsap'])
+
+    df_taz.to_csv(supplemental_loc+'/6_adjust_trip_ends.csv',index=True)
+
+    # Balance the taz dataframe
+    balanced_df = balance_trips(df_taz, balance_to_productions, 'pro')
+    balanced_df = balance_trips(df_taz, balance_to_attractions, 'att')
+    balanced_df.to_csv(supplemental_loc+'/7_balance_trip_ends.csv',index=True)
+
 
 if __name__ == "__main__":
     main()
