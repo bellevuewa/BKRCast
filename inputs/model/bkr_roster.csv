@@ -1,6 +1,8 @@
 #variable,mode,path-type,vot-group,start-minute,end-minute,length,file-type, name, field, transpose, blend-variable,blend-path-type,factor,scaling
-time,bike,full-network,all,0,1439,maxzone,hdf5,..\6to9.h5/Skims/mfbkpt,1,FALSE,distance,null,null,TRUE
-distance,bike,full-network,all,0,1439,maxzone,hdf5,..\6to9.h5/Skims/mfbkpt,1,FALSE,distance,null,0.15,TRUE
+time,bike,full-network,all,420,1199,maxzone,hdf5,..\6to9.h5/Skims/mfbkpt,1,FALSE,distance,null,null,TRUE
+distance,bike,full-network,all,420,1199,maxzone,hdf5,..\6to9.h5/Skims/mfbkpt,1,FALSE,distance,null,0.15,TRUE
+time,bike,full-network,all,1200,419,maxzone,null,null,1,FALSE,null,null,null,TRUE
+distance,bike,full-network,all,1200,419,maxzone,null,null,1,FALSE,null,null,null,TRUE
 distance,hov2,no-toll-network,very-low,0,1439,maxzone,hdf5,..\6to9.h5/Skims/h2nt1d,1,FALSE,distance,null,null,TRUE
 distance,hov2,no-toll-network,low,0,1439,maxzone,hdf5,..\6to9.h5/Skims/h2nt1d,1,FALSE,distance,null,null,TRUE
 distance,hov2,no-toll-network,medium,0,1439,maxzone,hdf5,..\6to9.h5/Skims/h2nt2d,1,FALSE,distance,null,null,TRUE
