@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # BKRCast base year
-model_year = '2018'
+project_folder = r'D:\projects\Bike_Bellevue\BKR3-19-6'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2019baseyear-new_popsim_approach'
+base_year = '2019'  # BKRCast base year
+model_year = '2019'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2018' #name of the folder with scenario data
+scenario_name = '2019' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2019' 
@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False
+run_accessibility_calcs = True
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
