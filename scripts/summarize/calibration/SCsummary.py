@@ -1688,12 +1688,11 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
     trip_time.to_excel(excel_writer = writer, sheet_name = 'Trip Arrival Times by Hour', na_rep = 'NA')
     tour_time_apd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 1)
     tour_time_lpd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 29)
-    writer.save()
+
 
     colwidths = getmaxwidths(location + '/TimeChoiceReport.xlsx')
     colors = ['#004488', '#00C0C0']
 
-    writer = pd.ExcelWriter(location + '/TimeChoiceReport.xlsx', engine = 'xlsxwriter')
     workbook = writer.book
     merge_format = workbook.add_format({'align': 'center', 'bold': True, 'border': 1})
     trip_time.to_excel(excel_writer = writer, sheet_name = 'Trip Arrival Times by Hour', na_rep = 'NA')
@@ -1745,7 +1744,37 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
     chart.set_y_axis({'name': 'Percent of Tours'})
     chart.set_legend({'position': 'top'})
     worksheet.insert_chart('F29', chart)
+
+    ### Create bike trip distribution by departure time and purpose
+    bike_trips_df = data1['Trip'][['deptm', 'trexpfac', 'mode', 'dpurp']].query('mode == "Bike"').reset_index()
+    bike_trips_df['hr'] = min_to_hour(bike_trips_df['deptm'], 0)
+    bike_trips_by_hr_df = bike_trips_df[['hr', 'trexpfac']].groupby('hr').sum().reset_index()
+    bike_trips_by_hr_df.rename(columns = {'hr':'Departure Hour', 'trexpfac':'All Purposes'}, inplace = True)
+    trip_purposes = bike_trips_df['dpurp'].unique()
+    for purp in trip_purposes:
+        bike_trip_purp_by_hf_df = bike_trips_df.loc[bike_trips_df['dpurp'] == purp, ['hr', 'trexpfac']].groupby('hr').sum().reset_index()
+        bike_trip_purp_by_hf_df.rename(columns = {'trexpfac':purp}, inplace = True)
+        bike_trips_by_hr_df = bike_trips_by_hr_df.merge(bike_trip_purp_by_hf_df, left_on = 'Departure Hour', right_on = 'hr', how = 'outer')
+        bike_trips_by_hr_df = bike_trips_by_hr_df.drop(columns = ['hr'])
+    bike_trips_by_hr_df.to_excel(excel_writer = writer, sheet_name = 'Bike Trips Dept Time by Hour', na_rep = 0)
+
+    ### create bike tour distribution by departure time and purpose
+    bike_tours_df = data1['Tour'][['tlvorig', 'toexpfac', 'tmodetp', 'pdpurp']].query('tmodetp == "Bike"').reset_index()
+    bike_tours_df['hrlvo'] = min_to_hour(bike_tours_df['tlvorig'], 0)
+    bike_tours_by_hr_df = bike_tours_df[['hrlvo', 'toexpfac']].groupby('hrlvo').sum().reset_index()
+    bike_tours_by_hr_df.rename(columns = {'hrlvo':'Departure Hour', 'toexpfac':'All Purposes'}, inplace = True)
+    tour_purposes = bike_tours_df['pdpurp'].unique()
+    for purp in tour_purposes:
+        bike_tour_purp_by_hr_df = bike_tours_df.loc[bike_tours_df['pdpurp'] == purp, ['hrlvo', 'toexpfac']].groupby('hrlvo').sum().reset_index()
+        bike_tour_purp_by_hr_df.rename(columns = {'toexpfac': purp}, inplace = True)
+        bike_tours_by_hr_df = bike_tours_by_hr_df.merge(bike_tour_purp_by_hr_df, left_on = 'Departure Hour', right_on = 'hrlvo', how = 'outer')
+        bike_tours_by_hr_df = bike_tours_by_hr_df.drop(columns = ['hrlvo'])
+    bike_tours_by_hr_df.to_excel(excel_writer = writer, sheet_name = 'Bike Tours Dept Time by Hour', na_rep = 0)
+
     writer.save()
+    
+    
+
 
     print('---Time Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
     
