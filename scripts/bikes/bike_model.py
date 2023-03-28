@@ -70,6 +70,13 @@ def process_attributes(my_project):
                       scenario = my_project.current_scenario,
                       revert_on_error=False)
 
+    copy_attribute = my_project.m.tool("inro.emme.data.network.copy_attribute")
+    from_att = '@biketype'
+    to_attr = '@bkfac'
+    from_scen = my_project.current_scenario
+    copy_attribute(from_scenario = from_scen, from_attribute_name = '@biketype', to_attribute_name = '@bkfac')
+    print('@bkfac is updated')
+
 def process_slope_weight(df, my_project):
     ''' Calcualte slope weights on an Emme network dataframe
         and merge with a bike attribute dataframe to get total perceived 
