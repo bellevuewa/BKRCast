@@ -128,10 +128,11 @@ def build_shadow_only(iter):
         modify_config([("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")])
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
 
         if returncode != 0:
+            logger.info('Shadow pricing crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
+        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
         shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
@@ -155,15 +156,18 @@ def run_truck_supplemental(iteration):
         if iteration == 0:
             returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
             if returncode != 0:
+                logger.info('Supplemental trip generation crashed unexpectedly. The return code is', str(returncode))
                 sys.exit(1)
 
         #run distribution
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
         if returncode != 0:
+            logger.info('Distribute_non_work_ixxi.py crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
 
         returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
         if returncode != 0:
+            logger.info('Airport model crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
 
 
@@ -183,10 +187,10 @@ def daysim_assignment(iteration):
 
          #run daysim
          returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-         logger.info("End of %s iteration of Daysim", str(iteration))
          if returncode != 0:
-             #send_error_email(recipients, returncode)
+             logger.info("daysim crashed unexpectedly. The return code is ", str(returncode))
              sys.exit(1)
+         logger.info("End of %s iteration of Daysim", str(iteration))
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
      run_truck_supplemental(iteration)
@@ -196,13 +200,14 @@ def daysim_assignment(iteration):
          logger.info("Start of %s iteration of Skims and Paths", str(iteration))
          returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
-         logger.info("End of %s iteration of Skims and Paths", str(iteration))
-         print('return code from skims and paths is ' + str(returncode))
          if returncode != 0:
+            logger.info('Skims crashed unexpectedly. The return code from skims and paths is ', str(returncode))
             sys.exit(1)
+         logger.info("End of %s iteration of Skims and Paths", str(iteration))
 
          returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
          if returncode != 0:
+            logger.info('Bike model crashed unexpectedly. The return code from skims and paths is ', str(returncode))
             sys.exit(1)
 
 '''
