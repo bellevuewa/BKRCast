@@ -169,6 +169,15 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
 
+### Equity analysis
+# 2016 federal poverty line   
+fed_poverty_1st_person = 11770
+fed_poverty_extra_person = 4160
+income_bins = [-1, 0, 0.5, 1, 2, 5, 10, 500]
+veh_bins = [-1, 0, 1, 2, 3, 10]
+age_bins = [0, 5, 15, 30, 50, 65, 100]
+hhsize_bins = [0, 1, 2, 3, 4, 20]
+
 
 #################################### CALIBRATION/VALIDATION ####################################
 
