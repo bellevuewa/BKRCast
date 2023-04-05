@@ -32,10 +32,10 @@ modeller_initial = "hd"
 run_update_parking = False #Only update parking for future-year analysis!
 run_accessibility_calcs = True
 run_copy_daysim_code = False
-run_copy_input_files = False
+run_copy_input_files = True
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_import_networks = False
+run_import_networks = True
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
@@ -168,6 +168,15 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@ovol' : 'observed volume', 
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
+
+### Equity analysis
+# 2016 federal poverty line   
+fed_poverty_1st_person = 11770
+fed_poverty_extra_person = 4160
+income_bins = [-1, 0, 0.5, 1, 2, 5, 10, 500]
+veh_bins = [-1, 0, 1, 2, 3, 10]
+age_bins = [0, 5, 15, 30, 50, 65, 100]
+hhsize_bins = [0, 1, 2, 3, 4, 20]
 
 
 #################################### CALIBRATION/VALIDATION ####################################
