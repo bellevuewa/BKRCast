@@ -37,6 +37,11 @@ import input_configuration as prj
 
 # 10/25/2021
 # modified to be compatible with python 3
+
+# 4/6/2023
+# fix an error in commute trip selection.
+# seperate trip lengths in multiple bins
+# seperate trip length calculation by all modes, auto only, transit only and bike only.
 #################################################################################################################
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
 purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
@@ -90,23 +95,6 @@ def get_time_period_by_minutes(period):
         print('period ' + period + ' is invalid.')
         exit()
     return start_time, end_time
-
-#def write_file_header(output_file, overwritten = False):
-#    if overwritten:
-#        file_mode = 'w'
-#    else:
-#        file_mode = 'a'
-    
-#    with open(output_file, file_mode) as output:
-#        output.write(str(datetime.datetime.now()) + '\n')
-#        output.write(trips_file + '\n')
-#        output.write(hhs_file + '\n')
-#        output.write(subarea_taz_file + '\n')
-#        output.write('Start time: ' + str(start_time) + '\n')
-#        output.write('End time: ' + str(end_time) + '\n')
-#        output.write('From the subarea: ' + str(trips_from_only) + '\n')
-#        output.write('To the subarea: ' + str(trips_end_only) + '\n')
-#        output.write('\n')
 
 def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=False, comments=''):
     if purpose == -1:
@@ -175,17 +163,20 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     trips_by_purpose['share'] = trips_by_purpose['share'].map('{:.1%}'.format)
     trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
 
-    # distance < 3 miles
-    trips_df['dist<=3'] = trips_df['travdist'] <= 3
-    trips_by_dist = trips_df[['travdist', 'dist<=3', 'trexpfac']].groupby('dist<=3').sum()
-    trips_by_dist['share'] = trips_by_dist['trexpfac'] / subtotal_trips
+    trips_df['trip_dist_bin'] = pd.cut(trips_df['travdist'], include_lowest = True,  bins = prj.trip_distance_bin)
+    trips_by_dist = trips_df[['trip_dist_bin', 'trexpfac', 'travdist']].groupby('trip_dist_bin').sum()
+    trips_by_dist['share'] = trips_by_dist['trexpfac'] / subtotal_trips 
     trips_by_dist['avgdist'] = trips_by_dist['travdist'] / trips_by_dist['trexpfac']
     trips_by_dist['avgdist'] = trips_by_dist['avgdist'].map('{:.1f}'.format)
     trips_by_dist['share'] = trips_by_dist['share'].map('{:.1%}'.format)
     trips_by_dist['travdist'] = trips_by_dist['travdist'].map('{:.1f}'.format)
 
+
     # calculate commute trips
-    commute_trips = trips_df.loc[(trips_df['dpurp']==1) | (trips_df['dpurp']==0)][['trexpfac', 'travdist', 'dist<=3']].groupby('dist<=3').sum()
+    # we could use origin purpose and destination purpose as filters to pull commute trips. But for some reason, it will generate
+    # different number of trips from the address type (oadtyp and dadtyp) method. Not sure why but for consistency purpose, we use this address type
+    # method.
+    commute_trips = trips_df.loc[((trips_df['oadtyp'] == 1) & (trips_df['dadtyp'] == 2)) | ((trips_df['oadtyp'] == 2) & (trips_df['dadtyp'] == 1))][['trexpfac', 'travdist', 'trip_dist_bin']].groupby('trip_dist_bin').sum()
     commute_trips['share'] = commute_trips['trexpfac'] / commute_trips['trexpfac'].sum()
     commute_trips['avgdist'] = commute_trips['travdist'] / commute_trips['trexpfac']
     commute_trips['avgdist'] = commute_trips['avgdist'].map('{:.1f}'.format)
@@ -241,6 +232,7 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
         f.write('HBSchool trips: %d\n' % hbsch_counts)
         f.write('HBO trips: %d\n' % hbo_counts)
         f.write('NHB trips: %d\n' % nhb_counts)
+        f.write('=====================================================================\n')
 
 def main():  
     Output_file = ''
@@ -384,7 +376,7 @@ def main():
         calculateModeSharebyTripPurpose(purpose, trips_by_workplace_df, Output_file, overwritten = False, comments = 'by workplace only')
     print('Mode share calculation is finished.')
 
-    print('Calculating tirp distance ...')
+    print('Calculating tirp distance , all mode...')
     # output to file
     with open(Output_file_trip_dist, 'w') as f:
         f.write('Trip file: %s\n' % trips_file)
@@ -393,8 +385,23 @@ def main():
         f.write('Time period: %s\n' % time_period)
         f.write('Start time: %d\n' % start_time)
         f.write('End time: %d\n' % end_time)
-        
-    cal_trip_distance(either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'either end in the subarea')
+        f.write('\n')
+    
+    cal_trip_distance(either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'All modes, either end in the subarea')
+    print('Calculating tirp distance, auto mode only...')
+
+    auto_mode_either_end_in_subarea_trips_df = either_end_in_subarea_trips_df.loc[either_end_in_subarea_trips_df['mode'].isin([3,4,5])].copy()    
+    cal_trip_distance(auto_mode_either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'Auto mode only, either end in the subarea')
+ 
+    print('Calculating trip distance, transit mode only...')   
+    transit_mode_either_end_in_subarea_trips_df = either_end_in_subarea_trips_df.loc[either_end_in_subarea_trips_df['mode'].isin([6])].copy()
+    cal_trip_distance(transit_mode_either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'Transit mode only, either end in the subarea')
+
+    print('Calculating trip distance, bike mode only...')
+    bike_mode_either_end_in_subarea_trips_df = either_end_in_subarea_trips_df.loc[either_end_in_subarea_trips_df['mode'].isin([2])].copy()
+    cal_trip_distance(bike_mode_either_end_in_subarea_trips_df, Output_file_trip_dist, overwritten = False, comments = 'Bike mode only, either end in the subarea')
+
+
     print('Done')
 
 if __name__ == '__main__':
