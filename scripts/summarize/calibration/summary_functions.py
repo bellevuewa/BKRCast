@@ -35,6 +35,8 @@ def weighted_average(df_in, col, weights, grouper = None): #Computes the weighte
         n_out = df[col + '_sp'].sum() / df[weights].sum()
         return(n_out)
     else:
+        if grouper == 'pptyp':
+            df.loc[df['pptyp'] == 'N\\A', 'pptyp'] = 'Non-Working Adult Age <65' 
         df[col + '_sp'] = df[col].multiply(df[weights])
         df_out = df.groupby(grouper).sum()
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
@@ -91,7 +93,7 @@ def get_counts(counts_df, input_time): #Function to get counts for a SoundCast t
 def recode_index(df, old_name, new_name): #Changes the index label
     df[new_name] = df.index
     df = df.reset_index()
-    del df[old_name]
+    df.drop(columns = [old_name], inplace = True)
     df = df.set_index(new_name)
     return df
 
