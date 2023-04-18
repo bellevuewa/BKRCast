@@ -1,9 +1,12 @@
+from enum import auto
 import pandas as pd
 import os, sys
+import datetime
+import getopt
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
-from input_configuration import *
+import input_configuration as prj
 from emme_configuration import *
 
 # 10/25/2021
@@ -14,79 +17,93 @@ from emme_configuration import *
 # and subarea boundary. They are two seperate and independent selections. That's OK.
 # but you cannot have a selection of ul1=1000 and ul2=60. This kind of selection is not allowed
 #link_selectors = {'@bkrlink': 1, '@studyarea': 1, '@studyarea405': 1,'@studyareafreeway': 1, '@studyarearamps': 1}
-link_selectors = {'@corearea': 1}
+link_selectors = {'@bkrlink': 1}
 
 # file will be exported to default output folder.
 outputfilename = 'system_metrics.txt'
 
+def calculate_system_metrics(links_df, tod, groupby):
+    links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
+    links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
+    links_df[tod+'_VDT'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
+
+    ret = links_df[[groupby, tod+'_VMT', tod+'_VHT', tod+'_VDT']].groupby(groupby).sum()
+
+    return ret
+
+def help():
+    print(' This script is used to calculate VMT, VHT and VDT in different time of day and then aggregated to daily metrics.')
+    print(' The metrics are aggregated to subareas flagged by an extra link attribute. The default attribute is @bkrlink.')
+    print(' User can define own attribute to tag links. ')
+    print(' The output file is saved in outputs/network/system_metrics.txt.')
+    print()
+    print(' python calculate_daily_VMT.py -h -t extra_link_attribute_tag')
+    print('    -h: help')
+    print('    -t: customized extra link attribute for link tagging')
+
 def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 't:')
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+    
+    attr = '@bkrlink'
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+        elif opt == '-t':
+            attr = arg
+    
     print(network_summary_project)
     my_project = EmmeProject(network_summary_project)
 
+    metrics = pd.DataFrame()
     for key, value in sound_cast_net_dict.items():
         my_project.change_active_database(key)
-        network = my_project.current_scenario.get_network()
-        network.create_attribute('NODE', 'numIn')
-        network.create_attribute('NODE', 'numOut')
-        for node in network.nodes():
-            node.numIn = len(list(node.incoming_links()))        
-            node.numOut = len(list(node.outgoing_links()))
+        print(f'loading {value} ...')
+        if value == 'pm':
+            extra_attr = my_project.current_scenario.extra_attribute(attr)
+            if extra_attr != None:
+                groupby_description = extra_attr.description
+            else:
+                groupby_description = ''
 
-        network.create_attribute('LINK', 'isAuto')
-        network.create_attribute('LINK', 'isTransit')
-        network.create_attribute('LINK', 'isConnector')
-        network.create_attribute('LINK', 'isOneWay')
-        auto_mode = set([m for m in network.modes() if m.type == 'AUTO'])
-        transit_mode = set([m for m in network.modes() if m.types == 'TRANSIT'])
+        links_df = my_project.emme_links_to_df()
+        print(f'calculating vmt, vht, and vdt in {value}')
+        auto_non_connectors_df = links_df.loc[(links_df['isAuto'] == True) & (links_df['isConnector'] == False)].copy()
+        ret = calculate_system_metrics(auto_non_connectors_df, value, attr)
+        metrics = pd.merge(metrics, ret, how = 'outer', left_index = True, right_index = True)
 
-        link_data = {'i_node':{}, 'j_node': {}}
-        link_data.update({k: [] for k in network.attributes('LINK')})
-        for link in network.links():
-            link.isAuto == auto_mode in link.modes
-            link.isTransit = bool(link.modes.intersection(transit_mode))
-            link.isConnector = (link.i_nde.is_centroid or link.j_node.is_centroid)
-            link.isOneWay = network.link(link.j_node, link.i_node) is None
+    metrics.fillna(0)
+    my_project.closeDesktop()
 
-            for k in network.attributes('LINK'):
-                link_data[k].append(link[k])
-
-            link_data['i_node'].append(link.i_node.number)
-            link_data['j_node'].append(link.j_node.number)
-        links_df = pd.DataFrame(link_data)
-
-        my_project.closeDesktop()
- 
-
-    outputfile = os.path.join(project_folder, 'outputs/network', outputfilename)
+    # calculate daily VMT, VHT, and VDT
+    print(f'calculating daily vmt, vht, and vdt')
+    metrics['daily_VMT'] = 0
+    metrics['daily_VHT'] = 0
+    metrics['daily_VDT'] = 0
+    for key, value in sound_cast_net_dict.items():  
+        metrics['daily_VMT'] = metrics['daily_VMT'] + metrics[value + '_VMT']
+        metrics['daily_VHT'] = metrics['daily_VHT'] + metrics[value + '_VHT']
+        metrics['daily_VDT'] = metrics['daily_VDT'] + metrics[value + '_VDT']
+    
+    for col in metrics.columns:
+        metrics[col] = metrics[col].map('{:.1f}'.format)
+    outputfile = os.path.join(prj.project_folder, 'outputs/network', outputfilename)
 
     # export to file also calculate daily VMT/VHT/VDT
     with open(outputfile, 'w')  as f:
-        for flag, val in metrics.items():
-            daily_vmt = 0
-            daily_vht = 0
-            daily_vdt = 0
-            daily_vol = 0
-            f.write('Selection: %s\n' % flag)
-            for tod, value in val.items():
-                f.write('  ')
-                f.write('Time of Day: %s\n' % tod)
-                for variable, var_val in value.items():
-                    f.write('    ')
-                    f.write('%s: %.2f\n' % (variable, var_val))
-                    if variable == 'VMT':
-                        daily_vmt = daily_vmt + var_val
-                    elif variable == 'VHT':
-                        daily_vht = daily_vht + var_val
-                    elif variable == 'VDT':
-                        daily_vdt = daily_vdt + var_val
-                    elif variable == 'TotalVol':
-                        daily_vol = daily_vol + var_val
-            f.write('  Time of Day: Daily\n')
-            f.write('    VMT: %.2f\n' % daily_vmt)
-            f.write('    VHT: %.2f\n' % daily_vht)
-            f.write('    VDT: %.2f\n' % daily_vdt)
-            f.write('    Vol: %.2f\n' % daily_vol)
-            f.write('\n')
+        f.write(str(datetime.datetime.now()) + '\n')
+        f.write(f'Project folder: {prj.project_folder}\n\n')
+        f.write('%s\n\n' % metrics.to_string())
+
+        f.write('Notes\n')
+        f.write('1. Auto mode only. Centroid connectors are not included.\n')
+        f.write(f'2. {attr}: {groupby_description}')
+
+
     print('Done')
 if __name__ == '__main__':
     main()

@@ -436,7 +436,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_daily_VMT.py" />
-    <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
     <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
