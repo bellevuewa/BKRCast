@@ -10,12 +10,13 @@ import getopt
 import input_configuration as prj
 from summary_functions import *
 
-def aggregate_by_attribute(df, select_attr_name, group_attr_name, aggregate_attr_name):
+def aggregate_by_attribute(df, select_attr_name, group_attr_name, aggregate_attr_name, show_percent = True):
     select_attr_name_values = np.sort(df[select_attr_name].unique())
     output_list = []
     for attr in select_attr_name_values:
         agg_by_select_attr = df.loc[df[select_attr_name] == attr].groupby(group_attr_name).sum()[[aggregate_attr_name]]
-        agg_by_select_attr[str(attr) + '_%'] = agg_by_select_attr[aggregate_attr_name] / agg_by_select_attr[aggregate_attr_name].sum()
+        if show_percent == True:
+            agg_by_select_attr[str(attr) + '_%'] = agg_by_select_attr[aggregate_attr_name] / agg_by_select_attr[aggregate_attr_name].sum()
         agg_by_select_attr.rename(columns = {aggregate_attr_name : attr}, inplace = True)
         output_list.append(agg_by_select_attr)
 
@@ -35,6 +36,16 @@ def create_demographic_hhs_report(df, writer):
     hhs_by_jurisdiction_sheet.write(srow,0, 'notes')
     hhs_by_jurisdiction_sheet.write(srow+1,0, '1. federal poverty line for one person household is $' + str(prj.fed_poverty_1st_person)) 
     hhs_by_jurisdiction_sheet.write(srow+2,0, '   add $' + str(prj.fed_poverty_extra_person) + ' for each additional person in the same household.') 
+
+    print('  households by income level and census blockgroups')
+    hhs_by_geoid10 = aggregate_by_attribute(df, 'GEOID10', 'income_bins', 'hhexpfac', False)
+    hhs_by_geoid10.T.to_excel(writer, sheet_name = 'hhs_by_GEOID10', index = True, startrow = 1)
+    hhs_by_geoid10_sheet = writer.sheets['hhs_by_GEOID10']
+    hhs_by_geoid10_sheet.write(0, 0, 'Households Distribution by Income Level')
+    srow = hhs_by_geoid10.shape[1] + 3
+    hhs_by_geoid10_sheet.write(srow,0, 'notes')
+    hhs_by_geoid10_sheet.write(srow+1,0, '1. federal poverty line for one person household is $' + str(prj.fed_poverty_1st_person)) 
+    hhs_by_geoid10_sheet.write(srow+2,0, '   add $' + str(prj.fed_poverty_extra_person) + ' for each additional person in the same household.') 
 
     print('  households by income level and subarea')
     hhs_by_subarea = aggregate_by_attribute(df, 'Subarea', 'income_bins', 'hhexpfac')
@@ -58,6 +69,12 @@ def create_demographic_hhs_report(df, writer):
     veh_by_subarea_sheet = writer.sheets['veh_by_subarea']
     veh_by_subarea_sheet.write(0, 0, 'Household Distribution by Vehicles')
 
+    print('  households by census blockgroup and vehicle ownership')
+    veh_by_geoid10 = aggregate_by_attribute(df, 'GEOID10', 'veh_bins', 'hhexpfac', False)
+    veh_by_geoid10.T.to_excel(writer, sheet_name = 'veh_by_GEOID10', index = True, startrow = 1)
+    veh_by_geoid10_sheet = writer.sheets['veh_by_GEOID10']
+    veh_by_geoid10_sheet.write(0, 0, 'Household Distribution by Vehicle')
+
 def create_demographic_person_report(df, writer):
     print('  people by age and jurisdiction')
     person_by_jurisdiction = aggregate_by_attribute(df, 'Jurisdiction', 'age_bins', 'psexpfac')
@@ -71,6 +88,12 @@ def create_demographic_person_report(df, writer):
     person_by_subarea_sheet = writer.sheets['person_by_subarea']
     person_by_subarea_sheet.write(0, 0, 'Person Distribution by Age')
 
+    print('  peope by age and census blockgroup')
+    person_by_geoid10 = aggregate_by_attribute(df, 'GEOID10', 'age_bins', 'psexpfac', False)
+    person_by_geoid10.T.to_excel(writer, sheet_name = 'person_by_GEOID10', index = True, startrow = 1)
+    person_by_geoid10_sheet = writer.sheets['person_by_GEOID10']
+    person_by_geoid10_sheet.write(0, 0, 'Person Distribution by Age')
+
     print('  people by person type and jurisdiction')
     persons_by_pptyp_juris = aggregate_by_attribute(df, 'Jurisdiction', 'pptyp', 'psexpfac')
     persons_by_pptyp_juris.to_excel(writer, sheet_name = 'pptyp_by_Juris', index = True, startrow = 1)
@@ -82,6 +105,12 @@ def create_demographic_person_report(df, writer):
     persons_by_pptyp_subarea.to_excel(writer, sheet_name = 'pptyp_by_subarea', index = True, startrow = 1)
     persons_by_pptyp_subarea_sheet = writer.sheets['pptyp_by_subarea']
     persons_by_pptyp_subarea_sheet.write(0, 0, 'Person Distribution by Type')
+
+    print('  people by person type and census blockgroup')
+    persons_by_pptyp_geoid10 = aggregate_by_attribute(df, 'GEOID10', 'pptyp', 'psexpfac', False)
+    persons_by_pptyp_geoid10.T.to_excel(writer, sheet_name = 'pptyp_by_GEOID10', index = True, startrow = 1)
+    persons_by_pptyp_geoid10_sheet = writer.sheets['pptyp_by_GEOID10']
+    persons_by_pptyp_geoid10_sheet.write(0, 0, 'Person Distribution by Type')
 
 def write_to_sheet(writer, name_of_sheet, dict_dfs, write_index = True, horizontal = True):
     '''
@@ -141,7 +170,7 @@ def trip_mode_share_residents(df, group_attr_list, aggregate_dict, column_rename
     mode_share_df = mode_share_df.round({'travdist':0, 'travtime':0, 'avg_trip_length':2, 'avg_trip_travel_time':2, 'trip_mode_share':3})
     mode_share_df.rename(columns = column_rename_dict, inplace = True)
 
-    return mode_share_df        
+    return mode_share_df, ['avg_trip_length', 'avg_trip_travel_time', 'trip_mode_share']        
 
 
 def help():
@@ -181,16 +210,19 @@ def main():
     lookup_parcels_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
     hhs_df = pd.merge(hhs_df, taz_subarea, left_on = 'hhtaz', right_on = 'BKRCastTAZ', how = 'left')
     persons_df = pd.read_csv(os.path.join(prj.report_output_location, '_person.tsv'), sep = '\t')
-
+    lookup_parcels_df = lookup_parcels_df[['PSRC_ID', 'GEOID10']]
+    hhs_df = pd.merge(hhs_df, lookup_parcels_df, left_on = 'hhparcel', right_on = 'PSRC_ID', how = 'left')
     #calculate federal poverty line 
     hhs_df['fed_poverty'] = 0
     hhs_df['fed_poverty'] = prj.fed_poverty_1st_person + prj.fed_poverty_extra_person * (hhs_df['hhsize'] - 1)
 
     hhs_df['income_bins'] = pd.cut(hhs_df['hhincome'] / hhs_df['fed_poverty'], bins = prj.income_bins)
+    hhs_df['income_bins2'] = pd.cut(hhs_df['hhincome'] / hhs_df['fed_poverty'], bins = prj.income_bins2)
+    hhs_df['income_bins3'] = pd.cut(hhs_df['hhincome'] / hhs_df['fed_poverty'], bins = prj.income_bins3)
     hhs_df['veh_bins'] = pd.cut(hhs_df['hhvehs'], bins = prj.veh_bins)
     hhs_df['size_bins'] = pd.cut(hhs_df['hhsize'], bins = prj.hhsize_bins)
     persons_df['age_bins'] = pd.cut(persons_df['pagey'], bins = prj.age_bins)
-    persons_df = persons_df.merge(hhs_df[['hhno', 'income_bins', 'veh_bins', 'size_bins', 'Jurisdiction', 'Subarea']], on = 'hhno')
+    persons_df = persons_df.merge(hhs_df[['hhno', 'income_bins', 'income_bins2', 'income_bins3', 'veh_bins', 'size_bins', 'Jurisdiction', 'Subarea', 'GEOID10']], on = 'hhno')
 
     trips_df = pd.read_csv(os.path.join(prj.report_output_location, trip_file), sep = '\t', low_memory = False)
     trips_df = trips_df.merge(taz_subarea[['BKRCastTAZ', 'Subarea']], left_on = 'otaz', right_on = 'BKRCastTAZ').rename(columns={'Subarea':'osubarea'})
@@ -266,15 +298,30 @@ def main():
     group_list = ['Jurisdiction', 'income_bins', 'mode']
     agg_dict = {'trexpfac':['sum'], 'travdist':'sum', 'travtime':'sum'}
     rename_dict = {'trexpfac': 'total_person_trips'}
-    juris_res_mode_share_df = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+    juris_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
     juris_res_mode_share_df.rename(index = categorical_dict['mode'], inplace = True)
     write_to_sheet(equity_writer, 'residents_mode_share_juris', {'Trip Mode Share by Residents': juris_res_mode_share_df})
 
+    # create resident trip mode share by jurisdiction and poverty line income_bins2
+    group_list2 = ['Jurisdiction', 'income_bins2', 'mode']
+    juris_res_mode_share_IL2_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list2,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+    juris_res_mode_share_IL2_df.rename(index = categorical_dict['mode'], inplace = True)
+    write_to_sheet(equity_writer, 'res_mode_share_by_poverty', {'Trip Mode Share by Residents': juris_res_mode_share_IL2_df})
+    jurisdiction = juris_res_mode_share_IL2_df.reset_index()['Jurisdiction'].unique()
+    srow = 1
+    scol = 0
+    for city in jurisdiction:
+        for col in avg_head_names:
+            juris = juris_res_mode_share_IL2_df.xs(city, level = 'Jurisdiction')[[col]].unstack(level='mode')
+            juris.to_excel(equity_writer, sheet_name = 'summary_by_poverty', index = True, startrow = srow, startcol = scol)
+            sheet = equity_writer.sheets['summary_by_poverty']
+            sheet.write(srow -1, scol, col + ' in ' + city)
+            srow = srow + juris.shape[0] + 5
+            
     # create trip mode share made by residents
     print('  trip mode share by residents, subarea and income level')
     group_list = ['Subarea', 'income_bins', 'mode']
-    subarea_res_mode_share_df = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    subarea_res_mode_share_df.rename(index = categorical_dict['mode'], inplace = True)
+    subarea_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
     write_to_sheet(equity_writer, 'residents_mode_share_subarea', {'Trip Mode Share by Residents':subarea_res_mode_share_df})
 
     equity_writer.save()
