@@ -240,9 +240,9 @@ def main():
     wksheet.write(1, 0, 'model folder')
     wksheet.write(1, 1, prj.project_folder)
 
-    create_demographic_hhs_report(hhs_df, demographic_writer)
-    create_demographic_person_report(persons_df, demographic_writer)
-    demographic_writer.save()
+    #create_demographic_hhs_report(hhs_df, demographic_writer)
+    #create_demographic_person_report(persons_df, demographic_writer)
+    #demographic_writer.save()
     print('demographic report is generated.')
 
     equity_writer = pd.ExcelWriter(os.path.join(prj.report_summary_output_location, 'equity_report.xlsx'), engine = 'xlsxwriter')
