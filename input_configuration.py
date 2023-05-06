@@ -181,6 +181,9 @@ age_bins = [0, 5, 15, 30, 50, 65, 200]
 hhsize_bins = [0, 1, 2, 3, 4, 20]
 trip_distance_bin = [0, 1, 2, 3, 5, 200]
 
+### GHG and VMT
+auto_speed_bins = [0, 2.5, 7.5, 12.5, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5, 62.5, 67.5, 72.5, 100 ]
+
 #################################### CALIBRATION/VALIDATION ####################################
 
 # Calibration Summary Configuration
