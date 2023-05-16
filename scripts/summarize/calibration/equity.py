@@ -16,7 +16,7 @@ def aggregate_by_attribute(df, select_attr_name, group_attr_name, aggregate_attr
     for attr in select_attr_name_values:
         agg_by_select_attr = df.loc[df[select_attr_name] == attr].groupby(group_attr_name).sum()[[aggregate_attr_name]]
         if show_percent == True:
-            agg_by_select_attr[str(attr) + '_%'] = agg_by_select_attr[aggregate_attr_name] / agg_by_select_attr[aggregate_attr_name].sum()
+        agg_by_select_attr[str(attr) + '_%'] = agg_by_select_attr[aggregate_attr_name] / agg_by_select_attr[aggregate_attr_name].sum()
         agg_by_select_attr.rename(columns = {aggregate_attr_name : attr}, inplace = True)
         output_list.append(agg_by_select_attr)
 

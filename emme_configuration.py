@@ -79,7 +79,7 @@ NI_extra_attributes = [{'type':'TRANSIT_LINE', 'name': '@nihdwy', 'description':
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'
-STOP_THRESHOLD = 0.015
+STOP_THRESHOLD = 0.005
 parallel_instances = 4   # Number of simultaneous parallel processes. Must be a factor of 4.
 max_iter = 50             # Assignment Convergence Criteria
 best_relative_gap = 0.01  # Assignment Convergence Criteria
