@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
 sys.path.append(os.getcwd())
 import  emme_configuration as emme_config
+import input_configuration as bkr_config
 from EmmeProject import *
 
 def load_skims(skim_file_loc, mode_name, divide_by_100=False):
@@ -147,7 +148,7 @@ def main():
     trip_table = pd.read_csv(emme_config.trip_table_loc, index_col="BKRCastTAZ")  # total 4K Ps and As by trip purpose
 
     # Import gravity model coefficients by trip purpose from db
-    coeff_df = pd.read_csv('inputs/supplemental/gravity_model_coefficients.csv')
+    coeff_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'gravity_model_coefficients.csv'))
                                
     # All Non-work external trips assumed as single purpose HSP (home-based shopping trips)
     trip_purpose_list = ['hsp']
@@ -182,7 +183,7 @@ def main():
     # Export to h5 container
     ixxi_trips = ixxi_trips['hsp']
 
-    ixxi_mode_share_df = pd.read_csv('inputs/supplemental/ixxi_mode_share.csv')
+    ixxi_mode_share_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'ixxi_mode_share.csv'))
     ixxi_h5 = h5py.File(emme_config.supplemental_non_work_file, "w")
 
     for mode in ['sov','hov2','hov3']:

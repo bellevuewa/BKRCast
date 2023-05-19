@@ -91,6 +91,8 @@ transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commu
 
 input_ensemble = r"inputs/landuse/parking_gz.csv"
 
+input_folder_for_supplemental = 'inputs/model/supplemental'
+
 # daysim mode definition
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
 #daysim trip purpose definition
