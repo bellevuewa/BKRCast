@@ -374,6 +374,7 @@
     <Content Include="inputs\supplemental\special_generators_bkr.csv" />
     <Content Include="inputs\supplemental\time_of_day_factors_bkr.csv" />
     <Content Include="inputs\supplemental\trip_rates.csv" />
+    <Content Include="inputs\supplemental\truck_time_of_day_factors_bkr.csv" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
