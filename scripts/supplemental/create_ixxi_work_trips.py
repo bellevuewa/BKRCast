@@ -66,7 +66,7 @@ def main():
     my_project = emmeproj.EmmeProject(me_config.supplemental_project)
     network_importer(my_project)
 
-    parcels_military = pd.read_csv('inputs/supplemental/enlisted_personnel_bkr.csv')
+    parcels_military = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'enlisted_personnel_bkr.csv'))
     parcels_military = parcels_military.loc[parcels_military['year'] == int(bkr_config.model_year)]
     parcels_urbansim = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
     parcels_urbansim.index = parcels_urbansim['PARCELID']
@@ -107,12 +107,12 @@ def main():
 
     # Load commute pattern data for workers in/out of PSRC region; keep only the needed columns
     # DB table "external_trip_distribution" generated from LEHD LODES data, 2014
-    work = pd.read_csv('inputs/supplemental/external_trip_distribution_bkr.csv')
+    work = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'external_trip_distribution_bkr.csv'))
     ixxi_cols = ['Total_IE', 'Total_EI', 'SOV_Veh_IE', 'SOV_Veh_EI','HOV2_Veh_IE','HOV2_Veh_EI','HOV3_Veh_IE','HOV3_Veh_EI']
     work = work[['BKRCastTAZ','External_Station']+ixxi_cols]
 
     # Scale this based on forecasted employment growth between model and base year
-    base_year_scaling = pd.read_csv('inputs/supplemental/base_year_scaling.csv')
+    base_year_scaling = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'base_year_scaling.csv'))
 
      # Base year employment
     base_year_totemp = base_year_scaling[(base_year_scaling['year'] == int(bkr_config.supplemental_module_base_year)) & 

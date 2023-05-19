@@ -197,22 +197,14 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
     print('  bikes..')
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
-    print('  supplemental..')
-    dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
+    #print('  supplemental..')
+    #dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
     dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
     dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
     print('  park and ride capacity..')
     dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
-#@timed
-#def copy_seed_supplemental_trips():
-#    print('Copying seed supplemental trips')
-#    if not os.path.exists('outputs/supplemental'):
-#       os.makedirs('outputs/supplemental')
-#    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
-#        shutil.copy(filename, project_folder+'/outputs/supplemental')
-    
 @timed
 def rename_network_outs(iter):
     for summary_name in network_summary_files:

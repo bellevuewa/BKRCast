@@ -359,9 +359,9 @@ def main():
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     zone_lookup_dict = dict((value,index) for index,value in enumerate(zones))
 
-    parameters_df = pd.read_csv('inputs/supplemental/mode_choice_parameters.csv')
+    parameters_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'mode_choice_parameters.csv'))
     #FIXME:  Document source of TOD factors; consider calculating these from last iteration of soundcast via daysim outputs?
-    tod_factors_df = pd.read_csv('inputs/supplemental/time_of_day_factors_bkr.csv')
+    tod_factors_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'time_of_day_factors_bkr.csv'))
 
     # Calculate mode shares for Home-Based Other purposes 
     # Work trips from externals are grown from observed data
@@ -381,7 +381,7 @@ def main():
     daysim = h5py.File(bkr_config.households_persons_file,'r')
 
     # Calculate total trips by TAZ to Seattle-Tacoma International Airport from internal zones
-    seatac_df = pd.read_csv('inputs/supplemental/seatac_bkr.csv')
+    seatac_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'seatac_bkr.csv')
     airport_control_total = seatac_df.loc[seatac_df['year'] == int(bkr_config.model_year), 'enplanements'].values[0]
     airport_trips = calculate_trips(daysim, parcel, airport_control_total)
     demand_matrix = np.zeros((len(zone_lookup_dict), len(zone_lookup_dict)), np.float64)
