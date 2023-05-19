@@ -44,6 +44,7 @@ no_toll_modes = ['s', 'h']
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
 headway_file = 'sc_headways.csv'
+zone_partition_file = 'zone_partitions.txt'
 
 #extra attribute - add to the list in dictionary format
 #format = {'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True}}

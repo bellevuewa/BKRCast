@@ -26,8 +26,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
     1.3.1 add existing and improved turn penalty, turn lane, and turn adjustment factor. @exist_tpf, @imp_tpf, @exist_turn_lane, @imp_turn_lane, @exist_turn_factor, @imp_turn_factor
     1.3.2 export bus stop file.
     1.3.3 export vehicle file. 
+    1.3.4 export zone partition
     '''
-    version = "1.3.2" # this is the version
+    version = "1.3.4" # this is the version
     default_path = ""
     tool_run_message = ""
     outputFolder = _modeller.Attribute(object)
@@ -303,7 +304,25 @@ class BKRCastExportNetwork(_modeller.Tool()):
             NAMESPACE = 'inro.emme.data.network.transit.export_vehicles'
             export_vehicle = _modeller.Modeller().tool(NAMESPACE)
             path = os.path.join(self.outputFolder, 'vehicles.txt')
-            export_vehicle(scenario = horizon_scen, export_file = path, field_separator = ' ')    
+            export_vehicle(scenario = horizon_scen, export_file = path, field_separator = ' ') 
+
+        # export all zone partitions
+        with _modeller.logbook_trace(name = "Export zone partitions", value = ""):
+            NAMESPACE = 'inro.emme.data.zone_partition.export_partitions'
+            export_partitions = _modeller.Modeller().tool(NAMESPACE)
+            path = os.path.join(self.outputFolder, 'zone_partitions.txt')
+            emmebank = _modeller.Modeller().emmebank
+            partitions = emmebank.partitions()
+            p_list = []
+            for p in partitions:
+                p_id = p.id
+                partition = emmebank.partition(p_id)
+                if partition != None:
+                    print(f'partition {p_id}') 
+                    p_list.append(p)
+            
+            export_partitions(partitions = p_list, partition_output_type="ZONES_BY_GROUP", export_file = path, append_to_file = False, field_separator = ' ', line_format = 'ONE_LINE_PER_CATEGORY', export_default_group = False)
+               
 
 
     def exportTransit(self, tempFileName, scen, selection):

@@ -200,6 +200,9 @@ def run_importer(project_name, delete_all_scenarios = True):
         #import turns
         my_project.process_turn('inputs/networks/' + value + turns_name)
 
+        #import zone partitions
+        my_project.process_zone_partition('inputs/networks/' + zone_partition_file)
+
         #import transit networks
         if my_project.tod in load_transit_tod:
            my_project.process_vehicles('inputs/networks/' + transit_vehicle_file)
@@ -215,6 +218,10 @@ def run_importer(project_name, delete_all_scenarios = True):
 
         if create_no_toll_network == True:
             change_mode_for_no_toll_traffic(my_project)
+
+        my_project.bank.dispose()
+    my_project.desktop.close()
+
 
 def help():
     print('  Import networks into all time periods. By default, all scenarios in databank will be deleted before new network is imported into scenario 1002. You have option ')
