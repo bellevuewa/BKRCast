@@ -42,6 +42,9 @@ import input_configuration as prj
 # fix an error in commute trip selection.
 # seperate trip lengths in multiple bins
 # seperate trip length calculation by all modes, auto only, transit only and bike only.
+
+# 5/23/2023
+# add Kirkand and Redmond to subarea_code option
 #################################################################################################################
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
 purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
@@ -145,9 +148,11 @@ def help():
     print('    --stime: start time in number of minutes from midnight.')
     print('    --etime: end time in number of minutes from midnight.')
     print('    subarea_code: ')
-    print("        'Region': the whole region")
+    print("        'Region':   the whole region")
     print("        'Bellevue': Bellevue")
-    print("        'BelDT':   Bellevue downtown")
+    print("        'BelDT':    Bellevue downtown")
+    print("        'Kirkland': Kirkland")
+    print("        'Redmond':  Redmond")
     print('')
 
 def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
@@ -284,6 +289,12 @@ def main():
             subarea_code = arg
         elif arg == 'BelDT':
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
+            subarea_code = arg
+        elif arg == 'Kirkland':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Kirkland_TAZ.txt')
+            subarea_code = arg
+        elif arg == 'Redmond':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Redmond_TAZ.txt')
             subarea_code = arg
         else:
             print('invalid argument. Use -h for help.')

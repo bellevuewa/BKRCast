@@ -352,6 +352,7 @@
     <Content Include="inputs\subarea_definition\Bellevue_TAZ.txt" />
     <Content Include="inputs\subarea_definition\BKR_+Fringe_area_TAZ.txt" />
     <Content Include="inputs\subarea_definition\BKR_only_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\Kirkland_TAZ.txt" />
     <Content Include="inputs\subarea_definition\Redmond_TAZ.txt" />
     <Content Include="inputs\subarea_definition\Regional.txt" />
     <Content Include="inputs\subarea_definition\TAZ_subarea.csv" />

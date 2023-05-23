@@ -33,6 +33,9 @@ import input_configuration as prj
 # 3/1/2022
 # new features: calculate mode share by business locations.
 
+# 5/23/2023
+# add Kirkland and Redmond to subarea_code option.
+
 
 
 tour_purpose = {0: 'all',
@@ -175,9 +178,11 @@ def help():
     print('    --stime: start time in number of minutes from midnight.')
     print('    --etime: end time in number of minutes from midnight.')
     print('    subarea_code: ')
-    print("        'Region': the whole region")
-    print("        'Bellevue': Bellevue")
-    print("        'BelDT':   Bellevue downtown")
+    print("        'Region':    the whole region")
+    print("        'Bellevue':  Bellevue")
+    print("        'BelDT':     Bellevue downtown")
+    print("        'Kirkland':  Kirkland")
+    print("        'Redmond':   Redmond")
     print('')
 
 def main():
@@ -224,6 +229,12 @@ def main():
             subarea_code = arg
         elif arg == 'BelDT':
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
+            subarea_code = arg
+        elif arg == 'Kirkland':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Kirkland_TAZ.txt')
+            subarea_code = arg
+        elif arg == 'Redmond':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Redmond_TAZ.txt')
             subarea_code = arg
         else:
             print('invalid argument. Use -h for help.')
