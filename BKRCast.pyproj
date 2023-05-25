@@ -432,6 +432,7 @@
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\export_intersection_volumes.py" />
     <Compile Include="scripts\modeller\generate_bus_stops.py" />
     <Compile Include="scripts\modeller\Pathbased_assignment_on_multiple_scenarios.py" />
     <Compile Include="scripts\modeller\PopulateNetwork.py" />
