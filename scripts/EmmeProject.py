@@ -344,6 +344,11 @@ class EmmeProject:
 
         return links_df
 
+    def set_primary_scenario(self, scen_id):
+        scen = self.data_explorer.scenario_by_number(scen_id)
+        if scen != None:
+            self.data_explorer.replace_parimary_scenario(scen)
+        
 
 def json_to_dictionary(dict_name):
 
