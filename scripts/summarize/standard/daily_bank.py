@@ -21,6 +21,7 @@ from EmmeProject import *
 # 5/28/2023
 # export daily transit boarding by transit line to external file
 # create LINK extra attribute @voltransit_daily
+# Create node extra attribute @daily_boarding and @daily_alighting at each transit stop
 
 print(os.getcwd())
 
@@ -208,6 +209,7 @@ def main():
 
         # copy auto volume in each tod to daily bank
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod[:4])
+        attr.description = 'auto volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@tveh'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
@@ -218,19 +220,20 @@ def main():
             scenario.delete_extra_attribute('@voltr_l')
 
         # calculate transit volume on each link in each tod, by looping through all transit segments on each link
-        attr_voltr_l = scenario.create_extra_attribute('LINK', '@voltr_l', default_value = 0)
-        attr_voltr_l.description = 'transit volume on link'
+        # be aware that create_attribute() only creates an attribute in memory. 
         network = scenario.get_network()
+        network.create_attribute('LINK', 'voltr_l', default_value = 0)
         for link in network.links():
             sum_voltr = 0
             for seg in link.segments():
                 sum_voltr += seg.transit_volume
-            link['@voltr_l'] = sum_voltr
-        values = scenario.get_attribute_values('LINK', ['@voltr_l'])
+            link['voltr_l'] = sum_voltr
+        values = network.get_attribute_values('LINK', ['voltr_l'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # create bike volume for each TOD
         attr = daily_scenario.create_extra_attribute('LINK', '@bvol' + tod[:4])
+        attr.description = 'bike volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@bvol'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
@@ -241,6 +244,19 @@ def main():
         segment_df.rename(columns =  {'transit_boardings':'board_'+ tod}, inplace = True)
         segments.append(segment_df[['id', 'board_'+ tod]])
         templates.append(segment_df[['id', 'line']])
+
+        ## copy boarding alighting at transit stop in each tod to daily bank.
+        # calculate daily boarding/alighting at each stop.
+        # to be done.
+        attr = daily_scenario.create_extra_attribute('NODE', '@board_' + tod)
+        attr.description = 'boardings at transit stop ' + tod
+        values = scenario.get_attribute_values('NODE', ['initial_boardings'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@alight_'+tod)
+        attr.description = 'alightings at transit stop ' + tod
+        values = scenario.get_attribute_values('NODE', ['final_alightings'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
 
     # assemble transit segment dataframe by TOD in one dataframe
     # calculate daily boarding by transit line
@@ -262,6 +278,11 @@ def main():
 
     attr = daily_scenario.create_extra_attribute('LINK', '@voltransit_daily')
     attr.description = 'daily transit volume'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_boarding')
+    attr.description = 'daily boarding at transit stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_alighting')
+    attr.description = 'daily alighting at transit stop'
+
     daily_network = daily_scenario.get_network()
 
     attr_list = ['@v' + x for x in tods]
@@ -274,6 +295,13 @@ def main():
             link['@tveh'] = link['@tveh'] + link['@v' + item[:4]]
             link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item[:4]]
             link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item[:4]]
+
+    # calculate daily boarding and alightings at transit stops
+    for node in daily_network.nodes():
+        for tod in tods:
+            node['@daily_boarding'] += node['@board_' + tod]
+            node['@daily_alighting'] += node['@alight_' + tod]
+
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 
     print('The following extra attributes are updated: ')
