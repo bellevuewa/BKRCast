@@ -321,7 +321,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
                     print(f'partition {p_id}') 
                     p_list.append(p)
             # need to set the export_default_group = True. Otherwise the output file would include empty lines for each undefined partition.
-            export_partitions(partitions = p_list, partition_output_type="ZONES_BY_GROUP", export_file = path, append_to_file = False, field_separator = ' ', line_format = 'ONE_LINE_PER_CATEGORY', export_default_group = True)
+            export_partitions(partitions = p_list, partition_output_type="ZONES_BY_GROUP", export_file = path, append_to_file = False, field_separator = ' ', line_format = 'ONE_ENTRY_PER_LINE', export_default_group = True)
                
 
 
