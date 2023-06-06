@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\daily_bank.py</StartupFile>
+    <StartupFile>build_toolbox.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -399,6 +399,7 @@
     <Content Include="scripts\summarize\mapping\dframe_explorer.html" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="build_toolbox.py" />
     <Compile Include="daysim_summaries\update_data.py" />
     <Compile Include="emme_configuration.py" />
     <Compile Include="input_configuration.py" />
@@ -431,14 +432,15 @@
     <Compile Include="scripts\data_wrangling.py" />
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
-    <Compile Include="scripts\modeller\ExportAllAttributes.py" />
-    <Compile Include="scripts\modeller\export_intersection_volumes.py" />
-    <Compile Include="scripts\modeller\generate_bus_stops.py" />
-    <Compile Include="scripts\modeller\Pathbased_assignment_on_multiple_scenarios.py" />
-    <Compile Include="scripts\modeller\PopulateNetwork.py" />
-    <Compile Include="scripts\modeller\PopulateNetwork2.py" />
-    <Compile Include="scripts\modeller\SOLA_assignment_on_multiple_scenarios.py" />
-    <Compile Include="scripts\modeller\TM611Util.py" />
+    <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
+    <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\Model_outputs\export_intersection_volumes.py" />
+    <Compile Include="scripts\modeller\Network\generate_bus_stops.py" />
+    <Compile Include="scripts\modeller\Assignment\Pathbased_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\Master_network_only\PopulateNetwork.py" />
+    <Compile Include="scripts\modeller\Master_network_only\PopulateNetwork2.py" />
+    <Compile Include="scripts\modeller\Assignment\SOLA_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\Network\TM611Util.py" />
     <Compile Include="scripts\network\daysim_zone_inputs.py" />
     <Compile Include="scripts\network\network_importer.py" />
     <Compile Include="scripts\popsampler.py" />
@@ -521,6 +523,10 @@
     <Folder Include="scripts\accessibility" />
     <Folder Include="scripts\archive" />
     <Folder Include="scripts\bikes" />
+    <Folder Include="scripts\modeller\Master_network_only\" />
+    <Folder Include="scripts\modeller\Assignment\" />
+    <Folder Include="scripts\modeller\Network\" />
+    <Folder Include="scripts\modeller\Model_outputs\" />
     <Folder Include="scripts\network" />
     <Folder Include="scripts\modeller\" />
     <Folder Include="scripts\skimming" />
