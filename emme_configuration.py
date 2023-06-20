@@ -182,3 +182,5 @@ toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmv
 
 # Home delivery trips, must be > 0
 total_delivery_trips = 1 
+
+pkhrfac_dict = {'pm': 0.35, 'am': 0.38, 'md': 0.154}

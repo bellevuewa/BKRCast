@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>build_toolbox.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\network_volume_validation.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,8 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>-i screenline_2018.json</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -378,6 +377,8 @@
     <Content Include="inputs\model\supplemental\truck_time_of_day_factors_bkr.csv" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
+    <Content Include="screenline_2014.json" />
+    <Content Include="screenline_2018.json" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
     <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\am_transit.csv" />
@@ -463,6 +464,7 @@
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
     <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
+    <Compile Include="scripts\summarize\standard\network_volume_validation.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
     <Compile Include="scripts\summarize\standard\pacalculator.py">
       <SubType>Code</SubType>
