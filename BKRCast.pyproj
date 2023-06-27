@@ -546,7 +546,6 @@
     <Folder Include="scripts\utils" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="CondaEnv|CondaEnv|BKRCast" />
     <InterpreterReference Include="Global|VisualStudio|BKRCast" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

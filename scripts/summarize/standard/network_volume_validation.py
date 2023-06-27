@@ -2,8 +2,8 @@ import pandas as pd
 import os, sys
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-from EmmeProject import *
 import datetime
+from EmmeProject import *
 from functools import reduce
 import matplotlib.pyplot as plt
 import numpy as np
@@ -124,6 +124,7 @@ def main():
     wksheet.write(2, 0, 'screenline attributes: ')
     pretty_json = json.dumps(screenline_dict, indent = 2)
     wksheet.write(3, 0, pretty_json)
+    fid = 0
 
     for key, value in emme_config.sound_cast_net_dict.items():
         my_project.change_active_database(key)
@@ -131,6 +132,7 @@ def main():
         links_df = my_project.emme_links_to_df()
         if value in screenline_dict.keys():
             for slid, attr in screenline_dict[value].items():
+                imgdata = None
                 print(f'processing {slid} ...')
                 sl_df = links_df.loc[(links_df['isAuto'] == True) & (links_df['isConnector'] == False) & (links_df[slid] > 0) & (links_df[attr] > 0)].copy()
                 selected_columns = columns_dict[value]
@@ -141,12 +143,15 @@ def main():
                 if value == 'pm':
                     sl_df['pmpkhr'] = sl_df['auto_volume'] * emme_config.pkhrfac_dict[value]
                     sum_sl_df = sl_df[[slid, 'auto_volume', 'pmpkhr', attr]].groupby(slid).sum()
+                    imgdata = create_scatter_plot_image(sl_df[attr], 'pm_pkhr_counts', sl_df['pmpkhr'], 'pm_pkhr_model_vol', attr, fid)
                 elif value == 'am':
                     sl_df['ampkhr'] = sl_df['auto_volume'] * emme_config.pkhrfac_dict[value]
                     sum_sl_df = sl_df[[slid, 'auto_volume', 'ampkhr', attr]].groupby(slid).sum()
+                    imgdata = create_scatter_plot_image(sl_df[attr], 'am_pkhr_counts', sl_df['ampkhr'], 'am_pkhr_model_vol', attr, fid)
                 elif value == 'md':
                     sl_df['mdpkhr'] = sl_df['auto_volume'] * emme_config.pkhrfac_dict[value]
                     sum_sl_df = sl_df[[slid, 'auto_volume', 'mdpkhr', attr]].groupby(slid).sum()
+                    imgdata = create_scatter_plot_image(sl_df[attr], 'md_pkhr_counts', sl_df['mdpkhr'], 'md_pkhr_model_vol', attr, fid)
 
                 sum_sl_df.rename(columns = {'auto_volume': 'auto_volume'+'_'+value}, inplace = True)
                 sum_sl_df = sum_sl_df.round(0)
@@ -157,6 +162,10 @@ def main():
                 sheet = writer.sheets[sheetname]
                 sheet.write(0, 0, 'screenline = ' + slid)
 
+                if imgdata != None:
+                    sheet.insert_image(0, sl_df.shape[1] + 2,  '', options = {'image_data': imgdata})
+                    fid += 1
+
                 if slid in sum_sl_dict.keys():
                     sum_sl_dict[slid].append(sum_sl_df)
                 else:
@@ -164,7 +173,6 @@ def main():
         else:
             print(f'no screenline volume found in {value}')
 
-    fid = 0
     for attr, dfs in sum_sl_dict.items():
         # merge all relevant aggregated screenline dfs together (AM, MD or/and PM)
         final_sl_summary = reduce(lambda left, right: pd.merge(left, right, on = attr, how = 'outer'), dfs)
