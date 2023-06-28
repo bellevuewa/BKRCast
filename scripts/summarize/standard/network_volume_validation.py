@@ -3,6 +3,7 @@ import os, sys
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import datetime
+from scipy import stats
 from EmmeProject import *
 from functools import reduce
 import matplotlib.pyplot as plt
@@ -41,16 +42,17 @@ def create_scatter_plot_image(x, xlabel, y, ylabel, attr, fid, image_to_file = F
         attr: name of attribute in comparison
         fid: figure id
     '''
-    # calculate regression line
-    m, b = np.polyfit(x, y, deg = 1)
+    # calculate regression line (this is the way to calculate r2 that matches Excel regression calculation)
+    m, b, r, p, se = stats.linregress(x, y)
     plt.figure(fid)
     plt.scatter(x = x, y = y)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
 
+    r2 = r ** 2
     # draw regression line on scatter plot
     ypred = m * x + b
-    plt.plot(x, ypred, label = f'$y = {m:.3f}x {b:+.3f}$')
+    plt.plot(x, ypred, label = f'y = {m:.3f}x {b:+.3f}   R^2 = {r2: .3f}')
     plt.grid(True, which = 'both', axis = 'both')
     ax = plt.gca()
     size = max(ax.get_xlim()[1], ax.get_ylim()[1])
