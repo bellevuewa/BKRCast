@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import h5py
 import numpy as np
-import inro.emme.matrix as ematrix
 import sys
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.path.join(os.getcwd(),"scripts/trucks"))
