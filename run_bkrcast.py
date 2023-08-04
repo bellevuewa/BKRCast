@@ -125,7 +125,13 @@ def modify_config(config_vals):
 @timed
 def build_shadow_only(iter):
      for shad_iter in range(0, len(shadow_work)):
-        modify_config([("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")])
+        daysim_config_update = [("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")]
+        #use operating cost 0.36 after 2044, otherwise 0.20.
+        if model_year >= 2044:
+            daysim_config_update.append(("$OP_COST", 0.36))
+        else:
+            daysim_config_update.append(("$OP_COST", 0.20))
+        modify_config(daysim_config_update)
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
 
@@ -413,8 +419,13 @@ def main():
                         sys.exit(1)
 
                 # Set up your Daysim Configration
-                modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
-
+                daysim_config_update = [("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                if model_year >= 2044:
+                    daysim_config_update.append(("$OP_COST", 0.36))
+                else:
+                    daysim_config_update.append(("$OP_COST", 0.20))
+                modify_config(daysim_config_update)
             else:
                 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
                 # 3 daysim iterations
@@ -422,9 +433,22 @@ def main():
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    modify_config([("$SHADOW_PRICE" ,"false"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    daysim_config_update = [("$SHADOW_PRICE" ,"false"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                    if model_year >= 2044:
+                        daysim_config_update.append(("$OP_COST", 0.36))
+                    else:
+                        daysim_config_update.append(("$OP_COST", 0.20))
+                    modify_config(daysim_config_update)
                 else:
-                    modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                    if model_year >= 2044:
+                        daysim_config_update.append(("$OP_COST", 0.36))
+                    else:
+                        daysim_config_update.append(("$OP_COST", 0.20))
+
+                    modify_config(daysim_config_update)
             
             ## Run Skimming and/or Daysim
             daysim_assignment(iteration)

@@ -1,6 +1,6 @@
 import math
 import sys
-
+import input_configuration as input_config
 # 10/25/2021
 # modified to be compatible with python 3
 
@@ -14,17 +14,25 @@ add_hot_lane_tolls = True
 #HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}    # PSRC
 
 
-# HOT lane rate per mile
+# HOT lane rate per mile. Use adjusted toll rate after 2044.
 # @tolllane
 # 1: I405 toll lane, north section, leaving Bellevue
 # 2: I405 toll lane, north section, going Bellevue
 # 3: I405 toll lane, south section, leaving Bellevue
 # 4: I405 toll lane, south section, going Bellevue
 # 6: HOT2+ (for SR167)
-HOT_rate_dict = {'am' : {1: 10, 2: 35, 3: 10, 4: 35, 6: 35},
-                  'md' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10},
-                  'pm' : {1: 35, 2: 10, 3: 35, 4: 10, 6: 35},
-                  'ni' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10}}
+
+if input_config.model_year >= 2044:
+    HOT_rate_dict = {'am' : {1: 15, 2: 50, 3: 15, 4: 50, 6: 35},
+                  'md' : {1: 15, 2: 15, 3: 15, 4: 15, 6: 10},
+                  'pm' : {1: 50, 2: 15, 3: 50, 4: 15, 6: 35},
+                  'ni' : {1: 15, 2: 15, 3: 15, 4: 15, 6: 10}}
+else:
+    HOT_rate_dict = {'am' : {1: 10, 2: 35, 3: 10, 4: 35, 6: 35},
+                 'md' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10},
+                 'pm' : {1: 35, 2: 10, 3: 35, 4: 10, 6: 35},
+                 'ni' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10}}
+
 
 ##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
