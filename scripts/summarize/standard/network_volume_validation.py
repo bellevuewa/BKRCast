@@ -86,7 +86,7 @@ def abline(slope, intercept):
 
 def help():
     print("This program will save model volumes and counts at screenline locations to external Excel file, and save")
-    print("scatter plots and caculate linear regression as well. ")
+    print("scatter plots and calculate linear regression as well. ")
     print('Screenlines and counts are defined in a json file, which usually resides in the root project folder.')
     print('')
     print('Two predefined json files are for 2014 and 2018 base year.')
