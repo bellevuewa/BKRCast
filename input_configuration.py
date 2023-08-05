@@ -53,6 +53,7 @@ run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
+run_prs_mode = False
 
 # Specific reports to run
 run_daysim_report = True
@@ -94,7 +95,7 @@ input_ensemble = r"inputs/landuse/parking_gz.csv"
 input_folder_for_supplemental = 'inputs/supplemental'
 
 # daysim mode definition
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'PRS'}
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 

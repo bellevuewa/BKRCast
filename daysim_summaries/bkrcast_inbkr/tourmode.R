@@ -56,9 +56,15 @@ prep_modedata_DaySim <- function(tourdata)
   return(tourdata)
 }
 
-prep_tourdata <- function(tourdata,perdata)
+prep_tourdata <- function(tourdata,perdata,tripdata=NULL)
 {
   tourdata <- merge(tourdata,perdata,by=c("hhno","pno"),all.x=T)
+  if(!is.null(tripdata)){
+    tourmodesdata = tripdata[,.N,.(hhno, pno, day, id=tour_id, mode, dorp)][,N:=NULL][]
+    tourdata[tourmodesdata,tourmode:=ifelse(tourmode==0 & any(i.mode==9),
+                                            9, tourmode),
+             on=.(hhno, pno, day, id)]
+  }
   if(excludeChildren5)
     tourdata <- tourdata[pptyp<8]
   tourdata[pdpurp==8,pdpurp:=7]
@@ -67,6 +73,8 @@ prep_tourdata <- function(tourdata,perdata)
   
   wrktours  <- tourdata[pdpurp == 1]
   wrktours <- wrktours[,c("hhno","pno","tour","tourmode"),with=F]
+  # Assign parents tour mode to Shared Ride 3+
+  wrktours[tourmode==9, tourmode:=3]
   setnames(wrktours,c("tourmode","tour"),c("parenttourmode","parent"))
   wrkbasedtours <- tourdata[parent > 0]
   wrkbasedtours <- merge(wrkbasedtours,wrktours,by=c("hhno","pno","parent"),all.x=T)
@@ -91,7 +99,7 @@ if(prepSurvey)
   survtourdata <- prep_modedata_NHTS(survtourdata)
   survtourdata <- prep_tourdata(survtourdata,survperdata)
   write_tables(tourmodemodelout,survtourdata,tourmodemodelfile,"survey")
-
+  
   rm(survperdata,survtourdata)
   gc()
 }
@@ -106,8 +114,9 @@ if(prepDaySim)
   rm(dshhdata)
   
   dstourdata <- assignLoad(paste0(dstourfile,".Rdata"))
+  dstripdata <- assignLoad(paste0(dstripfile,".Rdata")) # BKRCast
   dstourdata <- prep_modedata_NHTS(dstourdata) #prep_modedata_DaySim is only for Tampa/JAX
-  dstourdata <- prep_tourdata(dstourdata,dsperdata)
+  dstourdata <- prep_tourdata(dstourdata,dsperdata,dstripdata) #dstripdata is set to NULL for projects other than BKRCast
   write_tables(tourmodemodelout,dstourdata,tourmodemodelfile,"daysim")
   
   rm(dsperdata,dstourdata)
