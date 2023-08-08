@@ -127,7 +127,7 @@ def build_shadow_only(iter, include_prs_mode):
      for shad_iter in range(0, len(shadow_work)):
         daysim_config_update = [("$SHADOW_PRICE", "true"),("$INCLUDE_PRS" , str(include_prs_mode)),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
-        if model_year >= 2044:
+        if int(model_year) >= 2044:
             daysim_config_update.append(("$OP_COST", 0.36))
         else:
             daysim_config_update.append(("$OP_COST", 0.20))
@@ -426,7 +426,7 @@ def main():
                 # Set up your Daysim Configration
                 daysim_config_update = [("$SHADOW_PRICE" ,"true"),("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
                 # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                if model_year >= 2044:
+                if int(model_year) >= 2044:
                     daysim_config_update.append(("$OP_COST", 0.36))
                 else:
                     daysim_config_update.append(("$OP_COST", 0.20))
@@ -440,15 +440,15 @@ def main():
                 if pop_sample[iteration-1] > 2:
                     daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                    if model_year >= 2044:
+                    if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
                     else:
                         daysim_config_update.append(("$OP_COST", 0.20))
                     modify_config(daysim_config_update)
                 else:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                    if model_year >= 2044:
+                    if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
                     else:
                         daysim_config_update.append(("$OP_COST", 0.20))

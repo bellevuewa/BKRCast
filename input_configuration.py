@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # BKRCast base year
-model_year = '2018'
+project_folder = r'D:\projects\TNC_in_dev\BKR3-19-BB35_NB_2_30%WFH_TNC'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\TFP\2033_horizonyear_TFP\New_Kirkland_LU_test'
+base_year = '2019'  # BKRCast base year
+model_year = '2035'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2018' #name of the folder with scenario data
+scenario_name = '2035' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2019' 
@@ -35,7 +35,7 @@ run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_import_networks = True
+run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
@@ -53,7 +53,7 @@ run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
-run_prs_mode = False
+run_prs_mode = True
 
 # Specific reports to run
 run_daysim_report = True

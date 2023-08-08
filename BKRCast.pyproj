@@ -316,6 +316,7 @@
     <Content Include="inputs\skim_params\matrix_calculation.json" />
     <Content Include="inputs\skim_params\matrix_calc_spec.json" />
     <Content Include="inputs\skim_params\node_calculation.json" />
+    <Content Include="inputs\skim_params\prs_auto_map.json" />
     <Content Include="inputs\skim_params\temp_link_calculation.json" />
     <Content Include="inputs\skim_params\time_of_day.json" />
     <Content Include="inputs\skim_params\time_of_day_crosswalk_ab_4k_dictionary.json" />

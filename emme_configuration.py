@@ -22,7 +22,7 @@ add_hot_lane_tolls = True
 # 4: I405 toll lane, south section, going Bellevue
 # 6: HOT2+ (for SR167)
 
-if input_config.model_year >= 2044:
+if int(input_config.model_year) >= 2044:
     HOT_rate_dict = {'am' : {1: 15, 2: 50, 3: 15, 4: 50, 6: 35},
                   'md' : {1: 15, 2: 15, 3: 15, 4: 15, 6: 10},
                   'pm' : {1: 50, 2: 15, 3: 50, 4: 15, 6: 35},
