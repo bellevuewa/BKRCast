@@ -1,0 +1,20 @@
+[
+{"Name": "tnc_1nt1", "Auto":"h2nt1",  "FracToAssign": 1.0},
+{"Name": "tnc_1nt2", "Auto":"h2nt2",  "FracToAssign": 1.0},
+{"Name": "tnc_1nt3", "Auto":"h2nt3",  "FracToAssign": 1.0},
+{"Name": "tnc_1tl1" , "Auto":"h2tl1",   "FracToAssign": 1.0},
+{"Name": "tnc_1tl2" , "Auto":"h2tl2",   "FracToAssign": 1.0},
+{"Name": "tnc_1tl3" , "Auto":"h2tl3",   "FracToAssign": 1.0},
+{"Name": "tnc_2nt1", "Auto":"h3nt1",  "FracToAssign": 0.5},
+{"Name": "tnc_2nt2", "Auto":"h3nt2",  "FracToAssign": 0.5},
+{"Name": "tnc_2nt3", "Auto":"h3nt3",  "FracToAssign": 0.5},
+{"Name": "tnc_2tl1" , "Auto":"h3tl1",   "FracToAssign": 0.5},
+{"Name": "tnc_2tl2" , "Auto":"h3tl2",   "FracToAssign": 0.5},
+{"Name": "tnc_2tl3" , "Auto":"h3tl3",   "FracToAssign": 0.5},
+{"Name": "tnc_3nt1", "Auto":"h3nt1",  "FracToAssign": 0.25},
+{"Name": "tnc_3nt2", "Auto":"h3nt2",  "FracToAssign": 0.25},
+{"Name": "tnc_3nt3", "Auto":"h3nt3",  "FracToAssign": 0.25},
+{"Name": "tnc_3tl1" , "Auto":"h3tl1",   "FracToAssign": 0.25},
+{"Name": "tnc_3tl2" , "Auto":"h3tl2",   "FracToAssign": 0.25},
+{"Name": "tnc_3tl3" , "Auto":"h3tl3",   "FracToAssign": 0.25}
+]

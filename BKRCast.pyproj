@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\network_volume_validation.py</StartupFile>
+    <StartupFile>run_bkrcast.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -298,7 +298,6 @@
     <Content Include="inputs\skim_params\bike_walk_assignment.json" />
     <Content Include="inputs\skim_params\bike_walk_matrix_dict.json" />
     <Content Include="inputs\skim_params\demand_crosswalk_ab_4k_dictionary.json" />
-    <Content Include="inputs\skim_params\demand_matrix_dictionary.json" />
     <Content Include="inputs\skim_params\emme_bank_dimensions.json" />
     <Content Include="inputs\skim_params\extended_transit_assignment.json" />
     <Content Include="inputs\skim_params\extended_transit_assignment_bus.json" />
@@ -316,7 +315,9 @@
     <Content Include="inputs\skim_params\matrix_calculation.json" />
     <Content Include="inputs\skim_params\matrix_calc_spec.json" />
     <Content Include="inputs\skim_params\node_calculation.json" />
-    <Content Include="inputs\skim_params\prs_auto_map.json" />
+    <Content Include="inputs\skim_params\templates\demand_matrix_dictionary_template.json" />
+    <Content Include="inputs\skim_params\tnc_auto_map.json" />
+    <Content Include="inputs\skim_params\templates\user_classes_template.json" />
     <Content Include="inputs\skim_params\temp_link_calculation.json" />
     <Content Include="inputs\skim_params\time_of_day.json" />
     <Content Include="inputs\skim_params\time_of_day_crosswalk_ab_4k_dictionary.json" />
@@ -404,6 +405,7 @@
     <Compile Include="build_toolbox.py" />
     <Compile Include="daysim_summaries\update_data.py" />
     <Compile Include="emme_configuration.py" />
+    <Compile Include="inputs\skim_params\skim_templates.py" />
     <Compile Include="input_configuration.py" />
     <Compile Include="input_configuration_simple.py" />
     <Compile Include="psrc_to_bkrcast_scripts\batchRepackH5.py" />
@@ -519,6 +521,7 @@
     <Folder Include="inputs\model\" />
     <Folder Include="inputs\model\survey\" />
     <Folder Include="inputs\skim_params\" />
+    <Folder Include="inputs\skim_params\templates\" />
     <Folder Include="inputs\subarea_definition\" />
     <Folder Include="inputs\model\supplemental\" />
     <Folder Include="psrc_to_bkrcast_scripts" />

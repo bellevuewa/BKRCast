@@ -134,7 +134,7 @@ def define_matrices(my_project):
 
     for x in range (0, len(my_skim_matrix_designation)):
             for y in range (0, len(matrix_dict["Highway"])):
-                if 'prs' not in matrix_dict["Highway"][y]["Name"]:
+                if 'tnc_' not in matrix_dict["Highway"][y]["Name"]:
                     my_project.create_matrix(matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x], 
                                           matrix_dict["Highway"][y]["Description"], "FULL")
                    
@@ -247,7 +247,7 @@ def intitial_extra_attributes(my_project):
 
     # Create the link extra attributes to store volume results
     for x in range (0, len(matrix_dict["Highway"])):
-        if 'prs' not in matrix_dict["Highway"][x]["Name"]:
+        if 'tnc_' not in matrix_dict["Highway"][x]["Name"]:
             my_project.create_extra_attribute("LINK", "@"+matrix_dict["Highway"][x]["Name"], matrix_dict["Highway"][x]["Description"], True)
                      
 
@@ -276,17 +276,18 @@ def traffic_assignment(my_project, max_iteration):
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("general_path_based_assignment")
     my_user_classes= json_to_dictionary("user_classes")
-    prs_auto_ar = json_to_dictionary("prs_auto_map")    
-    prs_auto_map = {prs.get('Name'):prs.get('Auto') for prs in prs_auto_ar}
+    tnc_auto_ar = json_to_dictionary("tnc_auto_map")    
+    tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
     
-    # Add PRS trips to Auto trips
-    logging.debug('Adding PRS trips to Auto trips')
-    for prs_mat_name, auto_mat_name in prs_auto_map.items():
-        prs_mat_id = my_project.bank.matrix(prs_mat_name).id
-        auto_mat_id = my_project.bank.matrix(auto_mat_name).id
-        my_project.matrix_calculator(result = auto_mat_id,
-                                     expression = prs_mat_id + ' + ' + auto_mat_id)
-    logging.debug('Finished adding PRS trips to Auto trips')
+    # Add TNC trips to Auto trips  if include_tnc is on
+    if include_tnc:
+        logging.debug('Adding TNC trips to Auto trips')
+        for tnc_mat_name, auto_mat_name in tnc_auto_map.items():
+            tnc_mat_id = my_project.bank.matrix(tnc_mat_name).id
+            auto_mat_id = my_project.bank.matrix(auto_mat_name).id
+            my_project.matrix_calculator(result = auto_mat_id,
+                                         expression = tnc_mat_id + ' + ' + auto_mat_id)
+        logging.debug('Finished adding TNC trips to Auto trips')
     
     
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
@@ -590,7 +591,7 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     for x in range (0, len(my_skim_matrix_designation)):
 
         for y in range (0, len(matrix_dict["Highway"])):
-            if 'prs' not in matrix_dict["Highway"][y]["Name"]:
+            if 'tnc_' not in matrix_dict["Highway"][y]["Name"]:
                 matrix_name= matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x]
                 if my_skim_matrix_designation[x] == 'c':
                     matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 1, 99999)
@@ -778,10 +779,10 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())    
-    prs_auto_ar = json_to_dictionary("prs_auto_map")
+    tnc_auto_ar = json_to_dictionary("tnc_auto_map")
     
-    prs_frac_assign = {prs.get('Name'):prs.get('FracToAssign') for prs in prs_auto_ar}
-    prs_auto_map = {prs.get('Name'):prs.get('Auto') for prs in prs_auto_ar}
+    tnc_frac_assign = {tnc.get('Name'):tnc.get('FracToAssign') for tnc in tnc_auto_ar}
+    tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
     
     #Stores in the HDF5 Container to read or write to
     daysim_set = my_store['Trip']
@@ -889,16 +890,16 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
             if mode[x] == 9:
                 # Paid ride share
                 if dorp[x] > 10 and dorp[x] < 14:
-                    mat_name_prs = matrix_dict[(int(dorp[x]+1),int(vot[x]),int(toll_path[x]))]
+                    mat_name_tnc = matrix_dict[(int(dorp[x]+1),int(vot[x]),int(toll_path[x]))]
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))*prs_frac_assign.get(mat_name_prs)
+                    trips = np.asscalar(np.float32(trexpfac[x]))*tnc_frac_assign.get(mat_name_tnc)
                     trips = round(trips, 2)
-                    text = 'TOD: {}, Mode Name: {}, Trips: {}'.format(my_project.tod, mat_name_prs, trips)
+                    text = 'TOD: {}, Mode Name: {}, Trips: {}'.format(my_project.tod, mat_name_tnc, trips)
                     print(text) #Debugging statement by aditya.gore@rsginc.com
                     logging.debug(text)
-                    demand_matrices[mat_name_prs][myOtaz, myDtaz] = demand_matrices[mat_name_prs][myOtaz, myDtaz] + trips
+                    demand_matrices[mat_name_tnc][myOtaz, myDtaz] = demand_matrices[mat_name_tnc][myOtaz, myDtaz] + trips
   #all in-memory numpy matrices populated, now write out to emme
     if survey_seed_trips:
         for matrix in demand_matrices.values():
@@ -1245,7 +1246,7 @@ def feedback_check(emmebank_path_list):
         for y in range (0, len(matrix_dict["Highway"])):
            #trips
             matrix_name= matrix_dict["Highway"][y]["Name"]
-            if 'prs' not in matrix_name:
+            if 'tnc_' not in matrix_name:
                 matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
                 
                 trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)

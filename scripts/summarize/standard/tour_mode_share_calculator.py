@@ -31,7 +31,7 @@ import input_configuration as prj
 # modified to be compatible with python 3
 
 # 2/16/2022
-# add PRS mode
+# add TNC mode
 
 # 3/1/2022
 # new features: calculate mode share by business locations.
@@ -49,7 +49,7 @@ tour_purpose = {0: 'all',
                 5: 'shopping',
                 6: 'meal',
                 7: 'social'}
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit_walk_access', 7: 'Transit_auto_access', 8:'School_Bus', 9:'PRS'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit_walk_access', 7: 'Transit_auto_access', 8:'School_Bus', 9:'TNC'}
 time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 #purpose: 0: all purpose, 1: work, 2:school,3:escort, 4: personal buz, 5: shopping, 6: meal, 7: social/recreational, 8: not defined, 9: not defined
 def CalModeSharebyPurpose(purpose, tour_df, Output_file, overwritten=False, comments=''):

@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\projects\TNC_in_dev\BKR3-19-BB35_NB_2_30%WFH_TNC'
+project_folder = r'D:\projects\TNC_in_dev\future_improvement\BKR3-19-BB35_NB_2_30%WFH_TNC'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\TFP\2033_horizonyear_TFP\New_Kirkland_LU_test'
 base_year = '2019'  # BKRCast base year
 model_year = '2035'
@@ -53,7 +53,13 @@ run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
-run_prs_mode = True
+
+##############################
+# Modes and Path Types
+##############################
+# In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
+include_tnc = False
+include_tnc_to_transit = False # AV to transit path type allowed
 
 # Specific reports to run
 run_daysim_report = True
@@ -95,7 +101,7 @@ input_ensemble = r"inputs/landuse/parking_gz.csv"
 input_folder_for_supplemental = 'inputs/supplemental'
 
 # daysim mode definition
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'PRS'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 

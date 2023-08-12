@@ -123,9 +123,9 @@ def modify_config(config_vals):
      sys.exit(1)
     
 @timed
-def build_shadow_only(iter, include_prs_mode):
+def build_shadow_only(include_tnc_mode):
      for shad_iter in range(0, len(shadow_work)):
-        daysim_config_update = [("$SHADOW_PRICE", "true"),("$INCLUDE_PRS" , str(include_prs_mode)),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")]
+        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
         if int(model_year) >= 2044:
             daysim_config_update.append(("$OP_COST", 0.36))
@@ -348,7 +348,15 @@ def main():
     if not os.path.exists('outputs'):
         os.makedirs('outputs')
 
+    if include_tnc and run_daysim:
+        include_tnc_mode = 'true'
+    else:
+        include_tnc_mode = 'false'
+        
     build_output_dirs()
+    update_daysim_modes()
+    update_skim_parameters()
+
     if run_copy_input_files:
         copy_large_inputs()
     
@@ -400,11 +408,6 @@ def main():
         if run_daysim_popsampler:
             daysim_popsampler(sampling_option)
         
-        if run_prs_mode and run_daysim:
-            include_prs_mode = "true"
-        else:
-            include_prs_mode = "false"
-       
         for iteration in range(len(pop_sample)):
             print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))
@@ -424,7 +427,7 @@ def main():
                         sys.exit(1)
 
                 # Set up your Daysim Configration
-                daysim_config_update = [("$SHADOW_PRICE" ,"true"),("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                 # use new operating cost 0.36 after 2044, otherwise use 0.2 
                 if int(model_year) >= 2044:
                     daysim_config_update.append(("$OP_COST", 0.36))
@@ -434,11 +437,11 @@ def main():
             else:
                 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
                 # 3 daysim iterations
-                build_shadow_only(iteration, str(include_prs_mode))             
+                build_shadow_only(include_tnc_mode)
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
@@ -446,7 +449,7 @@ def main():
                         daysim_config_update.append(("$OP_COST", 0.20))
                     modify_config(daysim_config_update)
                 else:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_PRS" , str(include_prs_mode)), ("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
