@@ -951,10 +951,16 @@ def ModeChoice(data1, data2, name1, name2, location):
     counts2pivot = counts2.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
     if 'Other' not in counts1pivot.columns.tolist():
         counts1pivot['Other'] = np.nan
-    if 'PRS' not in counts2pivot.columns.tolist():
-        counts2pivot['PRS'] = np.nan
-    counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'PRS']]
-    counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'PRS']]
+
+    if include_tnc == True:
+        if 'TNC' not in counts2pivot.columns.tolist():
+            counts2pivot['TNC'] = np.nan
+        counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
+        counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
+    else:
+        counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
+        counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])[['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
+
     counts1pivot = counts1pivot.fillna(0).transpose().copy()
     counts2pivot = counts2pivot.fillna(0).transpose().copy()
     counts_difference = counts1pivot - counts2pivot
@@ -1788,8 +1794,8 @@ def report_compile(h5_results_file,h5_results_name,
     timerstart=time.time()
     data1 = convert(h5_results_file,guidefile,h5_results_name)
     data2 = convert(h5_comparison_file,guidefile,h5_comparison_name)
-    # Recode 'PRS' mode in survey data to 'Other'
-    data2['Trip']['mode']=data2['Trip']['mode'].replace('PRS','Other')
+    # Recode 'TNC' mode in survey data to 'Other'
+    data2['Trip']['mode']=data2['Trip']['mode'].replace('TNC','Other')
     #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
     #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
     zone_district = get_districts(districtfile)
