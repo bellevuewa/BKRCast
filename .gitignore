@@ -30,3 +30,4 @@ Daysim/last-run.log
 /inputs/model/bkr_roster.csv
 /inputs/model/bkr-roster.combinations.csv
 /inputs/skim_params/user_classes.json
+/inputs/skim_params/demand_matrix_dictionary.json
