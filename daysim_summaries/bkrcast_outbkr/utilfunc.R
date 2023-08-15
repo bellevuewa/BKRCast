@@ -132,6 +132,7 @@ tab_crosstab <- function(df,tabrow,wb)
   wtvar <- as.character(tabrow$weights)
   var1 <- as.character(tabrow$Var1)
   xvals <- c(tabrow$xvalsmin:tabrow$xvalsmax)
+  if("skipxval" %in% names(tabrow)) xvals = setdiff(xvals, tabrow$skipxval)
   if(dim==1){
     if(wtvar %in% c("",NA)){
       out <- data.frame(table(df[[var1]]))

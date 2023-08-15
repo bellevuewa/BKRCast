@@ -142,7 +142,8 @@ def main():
        
     ################ create new matrices in daily emmebank for trip tables only ##############
 
-    for unique_name in uniqueMatrices:
+    for unique_name in sorted(uniqueMatrices):
+        print(unique_name)
         daily_matrix = daily_emmebank.create_matrix(daily_emmebank.available_matrix_identifier('FULL')) #'FULL' means the full-type of trip table
         daily_matrix.name = unique_name
 

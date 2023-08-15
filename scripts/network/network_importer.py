@@ -55,7 +55,7 @@ def import_tolls(emmeProject):
                              5: "@trkc1",
                              6: "@trkc2",
                              7: "@trkc3"},
-              revert_on_error=False)
+              revert_on_error=True)
 
     import_attributes(attr_file[1], scenario = emmeProject.current_scenario,
               column_labels={0: "inode",
@@ -88,6 +88,30 @@ def import_tolls(emmeProject):
     cap_period = str(hwy_tod[tod_4k]) + ' * ul1' 
     emmeProject.network_calculator("link_calculation", result = "ul1", expression = cap_period, selections_by_link = "all")
     
+    #We are using the same rdly has 4k. No need to factor. 
+    #emmeProject.network_calculator("link_calculation", result = "@rdly", expression = "@rdly * .50")
+
+# set bridge/ferry flags
+
+    #bridge_ferry_flag__file = function_file = 'inputs/tolls/bridge_ferry_flags.in'
+    #import_attributes(bridge_ferry_flag__file, scenario = emmeProject.current_scenario,
+    #          column_labels={0: "inode",
+    #                         1: "jnode",
+    #                         2: "@brfer"},
+    #          revert_on_error=True)
+
+    
+    # change modes on tolled network, but exclude some bridges/ferries
+    #if create_no_toll_network:
+    #    network = emmeProject.current_scenario.get_network()
+    #    for link in network.links():
+    #        if link['@toll1'] > 0 and link['@brfer'] == 0:
+    #            #for i in no_toll_modes:
+    #            link.modes -= set([network.mode('s')])
+    #        # at md or ni period, set 
+    #        if link['@toll2'] > 0 and link['@brfer'] == 0:
+    #            link.modes -= set([network.mode('h')])
+    #    emmeProject.current_scenario.publish_network(network)
 
 def load_extra_attributes(emmeProject, attribute_list):
     create_extras = emmeProject.m.tool("inro.emme.data.extra_attribute.create_extra_attribute")
@@ -116,6 +140,36 @@ def update_headways(emmeProject, headways_df):
             network.delete_transit_line(transit_line.id)
     emmeProject.current_scenario.publish_network(network)
 
+#def distance_pricing(distance_rate, hot_rate, emmeProject):
+#   toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]
+#   network = emmeProject.current_scenario.get_network()
+#   for link in network.links():
+#        if add_distance_pricing:
+#            for att in toll_atts:
+#                link[att] = link[att] + (link.length * distance_rate)
+#        if add_hot_lane_tolls:
+#            # is the link a managed lane: 1 for I405 HOT north part; 3 is for the south part
+#            if (link['@tolllane'] == 1) or (link['@tolllane'] == 3):     ## toll lane option 1 (I405): free for 3+
+#                # get the modes allowed
+#                test = [i[1].id for i in enumerate(link.modes)]
+#                # if sov modes are allowed, they should be tolled
+#                if 's' in test or 'e' in test:
+#                    print hot_rate
+#                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
+#                    link['@toll2'] = link['@toll2'] + (link.length * hot_rate)
+#                if 'v' in test:
+#                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
+#            elif link['@tolllane'] == 2:    ## toll lane option 2 (SR167): free for 2+
+#                # get the modes allowed
+#                test = [i[1].id for i in enumerate(link.modes)]
+#                # if sov modes are allowed, they should be tolled
+#                if 's' in test or 'e' in test:
+#                    print hot_rate
+#                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
+#                if 'v' in test:
+#                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
+    
+#   emmeProject.current_scenario.publish_network(network)
 
 def distance_pricing(distance_rate, hot_rate, emmeProject):
     toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]

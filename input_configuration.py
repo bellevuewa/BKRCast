@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # BKRCast base year
-model_year = '2018'
+project_folder = r'D:\projects\TNC_in_dev\future_improvement\BKR3-19-BB35_NB_2_30%WFH_TNC'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\TFP\2033_horizonyear_TFP\New_Kirkland_LU_test'
+base_year = '2019'  # BKRCast base year
+model_year = '2035'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2018' #name of the folder with scenario data
+scenario_name = '2035' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2019' 
@@ -30,17 +30,17 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False
+run_accessibility_calcs = True
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
-run_setup_emme_bank_folders = False
+run_setup_emme_bank_folders = True
 run_import_networks = True
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = False
+run_skims_and_paths_seed_trips = True
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True
@@ -53,6 +53,13 @@ run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
+
+##############################
+# Modes and Path Types
+##############################
+# In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
+include_tnc = True
+include_tnc_to_transit = False # AV to transit path type allowed
 
 # Specific reports to run
 run_daysim_report = True
@@ -94,7 +101,7 @@ input_ensemble = r"inputs/landuse/parking_gz.csv"
 input_folder_for_supplemental = 'inputs/supplemental'
 
 # daysim mode definition
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 
