@@ -17,6 +17,7 @@ class BKRCastExportAllAttributes(_modeller.Tool()):
     1.03:
         export @biketype and @slope to emme_attr.in
     1.1.0: upgrade to python 3.7, compatible with EMME 4.5.1
+    1.1.1: export attribute definition
     '''
     version = "1.0.3" # this is the version
     default_path = ""
@@ -84,7 +85,7 @@ class BKRCastExportAllAttributes(_modeller.Tool()):
 
         NAMESPACE = "inro.emme.data.extra_attribute.export_extra_attributes"
         export_attribute = _modeller.Modeller().tool(NAMESPACE)
-        export_attribute(extra_attributes = attr, export_path = path, scenario=scen)
+        export_attribute(extra_attributes = attr, export_path = path, scenario=scen, export_definitions = True)
         type = attribute.type
         print(type)
         default_name = ""
