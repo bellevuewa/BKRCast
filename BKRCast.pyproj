@@ -290,6 +290,8 @@
     <Content Include="inputs\model\TAZIndex.txt" />
     <Content Include="inputs\model\TAZ_District_CrossWalk.csv" />
     <Content Include="inputs\model\TAZ_TAD_County.csv" />
+    <Content Include="inputs\model\templates\bkr-roster.combinations_template.csv" />
+    <Content Include="inputs\model\templates\bkr_roster_template.csv" />
     <Content Include="inputs\model\transit_agency_dict.json" />
     <Content Include="inputs\model\variable_labels.csv" />
     <Content Include="inputs\skim_params\bike_assignment.json" />
@@ -519,6 +521,7 @@
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\model\" />
     <Folder Include="inputs\model\survey\" />
+    <Folder Include="inputs\model\templates\" />
     <Folder Include="inputs\skim_params\" />
     <Folder Include="inputs\skim_params\templates\" />
     <Folder Include="inputs\subarea_definition\" />
