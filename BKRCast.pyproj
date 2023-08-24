@@ -378,6 +378,24 @@
     <Content Include="inputs\supplemental\special_generators_bkr.csv" />
     <Content Include="inputs\supplemental\time_of_day_factors_bkr.csv" />
     <Content Include="inputs\supplemental\trip_rates.csv" />
+    <Content Include="inputs\worksheets\1530to1830\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\1530to1830\Compare_traffic_volume_and_times.emw" />
+    <Content Include="inputs\worksheets\1530to1830\general.emu" />
+    <Content Include="inputs\worksheets\1530to1830\General_worksheet.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Links_table.emt" />
+    <Content Include="inputs\worksheets\1530to1830\Local_Count_Scatterplot.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Local_Count_Scatterplot_BelCBD.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Screenline_Scatterplot.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Select_link_analysis.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Transit_lines.emt" />
+    <Content Include="inputs\worksheets\1830to6\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\1830to6\Test_1830to6.txt" />
+    <Content Include="inputs\worksheets\6to9\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\6to9\Test_6to9.txt" />
+    <Content Include="inputs\worksheets\9to1530\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\9to1530\Test_9to1530.txt" />
+    <Content Include="inputs\worksheets\Supplementals\Test_supplemental.txt" />
+    <Content Include="inputs\worksheets\TruckModel\Test_truck.txt" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
     <Content Include="screenline_2014.json" />
@@ -473,11 +491,9 @@
     <Compile Include="scripts\summarize\standard\pacalculator.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="scripts\summarize\standard\parcel_summary.py" />
     <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
     <Compile Include="reset_project_folders.py" />
     <Compile Include="scripts\summarize\standard\summarize_daysim_hhs_and_persons.py" />
-    <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
     <Compile Include="scripts\summarize\standard\tour_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\trip_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\truck_vols.py" />
@@ -526,6 +542,13 @@
     <Folder Include="inputs\skim_params\templates\" />
     <Folder Include="inputs\subarea_definition\" />
     <Folder Include="inputs\supplemental\" />
+    <Folder Include="inputs\worksheets\" />
+    <Folder Include="inputs\worksheets\1530to1830\" />
+    <Folder Include="inputs\worksheets\1830to6\" />
+    <Folder Include="inputs\worksheets\6to9\" />
+    <Folder Include="inputs\worksheets\9to1530\" />
+    <Folder Include="inputs\worksheets\Supplementals\" />
+    <Folder Include="inputs\worksheets\TruckModel\" />
     <Folder Include="psrc_to_bkrcast_scripts" />
     <Folder Include="scripts" />
     <Folder Include="scripts\accessibility" />
