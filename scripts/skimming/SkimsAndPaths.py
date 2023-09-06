@@ -1391,8 +1391,6 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     attribute_based_skims(my_project, "Time")    
     #save results
     store_assign_results(my_project, iteration, prefix = 'traffic_assignment')
-   
-
 
     ###bike/walk:
     bike_walk_assignment(my_project, 'false')
@@ -1408,6 +1406,10 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     
     #save results
     store_assign_results(my_project, 'skim')
+
+    # update @mveh, @hveh, @bveh and @tveh.   Yhey will be updated again in bike_model.py
+    my_project.import_extra_attributes(extra_attributes_dict)
+    my_project.calc_total_vehicles()
 
     ##dispose emmebank
     my_project.closeDesktop()
