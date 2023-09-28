@@ -1,16 +1,19 @@
 import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as app
 import os, sys
+from pathlib2 import Path
 import numpy as np
 import pandas as pd
+import json
+import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
 from emme_configuration import *
-import json
-import shutil
+
 from distutils import dir_util
 from EmmeProject import *
+from data_wrangling import *
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -132,6 +135,10 @@ def main():
     daily_scenario = daily_emmebank.scenario(1002)
     daily_network = daily_scenario.get_network()
 
+    # if demand_matrix_dictionary.json is missing create one
+    demand_matrix_dict_file = Path('inputs/skim_params/demand_matrix_dictionary.json')
+    if demand_matrix_dict_file.is_file() == False:    
+        update_skim_parameters()        
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())
 
