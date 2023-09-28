@@ -136,6 +136,10 @@ def main():
             for slid, attr in screenline_dict[value].items():
                 imgdata = None
                 print(f'processing {slid} ...')
+                if not(attr in links_df.columns):
+                    print(f'Attribute {attr} is missing in {key} databank.')
+                    print(f'Aborted. Please load {attr} into {key} databank first.')                    
+                    exit(-1)                                                        
                 sl_df = links_df.loc[(links_df['isAuto'] == True) & (links_df['isConnector'] == False) & (links_df[slid] > 0) & (links_df[attr] > 0)].copy()
                 selected_columns = columns_dict[value]
                 sl_df = sl_df[selected_columns]
