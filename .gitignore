@@ -33,3 +33,6 @@ Daysim/last-run.log
 /inputs/skim_params/demand_matrix_dictionary.json
 /inputs/model/bkr_roster.csv
 /inputs/model/bkr-roster.combinations.csv
+/scripts/summarize/standard/calculate_AVO.py
+/scripts/summarize/standard/RegionalCenterSummaries.py
+/scripts/summarize/standard/truck_vols.py
