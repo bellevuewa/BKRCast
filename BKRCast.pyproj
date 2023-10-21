@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>run_bkrcast.py</StartupFile>
+    <StartupFile>scripts\modeller\Matrix\Compare_two_matrics.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -457,6 +457,7 @@
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
     <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\Matrix\Compare_two_matrics.py" />
     <Compile Include="scripts\modeller\Model_outputs\export_intersection_volumes.py" />
     <Compile Include="scripts\modeller\Network\generate_bus_stops.py" />
     <Compile Include="scripts\modeller\Assignment\Pathbased_assignment_on_multiple_scenarios.py" />
@@ -558,6 +559,7 @@
     <Folder Include="scripts\modeller\Assignment\" />
     <Folder Include="scripts\modeller\Network\" />
     <Folder Include="scripts\modeller\Model_outputs\" />
+    <Folder Include="scripts\modeller\Matrix\" />
     <Folder Include="scripts\network" />
     <Folder Include="scripts\modeller\" />
     <Folder Include="scripts\skimming" />

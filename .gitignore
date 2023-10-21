@@ -36,3 +36,4 @@ Daysim/last-run.log
 /scripts/summarize/standard/calculate_AVO.py
 /scripts/summarize/standard/RegionalCenterSummaries.py
 /scripts/summarize/standard/truck_vols.py
+*.png
