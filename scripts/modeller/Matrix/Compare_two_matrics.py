@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 import os
+from datetime import datetime
 
 '''
    This tool is used to compare two full matrices and show the linear regression. One full matrices resides in the current 
@@ -133,32 +134,38 @@ class BKRCastMatrixCompare(_modeller.Tool()):
         internal_matrix = this_bank.matrix(self.internalmatrix)  
         external_matrix = external_bank.matrix(self.externalmatrix)       
 
-        # to make scatter plot of full matrices, we need to convert 2-dimensional to 1D
-        internal_array = internal_matrix.get_numpy_data().flatten()
-        external_array = external_matrix.get_numpy_data().flatten()
+        if external_matrix != None:
+            # to make scatter plot of full matrices, we need to convert 2-dimensional to 1D
+            internal_array = internal_matrix.get_numpy_data().flatten()
+            external_array = external_matrix.get_numpy_data().flatten()
 
-        # this linear regression is consistent with Excel 
-        m, b, r, p, se = stats.linregress(internal_array, external_array)
-        r2 = r ** 2
-        ypred = m * internal_array + b  
+            # this linear regression is consistent with Excel 
+            m, b, r, p, se = stats.linregress(internal_array, external_array)
+            r2 = r ** 2
+            ypred = m * internal_array + b  
 
-        fig, ax = plt.subplots()
-        ax.scatter(internal_array, external_array)   
-        ax.plot(internal_array, ypred, label = f'y = {m:.3f}x {b:+.3f}   R^2 = {r2: .3f}')     
-        ax.grid(True, which = 'both', axis = 'both')   
-        figsize = fig.gca()
-        size = max(figsize.get_xlim()[1], figsize.get_ylim()[1])
-        print(str(size))    
-        # print paths to the footer            
-        ax.annotate('internal:' + this_bank.path, xy = (-0.1, -0.20), xycoords = 'axes fraction', ha = 'left', va = 'center', fontsize = 6)
-        ax.annotate('external:' + self.externaldatabase, xy = (-0.1, -0.25), xycoords = 'axes fraction', ha = 'left', va = 'center', fontsize = 6)
-        ax.axis([0, size, 0, size], 'square')
-        ax.set_xlabel('Internal ' + internal_matrix.id)
-        ax.set_ylabel('External ' + external_matrix.id)
-        ax.set_title('Scatter Plot of Two Matrices')
-        fig.legend(bbox_to_anchor=(0.2, 0.9), loc="upper left")
-        fig.tight_layout()   
-        if (self.destination_folder != None):
-            self.default_path = self.destination_folder 
-        fig.savefig(os.path.join(self.default_path, 'matrix_comparison_' + self.internalmatrix + '.png'))
-        plt.close()        
+            fig, ax = plt.subplots(figsize=(6, 6))
+            ax.scatter(internal_array, external_array)   
+            ax.plot(internal_array, ypred, label = f'y = {m:.3f}x {b:+.3f}   R^2 = {r2: .3f}')     
+            ax.grid(True, which = 'both', axis = 'both')   
+            # get current axises            
+            figsize = ax.gca()
+            size = max(figsize.get_xlim()[1], figsize.get_ylim()[1])
+            # print paths to the footer            
+            ax.annotate('internal:' + this_bank.path, xy = (-0.1, -0.20), xycoords = 'axes fraction', ha = 'left', va = 'center', fontsize = 6)
+            ax.annotate('external:' + self.externaldatabase, xy = (-0.1, -0.25), xycoords = 'axes fraction', ha = 'left', va = 'center', fontsize = 6)
+            ax.annotate(datetime.now().strftime('%m-%d-%Y %H:%M:%S'), xy = (-0.1, -0.3), xycoords = 'axes fraction', ha = 'left', va = 'center', fontsize = 6)   
+            ax.axis([0, size, 0, size], 'square')
+            ax.set_xlabel('Internal ' + internal_matrix.id)
+            ax.set_ylabel('External ' + external_matrix.id)
+            ax.set_title('Scatter Plot of Two Matrices')
+            
+            fig.legend(bbox_to_anchor=(0.25, 0.9), loc="upper left")
+            fig.tight_layout() 
+            fig.canvas.draw()              
+            if (self.destination_folder != None):
+                self.default_path = self.destination_folder 
+            fig.savefig(os.path.join(self.default_path, 'matrix_comparison_' + self.internalmatrix + '.png'))
+        else:
+            self.tool_run_message +=  f'{self.externalmatrix} is invalid in the external databank.'                        
+        plt.close(fig)        
