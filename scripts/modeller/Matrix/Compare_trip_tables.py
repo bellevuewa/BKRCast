@@ -33,8 +33,8 @@ class BKRCastTripTableCompare(_modeller.Tool()):
     
     def page(self):
 
-        pb = _modeller.ToolPageBuilder(self, title="BKRCast Matrix Comparison",
-        description="Matrix Comparison",
+        pb = _modeller.ToolPageBuilder(self, title="BKRCast Trip Table Comparison",
+        description="Trip Table Comparison",
         branding_text="Modeling and Analysis Group -- City of Bellevue Transportation")
 
         pb.add_select_file("externaldatabase", "file", "", title = "External database file:")
