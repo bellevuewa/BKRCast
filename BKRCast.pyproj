@@ -457,6 +457,7 @@
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
     <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\Matrix\Compare_trip_tables.py" />
     <Compile Include="scripts\modeller\Matrix\Compare_two_matrics.py" />
     <Compile Include="scripts\modeller\Model_outputs\export_intersection_volumes.py" />
     <Compile Include="scripts\modeller\Network\generate_bus_stops.py" />
