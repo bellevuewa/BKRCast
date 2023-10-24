@@ -317,6 +317,7 @@
     <Content Include="inputs\skim_params\matrix_calculation.json" />
     <Content Include="inputs\skim_params\matrix_calc_spec.json" />
     <Content Include="inputs\skim_params\node_calculation.json" />
+    <Content Include="inputs\skim_params\SOLA_assignment.json" />
     <Content Include="inputs\skim_params\templates\demand_matrix_dictionary_template.json" />
     <Content Include="inputs\skim_params\tnc_auto_map.json" />
     <Content Include="inputs\skim_params\templates\user_classes_template.json" />
