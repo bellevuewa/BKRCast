@@ -30,12 +30,12 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
-run_setup_emme_bank_folders = True
-run_import_networks = True
+run_setup_emme_bank_folders = False
+run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
@@ -49,7 +49,6 @@ run_truck_model = True
 run_supplemental_trips = True
 run_daysim = True
 run_daysim_popsampler = False
-run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False

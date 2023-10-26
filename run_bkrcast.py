@@ -34,6 +34,8 @@ from shutil import copy2 as shcopy
 from distutils import dir_util
 import re
 import logging
+
+from numpy import isin
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
@@ -49,16 +51,6 @@ from data_wrangling import *
 @timed
 def accessibility_calcs():
     copy_accessibility_files()
-
-    print('adding military jobs to regular jobs')
-    print('adding JBLM workers to external workers')
-    print('adjusting non-work externals')
-    print('creating ixxi file for Daysim')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
-    if returncode != 0:
-        print('Military Job loading failed')
-        sys.exit(1)
-    print('military jobs loaded')
 
     if run_update_parking:
         if base_year == model_year:
@@ -331,6 +323,17 @@ def run_all_summaries():
    if run_truck_summary:
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
+def clean_output_folder():
+    folders_kept = ['landuse'] # subfolders inside outputs
+    list_directory = os.listdir('outputs')
+    for item in list_directory:
+        full_path = os.path.join(project_folder, 'outputs', item)
+        if os.path.isfile(full_path):
+            os.remove(full_path)
+        elif os.path.isdir(full_path) and (not(item in folders_kept)):
+            shutil.rmtree(full_path)
+                
+                                
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
@@ -352,7 +355,9 @@ def main():
         include_tnc_mode = 'true'
     else:
         include_tnc_mode = 'false'
-        
+    
+    # delete everything inside outputs/ folder, except accessibility outputs which resides in landuse subfolder.
+    clean_output_folder()    
     build_output_dirs()
     update_daysim_modes()
     update_skim_parameters()
@@ -360,9 +365,6 @@ def main():
     if run_copy_input_files:
         copy_large_inputs()
     
-    #if run_copy_seed_supplemental_trips:
-    #    copy_seed_supplemental_trips()
-
     if run_copy_daysim_code:
         copy_daysim_code()
 
@@ -383,12 +385,18 @@ def main():
         if returncode != 0:
            sys.exit(1)
 
+    print('adding military jobs to regular jobs')
+    print('adding JBLM workers to external workers')
+    print('adjusting non-work externals')
+    print('creating ixxi file for Daysim')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
+    if returncode != 0:
+        print('Military Job loading failed')
+        sys.exit(1)
+    print('military jobs loaded')
+
     if run_accessibility_calcs:
         accessibility_calcs()
-
-    if run_accessibility_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
-
 
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:

@@ -298,7 +298,7 @@ def traffic_assignment(my_project, max_iteration):
     #mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
 
     for x in range (0, len(mod_assign["classes"])):
-        vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)
+        vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)    # reciprocol of VOT converted to cents/minute.
         mod_assign["classes"][x]["generalized_cost"]["perception_factor"] = vot
         mod_assign["classes"][x]["generalized_cost"]["link_costs"] = my_user_classes["Highway"][x]["Toll"]
         mod_assign["classes"][x]["demand"] = "mf"+ my_user_classes["Highway"][x]["Name"]
