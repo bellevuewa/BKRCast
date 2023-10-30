@@ -8,6 +8,7 @@ from scipy import stats
 import os
 from datetime import datetime
 import pandas as pd
+import json
 
 '''
    This tool is to export all trip tables from the current databank to an external excel file. Each trip table takes one tab. 
@@ -78,12 +79,11 @@ class BKRCastExportTripTables(_modeller.Tool()):
              
     @_modeller.logbook_trace(name="BKRCast Trip Tables Export", save_arguments=True)
     def __call__(self, internalmatrix, destination_folder, matrixsummary):
-        # for some reason, the value self.internalmatrix is not a list, but a string. Need to parse it to list of matrices.
-        # bug is reported to INRO waiting for a fix in a future update.  
+        # the value self.internalmatrix is serialized, need to deserialize first.
         if internalmatrix == '':
             matrices = self.trip_table_list  
         else:                             
-            matrices = self.stringfilter(internalmatrix)
+            matrices = json.loads(internalmatrix)
         print(matrices) 
 
         cur_bank = _modeller.Modeller().emmebank
