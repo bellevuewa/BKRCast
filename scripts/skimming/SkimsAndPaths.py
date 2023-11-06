@@ -1,4 +1,5 @@
 
+from ssl import Purpose
 from typing import overload
 import inro.emme.desktop.app as app
 import inro.modeller as _m
@@ -677,58 +678,78 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     print('It took' + str(round((end_export_hdf5-start_export_hdf5)/60,2)) + ' minutes to export all skims to the HDF5 File.')
     logging.debug(text)
 
-def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
+def remove_additional_HBO_trips_during_biz_hours(trips_df, tours_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
     purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
     trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
     trips_df['tripid'] = trips_df.reset_index().index
+    tours_df['pid'] = f"{tours_df['hhno']}_{tours_df['pno']}" 
+    tours_df['tourid'] = tours_df.reset_index().index
+        
     import pandas as pd
-    workers_df = pd.read_csv(converted_workers_filename)
+    print('loading files...')
+    # file for WHF is under the root folder.    
+    workers_df = pd.read_csv(os.path.join(converted_workers_filename))
     workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
-
     tazs = workers_df['hhtaz'].unique()
+
+    purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
+    trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
+    # id attribute has duplicated values so it cannot be used as index. Report this bug to RSG. need to create an index for trips_df
+    trips_df['tripid'] = trips_df.reset_index().index
+    tours_df['pid'] = tours_df['hhno'].astype('str') + '_' + tours_df['pno'].astype('str')
+    print(f'number of workers working from home: {workers_df.shape[0]}')
+
+    # find people who make errand trips when they work from home, these people will be stored in selected.    
     selected = pd.DataFrame()
     # these trips are one way trips starting from their home
     for taz in tazs:
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
-            selected_workers = workers.sample(frac = percent_trips_to_remove)
+            selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
             selected = selected.append(selected_workers)
 
-    selected_trips_df = pd.merge(trips_df, selected[['pid', 'hhparcel']], on = 'pid', how = 'inner')
-    selected_trips_df = selected_trips_df.loc[(selected_trips_df['deptm'] >= normal_biz_hrs_start) & (selected_trips_df['deptm'] < normal_biz_hrs_end) & (selected_trips_df['dpurp'].isin(purpose))]
-
-    trips_from = selected_trips_df.shape[0]
-    text = 'Trips to be removed: (from any location) ' + str(trips_from)
+    text = f'WFH workers wouldnt make errand tours during core biz hours: {selected.shape[0]}'
     print(text)
     logging.debug(text)
+            
+    selected_tours_df = pd.merge(tours_df, selected[['pid']], on = 'pid', how = 'inner')
+    selected_tours_df = selected_tours_df.loc[(selected_tours_df['tlvorig'] >= normal_biz_hrs_start) & (selected_tours_df['tlvorig'] < normal_biz_hrs_end) & (selected_tours_df['pdpurp'].isin(purpose))]   
+    updated_tours_df = tours_df[~tours_df['id'].isin(selected_tours_df['id'])].copy()
+    selected_tours_df.drop(columns = ['pid'], axis =1, inplace = True)
 
-    returntrips = pd.merge(trips_df, selected_trips_df[['pid', 'opcl', 'dpcl', 'hhparcel']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'hhparcel', 'pid'], how = 'inner')
-    selected_trips_df = selected_trips_df.append(returntrips)
-    selected_trips_df.drop(['opcl_x','opcl_y','dpcl_x','dpcl_y'], axis = 1, inplace = True)
-    selected_trips_df.drop_duplicates()
-
-    text = 'Trips to be removed: (going back home) ' + str(selected_trips_df.shape[0] - trips_from)
+    text = f'Errand tours saved due to WFH {selected_tours_df.shape[0]}'
     print(text)
     logging.debug(text)
+            
+    updated_tours_df.drop(['pid'], axis = 1, inplace = True) 
+    updated_tours_df.to_csv(os.path.join(report_output_location, '_updated_tours_df.tsv'), index = False, sep = '\t')    
+    text = f'Total tours after adjustment: {updated_tours_df.shape[0]}'
+    logging.debug(text)    
 
-    summarize_trips(selected_trips_df)
-    # remove the selected trips from trips_df
-    trips_df = trips_df[~trips_df['tripid'].isin(selected_trips_df['tripid'])]
-    trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
-    text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
-
-    updated_trip_name = os.path.join(report_output_location, '_updated_trips_df.tsv')
-    trips_df.to_csv(updated_trip_name, index = False, sep ='\t')
-    print(text)
+    selected_trips_df = trips_df.merge(selected_tours_df[['id']], left_on = 'tour_id', right_on = 'id')
+    text = f'Total trips saved due to WFH: {selected_trips_df.shape[0]}'
+    print(text)    
     logging.debug(text)
-    return trips_df
+        
+    updated_trips_df = trips_df[~trips_df['tripid'].isin(selected_trips_df['tripid'])].copy()
+    updated_trips_df.drop(columns = ['tripid', 'pid'], axis = 1, inplace = True)
+    updated_trips_df.to_csv(os.path.join(report_output_location, '_updated_trips_df.tsv'), index = False, sep = '\t')
+    text = f'Total trips after adjustment: {updated_trips_df.shape[0]}'
+    print(text)
+    logging.debug(text)    
 
-def summarize_trips(trips_df):
-    removed_filename = os.path.join(report_output_location, 'trips_to_be_removed.csv')
-    trips_df.to_csv(removed_filename, index = False)
-    filename = os.path.join(report_output_location, 'summary_removed_trips.txt')
+    summarize_trips(selected_trips_df, selected_tours_df)
+    return updated_trips_df
+
+def summarize_trips(trips_df, tours_df):
+    reduced_trip_filename = os.path.join(report_output_location, 'reduced_trips_due_to_WFH.csv')
+    reduced_tour_filename = os.path.join(report_output_location, 'reduced_tours_due_to_WFH.csv')   
     
-    subtotal_trips = trips_df['trexpfac'].count()
+    trips_df.to_csv(reduced_trip_filename, index = False)
+    tours_df.to_csv(reduced_tour_filename, index = False)    
+    filename = os.path.join(report_output_location, 'WFH_summary.txt')
+    
+    subtotal_trips = trips_df['trexpfac'].sum()
     trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp').sum()
     trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
     trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
@@ -740,15 +761,35 @@ def summarize_trips(trips_df):
     trips_by_purpose['share'] = trips_by_purpose['share'].map('{:.1%}'.format)
     trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
 
+    subtotal_tours = tours_df['toexpfac'].sum()
+    tours_by_purpose = tours_df[['pdpurp', 'tautodist', 'toexpfac']].groupby('pdpurp').sum()
+    tours_by_purpose['share'] = tours_by_purpose['toexpfac'] / subtotal_tours
+    tours_by_purpose['avg_auto_dist'] = tours_by_purpose['tautodist'] / tours_by_purpose['toexpfac']
+    tours_by_purpose.reset_index(inplace = True)
+    tours_by_purpose.replace({'pdpurp': tour_purpose_dict}, inplace = True)
+    tours_by_purpose.columns = ['purp', 'dist', 'tours', 'share', 'avgdist']            
+    tours_by_purpose['avgdist'] = tours_by_purpose['avgdist'].map('{:.1f}'.format)
+    tours_by_purpose['dist'] = tours_by_purpose['dist'].map('{:.1f}'.format)
+    tours_by_purpose['share'] = tours_by_purpose['share'].map('{:.1%}'.format)
+    tours_by_purpose['tours'] = tours_by_purpose['tours'].astype(int)
+   
     with open(filename, 'w') as f:
         f.write(str(datetime.datetime.now()) + '\n')
-        f.write('This is the summary of trips_to_be_removed.csv\n')
-        f.write('Total trips removed: ' + str(subtotal_trips))
+        f.write('This is the summary of reduced_trips_due_to_WFH.csv\n')
+        f.write('Total trips reduced: ' + str(subtotal_trips))
         f.write('\n')
-        f.write('Trip by Purpose\n')
+        f.write('Trip by purpose\n')
         f.write('%s' % trips_by_purpose)
-    print('Removed trips are saved in ' + removed_filename)
-    print('Summary is saved in ' + filename)
+
+        f.write('\n\n\n')
+        f.write('This is the summary of reduced_tours_due_to_WFH.csv\n')
+        f.write('Total tours reduced: ' + str(subtotal_tours)) 
+        f.write('\n')
+        f.write('Tours by purpose\n') 
+        f.write('%s' % tours_by_purpose)                                      
+    print(f'Reduced trips are saved in {reduced_trip_filename}')
+    print(f'Reduced tours are saved in {reduced_tour_filename}')    
+    print(f'Summary is saved in {filename}')
 
 def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     start_time = time.time()
@@ -784,9 +825,6 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     tnc_frac_assign = {tnc.get('Name'):tnc.get('FracToAssign') for tnc in tnc_auto_ar}
     tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
     
-    #Stores in the HDF5 Container to read or write to
-    daysim_set = my_store['Trip']
-
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
     otaz = np.asarray(daysim_set["otaz"])
@@ -1527,9 +1565,10 @@ def main():
     if ((converted_workers_file_name) != ''):
         my_store = h5py.File(hdf5_file_path, 'r')
         wfh_adj_trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
+        tours_df = data_wrangling.h5_to_df(my_store, 'Tour')        
         my_store.close()
         #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
-        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, time_start, time_end, converted_workers_file_name, percent)
+        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, tours_df, time_start, time_end, converted_workers_file_name, percent)
         text = 'Some home based trips are adjusted for WFH estimate.'
         print(text)
         logging.debug(text)

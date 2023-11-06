@@ -103,7 +103,14 @@ input_folder_for_supplemental = 'inputs/supplemental'
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
-
+tour_purpose_dict = {0: 'all',
+                1: 'work',
+                2: 'school',
+                3: 'escort',
+                4: 'personal business',
+                5: 'shopping',
+                6: 'meal',
+                7: 'social'}
 #################################### INPUT CHECKS ####################################
 
 # These files are often missing from a run.  We want to check they are present and warn if not.
