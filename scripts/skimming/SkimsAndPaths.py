@@ -691,7 +691,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start,
     for taz in tazs:
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
-            selected_workers = workers.sample(frac = percent_trips_to_remove)
+            selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
             selected = selected.append(selected_workers)
 
     selected_trips_df = pd.merge(trips_df, selected[['pid', 'hhparcel']], on = 'pid', how = 'inner')
