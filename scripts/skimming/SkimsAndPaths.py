@@ -705,7 +705,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, tours_df, normal_biz_
     for taz in tazs:
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
-            selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
+            selected_workers = workers.sample(frac = percent_trips_to_remove)
             selected = selected.append(selected_workers)
 
     text = f'WFH workers wouldnt make errand tours during core biz hours: {selected.shape[0]}'
@@ -781,7 +781,7 @@ def summarize_trips(trips_df, tours_df):
         f.write('Trip by purpose\n')
         f.write('%s' % trips_by_purpose)
 
-        f.write('\n\n\n')
+        f.write('\n')
         f.write('This is the summary of reduced_tours_due_to_WFH.csv\n')
         f.write('Total tours reduced: ' + str(subtotal_tours)) 
         f.write('\n')
@@ -825,6 +825,9 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     tnc_frac_assign = {tnc.get('Name'):tnc.get('FracToAssign') for tnc in tnc_auto_ar}
     tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
     
+    # #Stores in the HDF5 Container to read or write to
+    # daysim_set = my_store['Trip']
+
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
     otaz = np.asarray(daysim_set["otaz"])
