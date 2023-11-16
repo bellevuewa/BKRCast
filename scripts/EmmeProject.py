@@ -306,11 +306,10 @@ class EmmeProject:
         self.bank.dispose()
         self.desktop.close()
 
-    def import_attribute_values(self, file_path, scen_id, field_seperator, revert_on_error):
+    def import_attribute_values(self, file_path, revert_on_error):
         NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
         import_values = self.m.tool(NAMESPACE)
-        scen = self.bank.scenario(scen_id)
-        import_values(file_path, scenario = scen, field_separator = field_seperator, revert_on_error = revert_on_error)
+        import_values(file_path, scenario = self.current_scenario, column_labels = 'FROM_HEADER',revert_on_error = revert_on_error)
 
     def emme_links_to_df(self):
         '''
@@ -353,7 +352,7 @@ class EmmeProject:
         if scen != None:
             self.data_explorer.replace_parimary_scenario(scen)
 
-    def import_extra_attributes(self, attr_dict):
+    def create_extra_attributes(self, attr_dict):
         for attrname, desc in attr_dict.items():
             if attrname in self.current_scenario.extra_attributes():
                 self.delete_extra_attribute(attrname)

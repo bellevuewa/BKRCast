@@ -88,6 +88,7 @@ def help():
     print("This program will save model volumes and counts at screenline locations to external Excel file, and save")
     print("scatter plots and calculate linear regression as well. ")
     print('Screenlines and counts are defined in a json file, which usually resides in the root project folder.')
+    print('If the traffic count attribute is missing from a databank, it will be imported first. '        )    
     print('')
     print('Two predefined json files are for 2014 and 2018 base year.')
     print('')   
@@ -138,8 +139,13 @@ def main():
                 print(f'processing {slid} ...')
                 if not(attr in links_df.columns):
                     print(f'Attribute {attr} is missing in {key} databank.')
-                    print(f'Aborted. Please load {attr} into {key} databank first.')                    
-                    exit(-1)                                                        
+                    my_project.create_extra_attribute('LINK', attr, '', True) 
+                    fn = os.path.join(prj.project_folder, 'inputs/observed', attr + '.txt')  
+                    my_project.import_attribute_values(fn, False)   
+                    # new attribute is added, need to update links_df                    
+                    links_df = my_project.emme_links_to_df()                    
+                    print(f'Missing attribute is loaded into in {key} databank.')
+                                                                         
                 sl_df = links_df.loc[(links_df['isAuto'] == True) & (links_df['isConnector'] == False) & (links_df[slid] > 0) & (links_df[attr] > 0)].copy()
                 selected_columns = columns_dict[value]
                 sl_df = sl_df[selected_columns]
