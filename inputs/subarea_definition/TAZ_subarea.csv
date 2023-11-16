@@ -1,1307 +1,1307 @@
-Jurisdiction,BKRCastTAZ,LUType,Subarea,SubareaName,PMA_ID,PMA_NAME
-BELLEVUE,1,Regular,3,Downtown,1,HDMX
-BELLEVUE,2,Regular,3,Downtown,1,HDMX
-BELLEVUE,3,Regular,3,Downtown,1,HDMX
-BELLEVUE,4,Regular,3,Downtown,1,HDMX
-BELLEVUE,5,Regular,3,Downtown,1,HDMX
-BELLEVUE,6,Regular,3,Downtown,1,HDMX
-BELLEVUE,7,Regular,3,Downtown,1,HDMX
-BELLEVUE,8,Regular,3,Downtown,1,HDMX
-BELLEVUE,9,Regular,3,Downtown,1,HDMX
-BELLEVUE,10,Regular,3,Downtown,1,HDMX
-BELLEVUE,11,Regular,3,Downtown,1,HDMX
-BELLEVUE,12,Park,3,Downtown,1,HDMX
-BELLEVUE,13,Regular,3,Downtown,1,HDMX
-BELLEVUE,14,Regular,3,Downtown,1,HDMX
-BELLEVUE,15,Regular,3,Downtown,1,HDMX
-BELLEVUE,16,Regular,3,Downtown,1,HDMX
-BELLEVUE,17,Regular,3,Downtown,1,HDMX
-BELLEVUE,18,Regular,3,Downtown,1,HDMX
-BELLEVUE,19,Regular,3,Downtown,1,HDMX
-BELLEVUE,20,Regular,3,Downtown,1,HDMX
-BELLEVUE,21,Regular,3,Downtown,1,HDMX
-BELLEVUE,22,Regular,3,Downtown,1,HDMX
-BELLEVUE,23,Regular,3,Downtown,1,HDMX
-BELLEVUE,24,Regular,3,Downtown,1,HDMX
-BELLEVUE,25,Regular,3,Downtown,1,HDMX
-BELLEVUE,26,Regular,3,Downtown,1,HDMX
-BELLEVUE,27,Regular,3,Downtown,1,HDMX
-BELLEVUE,28,Regular,3,Downtown,1,HDMX
-BELLEVUE,29,Regular,3,Downtown,1,HDMX
-BELLEVUE,30,Regular,3,Downtown,1,HDMX
-BELLEVUE,31,Regular,3,Downtown,1,HDMX
-BELLEVUE,32,Regular,3,Downtown,1,HDMX
-BELLEVUE,33,Regular,3,Downtown,1,HDMX
-BELLEVUE,34,Regular,3,Downtown,1,HDMX
-BELLEVUE,35,Regular,3,Downtown,1,HDMX
-BELLEVUE,36,Regular,3,Downtown,1,HDMX
-BELLEVUE,37,Regular,3,Downtown,1,HDMX
-BELLEVUE,38,Regular,3,Downtown,1,HDMX
-BELLEVUE,39,Regular,3,Downtown,1,HDMX
-BELLEVUE,40,Regular,3,Downtown,1,HDMX
-BELLEVUE,41,Regular,3,Downtown,1,HDMX
-BELLEVUE,42,Regular,3,Downtown,1,HDMX
-BELLEVUE,43,Regular,3,Downtown,1,HDMX
-BELLEVUE,44,Regular,3,Downtown,1,HDMX
-BELLEVUE,45,Regular,3,Downtown,1,HDMX
-BELLEVUE,46,Regular,3,Downtown,1,HDMX
-BELLEVUE,47,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,48,Park,1,North Bellevue,3,LDRN
-BELLEVUE,49,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,50,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,51,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,52,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,53,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,54,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,55,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,56,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,57,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,58,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,59,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,60,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,61,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,62,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,63,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,64,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,65,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,66,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,67,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,68,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,69,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,70,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,71,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,72,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,73,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,74,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,75,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,76,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,77,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,78,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,79,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,80,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,81,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,82,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,83,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,84,Park,1,North Bellevue,3,LDRN
-BELLEVUE,85,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,86,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,87,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,88,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,89,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,90,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,91,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,92,Regular,1,North Bellevue,3,LDRN
-BELLEVUE,93,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,94,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,95,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,96,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,97,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,98,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,99,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,100,Elementary School,2,Bridle Trails,3,LDRN
-BELLEVUE,101,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,102,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,103,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,104,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,105,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,106,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,107,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,108,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,109,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,110,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,111,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,112,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,113,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,114,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,115,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,116,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,117,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,118,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,119,Park,2,Bridle Trails,3,LDRN
-BELLEVUE,120,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,121,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,122,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,123,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,124,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,125,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,126,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,127,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,128,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,129,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,130,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,131,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,132,Regular,2,Bridle Trails,3,LDRN
-BELLEVUE,133,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,134,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,135,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,136,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,137,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,138,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,139,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,140,Park,12,Bel-Red Northup,1,HDMX
-BELLEVUE,141,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,142,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,143,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,144,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,145,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,146,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,147,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,148,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,149,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,150,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,151,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,152,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,153,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,154,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,155,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,156,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,157,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,158,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,159,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,160,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,161,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,162,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,163,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,164,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,165,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,166,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,167,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,168,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,169,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,170,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,171,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,172,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,173,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,174,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,175,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,176,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,177,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,178,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,179,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,180,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,181,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,182,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,183,Regular,4,Wilburton,1,HDMX
-BELLEVUE,184,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,185,Regular,4,Wilburton,1,HDMX
-BELLEVUE,186,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,187,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,188,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,189,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,190,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,191,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,192,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,193,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,194,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,195,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,196,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,197,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,198,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,199,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,200,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,201,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,202,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,203,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,204,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,205,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,206,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,207,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,208,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,209,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,210,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,211,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,212,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,213,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,214,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,215,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,216,Middle School,9,East Bellevue,3,LDRN
-BELLEVUE,217,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,218,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,219,Regular,5,Crossroads,2,MDMX
-BELLEVUE,220,Regular,5,Crossroads,2,MDMX
-BELLEVUE,221,Regular,5,Crossroads,2,MDMX
-BELLEVUE,222,Regular,5,Crossroads,2,MDMX
-BELLEVUE,223,Regular,5,Crossroads,2,MDMX
-BELLEVUE,224,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,225,Regular,5,Crossroads,2,MDMX
-BELLEVUE,226,Regular,12,Bel-Red Northup,1,HDMX
-BELLEVUE,227,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,228,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,229,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,230,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,231,Elementary School,6,Northeast Bellevue,3,LDRN
-BELLEVUE,232,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,233,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,234,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,235,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,236,High School,6,Northeast Bellevue,3,LDRN
-BELLEVUE,237,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,238,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,239,Regular,5,Crossroads,2,MDMX
-BELLEVUE,240,Regular,5,Crossroads,2,MDMX
-BELLEVUE,241,Regular,5,Crossroads,2,MDMX
-BELLEVUE,242,Regular,5,Crossroads,2,MDMX
-BELLEVUE,243,Park,5,Crossroads,2,MDMX
-BELLEVUE,244,Regular,5,Crossroads,2,MDMX
-BELLEVUE,245,Regular,5,Crossroads,2,MDMX
-BELLEVUE,246,Regular,5,Crossroads,2,MDMX
-BELLEVUE,247,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,248,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,249,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,250,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,251,Elementary School,6,Northeast Bellevue,3,LDRN
-BELLEVUE,252,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,253,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,254,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,255,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,256,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,257,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,258,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,259,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,260,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,261,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,262,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,263,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,264,Elementary School,6,Northeast Bellevue,3,LDRN
-BELLEVUE,265,Park,6,Northeast Bellevue,3,LDRN
-BELLEVUE,266,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,267,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,268,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,269,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,270,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,271,Regular,6,Northeast Bellevue,3,LDRN
-BELLEVUE,272,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,273,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,274,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,275,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,276,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,277,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,278,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,279,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,280,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,281,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,282,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,283,Middle School,9,East Bellevue,3,LDRN
-BELLEVUE,284,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,285,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,286,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,287,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,288,Park,9,East Bellevue,3,LDRN
-BELLEVUE,289,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,290,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,291,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,292,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,293,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,294,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,295,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,296,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,297,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,298,Park,9,East Bellevue,3,LDRN
-BELLEVUE,299,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,300,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,301,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,302,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,303,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,304,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,305,Elementary School,9,East Bellevue,3,LDRN
-BELLEVUE,306,Park,9,East Bellevue,3,LDRN
-BELLEVUE,307,Middle School,9,East Bellevue,3,LDRN
-BELLEVUE,308,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,309,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,310,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,311,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,312,Park,9,East Bellevue,3,LDRN
-BELLEVUE,313,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,314,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,315,Park,9,East Bellevue,3,LDRN
-BELLEVUE,316,Park,9,East Bellevue,3,LDRN
-BELLEVUE,317,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,318,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,319,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,320,Middle School,9,East Bellevue,3,LDRN
-BELLEVUE,321,Park,9,East Bellevue,3,LDRN
-BELLEVUE,322,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,323,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,324,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,325,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,326,Park,10,Eastgate,2,MDMX
-BELLEVUE,327,Regular,10,Eastgate,2,MDMX
-BELLEVUE,328,Regular,10,Eastgate,2,MDMX
-BELLEVUE,329,Elementary School,10,Eastgate,2,MDMX
-BELLEVUE,330,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,331,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,332,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,333,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,334,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,335,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,336,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,337,Elementary School,9,East Bellevue,3,LDRN
-BELLEVUE,338,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,339,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,340,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,341,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,342,Regular,10,Eastgate,2,MDMX
-BELLEVUE,343,Regular,10,Eastgate,2,MDMX
-BELLEVUE,344,Regular,10,Eastgate,2,MDMX
-BELLEVUE,345,Regular,10,Eastgate,2,MDMX
-BELLEVUE,346,Regular,10,Eastgate,2,MDMX
-BELLEVUE,347,Regular,10,Eastgate,2,MDMX
-BELLEVUE,348,Regular,10,Eastgate,2,MDMX
-BELLEVUE,349,Regular,10,Eastgate,2,MDMX
-BELLEVUE,350,Regular,10,Eastgate,2,MDMX
-BELLEVUE,351,College,10,Eastgate,2,MDMX
-BELLEVUE,352,Regular,10,Eastgate,2,MDMX
-BELLEVUE,353,Regular,10,Eastgate,2,MDMX
-BELLEVUE,354,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,355,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,356,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,357,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,358,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,359,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,360,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,361,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,362,Elementary School,9,East Bellevue,3,LDRN
-BELLEVUE,363,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,364,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,365,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,366,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,367,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,368,High School,9,East Bellevue,3,LDRN
-BELLEVUE,369,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,370,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,371,Middle School,9,East Bellevue,3,LDRN
-BELLEVUE,372,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,373,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,374,Elementary School,9,East Bellevue,3,LDRN
-BELLEVUE,375,Regular,9,East Bellevue,3,LDRN
-BELLEVUE,376,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,377,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,378,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,379,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,380,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,381,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,382,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,383,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,384,Regular,10,Eastgate,2,MDMX
-BELLEVUE,385,Regular,10,Eastgate,2,MDMX
-BELLEVUE,386,Regular,10,Eastgate,2,MDMX
-BELLEVUE,387,Regular,10,Eastgate,2,MDMX
-BELLEVUE,388,Regular,10,Eastgate,2,MDMX
-BELLEVUE,389,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,390,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,391,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,392,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,393,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,394,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,395,Park,8,Richards Valley,3,LDRN
-BELLEVUE,396,Park,8,Richards Valley,3,LDRN
-BELLEVUE,397,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,398,Park,8,Richards Valley,3,LDRN
-BELLEVUE,399,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,400,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,401,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,402,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,403,Elementary School,8,Richards Valley,3,LDRN
-BELLEVUE,404,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,405,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,406,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,407,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,408,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,409,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,410,Middle School,8,Richards Valley,3,LDRN
-BELLEVUE,411,Park,8,Richards Valley,3,LDRN
-BELLEVUE,412,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,413,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,414,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,415,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,416,Regular,8,Richards Valley,3,LDRN
-BELLEVUE,417,Park,4,Wilburton,1,HDMX
-BELLEVUE,418,Regular,4,Wilburton,1,HDMX
-BELLEVUE,419,Regular,4,Wilburton,1,HDMX
-BELLEVUE,420,Regular,4,Wilburton,1,HDMX
-BELLEVUE,421,Regular,4,Wilburton,1,HDMX
-BELLEVUE,422,Regular,4,Wilburton,1,HDMX
-BELLEVUE,423,Regular,4,Wilburton,1,HDMX
-BELLEVUE,424,Regular,4,Wilburton,1,HDMX
-BELLEVUE,425,Regular,4,Wilburton,1,HDMX
-BELLEVUE,426,Regular,4,Wilburton,1,HDMX
-BELLEVUE,427,Regular,4,Wilburton,1,HDMX
-BELLEVUE,428,Regular,4,Wilburton,1,HDMX
-BELLEVUE,429,Regular,4,Wilburton,1,HDMX
-BELLEVUE,430,Regular,4,Wilburton,1,HDMX
-BELLEVUE,431,Regular,4,Wilburton,1,HDMX
-BELLEVUE,432,Regular,4,Wilburton,1,HDMX
-BELLEVUE,433,Regular,4,Wilburton,1,HDMX
-BELLEVUE,434,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,435,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,436,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,437,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,438,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,439,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,440,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,441,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,442,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,443,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,444,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,445,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,446,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,447,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,448,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,449,High School,7,South Bellevue,3,LDRN
-BELLEVUE,450,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,451,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,452,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,453,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,454,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,455,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,456,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,457,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,458,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,459,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,460,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,461,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,462,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,463,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,464,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,465,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,466,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,467,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,468,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,469,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,470,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,471,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,472,Elementary School,7,South Bellevue,3,LDRN
-BELLEVUE,473,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,474,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,475,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,476,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,477,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,478,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,479,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,480,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,481,Regular,4,Wilburton,1,HDMX
-BELLEVUE,482,Park,7,South Bellevue,3,LDRN
-BELLEVUE,483,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,484,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,485,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,486,Park,7,South Bellevue,3,LDRN
-BELLEVUE,487,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,488,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,489,Regular,7,South Bellevue,3,LDRN
-BELLEVUE,490,Regular,13,Factoria,2,MDMX
-BELLEVUE,491,Regular,13,Factoria,2,MDMX
-BELLEVUE,492,Regular,10,Eastgate,2,MDMX
-BELLEVUE,493,Regular,10,Eastgate,2,MDMX
-BELLEVUE,494,Regular,10,Eastgate,2,MDMX
-BELLEVUE,495,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,496,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,497,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,498,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,499,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,500,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,501,Middle School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,502,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,503,Elementary School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,504,Regular,13,Factoria,2,MDMX
-BELLEVUE,505,Regular,13,Factoria,2,MDMX
-BELLEVUE,506,Regular,13,Factoria,2,MDMX
-BELLEVUE,507,Regular,13,Factoria,2,MDMX
-BELLEVUE,508,Regular,13,Factoria,2,MDMX
-BELLEVUE,509,Regular,13,Factoria,2,MDMX
-BELLEVUE,510,Regular,13,Factoria,2,MDMX
-BELLEVUE,511,Regular,13,Factoria,2,MDMX
-BELLEVUE,512,High School,13,Factoria,2,MDMX
-BELLEVUE,513,Regular,13,Factoria,2,MDMX
-BELLEVUE,514,Regular,13,Factoria,2,MDMX
-BELLEVUE,515,Regular,13,Factoria,2,MDMX
-BELLEVUE,516,Regular,13,Factoria,2,MDMX
-BELLEVUE,517,Regular,13,Factoria,2,MDMX
-BELLEVUE,518,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,519,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,520,Park,11,Southeast Bellevue,3,LDRN
-BELLEVUE,521,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,522,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,523,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,524,Elementary School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,525,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,526,Regular,10,Eastgate,2,MDMX
-BELLEVUE,527,Regular,10,Eastgate,2,MDMX
-BELLEVUE,528,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,529,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,530,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,531,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,532,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,533,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,534,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,535,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,536,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,537,Park,11,Southeast Bellevue,3,LDRN
-BELLEVUE,538,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,539,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,540,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,541,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,542,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,543,Elementary School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,544,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,545,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,546,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,547,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,548,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,549,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,550,Elementary School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,551,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,552,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,553,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,554,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,555,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,556,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,557,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,558,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,559,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,560,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,561,Park,11,Southeast Bellevue,3,LDRN
-BELLEVUE,562,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,563,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,564,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,565,Park,11,Southeast Bellevue,3,LDRN
-BELLEVUE,566,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,567,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,568,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,569,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,570,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,571,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,572,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,573,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,574,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,575,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,576,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,577,Elementary School,11,Southeast Bellevue,3,LDRN
-BELLEVUE,578,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,579,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,580,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,581,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,582,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,583,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,584,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,585,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,586,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,587,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,588,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,589,Regular,11,Southeast Bellevue,3,LDRN
-BELLEVUE,590,Regular,13,Factoria,2,MDMX
-BELLEVUE,591,Regular,13,Factoria,2,MDMX
-BELLEVUE,592,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,593,Elementary School,14,Newport Hills,3,LDRN
-BELLEVUE,594,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,595,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,596,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,597,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,598,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,599,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,600,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,601,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,602,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,603,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,604,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,605,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,606,Elementary School,14,Newport Hills,3,LDRN
-BELLEVUE,607,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,608,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,609,Middle School,14,Newport Hills,3,LDRN
-BELLEVUE,610,Park,14,Newport Hills,3,LDRN
-BELLEVUE,611,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,612,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,613,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,614,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,615,Regular,14,Newport Hills,3,LDRN
-BELLEVUE,616,Regular,14,Newport Hills,3,LDRN
-BellevueFringe,617,Regular,50,Fringe KC,,
-BellevueFringe,618,Regular,50,Fringe KC,,
-BellevueFringe,619,Regular,50,Fringe KC,,
-BellevueFringe,620,Regular,50,Fringe KC,,
-BellevueFringe,621,Regular,50,Fringe KC,,
-BellevueFringe,622,Regular,50,Fringe KC,,
-BellevueFringe,623,Regular,50,Fringe KC,,
-BellevueFringe,624,Regular,50,Fringe KC,,
-BellevueFringe,625,Regular,50,Fringe KC,,
-BellevueFringe,626,Park,50,Fringe KC,,
-BellevueFringe,627,Regular,50,Fringe KC,,
-BellevueFringe,628,Regular,50,Fringe KC,,
-BellevueFringe,629,Elementary School,50,Fringe KC,,
-BellevueFringe,630,Middle School,50,Fringe KC,,
-BellevueFringe,631,Regular,50,Fringe KC,,
-BellevueFringe,632,Regular,50,Fringe KC,,
-BellevueFringe,633,Elementary School,50,Fringe KC,,
-BellevueFringe,634,Regular,50,Fringe KC,,
-BellevueFringe,635,Regular,50,Fringe KC,,
-BellevueFringe,636,Regular,47,Fringe KC,,
-BellevueFringe,637,Regular,47,Fringe KC,,
-BellevueFringe,638,Regular,47,Fringe KC,,
-BellevueFringe,639,Regular,48,Fringe KC,,
-BellevueFringe,640,Regular,48,Fringe KC,,
-BellevueFringe,641,Park,48,Fringe KC,,
-BellevueFringe,642,Regular,48,Fringe KC,,
-BellevueFringe,643,Park,48,Fringe KC,,
-BellevueFringe,644,Regular,49,Fringe KC,,
-BellevueFringe,645,Regular,49,Fringe KC,,
-BellevueFringe,646,Regular,49,Fringe KC,,
-BellevueFringe,647,Regular,49,Fringe KC,,
-BellevueFringe,648,Regular,49,Fringe KC,,
-BellevueFringe,649,Regular,49,Fringe KC,,
-BellevueFringe,650,Regular,49,Fringe KC,,
-BellevueFringe,651,Regular,49,Fringe KC,,
-BellevueFringe,652,Regular,49,Fringe KC,,
-BellevueFringe,653,Regular,49,Fringe KC,,
-BellevueFringe,654,Regular,49,Fringe KC,,
-BellevueFringe,655,Regular,49,Fringe KC,,
-BellevueFringe,656,Regular,49,Fringe KC,,
-BellevueFringe,657,Regular,49,Fringe KC,,
-BellevueFringe,658,Regular,49,Fringe KC,,
-KIRKLAND,681,Regular,25,Lakeview,,
-KIRKLAND,682,Regular,25,Lakeview,,
-KIRKLAND,683,Regular,25,Lakeview,,
-KIRKLAND,684,Regular,25,Lakeview,,
-KIRKLAND,685,Regular,25,Lakeview,,
-KIRKLAND,686,Regular,21,Central Houghton,,
-KIRKLAND,687,Regular,21,Central Houghton,,
-KIRKLAND,688,Park,21,Central Houghton,,
-KIRKLAND,689,Regular,15,Bridle Trails,,
-KIRKLAND,690,Regular,21,Central Houghton,,
-KIRKLAND,691,High School,21,Central Houghton,,
-KIRKLAND,692,Regular,21,Central Houghton,,
-KIRKLAND,693,Regular,25,Lakeview,,
-KIRKLAND,694,Regular,25,Lakeview,,
-KIRKLAND,695,Regular,25,Lakeview,,
-KIRKLAND,696,Regular,25,Lakeview,,
-KIRKLAND,697,Regular,21,Central Houghton,,
-KIRKLAND,698,College,21,Central Houghton,,
-KIRKLAND,699,Regular,21,Central Houghton,,
-KIRKLAND,700,Regular,21,Central Houghton,,
-KIRKLAND,701,Regular,25,Lakeview,,
-KIRKLAND,702,Regular,25,Lakeview,,
-KIRKLAND,703,Regular,25,Lakeview,,
-KIRKLAND,704,Regular,25,Lakeview,,
-KIRKLAND,705,Regular,25,Lakeview,,
-KIRKLAND,706,Regular,25,Lakeview,,
-KIRKLAND,707,Regular,25,Lakeview,,
-KIRKLAND,708,Regular,21,Central Houghton,,
-KIRKLAND,709,Regular,21,Central Houghton,,
-KIRKLAND,710,Regular,21,Central Houghton,,
-KIRKLAND,711,Regular,21,Central Houghton,,
-KIRKLAND,712,Middle School,21,Central Houghton,,
-KIRKLAND,713,Regular,15,Bridle Trails,,
-KIRKLAND,714,Regular,15,Bridle Trails,,
-KIRKLAND,715,Regular,15,Bridle Trails,,
-KIRKLAND,716,Regular,15,Bridle Trails,,
-KIRKLAND,717,Regular,15,Bridle Trails,,
-KIRKLAND,718,Elementary School,15,Bridle Trails,,
-KIRKLAND,719,Regular,15,Bridle Trails,,
-KIRKLAND,720,Regular,15,Bridle Trails,,
-KIRKLAND,721,Regular,15,Bridle Trails,,
-KIRKLAND,722,Regular,15,Bridle Trails,,
-KIRKLAND,723,Regular,16,South Rose Hill,,
-KIRKLAND,724,Regular,16,South Rose Hill,,
-KIRKLAND,725,Regular,16,South Rose Hill,,
-KIRKLAND,726,Regular,16,South Rose Hill,,
-KIRKLAND,727,Regular,16,South Rose Hill,,
-KIRKLAND,728,Regular,16,South Rose Hill,,
-KIRKLAND,729,Regular,16,South Rose Hill,,
-KIRKLAND,730,High School,16,South Rose Hill,,
-KIRKLAND,731,Regular,16,South Rose Hill,,
-KIRKLAND,732,Regular,29,Everest,,
-KIRKLAND,733,Regular,29,Everest,,
-KIRKLAND,734,Regular,29,Everest,,
-KIRKLAND,735,Regular,29,Everest,,
-KIRKLAND,736,Regular,29,Everest,,
-KIRKLAND,737,Regular,28,Moss Bay,,
-KIRKLAND,738,Regular,28,Moss Bay,,
-KIRKLAND,739,Regular,28,Moss Bay,,
-KIRKLAND,740,Regular,28,Moss Bay,,
-KIRKLAND,741,Regular,28,Moss Bay,,
-KIRKLAND,742,Regular,28,Moss Bay,,
-KIRKLAND,743,Regular,28,Moss Bay,,
-KIRKLAND,744,Regular,28,Moss Bay,,
-KIRKLAND,745,Regular,28,Moss Bay,,
-KIRKLAND,746,Regular,28,Moss Bay,,
-KIRKLAND,747,Regular,28,Moss Bay,,
-KIRKLAND,748,Regular,28,Moss Bay,,
-KIRKLAND,749,Regular,28,Moss Bay,,
-KIRKLAND,750,Park,28,Moss Bay,,
-KIRKLAND,751,Regular,28,Moss Bay,,
-KIRKLAND,752,Regular,28,Moss Bay,,
-KIRKLAND,753,Regular,28,Moss Bay,,
-KIRKLAND,754,Regular,28,Moss Bay,,
-KIRKLAND,755,Regular,29,Everest,,
-KIRKLAND,756,Regular,16,South Rose Hill,,
-KIRKLAND,757,Regular,16,South Rose Hill,,
-KIRKLAND,758,Regular,16,South Rose Hill,,
-KIRKLAND,759,Regular,16,South Rose Hill,,
-KIRKLAND,760,Regular,16,South Rose Hill,,
-KIRKLAND,761,Regular,16,South Rose Hill,,
-KIRKLAND,762,Elementary School,16,South Rose Hill,,
-KIRKLAND,763,Regular,16,South Rose Hill,,
-KIRKLAND,764,Regular,19,North Rose Hill,,
-KIRKLAND,765,Regular,19,North Rose Hill,,
-KIRKLAND,766,Regular,19,North Rose Hill,,
-KIRKLAND,767,Regular,19,North Rose Hill,,
-KIRKLAND,768,Regular,17,Norkirk,,
-KIRKLAND,769,Regular,17,Norkirk,,
-KIRKLAND,770,Regular,17,Norkirk,,
-KIRKLAND,771,Regular,26,Market,,
-KIRKLAND,772,Regular,17,Norkirk,,
-KIRKLAND,773,Regular,17,Norkirk,,
-KIRKLAND,774,Regular,17,Norkirk,,
-KIRKLAND,775,Elementary School,17,Norkirk,,
-KIRKLAND,776,Regular,18,Highlands,,
-KIRKLAND,777,Regular,19,North Rose Hill,,
-KIRKLAND,778,Regular,19,North Rose Hill,,
-KIRKLAND,779,Elementary School,19,North Rose Hill,,
-KIRKLAND,780,Regular,19,North Rose Hill,,
-KIRKLAND,781,Regular,19,North Rose Hill,,
-KIRKLAND,782,Regular,19,North Rose Hill,,
-KIRKLAND,783,Regular,19,North Rose Hill,,
-KIRKLAND,784,Regular,18,Highlands,,
-KIRKLAND,785,Regular,17,Norkirk,,
-KIRKLAND,786,Park,17,Norkirk,,
-KIRKLAND,787,Middle School,17,Norkirk,,
-KIRKLAND,788,Regular,17,Norkirk,,
-KIRKLAND,789,Regular,17,Norkirk,,
-KIRKLAND,790,Regular,26,Market,,
-KIRKLAND,791,Park,26,Market,,
-KIRKLAND,792,Regular,27,South Juanita,,
-KIRKLAND,793,Regular,27,South Juanita,,
-KIRKLAND,794,Regular,27,South Juanita,,
-KIRKLAND,795,Regular,20,Totem Lake,,
-KIRKLAND,796,Regular,20,Totem Lake,,
-KIRKLAND,797,Regular,19,North Rose Hill,,
-KIRKLAND,798,Regular,19,North Rose Hill,,
-KIRKLAND,799,Regular,19,North Rose Hill,,
-KIRKLAND,800,College,19,North Rose Hill,,
-KIRKLAND,801,Regular,19,North Rose Hill,,
-KIRKLAND,802,Regular,20,Totem Lake,,
-KIRKLAND,803,Regular,20,Totem Lake,,
-KIRKLAND,804,Regular,20,Totem Lake,,
-KIRKLAND,805,Regular,27,South Juanita,,
-KIRKLAND,806,Elementary School,27,South Juanita,,
-KIRKLAND,807,Regular,27,South Juanita,,
-KIRKLAND,808,Regular,27,South Juanita,,
-KIRKLAND,809,Regular,27,South Juanita,,
-KIRKLAND,810,Regular,20,Totem Lake,,
-KIRKLAND,811,Regular,20,Totem Lake,,
-KIRKLAND,812,Regular,27,South Juanita,,
-KIRKLAND,813,Regular,27,South Juanita,,
-KIRKLAND,814,Regular,27,South Juanita,,
-KIRKLAND,815,Regular,27,South Juanita,,
-KIRKLAND,816,Park,27,South Juanita,,
-KIRKLAND,817,Regular,27,South Juanita,,
-KIRKLAND,818,Regular,27,South Juanita,,
-KIRKLAND,819,Regular,24,Finn Hill,,
-KIRKLAND,820,Regular,24,Finn Hill,,
-KIRKLAND,821,Regular,24,Finn Hill,,
-KIRKLAND,822,Regular,24,Finn Hill,,
-KIRKLAND,823,Regular,24,Finn Hill,,
-KIRKLAND,824,Regular,24,Finn Hill,,
-KIRKLAND,825,Park,24,Finn Hill,,
-KIRKLAND,826,Park,24,Finn Hill,,
-KIRKLAND,827,Regular,24,Finn Hill,,
-KIRKLAND,828,Regular,24,Finn Hill,,
-KIRKLAND,829,Regular,24,Finn Hill,,
-KIRKLAND,830,Regular,24,Finn Hill,,
-KIRKLAND,831,Regular,24,Finn Hill,,
-KIRKLAND,832,Park,24,Finn Hill,,
-KIRKLAND,833,Regular,24,Finn Hill,,
-KIRKLAND,834,Regular,24,Finn Hill,,
-KIRKLAND,835,Regular,24,Finn Hill,,
-KIRKLAND,836,Middle School,24,Finn Hill,,
-KIRKLAND,837,Regular,24,Finn Hill,,
-KIRKLAND,838,Elementary School,24,Finn Hill,,
-KIRKLAND,839,Regular,24,Finn Hill,,
-KIRKLAND,840,Regular,24,Finn Hill,,
-KIRKLAND,841,Regular,24,Finn Hill,,
-KIRKLAND,842,Regular,24,Finn Hill,,
-KIRKLAND,843,Regular,24,Finn Hill,,
-KIRKLAND,844,Regular,24,Finn Hill,,
-KIRKLAND,845,Regular,24,Finn Hill,,
-KIRKLAND,846,Regular,24,Finn Hill,,
-KIRKLAND,847,Regular,24,Finn Hill,,
-KIRKLAND,848,Regular,23,North Juanita,,
-KIRKLAND,849,Regular,23,North Juanita,,
-KIRKLAND,850,Elementary School,23,North Juanita,,
-KIRKLAND,851,Regular,24,Finn Hill,,
-KIRKLAND,852,Regular,24,Finn Hill,,
-KIRKLAND,853,Regular,24,Finn Hill,,
-KIRKLAND,854,Regular,23,North Juanita,,
-KIRKLAND,855,Regular,23,North Juanita,,
-KIRKLAND,856,Regular,23,North Juanita,,
-KIRKLAND,857,Elementary School,23,North Juanita,,
-KIRKLAND,858,Regular,23,North Juanita,,
-KIRKLAND,859,Regular,23,North Juanita,,
-KIRKLAND,860,Regular,23,North Juanita,,
-KIRKLAND,861,Regular,23,North Juanita,,
-KIRKLAND,862,Regular,23,North Juanita,,
-KIRKLAND,863,Regular,23,North Juanita,,
-KIRKLAND,864,High School,23,North Juanita,,
-KIRKLAND,865,Regular,20,Totem Lake,,
-KIRKLAND,866,Regular,23,North Juanita,,
-KIRKLAND,867,Regular,23,North Juanita,,
-KIRKLAND,868,Regular,20,Totem Lake,,
-KIRKLAND,869,Regular,20,Totem Lake,,
-KIRKLAND,870,Regular,20,Totem Lake,,
-KIRKLAND,871,Regular,20,Totem Lake,,
-KIRKLAND,872,Regular,20,Totem Lake,,
-KIRKLAND,873,Regular,20,Totem Lake,,
-KIRKLAND,874,Regular,20,Totem Lake,,
-KIRKLAND,875,Regular,19,North Rose Hill,,
-KIRKLAND,876,Regular,20,Totem Lake,,
-KIRKLAND,877,Regular,20,Totem Lake,,
-KIRKLAND,878,Regular,20,Totem Lake,,
-KIRKLAND,879,Regular,20,Totem Lake,,
-KIRKLAND,880,Regular,20,Totem Lake,,
-KIRKLAND,881,Regular,20,Totem Lake,,
-KIRKLAND,882,Regular,20,Totem Lake,,
-KIRKLAND,883,Regular,22,Kingsgate,,
-KIRKLAND,884,Regular,22,Kingsgate,,
-KIRKLAND,885,Regular,22,Kingsgate,,
-KIRKLAND,886,Regular,22,Kingsgate,,
-KIRKLAND,887,Regular,22,Kingsgate,,
-KIRKLAND,888,Regular,22,Kingsgate,,
-KIRKLAND,889,Elementary School,22,Kingsgate,,
-KIRKLAND,890,Regular,22,Kingsgate,,
-KIRKLAND,891,Regular,22,Kingsgate,,
-KIRKLAND,892,Elementary School,22,Kingsgate,,
-KIRKLAND,893,Regular,22,Kingsgate,,
-KIRKLAND,894,Regular,22,Kingsgate,,
-KIRKLAND,895,Middle School,22,Kingsgate,,
-KIRKLAND,896,Regular,22,Kingsgate,,
-KIRKLAND,897,Regular,22,Kingsgate,,
-KirklandFringe,898,Park,42,Fringe KC,,
-KirklandFringe,899,Park,42,Fringe KC,,
-KirklandFringe,900,College,42,Fringe KC,,
-KirklandFringe,901,Regular,42,Fringe KC,,
-KirklandFringe,902,Regular,42,Fringe KC,,
-KirklandFringe,903,Regular,42,Fringe KC,,
-KirklandFringe,904,Regular,42,Fringe KC,,
-KirklandFringe,905,Regular,43,Fringe KC,,
-KirklandFringe,906,Regular,43,Fringe KC,,
-KirklandFringe,907,Regular,43,Fringe KC,,
-KirklandFringe,908,Regular,43,Fringe KC,,
-KirklandFringe,909,Regular,41,Fringe KC,,
-KirklandFringe,910,Regular,43,Fringe KC,,
-KirklandFringe,911,Regular,43,Fringe KC,,
-KirklandFringe,912,Regular,43,Fringe KC,,
-KirklandFringe,913,Regular,43,Fringe KC,,
-KirklandFringe,914,Regular,42,Fringe KC,,
-KirklandFringe,915,Regular,42,Fringe KC,,
-KirklandFringe,916,Regular,42,Fringe KC,,
-KirklandFringe,917,Regular,43,Fringe KC,,
-KirklandFringe,918,Regular,43,Fringe KC,,
-REDMOND,931,Regular,31,Overlake,,
-REDMOND,932,Regular,31,Overlake,,
-REDMOND,933,Regular,31,Overlake,,
-REDMOND,934,Regular,31,Overlake,,
-REDMOND,935,Regular,31,Overlake,,
-REDMOND,936,Regular,31,Overlake,,
-REDMOND,937,Regular,31,Overlake,,
-REDMOND,938,Regular,31,Overlake,,
-REDMOND,939,Regular,31,Overlake,,
-REDMOND,940,Regular,31,Overlake,,
-REDMOND,941,Regular,31,Overlake,,
-REDMOND,942,Regular,31,Overlake,,
-REDMOND,943,Regular,31,Overlake,,
-REDMOND,944,Regular,31,Overlake,,
-REDMOND,945,Regular,31,Overlake,,
-REDMOND,946,Regular,31,Overlake,,
-REDMOND,947,Regular,31,Overlake,,
-REDMOND,948,Regular,31,Overlake,,
-REDMOND,949,Regular,31,Overlake,,
-REDMOND,950,Regular,31,Overlake,,
-REDMOND,951,Regular,31,Overlake,,
-REDMOND,952,Regular,31,Overlake,,
-REDMOND,953,Regular,31,Overlake,,
-REDMOND,954,Regular,31,Overlake,,
-REDMOND,955,Regular,31,Overlake,,
-REDMOND,956,Regular,31,Overlake,,
-REDMOND,957,Regular,31,Overlake,,
-REDMOND,958,Regular,31,Overlake,,
-REDMOND,959,Regular,31,Overlake,,
-REDMOND,960,Regular,31,Overlake,,
-REDMOND,961,Regular,30,Idylwood,,
-REDMOND,962,Regular,30,Idylwood,,
-REDMOND,963,Regular,30,Idylwood,,
-REDMOND,964,Regular,30,Idylwood,,
-REDMOND,965,Regular,30,Idylwood,,
-REDMOND,966,Regular,30,Idylwood,,
-REDMOND,967,Regular,30,Idylwood,,
-REDMOND,968,Regular,30,Idylwood,,
-REDMOND,969,Regular,30,Idylwood,,
-REDMOND,970,Regular,30,Idylwood,,
-REDMOND,971,Regular,30,Idylwood,,
-REDMOND,972,Elementary School,30,Idylwood,,
-REDMOND,973,Regular,30,Idylwood,,
-REDMOND,974,Regular,30,Idylwood,,
-REDMOND,975,Regular,30,Idylwood,,
-REDMOND,976,Regular,31,Overlake,,
-REDMOND,977,Regular,31,Overlake,,
-REDMOND,978,Regular,31,Overlake,,
-REDMOND,979,Regular,31,Overlake,,
-REDMOND,980,Regular,31,Overlake,,
-REDMOND,981,Regular,31,Overlake,,
-REDMOND,982,Regular,31,Overlake,,
-REDMOND,983,Regular,31,Overlake,,
-REDMOND,984,Regular,31,Overlake,,
-REDMOND,985,Regular,31,Overlake,,
-REDMOND,986,Regular,31,Overlake,,
-REDMOND,987,Regular,32,Grass Lawn,,
-REDMOND,988,Regular,32,Grass Lawn,,
-REDMOND,989,Regular,32,Grass Lawn,,
-REDMOND,990,Regular,32,Grass Lawn,,
-REDMOND,991,Elementary School,32,Grass Lawn,,
-REDMOND,992,Regular,32,Grass Lawn,,
-REDMOND,993,Regular,32,Grass Lawn,,
-REDMOND,994,Park,32,Grass Lawn,,
-REDMOND,995,Regular,32,Grass Lawn,,
-REDMOND,996,Regular,32,Grass Lawn,,
-REDMOND,997,Regular,32,Grass Lawn,,
-REDMOND,998,Regular,32,Grass Lawn,,
-REDMOND,999,Middle School,32,Grass Lawn,,
-REDMOND,1000,Regular,32,Grass Lawn,,
-REDMOND,1001,Regular,32,Grass Lawn,,
-REDMOND,1002,Regular,32,Grass Lawn,,
-REDMOND,1003,Regular,32,Grass Lawn,,
-REDMOND,1004,Regular,32,Grass Lawn,,
-REDMOND,1005,Regular,32,Grass Lawn,,
-REDMOND,1006,Regular,32,Grass Lawn,,
-REDMOND,1007,Regular,38,Willows / Rose Hill,,
-REDMOND,1008,Regular,38,Willows / Rose Hill,,
-REDMOND,1009,Regular,38,Willows / Rose Hill,,
-REDMOND,1010,Regular,38,Willows / Rose Hill,,
-REDMOND,1011,Regular,38,Willows / Rose Hill,,
-REDMOND,1012,Regular,32,Grass Lawn,,
-REDMOND,1013,Regular,38,Willows / Rose Hill,,
-REDMOND,1014,Regular,38,Willows / Rose Hill,,
-REDMOND,1015,Regular,38,Willows / Rose Hill,,
-REDMOND,1016,Regular,38,Willows / Rose Hill,,
-REDMOND,1017,Regular,38,Willows / Rose Hill,,
-REDMOND,1018,Regular,38,Willows / Rose Hill,,
-REDMOND,1019,Regular,38,Willows / Rose Hill,,
-REDMOND,1020,Regular,38,Willows / Rose Hill,,
-REDMOND,1021,Regular,38,Willows / Rose Hill,,
-REDMOND,1022,Regular,38,Willows / Rose Hill,,
-REDMOND,1023,Regular,38,Willows / Rose Hill,,
-REDMOND,1024,Regular,37,Sammamish Valley,,
-REDMOND,1025,Park,37,Sammamish Valley,,
-REDMOND,1026,Regular,39,North Redmond,,
-REDMOND,1027,Regular,36,Education Hill,,
-REDMOND,1028,Regular,37,Sammamish Valley,,
-REDMOND,1029,Regular,35,Downtown,,
-REDMOND,1030,Regular,35,Downtown,,
-REDMOND,1031,Regular,35,Downtown,,
-REDMOND,1032,Regular,35,Downtown,,
-REDMOND,1033,Regular,35,Downtown,,
-REDMOND,1034,Regular,37,Sammamish Valley,,
-REDMOND,1035,Regular,37,Sammamish Valley,,
-REDMOND,1036,Regular,37,Sammamish Valley,,
-REDMOND,1037,Regular,35,Downtown,,
-REDMOND,1038,Regular,35,Downtown,,
-REDMOND,1039,Regular,35,Downtown,,
-REDMOND,1040,Regular,35,Downtown,,
-REDMOND,1041,Regular,36,Education Hill,,
-REDMOND,1042,Regular,35,Downtown,,
-REDMOND,1043,Regular,35,Downtown,,
-REDMOND,1044,Regular,35,Downtown,,
-REDMOND,1045,Regular,35,Downtown,,
-REDMOND,1046,Regular,35,Downtown,,
-REDMOND,1047,Regular,35,Downtown,,
-REDMOND,1048,Regular,35,Downtown,,
-REDMOND,1049,Regular,35,Downtown,,
-REDMOND,1050,Regular,35,Downtown,,
-REDMOND,1051,Regular,35,Downtown,,
-REDMOND,1052,Elementary School,35,Downtown,,
-REDMOND,1053,Regular,35,Downtown,,
-REDMOND,1054,Regular,35,Downtown,,
-REDMOND,1055,Regular,35,Downtown,,
-REDMOND,1056,Regular,35,Downtown,,
-REDMOND,1057,Regular,35,Downtown,,
-REDMOND,1058,Regular,35,Downtown,,
-REDMOND,1059,Regular,35,Downtown,,
-REDMOND,1060,Regular,35,Downtown,,
-REDMOND,1061,Regular,35,Downtown,,
-REDMOND,1062,Regular,35,Downtown,,
-REDMOND,1063,Regular,35,Downtown,,
-REDMOND,1064,Regular,35,Downtown,,
-REDMOND,1065,Regular,35,Downtown,,
-REDMOND,1066,Regular,35,Downtown,,
-REDMOND,1067,Regular,35,Downtown,,
-REDMOND,1068,Regular,35,Downtown,,
-REDMOND,1069,Regular,35,Downtown,,
-REDMOND,1070,Regular,35,Downtown,,
-REDMOND,1071,Regular,35,Downtown,,
-REDMOND,1072,Regular,35,Downtown,,
-REDMOND,1073,Regular,35,Downtown,,
-REDMOND,1074,Regular,35,Downtown,,
-REDMOND,1075,Regular,35,Downtown,,
-REDMOND,1076,Regular,35,Downtown,,
-REDMOND,1077,Park,35,Downtown,,
-REDMOND,1078,Regular,35,Downtown,,
-REDMOND,1079,Regular,35,Downtown,,
-REDMOND,1080,Regular,35,Downtown,,
-REDMOND,1081,Regular,35,Downtown,,
-REDMOND,1082,Regular,35,Downtown,,
-REDMOND,1083,Regular,35,Downtown,,
-REDMOND,1084,Regular,35,Downtown,,
-REDMOND,1085,Regular,35,Downtown,,
-REDMOND,1086,Regular,35,Downtown,,
-REDMOND,1087,Regular,35,Downtown,,
-REDMOND,1088,Regular,35,Downtown,,
-REDMOND,1089,Park,35,Downtown,,
-REDMOND,1090,Regular,35,Downtown,,
-REDMOND,1091,Park,33,SE Redmond,,
-REDMOND,1092,Regular,33,SE Redmond,,
-REDMOND,1093,Regular,33,SE Redmond,,
-REDMOND,1094,Regular,33,SE Redmond,,
-REDMOND,1095,Regular,33,SE Redmond,,
-REDMOND,1096,Regular,33,SE Redmond,,
-REDMOND,1097,Regular,33,SE Redmond,,
-REDMOND,1098,Regular,35,Downtown,,
-REDMOND,1099,Regular,35,Downtown,,
-REDMOND,1100,Regular,35,Downtown,,
-REDMOND,1101,Regular,35,Downtown,,
-REDMOND,1102,Regular,35,Downtown,,
-REDMOND,1103,Regular,36,Education Hill,,
-REDMOND,1104,Park,35,Downtown,,
-REDMOND,1105,Regular,33,SE Redmond,,
-REDMOND,1106,Regular,33,SE Redmond,,
-REDMOND,1107,Regular,33,SE Redmond,,
-REDMOND,1108,Regular,33,SE Redmond,,
-REDMOND,1109,Regular,33,SE Redmond,,
-REDMOND,1110,Regular,33,SE Redmond,,
-REDMOND,1111,Regular,33,SE Redmond,,
-REDMOND,1112,Regular,33,SE Redmond,,
-REDMOND,1113,Regular,33,SE Redmond,,
-REDMOND,1114,Regular,33,SE Redmond,,
-REDMOND,1115,Regular,33,SE Redmond,,
-REDMOND,1116,Regular,33,SE Redmond,,
-REDMOND,1117,Regular,33,SE Redmond,,
-REDMOND,1118,Regular,33,SE Redmond,,
-REDMOND,1119,Regular,33,SE Redmond,,
-REDMOND,1120,Regular,33,SE Redmond,,
-REDMOND,1121,Regular,33,SE Redmond,,
-REDMOND,1122,Regular,33,SE Redmond,,
-REDMOND,1123,Regular,33,SE Redmond,,
-REDMOND,1124,Regular,33,SE Redmond,,
-REDMOND,1125,Regular,33,SE Redmond,,
-REDMOND,1126,Regular,33,SE Redmond,,
-REDMOND,1127,Regular,33,SE Redmond,,
-REDMOND,1128,Regular,33,SE Redmond,,
-REDMOND,1129,Regular,33,SE Redmond,,
-REDMOND,1130,Regular,33,SE Redmond,,
-REDMOND,1131,Park,34,Bear Creek,,
-REDMOND,1132,Regular,34,Bear Creek,,
-REDMOND,1133,Regular,33,SE Redmond,,
-REDMOND,1134,Regular,33,SE Redmond,,
-REDMOND,1135,Regular,34,Bear Creek,,
-REDMOND,1136,Regular,36,Education Hill,,
-REDMOND,1137,Regular,36,Education Hill,,
-REDMOND,1138,Regular,36,Education Hill,,
-REDMOND,1139,Regular,36,Education Hill,,
-REDMOND,1140,Regular,36,Education Hill,,
-REDMOND,1141,Regular,36,Education Hill,,
-REDMOND,1142,Regular,34,Bear Creek,,
-REDMOND,1143,Regular,34,Bear Creek,,
-REDMOND,1144,Regular,34,Bear Creek,,
-REDMOND,1145,Regular,34,Bear Creek,,
-REDMOND,1146,Regular,34,Bear Creek,,
-REDMOND,1147,Regular,34,Bear Creek,,
-REDMOND,1148,Regular,34,Bear Creek,,
-REDMOND,1149,Regular,34,Bear Creek,,
-REDMOND,1150,Regular,36,Education Hill,,
-REDMOND,1151,Regular,36,Education Hill,,
-REDMOND,1152,Regular,36,Education Hill,,
-REDMOND,1153,Regular,36,Education Hill,,
-REDMOND,1154,Middle School,36,Education Hill,,
-REDMOND,1155,Regular,36,Education Hill,,
-REDMOND,1156,Elementary School,36,Education Hill,,
-REDMOND,1157,Park,36,Education Hill,,
-REDMOND,1158,Regular,36,Education Hill,,
-REDMOND,1159,Regular,36,Education Hill,,
-REDMOND,1160,Regular,36,Education Hill,,
-REDMOND,1161,Regular,36,Education Hill,,
-REDMOND,1162,Regular,36,Education Hill,,
-REDMOND,1163,High School,36,Education Hill,,
-REDMOND,1164,Regular,36,Education Hill,,
-REDMOND,1165,Regular,36,Education Hill,,
-REDMOND,1166,Regular,36,Education Hill,,
-REDMOND,1167,Regular,36,Education Hill,,
-REDMOND,1168,Regular,36,Education Hill,,
-REDMOND,1169,Regular,36,Education Hill,,
-REDMOND,1170,Elementary School,36,Education Hill,,
-REDMOND,1171,Regular,39,North Redmond,,
-REDMOND,1172,Regular,39,North Redmond,,
-REDMOND,1173,Regular,39,North Redmond,,
-REDMOND,1174,Regular,39,North Redmond,,
-REDMOND,1175,Regular,39,North Redmond,,
-REDMOND,1176,Elementary School,39,North Redmond,,
-REDMOND,1177,Regular,39,North Redmond,,
-REDMOND,1178,Regular,39,North Redmond,,
-REDMOND,1179,Regular,39,North Redmond,,
-REDMOND,1180,Regular,39,North Redmond,,
-REDMOND,1181,Regular,39,North Redmond,,
-REDMOND,1182,Regular,39,North Redmond,,
-REDMOND,1183,Regular,39,North Redmond,,
-RedmondFringe,1184,Regular,41,Fringe KC,,
-RedmondFringe,1185,Regular,41,Fringe KC,,
-RedmondFringe,1186,Park,41,Fringe KC,,
-RedmondFringe,1187,Regular,41,Fringe KC,,
-RedmondFringe,1188,Regular,41,Fringe KC,,
-RedmondFringe,1189,Regular,41,Fringe KC,,
-RedmondFringe,1190,Regular,41,Fringe KC,,
-RedmondFringe,1191,Regular,41,Fringe KC,,
-RedmondFringe,1192,Regular,41,Fringe KC,,
-RedmondFringe,1193,Regular,45,Fringe KC,,
-RedmondFringe,1194,Regular,45,Fringe KC,,
-RedmondFringe,1195,Regular,40,English Hill,,
-RedmondFringe,1196,Regular,41,Fringe KC,,
-RedmondFringe,1197,Regular,44,Fringe KC,,
-RedmondFringe,1198,Regular,44,Fringe KC,,
-RedmondFringe,1199,Regular,44,Fringe KC,,
-RedmondFringe,1200,Regular,45,Fringe KC,,
-RedmondFringe,1201,Regular,45,Fringe KC,,
-RedmondFringe,1202,Regular,45,Fringe KC,,
-RedmondFringe,1203,Regular,45,Fringe KC,,
-RedmondFringe,1204,Regular,45,Fringe KC,,
-RedmondFringe,1205,Regular,45,Fringe KC,,
-RedmondFringe,1206,Regular,45,Fringe KC,,
-RedmondFringe,1207,Regular,45,Fringe KC,,
-RedmondFringe,1208,Regular,46,Fringe KC,,
-RedmondFringe,1209,Regular,46,Fringe KC,,
-RedmondFringe,1210,Regular,46,Fringe KC,,
-RedmondFringe,1211,Regular,46,Fringe KC,,
-RedmondFringe,1212,Regular,46,Fringe KC,,
-RedmondFringe,1213,Regular,46,Fringe KC,,
-RedmondFringe,1214,Regular,46,Fringe KC,,
-RedmondFringe,1215,Regular,46,Fringe KC,,
-Rest of KC,1231,External,0,,,
-Rest of KC,1232,External,0,,,
-Rest of KC,1233,External,0,,,
-Rest of KC,1234,External,0,,,
-Rest of KC,1235,External,0,,,
-Rest of KC,1236,External,0,,,
-Rest of KC,1237,External,0,,,
-Rest of KC,1238,External,0,,,
-Rest of KC,1239,External,0,,,
-Rest of KC,1240,External,0,,,
-Rest of KC,1241,External,0,,,
-Rest of KC,1242,External,0,,,
-Rest of KC,1243,External,0,,,
-Rest of KC,1244,External,0,,,
-Rest of KC,1245,External,0,,,
-Rest of KC,1246,External,0,,,
-Rest of KC,1247,External,0,,,
-Rest of KC,1248,External,0,,,
-Rest of KC,1249,External,0,,,
-Rest of KC,1250,External,0,,,
-Rest of KC,1251,External,0,,,
-Rest of KC,1252,External,0,,,
-Rest of KC,1253,External,0,,,
-Rest of KC,1254,External,0,,,
-Rest of KC,1255,External,0,,,
-Rest of KC,1256,External,0,,,
-Rest of KC,1257,External,0,,,
-Rest of KC,1258,External,0,,,
-Rest of KC,1259,External,0,,,
-Rest of KC,1260,External,0,,,
-Rest of KC,1261,External,0,,,
-Rest of KC,1262,External,0,,,
-Rest of KC,1263,External,0,,,
-Rest of KC,1264,External,0,,,
-Rest of KC,1265,External,0,,,
-Rest of KC,1266,External,0,,,
-Rest of KC,1267,External,0,,,
-Rest of KC,1268,External,0,,,
-Rest of KC,1269,External,0,,,
-Rest of KC,1270,External,0,,,
-Rest of KC,1271,External,0,,,
-Rest of KC,1272,External,0,,,
-Rest of KC,1273,External,0,,,
-Rest of KC,1274,External,0,,,
-External,1275,External,0,,,
-External,1276,External,0,,,
-External,1277,External,0,,,
-External,1278,External,0,,,
-External,1279,External,0,,,
-External,1280,External,0,,,
-External,1281,External,0,,,
-External,1282,External,0,,,
-External,1283,External,0,,,
-External,1284,External,0,,,
-External,1285,External,0,,,
-External,1286,External,0,,,
-External,1287,External,0,,,
-External,1288,External,0,,,
-External,1289,External,0,,,
-External,1290,External,0,,,
-External,1291,External,0,,,
-External,1292,External,0,,,
-External,1293,External,0,,,
-External,1294,External,0,,,
-Rest of KC,1295,External,0,,,
-Rest of KC,1296,External,0,,,
-Rest of KC,1297,External,0,,,
-Rest of KC,1298,External,0,,,
-Rest of KC,1299,External,0,,,
-Rest of KC,1300,External,0,,,
-Rest of KC,1301,External,0,,,
-Rest of KC,1302,External,0,,,
-Rest of KC,1303,External,0,,,
-Rest of KC,1304,External,0,,,
-Rest of KC,1305,External,0,,,
-Rest of KC,1306,External,0,,,
-Rest of KC,1307,External,0,,,
-Rest of KC,1308,External,0,,,
-Rest of KC,1309,External,0,,,
-Rest of KC,1310,External,0,,,
-Rest of KC,1311,External,0,,,
-Rest of KC,1312,External,0,,,
-Rest of KC,1313,External,0,,,
-Rest of KC,1314,External,0,,,
-Rest of KC,1315,External,0,,,
-Rest of KC,1316,External,0,,,
-Rest of KC,1317,External,0,,,
-External,1318,External,0,,,
-External,1319,External,0,,,
-External,1320,External,0,,,
-External,1321,External,0,,,
-External,1322,External,0,,,
-External,1323,External,0,,,
-Rest of KC,1324,External,0,,,
-Rest of KC,1325,External,0,,,
-Rest of KC,1326,External,0,,,
-Rest of KC,1327,External,0,,,
-Rest of KC,1328,External,0,,,
-Rest of KC,1329,External,0,,,
-Rest of KC,1330,External,0,,,
-Rest of KC,1331,External,0,,,
-Rest of KC,1332,External,0,,,
-Rest of KC,1333,External,0,,,
-Rest of KC,1334,External,0,,,
-Rest of KC,1335,External,0,,,
-Rest of KC,1336,External,0,,,
-Rest of KC,1337,External,0,,,
-Rest of KC,1338,External,0,,,
-Rest of KC,1339,External,0,,,
-Rest of KC,1340,External,0,,,
-Rest of KC,1341,External,0,,,
-Rest of KC,1342,External,0,,,
-Rest of KC,1343,External,0,,,
-Rest of KC,1344,External,0,,,
-Rest of KC,1345,External,0,,,
-External,1346,External,0,,,
-External,1347,External,0,,,
-External,1348,External,0,,,
-External,1349,External,0,,,
-External,1350,External,0,,,
-External,1351,External,0,,,
-External,1352,External,0,,,
-External,1353,External,0,,,
-External,1354,External,0,,,
-Rest of KC,1355,External,0,,,
+﻿Jurisdiction,BKRCastTAZ,LUType,Subarea,SubareaName,PMA_ID,PMA_NAME,BKRDistrict,DistrictFlowID,Area
+BELLEVUE,1,Regular,3,Downtown,1,HDMX,62,2,332323.1344
+BELLEVUE,2,Regular,3,Downtown,1,HDMX,62,2,230403.6827
+BELLEVUE,3,Regular,3,Downtown,1,HDMX,62,2,183625.6801
+BELLEVUE,4,Regular,3,Downtown,1,HDMX,62,2,426674.4649
+BELLEVUE,5,Regular,3,Downtown,1,HDMX,62,2,471360.8186
+BELLEVUE,6,Regular,3,Downtown,1,HDMX,62,2,405366.6962
+BELLEVUE,7,Regular,3,Downtown,1,HDMX,62,2,433195.5996
+BELLEVUE,8,Regular,3,Downtown,1,HDMX,62,2,443302.4646
+BELLEVUE,9,Regular,3,Downtown,1,HDMX,62,2,440108.9228
+BELLEVUE,10,Regular,3,Downtown,1,HDMX,62,2,439042.6664
+BELLEVUE,11,Regular,3,Downtown,1,HDMX,62,2,1740432.929
+BELLEVUE,12,Park,3,Downtown,1,HDMX,62,2,1019041.846
+BELLEVUE,13,Regular,3,Downtown,1,HDMX,62,2,114208.9575
+BELLEVUE,14,Regular,3,Downtown,1,HDMX,62,2,248158.202
+BELLEVUE,15,Regular,3,Downtown,1,HDMX,62,2,359100.0234
+BELLEVUE,16,Regular,3,Downtown,1,HDMX,62,2,202390.8131
+BELLEVUE,17,Regular,3,Downtown,1,HDMX,62,2,269244.2404
+BELLEVUE,18,Regular,3,Downtown,1,HDMX,62,2,240757.9646
+BELLEVUE,19,Regular,3,Downtown,1,HDMX,62,2,368639.2148
+BELLEVUE,20,Regular,3,Downtown,1,HDMX,62,2,227315.8438
+BELLEVUE,21,Regular,3,Downtown,1,HDMX,62,2,216103.624
+BELLEVUE,22,Regular,3,Downtown,1,HDMX,62,2,439536.8521
+BELLEVUE,23,Regular,3,Downtown,1,HDMX,62,2,472201.0901
+BELLEVUE,24,Regular,3,Downtown,1,HDMX,62,2,401875.0171
+BELLEVUE,25,Regular,3,Downtown,1,HDMX,62,2,371966.2906
+BELLEVUE,26,Regular,3,Downtown,1,HDMX,62,2,209101.0279
+BELLEVUE,27,Regular,3,Downtown,1,HDMX,62,2,220131.8807
+BELLEVUE,28,Regular,3,Downtown,1,HDMX,62,2,199683.9816
+BELLEVUE,29,Regular,3,Downtown,1,HDMX,62,2,418927.875
+BELLEVUE,30,Regular,3,Downtown,1,HDMX,62,2,435010.2418
+BELLEVUE,31,Regular,3,Downtown,1,HDMX,62,2,220618.2707
+BELLEVUE,32,Regular,3,Downtown,1,HDMX,62,2,223803.5265
+BELLEVUE,33,Regular,3,Downtown,1,HDMX,62,2,435820.645
+BELLEVUE,34,Regular,3,Downtown,1,HDMX,62,2,423152.3598
+BELLEVUE,35,Regular,3,Downtown,1,HDMX,62,2,438746.2689
+BELLEVUE,36,Regular,3,Downtown,1,HDMX,62,2,437842.2409
+BELLEVUE,37,Regular,3,Downtown,1,HDMX,62,2,757209.3381
+BELLEVUE,38,Regular,3,Downtown,1,HDMX,62,2,436827.716
+BELLEVUE,39,Regular,3,Downtown,1,HDMX,62,2,437363.3381
+BELLEVUE,40,Regular,3,Downtown,1,HDMX,62,2,439753.7954
+BELLEVUE,41,Regular,3,Downtown,1,HDMX,62,2,436052.1034
+BELLEVUE,42,Regular,3,Downtown,1,HDMX,62,2,440483.0392
+BELLEVUE,43,Regular,3,Downtown,1,HDMX,62,2,471933.8225
+BELLEVUE,44,Regular,3,Downtown,1,HDMX,62,2,453444.437
+BELLEVUE,45,Regular,3,Downtown,1,HDMX,62,2,474671.6956
+BELLEVUE,46,Regular,3,Downtown,1,HDMX,62,2,479542.2978
+BELLEVUE,47,Regular,1,North Bellevue,3,LDRN,61,1,375985.9329
+BELLEVUE,48,Park,1,North Bellevue,3,LDRN,61,1,901700.5332
+BELLEVUE,49,Regular,1,North Bellevue,3,LDRN,61,1,1711148.36
+BELLEVUE,50,Regular,1,North Bellevue,3,LDRN,61,1,1029353.444
+BELLEVUE,51,Regular,1,North Bellevue,3,LDRN,61,1,1321243.899
+BELLEVUE,52,Regular,1,North Bellevue,3,LDRN,61,1,1720412.331
+BELLEVUE,53,Regular,1,North Bellevue,3,LDRN,61,1,1636750.872
+BELLEVUE,54,Regular,1,North Bellevue,3,LDRN,61,1,3528312.449
+BELLEVUE,55,Regular,1,North Bellevue,3,LDRN,61,1,938182.5207
+BELLEVUE,56,Regular,1,North Bellevue,3,LDRN,61,1,1164276.823
+BELLEVUE,57,Regular,1,North Bellevue,3,LDRN,61,1,1169239.776
+BELLEVUE,58,Regular,1,North Bellevue,3,LDRN,61,1,585551.4546
+BELLEVUE,59,Regular,1,North Bellevue,3,LDRN,61,1,627229.3428
+BELLEVUE,60,Regular,1,North Bellevue,3,LDRN,61,1,856112.2868
+BELLEVUE,61,Regular,1,North Bellevue,3,LDRN,61,1,858944.2466
+BELLEVUE,62,Regular,1,North Bellevue,3,LDRN,61,1,673071.5822
+BELLEVUE,63,Regular,1,North Bellevue,3,LDRN,61,1,450571.3116
+BELLEVUE,64,Regular,1,North Bellevue,3,LDRN,61,1,1345174.484
+BELLEVUE,65,Regular,1,North Bellevue,3,LDRN,61,1,762896.0037
+BELLEVUE,66,Regular,1,North Bellevue,3,LDRN,61,1,982978.9122
+BELLEVUE,67,Regular,1,North Bellevue,3,LDRN,61,1,1139413.304
+BELLEVUE,68,Regular,1,North Bellevue,3,LDRN,61,1,1588710.648
+BELLEVUE,69,Regular,1,North Bellevue,3,LDRN,61,1,1330689.338
+BELLEVUE,70,Regular,1,North Bellevue,3,LDRN,61,1,2203724.731
+BELLEVUE,71,Regular,1,North Bellevue,3,LDRN,61,1,2305457.363
+BELLEVUE,72,Regular,1,North Bellevue,3,LDRN,61,1,620120.5017
+BELLEVUE,73,Regular,1,North Bellevue,3,LDRN,61,1,954327.6977
+BELLEVUE,74,Regular,1,North Bellevue,3,LDRN,61,1,749174.901
+BELLEVUE,75,Regular,1,North Bellevue,3,LDRN,61,1,644351.8241
+BELLEVUE,76,Regular,1,North Bellevue,3,LDRN,61,1,1671149.759
+BELLEVUE,77,Regular,1,North Bellevue,3,LDRN,61,1,2232777.815
+BELLEVUE,78,Regular,1,North Bellevue,3,LDRN,61,1,1545807.701
+BELLEVUE,79,Regular,1,North Bellevue,3,LDRN,61,1,1521557.71
+BELLEVUE,80,Regular,1,North Bellevue,3,LDRN,61,1,1948908.379
+BELLEVUE,81,Regular,1,North Bellevue,3,LDRN,61,1,582649.7475
+BELLEVUE,82,Regular,1,North Bellevue,3,LDRN,61,1,392921.6876
+BELLEVUE,83,Regular,1,North Bellevue,3,LDRN,61,1,810633.0413
+BELLEVUE,84,Park,1,North Bellevue,3,LDRN,61,1,775944.4124
+BELLEVUE,85,Regular,1,North Bellevue,3,LDRN,61,1,668861.2609
+BELLEVUE,86,Regular,1,North Bellevue,3,LDRN,61,1,1679561.367
+BELLEVUE,87,Regular,1,North Bellevue,3,LDRN,61,1,1507745.932
+BELLEVUE,88,Regular,1,North Bellevue,3,LDRN,61,1,2196262.32
+BELLEVUE,89,Regular,1,North Bellevue,3,LDRN,61,1,1400790.508
+BELLEVUE,90,Regular,1,North Bellevue,3,LDRN,61,1,860016.684
+BELLEVUE,91,Regular,1,North Bellevue,3,LDRN,61,1,2746067.544
+BELLEVUE,92,Regular,1,North Bellevue,3,LDRN,61,1,1947630.671
+BELLEVUE,93,Regular,2,Bridle Trails,3,LDRN,61,1,3216168.524
+BELLEVUE,94,Regular,2,Bridle Trails,3,LDRN,61,1,2524987.21
+BELLEVUE,95,Regular,2,Bridle Trails,3,LDRN,61,1,519480.2757
+BELLEVUE,96,Regular,2,Bridle Trails,3,LDRN,61,1,2171664.197
+BELLEVUE,97,Regular,2,Bridle Trails,3,LDRN,61,1,1838108.027
+BELLEVUE,98,Regular,2,Bridle Trails,3,LDRN,61,1,1498703.64
+BELLEVUE,99,Regular,2,Bridle Trails,3,LDRN,61,1,4707276.797
+BELLEVUE,100,Elementary School,2,Bridle Trails,3,LDRN,61,1,441824.6528
+BELLEVUE,101,Regular,2,Bridle Trails,3,LDRN,61,1,1897526.745
+BELLEVUE,102,Regular,2,Bridle Trails,3,LDRN,61,1,1749348.717
+BELLEVUE,103,Regular,2,Bridle Trails,3,LDRN,61,1,1734777.397
+BELLEVUE,104,Regular,2,Bridle Trails,3,LDRN,61,1,1593113.486
+BELLEVUE,105,Regular,2,Bridle Trails,3,LDRN,61,1,6728470.629
+BELLEVUE,106,Regular,2,Bridle Trails,3,LDRN,61,1,1120060.019
+BELLEVUE,107,Regular,2,Bridle Trails,3,LDRN,61,1,1328330.912
+BELLEVUE,108,Regular,2,Bridle Trails,3,LDRN,61,1,1015750.01
+BELLEVUE,109,Regular,2,Bridle Trails,3,LDRN,61,1,1120354.062
+BELLEVUE,110,Regular,2,Bridle Trails,3,LDRN,61,1,2511514.304
+BELLEVUE,111,Regular,2,Bridle Trails,3,LDRN,61,1,3310500.936
+BELLEVUE,112,Regular,2,Bridle Trails,3,LDRN,61,1,2788672.403
+BELLEVUE,113,Regular,2,Bridle Trails,3,LDRN,61,1,2830468.251
+BELLEVUE,114,Regular,2,Bridle Trails,3,LDRN,61,1,3077820.562
+BELLEVUE,115,Regular,2,Bridle Trails,3,LDRN,61,1,4103165.522
+BELLEVUE,116,Regular,2,Bridle Trails,3,LDRN,61,1,3767340.431
+BELLEVUE,117,Regular,2,Bridle Trails,3,LDRN,61,1,1697549.846
+BELLEVUE,118,Regular,2,Bridle Trails,3,LDRN,61,1,1604031.596
+BELLEVUE,119,Park,2,Bridle Trails,3,LDRN,61,1,5235348.224
+BELLEVUE,120,Regular,2,Bridle Trails,3,LDRN,61,1,1153161.278
+BELLEVUE,121,Regular,2,Bridle Trails,3,LDRN,61,1,201774.4419
+BELLEVUE,122,Regular,2,Bridle Trails,3,LDRN,61,1,1307270.125
+BELLEVUE,123,Regular,2,Bridle Trails,3,LDRN,61,1,1940180.426
+BELLEVUE,124,Regular,2,Bridle Trails,3,LDRN,61,1,1453288.608
+BELLEVUE,125,Regular,2,Bridle Trails,3,LDRN,61,1,3487610.582
+BELLEVUE,126,Regular,2,Bridle Trails,3,LDRN,61,1,1687994.831
+BELLEVUE,127,Regular,2,Bridle Trails,3,LDRN,61,1,2304061.079
+BELLEVUE,128,Regular,2,Bridle Trails,3,LDRN,61,1,1420309.504
+BELLEVUE,129,Regular,2,Bridle Trails,3,LDRN,61,1,1293189.366
+BELLEVUE,130,Regular,2,Bridle Trails,3,LDRN,61,1,3434604.409
+BELLEVUE,131,Regular,2,Bridle Trails,3,LDRN,61,1,882654.6392
+BELLEVUE,132,Regular,2,Bridle Trails,3,LDRN,61,1,1295525.112
+BELLEVUE,133,Regular,12,Bel-Red Northup,1,HDMX,61,1,808057.497
+BELLEVUE,134,Regular,12,Bel-Red Northup,1,HDMX,61,1,403276.2269
+BELLEVUE,135,Regular,12,Bel-Red Northup,1,HDMX,61,1,431692.017
+BELLEVUE,136,Regular,12,Bel-Red Northup,1,HDMX,61,1,388918.4052
+BELLEVUE,137,Regular,12,Bel-Red Northup,1,HDMX,61,1,434164.561
+BELLEVUE,138,Regular,12,Bel-Red Northup,1,HDMX,61,1,698437.4455
+BELLEVUE,139,Regular,12,Bel-Red Northup,1,HDMX,61,1,385730.4445
+BELLEVUE,140,Park,12,Bel-Red Northup,1,HDMX,61,1,690974.9301
+BELLEVUE,141,Regular,12,Bel-Red Northup,1,HDMX,61,1,588285.6813
+BELLEVUE,142,Regular,12,Bel-Red Northup,1,HDMX,61,1,1176692.557
+BELLEVUE,143,Regular,12,Bel-Red Northup,1,HDMX,61,1,718744.1997
+BELLEVUE,144,Regular,12,Bel-Red Northup,1,HDMX,61,1,889397.3638
+BELLEVUE,145,Regular,12,Bel-Red Northup,1,HDMX,61,1,243467.518
+BELLEVUE,146,Regular,12,Bel-Red Northup,1,HDMX,61,1,546558.9885
+BELLEVUE,147,Regular,12,Bel-Red Northup,1,HDMX,61,1,253987.3935
+BELLEVUE,148,Regular,12,Bel-Red Northup,1,HDMX,61,1,348904.4795
+BELLEVUE,149,Regular,12,Bel-Red Northup,1,HDMX,61,1,515440.4592
+BELLEVUE,150,Regular,12,Bel-Red Northup,1,HDMX,61,1,326720.7674
+BELLEVUE,151,Regular,12,Bel-Red Northup,1,HDMX,61,1,653298.8112
+BELLEVUE,152,Regular,12,Bel-Red Northup,1,HDMX,61,1,552481.7033
+BELLEVUE,153,Regular,12,Bel-Red Northup,1,HDMX,61,1,424830.9484
+BELLEVUE,154,Regular,12,Bel-Red Northup,1,HDMX,61,1,188564.4564
+BELLEVUE,155,Regular,12,Bel-Red Northup,1,HDMX,61,1,302463.0092
+BELLEVUE,156,Regular,12,Bel-Red Northup,1,HDMX,61,1,194559.3357
+BELLEVUE,157,Regular,12,Bel-Red Northup,1,HDMX,61,1,428991.124
+BELLEVUE,158,Regular,12,Bel-Red Northup,1,HDMX,61,1,432153.345
+BELLEVUE,159,Regular,12,Bel-Red Northup,1,HDMX,61,1,437528.9201
+BELLEVUE,160,Regular,12,Bel-Red Northup,1,HDMX,61,1,698711.2825
+BELLEVUE,161,Regular,12,Bel-Red Northup,1,HDMX,61,1,1004729.377
+BELLEVUE,162,Regular,12,Bel-Red Northup,1,HDMX,61,1,669606.1303
+BELLEVUE,163,Regular,12,Bel-Red Northup,1,HDMX,61,1,651180.6898
+BELLEVUE,164,Regular,12,Bel-Red Northup,1,HDMX,61,1,623440.7963
+BELLEVUE,165,Regular,12,Bel-Red Northup,1,HDMX,61,1,548996.4541
+BELLEVUE,166,Regular,12,Bel-Red Northup,1,HDMX,61,1,1127554.018
+BELLEVUE,167,Regular,12,Bel-Red Northup,1,HDMX,61,1,1153280.2
+BELLEVUE,168,Regular,12,Bel-Red Northup,1,HDMX,61,1,412655.1065
+BELLEVUE,169,Regular,12,Bel-Red Northup,1,HDMX,61,1,496651.3593
+BELLEVUE,170,Regular,12,Bel-Red Northup,1,HDMX,61,1,508375.7654
+BELLEVUE,171,Regular,12,Bel-Red Northup,1,HDMX,61,1,1021316.757
+BELLEVUE,172,Regular,12,Bel-Red Northup,1,HDMX,61,1,768669.9213
+BELLEVUE,173,Regular,12,Bel-Red Northup,1,HDMX,61,1,882943.5722
+BELLEVUE,174,Regular,12,Bel-Red Northup,1,HDMX,61,1,515644.5066
+BELLEVUE,175,Regular,12,Bel-Red Northup,1,HDMX,61,1,438856.3686
+BELLEVUE,176,Regular,12,Bel-Red Northup,1,HDMX,61,1,871668.3677
+BELLEVUE,177,Regular,12,Bel-Red Northup,1,HDMX,61,1,629516.1366
+BELLEVUE,178,Regular,12,Bel-Red Northup,1,HDMX,61,1,1289524.069
+BELLEVUE,179,Regular,12,Bel-Red Northup,1,HDMX,61,1,1241171.636
+BELLEVUE,180,Regular,12,Bel-Red Northup,1,HDMX,61,1,713127.0223
+BELLEVUE,181,Regular,12,Bel-Red Northup,1,HDMX,61,1,991645.875
+BELLEVUE,182,Regular,12,Bel-Red Northup,1,HDMX,61,1,1193551.462
+BELLEVUE,183,Regular,4,Wilburton,1,HDMX,61,1,872704.2121
+BELLEVUE,184,Regular,12,Bel-Red Northup,1,HDMX,61,1,1379251.038
+BELLEVUE,185,Regular,4,Wilburton,1,HDMX,61,1,544164.562
+BELLEVUE,186,Regular,12,Bel-Red Northup,1,HDMX,61,1,574626.4048
+BELLEVUE,187,Regular,12,Bel-Red Northup,1,HDMX,61,1,525734.3683
+BELLEVUE,188,Regular,12,Bel-Red Northup,1,HDMX,61,1,1419370.525
+BELLEVUE,189,Regular,12,Bel-Red Northup,1,HDMX,61,1,492170.9243
+BELLEVUE,190,Regular,8,Richards Valley,3,LDRN,61,1,725820.1948
+BELLEVUE,191,Regular,8,Richards Valley,3,LDRN,61,1,855035.9433
+BELLEVUE,192,Regular,12,Bel-Red Northup,1,HDMX,61,1,408925.6837
+BELLEVUE,193,Regular,12,Bel-Red Northup,1,HDMX,61,1,472745.433
+BELLEVUE,194,Regular,8,Richards Valley,3,LDRN,61,1,325859.9925
+BELLEVUE,195,Regular,8,Richards Valley,3,LDRN,61,1,1116349.457
+BELLEVUE,196,Regular,12,Bel-Red Northup,1,HDMX,61,1,383169.7194
+BELLEVUE,197,Regular,12,Bel-Red Northup,1,HDMX,61,1,195060.383
+BELLEVUE,198,Regular,12,Bel-Red Northup,1,HDMX,61,1,246481.2737
+BELLEVUE,199,Regular,8,Richards Valley,3,LDRN,61,1,786988.4227
+BELLEVUE,200,Regular,8,Richards Valley,3,LDRN,61,1,1396032.357
+BELLEVUE,201,Regular,8,Richards Valley,3,LDRN,61,1,1021536.159
+BELLEVUE,202,Regular,8,Richards Valley,3,LDRN,61,1,696484.0251
+BELLEVUE,203,Regular,8,Richards Valley,3,LDRN,61,1,1026910.919
+BELLEVUE,204,Regular,12,Bel-Red Northup,1,HDMX,61,1,238603.6181
+BELLEVUE,205,Regular,12,Bel-Red Northup,1,HDMX,61,1,218387.228
+BELLEVUE,206,Regular,9,East Bellevue,3,LDRN,61,1,1179196.438
+BELLEVUE,207,Regular,9,East Bellevue,3,LDRN,61,1,1415730.46
+BELLEVUE,208,Regular,9,East Bellevue,3,LDRN,61,1,311009.8216
+BELLEVUE,209,Regular,9,East Bellevue,3,LDRN,61,1,420675.5605
+BELLEVUE,210,Regular,9,East Bellevue,3,LDRN,61,1,1236555.798
+BELLEVUE,211,Regular,9,East Bellevue,3,LDRN,61,1,632464.7633
+BELLEVUE,212,Regular,9,East Bellevue,3,LDRN,61,1,1255527.096
+BELLEVUE,213,Regular,9,East Bellevue,3,LDRN,61,1,1049174.736
+BELLEVUE,214,Regular,9,East Bellevue,3,LDRN,61,1,196611.6118
+BELLEVUE,215,Regular,12,Bel-Red Northup,1,HDMX,61,1,359775.8796
+BELLEVUE,216,Middle School,9,East Bellevue,3,LDRN,61,1,946785.144
+BELLEVUE,217,Regular,9,East Bellevue,3,LDRN,61,1,1729522.542
+BELLEVUE,218,Regular,9,East Bellevue,3,LDRN,61,1,1733601.016
+BELLEVUE,219,Regular,5,Crossroads,2,MDMX,61,1,1284810.739
+BELLEVUE,220,Regular,5,Crossroads,2,MDMX,61,1,445872.2456
+BELLEVUE,221,Regular,5,Crossroads,2,MDMX,61,1,1297883.557
+BELLEVUE,222,Regular,5,Crossroads,2,MDMX,61,1,879391.6358
+BELLEVUE,223,Regular,5,Crossroads,2,MDMX,61,1,780275.7837
+BELLEVUE,224,Regular,9,East Bellevue,3,LDRN,61,1,369939.1906
+BELLEVUE,225,Regular,5,Crossroads,2,MDMX,61,1,443341.1496
+BELLEVUE,226,Regular,12,Bel-Red Northup,1,HDMX,61,1,856920.3859
+BELLEVUE,227,Regular,6,Northeast Bellevue,3,LDRN,61,1,517409.0447
+BELLEVUE,228,Regular,6,Northeast Bellevue,3,LDRN,61,1,466203.9355
+BELLEVUE,229,Regular,6,Northeast Bellevue,3,LDRN,61,1,840644.8423
+BELLEVUE,230,Regular,6,Northeast Bellevue,3,LDRN,61,1,2100069.547
+BELLEVUE,231,Elementary School,6,Northeast Bellevue,3,LDRN,61,1,448729.0668
+BELLEVUE,232,Regular,6,Northeast Bellevue,3,LDRN,61,1,2546668.51
+BELLEVUE,233,Regular,6,Northeast Bellevue,3,LDRN,61,1,1556370.138
+BELLEVUE,234,Regular,6,Northeast Bellevue,3,LDRN,61,1,1296325.75
+BELLEVUE,235,Regular,6,Northeast Bellevue,3,LDRN,61,1,1290484.516
+BELLEVUE,236,High School,6,Northeast Bellevue,3,LDRN,61,1,1739811.148
+BELLEVUE,237,Regular,6,Northeast Bellevue,3,LDRN,61,1,2173081.368
+BELLEVUE,238,Regular,6,Northeast Bellevue,3,LDRN,61,1,1338696.951
+BELLEVUE,239,Regular,5,Crossroads,2,MDMX,61,1,1258944.835
+BELLEVUE,240,Regular,5,Crossroads,2,MDMX,61,1,1329175.404
+BELLEVUE,241,Regular,5,Crossroads,2,MDMX,61,1,489506.5825
+BELLEVUE,242,Regular,5,Crossroads,2,MDMX,61,1,2251054.903
+BELLEVUE,243,Park,5,Crossroads,2,MDMX,61,1,1595268.443
+BELLEVUE,244,Regular,5,Crossroads,2,MDMX,61,1,346790.7263
+BELLEVUE,245,Regular,5,Crossroads,2,MDMX,61,1,1092813.527
+BELLEVUE,246,Regular,5,Crossroads,2,MDMX,61,1,499130.5243
+BELLEVUE,247,Regular,6,Northeast Bellevue,3,LDRN,61,1,1340073.76
+BELLEVUE,248,Regular,6,Northeast Bellevue,3,LDRN,61,1,1339992.027
+BELLEVUE,249,Regular,6,Northeast Bellevue,3,LDRN,61,1,1326071.283
+BELLEVUE,250,Regular,6,Northeast Bellevue,3,LDRN,61,1,1336019.272
+BELLEVUE,251,Elementary School,6,Northeast Bellevue,3,LDRN,61,1,429945.335
+BELLEVUE,252,Regular,6,Northeast Bellevue,3,LDRN,61,1,2498388.832
+BELLEVUE,253,Regular,6,Northeast Bellevue,3,LDRN,61,1,2134496.197
+BELLEVUE,254,Regular,6,Northeast Bellevue,3,LDRN,61,1,1194006.485
+BELLEVUE,255,Regular,6,Northeast Bellevue,3,LDRN,61,1,1922081.477
+BELLEVUE,256,Regular,6,Northeast Bellevue,3,LDRN,61,1,1043131.601
+BELLEVUE,257,Regular,6,Northeast Bellevue,3,LDRN,61,1,434838.3213
+BELLEVUE,258,Regular,6,Northeast Bellevue,3,LDRN,61,1,1710314.201
+BELLEVUE,259,Regular,6,Northeast Bellevue,3,LDRN,61,1,3009368.121
+BELLEVUE,260,Regular,6,Northeast Bellevue,3,LDRN,61,1,1103508.85
+BELLEVUE,261,Regular,6,Northeast Bellevue,3,LDRN,61,1,702976.3663
+BELLEVUE,262,Regular,6,Northeast Bellevue,3,LDRN,61,1,1216265.726
+BELLEVUE,263,Regular,6,Northeast Bellevue,3,LDRN,61,1,1335451.822
+BELLEVUE,264,Elementary School,6,Northeast Bellevue,3,LDRN,61,1,428586.1703
+BELLEVUE,265,Park,6,Northeast Bellevue,3,LDRN,61,1,2375843.755
+BELLEVUE,266,Regular,6,Northeast Bellevue,3,LDRN,61,1,4116700.461
+BELLEVUE,267,Regular,6,Northeast Bellevue,3,LDRN,61,1,922268.8946
+BELLEVUE,268,Regular,6,Northeast Bellevue,3,LDRN,61,1,1910188.097
+BELLEVUE,269,Regular,6,Northeast Bellevue,3,LDRN,61,1,2982279.064
+BELLEVUE,270,Regular,6,Northeast Bellevue,3,LDRN,61,1,1233186.295
+BELLEVUE,271,Regular,6,Northeast Bellevue,3,LDRN,61,1,1537567.919
+BELLEVUE,272,Regular,9,East Bellevue,3,LDRN,61,1,1625270.587
+BELLEVUE,273,Regular,9,East Bellevue,3,LDRN,61,1,1748972.226
+BELLEVUE,274,Regular,9,East Bellevue,3,LDRN,61,1,3862618.354
+BELLEVUE,275,Regular,9,East Bellevue,3,LDRN,61,1,2015409.327
+BELLEVUE,276,Regular,9,East Bellevue,3,LDRN,61,1,2310082.336
+BELLEVUE,277,Regular,9,East Bellevue,3,LDRN,61,1,945005.5548
+BELLEVUE,278,Regular,9,East Bellevue,3,LDRN,61,1,1691710.631
+BELLEVUE,279,Regular,9,East Bellevue,3,LDRN,61,1,2605358.473
+BELLEVUE,280,Regular,9,East Bellevue,3,LDRN,61,1,1964335.025
+BELLEVUE,281,Regular,9,East Bellevue,3,LDRN,61,1,1782682.719
+BELLEVUE,282,Regular,9,East Bellevue,3,LDRN,61,1,1301500.194
+BELLEVUE,283,Middle School,9,East Bellevue,3,LDRN,61,1,429580.5573
+BELLEVUE,284,Regular,9,East Bellevue,3,LDRN,61,1,1475164.861
+BELLEVUE,285,Regular,9,East Bellevue,3,LDRN,61,1,1920881.971
+BELLEVUE,286,Regular,9,East Bellevue,3,LDRN,61,1,734278.8751
+BELLEVUE,287,Regular,9,East Bellevue,3,LDRN,61,1,1687103.086
+BELLEVUE,288,Park,9,East Bellevue,3,LDRN,61,1,2690451.531
+BELLEVUE,289,Regular,9,East Bellevue,3,LDRN,61,1,1908844.932
+BELLEVUE,290,Regular,9,East Bellevue,3,LDRN,61,1,1548128.664
+BELLEVUE,291,Regular,9,East Bellevue,3,LDRN,61,1,1317142.607
+BELLEVUE,292,Regular,9,East Bellevue,3,LDRN,61,1,815170.3349
+BELLEVUE,293,Regular,9,East Bellevue,3,LDRN,61,1,1581725.953
+BELLEVUE,294,Regular,9,East Bellevue,3,LDRN,61,1,1699698.412
+BELLEVUE,295,Regular,9,East Bellevue,3,LDRN,61,1,3976137.088
+BELLEVUE,296,Regular,9,East Bellevue,3,LDRN,61,1,2244736.611
+BELLEVUE,297,Regular,9,East Bellevue,3,LDRN,61,1,2187988.361
+BELLEVUE,298,Park,9,East Bellevue,3,LDRN,61,1,3519192.964
+BELLEVUE,299,Regular,9,East Bellevue,3,LDRN,61,1,3440158.563
+BELLEVUE,300,Regular,9,East Bellevue,3,LDRN,61,1,2116120.718
+BELLEVUE,301,Regular,9,East Bellevue,3,LDRN,61,1,2185376.655
+BELLEVUE,302,Regular,9,East Bellevue,3,LDRN,61,1,1755821.151
+BELLEVUE,303,Regular,9,East Bellevue,3,LDRN,61,1,1247592.565
+BELLEVUE,304,Regular,9,East Bellevue,3,LDRN,61,1,734340.379
+BELLEVUE,305,Elementary School,9,East Bellevue,3,LDRN,61,1,439576.9429
+BELLEVUE,306,Park,9,East Bellevue,3,LDRN,61,1,482127.7826
+BELLEVUE,307,Middle School,9,East Bellevue,3,LDRN,61,1,803953.0969
+BELLEVUE,308,Regular,9,East Bellevue,3,LDRN,61,1,1583736.647
+BELLEVUE,309,Regular,9,East Bellevue,3,LDRN,61,1,1041948.042
+BELLEVUE,310,Regular,9,East Bellevue,3,LDRN,61,1,1388028.417
+BELLEVUE,311,Regular,9,East Bellevue,3,LDRN,61,1,1573457.293
+BELLEVUE,312,Park,9,East Bellevue,3,LDRN,61,1,740361.8215
+BELLEVUE,313,Regular,9,East Bellevue,3,LDRN,61,1,887782.181
+BELLEVUE,314,Regular,9,East Bellevue,3,LDRN,61,1,2457754.783
+BELLEVUE,315,Park,9,East Bellevue,3,LDRN,61,1,1549205.819
+BELLEVUE,316,Park,9,East Bellevue,3,LDRN,61,1,1522051.439
+BELLEVUE,317,Regular,9,East Bellevue,3,LDRN,61,1,846634.694
+BELLEVUE,318,Regular,9,East Bellevue,3,LDRN,61,1,3301891.977
+BELLEVUE,319,Regular,9,East Bellevue,3,LDRN,61,1,670547.9645
+BELLEVUE,320,Middle School,9,East Bellevue,3,LDRN,61,1,667678.7786
+BELLEVUE,321,Park,9,East Bellevue,3,LDRN,61,1,2284472.689
+BELLEVUE,322,Regular,9,East Bellevue,3,LDRN,61,1,2385689.076
+BELLEVUE,323,Regular,9,East Bellevue,3,LDRN,61,1,1066939.922
+BELLEVUE,324,Regular,9,East Bellevue,3,LDRN,61,1,1456431.573
+BELLEVUE,325,Regular,9,East Bellevue,3,LDRN,61,1,1734922.54
+BELLEVUE,326,Park,10,Eastgate,2,MDMX,61,1,1198079.846
+BELLEVUE,327,Regular,10,Eastgate,2,MDMX,61,1,2091782.579
+BELLEVUE,328,Regular,10,Eastgate,2,MDMX,61,1,1753076.715
+BELLEVUE,329,Elementary School,10,Eastgate,2,MDMX,61,1,405721.095
+BELLEVUE,330,Regular,9,East Bellevue,3,LDRN,61,1,1387228.583
+BELLEVUE,331,Regular,9,East Bellevue,3,LDRN,61,1,1995924.875
+BELLEVUE,332,Regular,9,East Bellevue,3,LDRN,61,1,1522583.529
+BELLEVUE,333,Regular,9,East Bellevue,3,LDRN,61,1,1446205.98
+BELLEVUE,334,Regular,9,East Bellevue,3,LDRN,61,1,1317164.566
+BELLEVUE,335,Regular,9,East Bellevue,3,LDRN,61,1,2333679.523
+BELLEVUE,336,Regular,9,East Bellevue,3,LDRN,61,1,2077789.516
+BELLEVUE,337,Elementary School,9,East Bellevue,3,LDRN,61,1,1383748.244
+BELLEVUE,338,Regular,9,East Bellevue,3,LDRN,61,1,2221565.896
+BELLEVUE,339,Regular,9,East Bellevue,3,LDRN,61,1,1370667.747
+BELLEVUE,340,Regular,9,East Bellevue,3,LDRN,61,1,3550715.797
+BELLEVUE,341,Regular,9,East Bellevue,3,LDRN,61,1,1415506.199
+BELLEVUE,342,Regular,10,Eastgate,2,MDMX,61,1,1844833.42
+BELLEVUE,343,Regular,10,Eastgate,2,MDMX,61,1,1929735.605
+BELLEVUE,344,Regular,10,Eastgate,2,MDMX,61,1,4003005.613
+BELLEVUE,345,Regular,10,Eastgate,2,MDMX,61,1,1614816.369
+BELLEVUE,346,Regular,10,Eastgate,2,MDMX,61,1,1329132.894
+BELLEVUE,347,Regular,10,Eastgate,2,MDMX,61,1,1622455.796
+BELLEVUE,348,Regular,10,Eastgate,2,MDMX,61,1,2079375.268
+BELLEVUE,349,Regular,10,Eastgate,2,MDMX,61,1,737696.4241
+BELLEVUE,350,Regular,10,Eastgate,2,MDMX,61,1,1019590.385
+BELLEVUE,351,College,10,Eastgate,2,MDMX,61,1,4212014.652
+BELLEVUE,352,Regular,10,Eastgate,2,MDMX,61,1,1532113.626
+BELLEVUE,353,Regular,10,Eastgate,2,MDMX,61,1,1323186.756
+BELLEVUE,354,Regular,9,East Bellevue,3,LDRN,61,1,537627.2638
+BELLEVUE,355,Regular,8,Richards Valley,3,LDRN,61,1,1979993.745
+BELLEVUE,356,Regular,9,East Bellevue,3,LDRN,61,1,1199673.904
+BELLEVUE,357,Regular,9,East Bellevue,3,LDRN,61,1,1625211.461
+BELLEVUE,358,Regular,8,Richards Valley,3,LDRN,61,1,719950.0955
+BELLEVUE,359,Regular,9,East Bellevue,3,LDRN,61,1,1116380.602
+BELLEVUE,360,Regular,9,East Bellevue,3,LDRN,61,1,1765005.322
+BELLEVUE,361,Regular,9,East Bellevue,3,LDRN,61,1,1248464.651
+BELLEVUE,362,Elementary School,9,East Bellevue,3,LDRN,61,1,428435.7899
+BELLEVUE,363,Regular,9,East Bellevue,3,LDRN,61,1,820400.4884
+BELLEVUE,364,Regular,9,East Bellevue,3,LDRN,61,1,356514.2054
+BELLEVUE,365,Regular,9,East Bellevue,3,LDRN,61,1,1392492.821
+BELLEVUE,366,Regular,9,East Bellevue,3,LDRN,61,1,1787860.296
+BELLEVUE,367,Regular,9,East Bellevue,3,LDRN,61,1,1638460.774
+BELLEVUE,368,High School,9,East Bellevue,3,LDRN,61,1,1741357.024
+BELLEVUE,369,Regular,9,East Bellevue,3,LDRN,61,1,2491466.497
+BELLEVUE,370,Regular,9,East Bellevue,3,LDRN,61,1,2017156.945
+BELLEVUE,371,Middle School,9,East Bellevue,3,LDRN,61,1,817267.967
+BELLEVUE,372,Regular,9,East Bellevue,3,LDRN,61,1,315846.2261
+BELLEVUE,373,Regular,9,East Bellevue,3,LDRN,61,1,734136.9439
+BELLEVUE,374,Elementary School,9,East Bellevue,3,LDRN,61,1,425024.6742
+BELLEVUE,375,Regular,9,East Bellevue,3,LDRN,61,1,422121.9719
+BELLEVUE,376,Regular,8,Richards Valley,3,LDRN,61,1,2451922.94
+BELLEVUE,377,Regular,8,Richards Valley,3,LDRN,61,1,1719160.488
+BELLEVUE,378,Regular,8,Richards Valley,3,LDRN,61,1,1760382.402
+BELLEVUE,379,Regular,8,Richards Valley,3,LDRN,61,1,1270577.052
+BELLEVUE,380,Regular,8,Richards Valley,3,LDRN,61,1,3378219.587
+BELLEVUE,381,Regular,8,Richards Valley,3,LDRN,61,1,2037863.976
+BELLEVUE,382,Regular,8,Richards Valley,3,LDRN,61,1,2460723.964
+BELLEVUE,383,Regular,8,Richards Valley,3,LDRN,61,1,1087043.676
+BELLEVUE,384,Regular,10,Eastgate,2,MDMX,61,1,1437199.765
+BELLEVUE,385,Regular,10,Eastgate,2,MDMX,61,1,1259477.121
+BELLEVUE,386,Regular,10,Eastgate,2,MDMX,61,1,1528734.053
+BELLEVUE,387,Regular,10,Eastgate,2,MDMX,61,1,1823326.324
+BELLEVUE,388,Regular,10,Eastgate,2,MDMX,61,1,1451931.892
+BELLEVUE,389,Regular,8,Richards Valley,3,LDRN,61,1,1697027.616
+BELLEVUE,390,Regular,8,Richards Valley,3,LDRN,61,1,939368.2129
+BELLEVUE,391,Regular,8,Richards Valley,3,LDRN,61,1,1625223.983
+BELLEVUE,392,Regular,8,Richards Valley,3,LDRN,61,1,2077764.734
+BELLEVUE,393,Regular,8,Richards Valley,3,LDRN,61,1,1115739.634
+BELLEVUE,394,Regular,8,Richards Valley,3,LDRN,61,1,1690863.246
+BELLEVUE,395,Park,8,Richards Valley,3,LDRN,61,1,1482591.142
+BELLEVUE,396,Park,8,Richards Valley,3,LDRN,61,1,6616387.003
+BELLEVUE,397,Regular,8,Richards Valley,3,LDRN,61,1,992594.0493
+BELLEVUE,398,Park,8,Richards Valley,3,LDRN,61,1,6066482.222
+BELLEVUE,399,Regular,8,Richards Valley,3,LDRN,61,1,1629416.327
+BELLEVUE,400,Regular,8,Richards Valley,3,LDRN,61,1,3179495.539
+BELLEVUE,401,Regular,8,Richards Valley,3,LDRN,61,1,4471974.125
+BELLEVUE,402,Regular,8,Richards Valley,3,LDRN,61,1,2208073.407
+BELLEVUE,403,Elementary School,8,Richards Valley,3,LDRN,61,1,462822.4423
+BELLEVUE,404,Regular,8,Richards Valley,3,LDRN,61,1,1429715.234
+BELLEVUE,405,Regular,8,Richards Valley,3,LDRN,61,1,846584.0578
+BELLEVUE,406,Regular,8,Richards Valley,3,LDRN,61,1,3631390.094
+BELLEVUE,407,Regular,8,Richards Valley,3,LDRN,61,1,1643919.31
+BELLEVUE,408,Regular,8,Richards Valley,3,LDRN,61,1,2937477.09
+BELLEVUE,409,Regular,8,Richards Valley,3,LDRN,61,1,3571529.6
+BELLEVUE,410,Middle School,8,Richards Valley,3,LDRN,61,1,857415.1029
+BELLEVUE,411,Park,8,Richards Valley,3,LDRN,61,1,2661830.42
+BELLEVUE,412,Regular,8,Richards Valley,3,LDRN,61,1,1347519.741
+BELLEVUE,413,Regular,8,Richards Valley,3,LDRN,61,1,1846840.988
+BELLEVUE,414,Regular,8,Richards Valley,3,LDRN,61,1,1338557.911
+BELLEVUE,415,Regular,8,Richards Valley,3,LDRN,61,1,1093106.981
+BELLEVUE,416,Regular,8,Richards Valley,3,LDRN,61,1,276851.2915
+BELLEVUE,417,Park,4,Wilburton,1,HDMX,61,1,3263674.909
+BELLEVUE,418,Regular,4,Wilburton,1,HDMX,61,1,1919663.059
+BELLEVUE,419,Regular,4,Wilburton,1,HDMX,61,1,1459486.958
+BELLEVUE,420,Regular,4,Wilburton,1,HDMX,61,1,873425.5018
+BELLEVUE,421,Regular,4,Wilburton,1,HDMX,61,1,508405.7922
+BELLEVUE,422,Regular,4,Wilburton,1,HDMX,61,1,306158.5275
+BELLEVUE,423,Regular,4,Wilburton,1,HDMX,61,1,469634.3512
+BELLEVUE,424,Regular,4,Wilburton,1,HDMX,61,1,167095.5376
+BELLEVUE,425,Regular,4,Wilburton,1,HDMX,61,1,369007.6232
+BELLEVUE,426,Regular,4,Wilburton,1,HDMX,61,1,988098.3188
+BELLEVUE,427,Regular,4,Wilburton,1,HDMX,61,1,538992.9363
+BELLEVUE,428,Regular,4,Wilburton,1,HDMX,61,1,266407.9477
+BELLEVUE,429,Regular,4,Wilburton,1,HDMX,61,1,515778.9253
+BELLEVUE,430,Regular,4,Wilburton,1,HDMX,61,1,451971.5961
+BELLEVUE,431,Regular,4,Wilburton,1,HDMX,61,1,634652.3703
+BELLEVUE,432,Regular,4,Wilburton,1,HDMX,61,1,784901.4697
+BELLEVUE,433,Regular,4,Wilburton,1,HDMX,61,1,823165.6001
+BELLEVUE,434,Regular,7,South Bellevue,3,LDRN,61,1,443606.852
+BELLEVUE,435,Regular,7,South Bellevue,3,LDRN,61,1,1929442.991
+BELLEVUE,436,Regular,7,South Bellevue,3,LDRN,61,1,440501.923
+BELLEVUE,437,Regular,7,South Bellevue,3,LDRN,61,1,949249.7991
+BELLEVUE,438,Regular,7,South Bellevue,3,LDRN,61,1,383565.4616
+BELLEVUE,439,Regular,7,South Bellevue,3,LDRN,61,1,558498.4184
+BELLEVUE,440,Regular,7,South Bellevue,3,LDRN,61,1,873633.9614
+BELLEVUE,441,Regular,7,South Bellevue,3,LDRN,61,1,369338.9757
+BELLEVUE,442,Regular,7,South Bellevue,3,LDRN,61,1,513879.452
+BELLEVUE,443,Regular,7,South Bellevue,3,LDRN,61,1,2001872.262
+BELLEVUE,444,Regular,7,South Bellevue,3,LDRN,61,1,2798060.435
+BELLEVUE,445,Regular,7,South Bellevue,3,LDRN,61,1,837318.5982
+BELLEVUE,446,Regular,7,South Bellevue,3,LDRN,61,1,257972.8894
+BELLEVUE,447,Regular,7,South Bellevue,3,LDRN,61,1,1128649.394
+BELLEVUE,448,Regular,7,South Bellevue,3,LDRN,61,1,540509.7238
+BELLEVUE,449,High School,7,South Bellevue,3,LDRN,61,1,1776818.333
+BELLEVUE,450,Regular,7,South Bellevue,3,LDRN,61,1,2010522.658
+BELLEVUE,451,Regular,7,South Bellevue,3,LDRN,61,1,579383.0151
+BELLEVUE,452,Regular,7,South Bellevue,3,LDRN,61,1,804214.6805
+BELLEVUE,453,Regular,7,South Bellevue,3,LDRN,61,1,1069203.228
+BELLEVUE,454,Regular,7,South Bellevue,3,LDRN,61,1,488977.5456
+BELLEVUE,455,Regular,7,South Bellevue,3,LDRN,61,1,2200871.423
+BELLEVUE,456,Regular,7,South Bellevue,3,LDRN,61,1,853686.87
+BELLEVUE,457,Regular,7,South Bellevue,3,LDRN,61,1,713093.9986
+BELLEVUE,458,Regular,7,South Bellevue,3,LDRN,61,1,695309.401
+BELLEVUE,459,Regular,7,South Bellevue,3,LDRN,61,1,631692.5718
+BELLEVUE,460,Regular,7,South Bellevue,3,LDRN,61,1,592421.6887
+BELLEVUE,461,Regular,7,South Bellevue,3,LDRN,61,1,721618.6519
+BELLEVUE,462,Regular,7,South Bellevue,3,LDRN,61,1,2348779.245
+BELLEVUE,463,Regular,7,South Bellevue,3,LDRN,61,1,1575155.865
+BELLEVUE,464,Regular,7,South Bellevue,3,LDRN,61,1,1184824.618
+BELLEVUE,465,Regular,7,South Bellevue,3,LDRN,61,1,886891.7101
+BELLEVUE,466,Regular,7,South Bellevue,3,LDRN,61,1,4799173.193
+BELLEVUE,467,Regular,7,South Bellevue,3,LDRN,61,1,1708240.187
+BELLEVUE,468,Regular,7,South Bellevue,3,LDRN,61,1,2719317.629
+BELLEVUE,469,Regular,7,South Bellevue,3,LDRN,61,1,3032037.167
+BELLEVUE,470,Regular,7,South Bellevue,3,LDRN,61,1,1915710.374
+BELLEVUE,471,Regular,7,South Bellevue,3,LDRN,61,1,1212854.079
+BELLEVUE,472,Elementary School,7,South Bellevue,3,LDRN,61,1,384051.2654
+BELLEVUE,473,Regular,7,South Bellevue,3,LDRN,61,1,1058880.68
+BELLEVUE,474,Regular,7,South Bellevue,3,LDRN,61,1,1666209.762
+BELLEVUE,475,Regular,7,South Bellevue,3,LDRN,61,1,1132152.406
+BELLEVUE,476,Regular,7,South Bellevue,3,LDRN,61,1,1879914.019
+BELLEVUE,477,Regular,7,South Bellevue,3,LDRN,61,1,1687810.893
+BELLEVUE,478,Regular,7,South Bellevue,3,LDRN,61,1,787146.0691
+BELLEVUE,479,Regular,7,South Bellevue,3,LDRN,61,1,1366949.178
+BELLEVUE,480,Regular,7,South Bellevue,3,LDRN,61,1,1915988.72
+BELLEVUE,481,Regular,4,Wilburton,1,HDMX,61,1,332844.2712
+BELLEVUE,482,Park,7,South Bellevue,3,LDRN,61,1,16900367.66
+BELLEVUE,483,Regular,7,South Bellevue,3,LDRN,61,1,1204496.957
+BELLEVUE,484,Regular,7,South Bellevue,3,LDRN,61,1,1824093.364
+BELLEVUE,485,Regular,7,South Bellevue,3,LDRN,61,1,11583148.01
+BELLEVUE,486,Park,7,South Bellevue,3,LDRN,61,1,2552617.962
+BELLEVUE,487,Regular,7,South Bellevue,3,LDRN,61,1,2331402.423
+BELLEVUE,488,Regular,14,Newport Hills,3,LDRN,61,1,3961411.283
+BELLEVUE,489,Regular,7,South Bellevue,3,LDRN,61,1,5358128.056
+BELLEVUE,490,Regular,13,Factoria,2,MDMX,61,1,677876.1215
+BELLEVUE,491,Regular,13,Factoria,2,MDMX,61,1,703589.5648
+BELLEVUE,492,Regular,10,Eastgate,2,MDMX,61,1,746408.1945
+BELLEVUE,493,Regular,10,Eastgate,2,MDMX,61,1,536015.7262
+BELLEVUE,494,Regular,10,Eastgate,2,MDMX,61,1,1993580.078
+BELLEVUE,495,Regular,11,Southeast Bellevue,3,LDRN,61,1,2291380.754
+BELLEVUE,496,Regular,11,Southeast Bellevue,3,LDRN,61,1,1400578.991
+BELLEVUE,497,Regular,11,Southeast Bellevue,3,LDRN,61,1,1551109.386
+BELLEVUE,498,Regular,11,Southeast Bellevue,3,LDRN,61,1,3354467.838
+BELLEVUE,499,Regular,11,Southeast Bellevue,3,LDRN,61,1,3443091.275
+BELLEVUE,500,Regular,11,Southeast Bellevue,3,LDRN,61,1,600601.3105
+BELLEVUE,501,Middle School,11,Southeast Bellevue,3,LDRN,61,1,1236923.699
+BELLEVUE,502,Regular,11,Southeast Bellevue,3,LDRN,61,1,1434661.271
+BELLEVUE,503,Elementary School,11,Southeast Bellevue,3,LDRN,61,1,634880.4017
+BELLEVUE,504,Regular,13,Factoria,2,MDMX,61,1,468332.2979
+BELLEVUE,505,Regular,13,Factoria,2,MDMX,61,1,387810.9205
+BELLEVUE,506,Regular,13,Factoria,2,MDMX,61,1,436086.0068
+BELLEVUE,507,Regular,13,Factoria,2,MDMX,61,1,613811.5699
+BELLEVUE,508,Regular,13,Factoria,2,MDMX,61,1,1096124.909
+BELLEVUE,509,Regular,13,Factoria,2,MDMX,61,1,209029.5094
+BELLEVUE,510,Regular,13,Factoria,2,MDMX,61,1,202263.6371
+BELLEVUE,511,Regular,13,Factoria,2,MDMX,61,1,203835.5069
+BELLEVUE,512,High School,13,Factoria,2,MDMX,61,1,2008855.059
+BELLEVUE,513,Regular,13,Factoria,2,MDMX,61,1,846889.6598
+BELLEVUE,514,Regular,13,Factoria,2,MDMX,61,1,2224867.461
+BELLEVUE,515,Regular,13,Factoria,2,MDMX,61,1,1560295.853
+BELLEVUE,516,Regular,13,Factoria,2,MDMX,61,1,830462.9085
+BELLEVUE,517,Regular,13,Factoria,2,MDMX,61,1,1798008.041
+BELLEVUE,518,Regular,11,Southeast Bellevue,3,LDRN,61,1,3028490.639
+BELLEVUE,519,Regular,11,Southeast Bellevue,3,LDRN,61,1,2134060.72
+BELLEVUE,520,Park,11,Southeast Bellevue,3,LDRN,61,1,2177193.709
+BELLEVUE,521,Regular,11,Southeast Bellevue,3,LDRN,61,1,563580.3872
+BELLEVUE,522,Regular,11,Southeast Bellevue,3,LDRN,61,1,1537217.8
+BELLEVUE,523,Regular,11,Southeast Bellevue,3,LDRN,61,1,1349849.722
+BELLEVUE,524,Elementary School,11,Southeast Bellevue,3,LDRN,61,1,394764.1435
+BELLEVUE,525,Regular,11,Southeast Bellevue,3,LDRN,61,1,4012099.371
+BELLEVUE,526,Regular,10,Eastgate,2,MDMX,61,1,1798518.277
+BELLEVUE,527,Regular,10,Eastgate,2,MDMX,61,1,1457481.809
+BELLEVUE,528,Regular,11,Southeast Bellevue,3,LDRN,61,1,1313051.988
+BELLEVUE,529,Regular,11,Southeast Bellevue,3,LDRN,61,1,791448.0496
+BELLEVUE,530,Regular,11,Southeast Bellevue,3,LDRN,61,1,1555678.161
+BELLEVUE,531,Regular,11,Southeast Bellevue,3,LDRN,61,1,1230137.499
+BELLEVUE,532,Regular,11,Southeast Bellevue,3,LDRN,61,1,3469371.211
+BELLEVUE,533,Regular,11,Southeast Bellevue,3,LDRN,61,1,3416780.932
+BELLEVUE,534,Regular,11,Southeast Bellevue,3,LDRN,61,1,2598429.854
+BELLEVUE,535,Regular,11,Southeast Bellevue,3,LDRN,61,1,4261797.697
+BELLEVUE,536,Regular,11,Southeast Bellevue,3,LDRN,61,1,6153028.292
+BELLEVUE,537,Park,11,Southeast Bellevue,3,LDRN,61,1,4329670.826
+BELLEVUE,538,Regular,11,Southeast Bellevue,3,LDRN,61,1,4624107.122
+BELLEVUE,539,Regular,11,Southeast Bellevue,3,LDRN,61,1,5296752.301
+BELLEVUE,540,Regular,11,Southeast Bellevue,3,LDRN,61,1,3512973.068
+BELLEVUE,541,Regular,11,Southeast Bellevue,3,LDRN,61,1,4221748.363
+BELLEVUE,542,Regular,11,Southeast Bellevue,3,LDRN,61,1,2363918.811
+BELLEVUE,543,Elementary School,11,Southeast Bellevue,3,LDRN,61,1,374507.8954
+BELLEVUE,544,Regular,11,Southeast Bellevue,3,LDRN,61,1,5508718.267
+BELLEVUE,545,Regular,11,Southeast Bellevue,3,LDRN,61,1,1345531.842
+BELLEVUE,546,Regular,11,Southeast Bellevue,3,LDRN,61,1,2731315.831
+BELLEVUE,547,Regular,11,Southeast Bellevue,3,LDRN,61,1,1781082.935
+BELLEVUE,548,Regular,11,Southeast Bellevue,3,LDRN,61,1,1917942.611
+BELLEVUE,549,Regular,11,Southeast Bellevue,3,LDRN,61,1,2354148.459
+BELLEVUE,550,Elementary School,11,Southeast Bellevue,3,LDRN,61,1,443401.7693
+BELLEVUE,551,Regular,11,Southeast Bellevue,3,LDRN,61,1,1794550.908
+BELLEVUE,552,Regular,11,Southeast Bellevue,3,LDRN,61,1,1327447.562
+BELLEVUE,553,Regular,11,Southeast Bellevue,3,LDRN,61,1,2471831.992
+BELLEVUE,554,Regular,11,Southeast Bellevue,3,LDRN,61,1,3223956.202
+BELLEVUE,555,Regular,11,Southeast Bellevue,3,LDRN,61,1,1323280.698
+BELLEVUE,556,Regular,11,Southeast Bellevue,3,LDRN,61,1,1782253.237
+BELLEVUE,557,Regular,11,Southeast Bellevue,3,LDRN,61,1,1486917.696
+BELLEVUE,558,Regular,11,Southeast Bellevue,3,LDRN,61,1,3889943.567
+BELLEVUE,559,Regular,11,Southeast Bellevue,3,LDRN,61,1,4362003.154
+BELLEVUE,560,Regular,11,Southeast Bellevue,3,LDRN,61,1,4045029.032
+BELLEVUE,561,Park,11,Southeast Bellevue,3,LDRN,61,1,2535068.792
+BELLEVUE,562,Regular,11,Southeast Bellevue,3,LDRN,61,1,2360063.604
+BELLEVUE,563,Regular,11,Southeast Bellevue,3,LDRN,61,1,1143169.939
+BELLEVUE,564,Regular,11,Southeast Bellevue,3,LDRN,61,1,6335297.595
+BELLEVUE,565,Park,11,Southeast Bellevue,3,LDRN,61,1,16546176.61
+BELLEVUE,566,Regular,11,Southeast Bellevue,3,LDRN,61,1,2646585.347
+BELLEVUE,567,Regular,11,Southeast Bellevue,3,LDRN,61,1,1393361.56
+BELLEVUE,568,Regular,11,Southeast Bellevue,3,LDRN,61,1,972137.6368
+BELLEVUE,569,Regular,11,Southeast Bellevue,3,LDRN,61,1,1319751.235
+BELLEVUE,570,Regular,11,Southeast Bellevue,3,LDRN,61,1,3418993.676
+BELLEVUE,571,Regular,11,Southeast Bellevue,3,LDRN,61,1,2755633.694
+BELLEVUE,572,Regular,11,Southeast Bellevue,3,LDRN,61,1,3399750.197
+BELLEVUE,573,Regular,11,Southeast Bellevue,3,LDRN,61,1,6111739.335
+BELLEVUE,574,Regular,11,Southeast Bellevue,3,LDRN,61,1,2299215.247
+BELLEVUE,575,Regular,11,Southeast Bellevue,3,LDRN,61,1,1986931.763
+BELLEVUE,576,Regular,11,Southeast Bellevue,3,LDRN,61,1,5507623.854
+BELLEVUE,577,Elementary School,11,Southeast Bellevue,3,LDRN,61,1,483491.8678
+BELLEVUE,578,Regular,11,Southeast Bellevue,3,LDRN,61,1,3705248.444
+BELLEVUE,579,Regular,11,Southeast Bellevue,3,LDRN,61,1,3486253.814
+BELLEVUE,580,Regular,11,Southeast Bellevue,3,LDRN,61,1,1246698.802
+BELLEVUE,581,Regular,11,Southeast Bellevue,3,LDRN,61,1,963743.3239
+BELLEVUE,582,Regular,11,Southeast Bellevue,3,LDRN,61,1,3687922.62
+BELLEVUE,583,Regular,11,Southeast Bellevue,3,LDRN,61,1,1198305.958
+BELLEVUE,584,Regular,11,Southeast Bellevue,3,LDRN,61,1,2377462.538
+BELLEVUE,585,Regular,11,Southeast Bellevue,3,LDRN,61,1,1374707.81
+BELLEVUE,586,Regular,11,Southeast Bellevue,3,LDRN,61,1,1233698.312
+BELLEVUE,587,Regular,11,Southeast Bellevue,3,LDRN,61,1,2383521.639
+BELLEVUE,588,Regular,11,Southeast Bellevue,3,LDRN,61,1,1965119.688
+BELLEVUE,589,Regular,11,Southeast Bellevue,3,LDRN,61,1,859900.5022
+BELLEVUE,590,Regular,13,Factoria,2,MDMX,61,1,1720376.661
+BELLEVUE,591,Regular,13,Factoria,2,MDMX,61,1,2655204.893
+BELLEVUE,592,Regular,14,Newport Hills,3,LDRN,61,1,2272235.543
+BELLEVUE,593,Elementary School,14,Newport Hills,3,LDRN,61,1,453479.002
+BELLEVUE,594,Regular,14,Newport Hills,3,LDRN,61,1,1492687.868
+BELLEVUE,595,Regular,14,Newport Hills,3,LDRN,61,1,3193358.294
+BELLEVUE,596,Regular,14,Newport Hills,3,LDRN,61,1,2204435.075
+BELLEVUE,597,Regular,14,Newport Hills,3,LDRN,61,1,1617783.279
+BELLEVUE,598,Regular,14,Newport Hills,3,LDRN,61,1,2160416.821
+BELLEVUE,599,Regular,14,Newport Hills,3,LDRN,61,1,1892013.755
+BELLEVUE,600,Regular,14,Newport Hills,3,LDRN,61,1,1494278.151
+BELLEVUE,601,Regular,14,Newport Hills,3,LDRN,61,1,3431433.078
+BELLEVUE,602,Regular,14,Newport Hills,3,LDRN,61,1,2852816.912
+BELLEVUE,603,Regular,14,Newport Hills,3,LDRN,61,1,3037142.868
+BELLEVUE,604,Regular,14,Newport Hills,3,LDRN,61,1,3514437.798
+BELLEVUE,605,Regular,14,Newport Hills,3,LDRN,61,1,2281445.489
+BELLEVUE,606,Elementary School,14,Newport Hills,3,LDRN,61,1,458853.1959
+BELLEVUE,607,Regular,14,Newport Hills,3,LDRN,61,1,1621861.072
+BELLEVUE,608,Regular,14,Newport Hills,3,LDRN,61,1,1085442.551
+BELLEVUE,609,Middle School,14,Newport Hills,3,LDRN,61,1,860818.3199
+BELLEVUE,610,Park,14,Newport Hills,3,LDRN,61,1,222273.4452
+BELLEVUE,611,Regular,14,Newport Hills,3,LDRN,61,1,3737176.491
+BELLEVUE,612,Regular,14,Newport Hills,3,LDRN,61,1,2069567.741
+BELLEVUE,613,Regular,14,Newport Hills,3,LDRN,61,1,3242455.163
+BELLEVUE,614,Regular,14,Newport Hills,3,LDRN,61,1,1760096.675
+BELLEVUE,615,Regular,14,Newport Hills,3,LDRN,61,1,939965.1896
+BELLEVUE,616,Regular,14,Newport Hills,3,LDRN,61,1,2675785.728
+BellevueFringe,617,Regular,50,Fringe KC,,,60,7,6004138.584
+BellevueFringe,618,Regular,50,Fringe KC,,,60,7,9090096.709
+BellevueFringe,619,Regular,50,Fringe KC,,,60,7,10722333.15
+BellevueFringe,620,Regular,50,Fringe KC,,,60,7,1732905.446
+BellevueFringe,621,Regular,50,Fringe KC,,,60,7,761246.8248
+BellevueFringe,622,Regular,50,Fringe KC,,,60,7,4506265.355
+BellevueFringe,623,Regular,50,Fringe KC,,,60,7,5494845.196
+BellevueFringe,624,Regular,50,Fringe KC,,,60,7,6063433.594
+BellevueFringe,625,Regular,50,Fringe KC,,,60,7,8664890.72
+BellevueFringe,626,Park,50,Fringe KC,,,60,7,5884883.251
+BellevueFringe,627,Regular,50,Fringe KC,,,60,7,3273195.126
+BellevueFringe,628,Regular,50,Fringe KC,,,60,7,3938580.165
+BellevueFringe,629,Elementary School,50,Fringe KC,,,60,7,461214.9211
+BellevueFringe,630,Middle School,50,Fringe KC,,,60,7,875053.0723
+BellevueFringe,631,Regular,50,Fringe KC,,,60,7,2623606.528
+BellevueFringe,632,Regular,50,Fringe KC,,,60,7,6613168.464
+BellevueFringe,633,Elementary School,50,Fringe KC,,,60,7,283403.0983
+BellevueFringe,634,Regular,50,Fringe KC,,,60,7,9454462.155
+BellevueFringe,635,Regular,50,Fringe KC,,,60,7,7600900.651
+BellevueFringe,636,Regular,47,Fringe KC,,,60,7,2344759.525
+BellevueFringe,637,Regular,47,Fringe KC,,,60,7,18825579.4
+BellevueFringe,638,Regular,47,Fringe KC,,,60,7,16052574.83
+BellevueFringe,639,Regular,48,Fringe KC,,,60,7,28885431.69
+BellevueFringe,640,Regular,48,Fringe KC,,,60,7,28782386.36
+BellevueFringe,641,Park,48,Fringe KC,,,60,7,52066813.76
+BellevueFringe,642,Regular,48,Fringe KC,,,60,7,64689231.15
+BellevueFringe,643,Park,48,Fringe KC,,,60,7,70273427.07
+BellevueFringe,644,Regular,49,Fringe KC,,,60,7,26848291.67
+BellevueFringe,645,Regular,49,Fringe KC,,,60,7,24402787.25
+BellevueFringe,646,Regular,49,Fringe KC,,,60,7,4339930.087
+BellevueFringe,647,Regular,49,Fringe KC,,,60,7,4168207.674
+BellevueFringe,648,Regular,49,Fringe KC,,,60,7,580458.2388
+BellevueFringe,649,Regular,49,Fringe KC,,,60,7,563367.1549
+BellevueFringe,650,Regular,49,Fringe KC,,,60,7,10046480.8
+BellevueFringe,651,Regular,49,Fringe KC,,,60,7,7174506.881
+BellevueFringe,652,Regular,49,Fringe KC,,,60,7,11179451.14
+BellevueFringe,653,Regular,49,Fringe KC,,,60,7,8780697.06
+BellevueFringe,654,Regular,49,Fringe KC,,,60,7,7664308.547
+BellevueFringe,655,Regular,49,Fringe KC,,,60,7,7403956.75
+BellevueFringe,656,Regular,49,Fringe KC,,,60,7,16635578.74
+BellevueFringe,657,Regular,49,Fringe KC,,,60,7,7951769.69
+BellevueFringe,658,Regular,49,Fringe KC,,,60,7,2401450.84
+KIRKLAND,681,Regular,25,Lakeview,,,63,3,2046695.707
+KIRKLAND,682,Regular,25,Lakeview,,,63,3,4330634.8
+KIRKLAND,683,Regular,25,Lakeview,,,63,3,868739.7426
+KIRKLAND,684,Regular,25,Lakeview,,,63,3,1392379.573
+KIRKLAND,685,Regular,25,Lakeview,,,63,3,962890.0737
+KIRKLAND,686,Regular,21,Central Houghton,,,63,3,2152432.288
+KIRKLAND,687,Regular,21,Central Houghton,,,63,3,550844.4872
+KIRKLAND,688,Park,21,Central Houghton,,,63,3,3672085.654
+KIRKLAND,689,Regular,15,Bridle Trails,,,63,3,5153164.546
+KIRKLAND,690,Regular,21,Central Houghton,,,63,3,3157571.692
+KIRKLAND,691,High School,21,Central Houghton,,,63,3,476452.742
+KIRKLAND,692,Regular,21,Central Houghton,,,63,3,1239474.958
+KIRKLAND,693,Regular,25,Lakeview,,,63,3,753862.5778
+KIRKLAND,694,Regular,25,Lakeview,,,63,3,1706206.515
+KIRKLAND,695,Regular,25,Lakeview,,,63,3,2456175.861
+KIRKLAND,696,Regular,25,Lakeview,,,63,3,554370.6367
+KIRKLAND,697,Regular,21,Central Houghton,,,63,3,1771754.982
+KIRKLAND,698,College,21,Central Houghton,,,63,3,2455786.557
+KIRKLAND,699,Regular,21,Central Houghton,,,63,3,1847454.253
+KIRKLAND,700,Regular,21,Central Houghton,,,63,3,1961778.629
+KIRKLAND,701,Regular,25,Lakeview,,,63,3,725351.4265
+KIRKLAND,702,Regular,25,Lakeview,,,63,3,327793.3464
+KIRKLAND,703,Regular,25,Lakeview,,,63,3,1722584.462
+KIRKLAND,704,Regular,25,Lakeview,,,63,3,616513.9976
+KIRKLAND,705,Regular,25,Lakeview,,,63,3,674838.7519
+KIRKLAND,706,Regular,25,Lakeview,,,63,3,1151882.038
+KIRKLAND,707,Regular,25,Lakeview,,,63,3,902261.1856
+KIRKLAND,708,Regular,21,Central Houghton,,,63,3,557407.0175
+KIRKLAND,709,Regular,21,Central Houghton,,,63,3,654140.6891
+KIRKLAND,710,Regular,21,Central Houghton,,,63,3,1191753.018
+KIRKLAND,711,Regular,21,Central Houghton,,,63,3,4520880.483
+KIRKLAND,712,Middle School,21,Central Houghton,,,63,3,455619.1621
+KIRKLAND,713,Regular,15,Bridle Trails,,,63,3,3118464.436
+KIRKLAND,714,Regular,15,Bridle Trails,,,63,3,1729854.177
+KIRKLAND,715,Regular,15,Bridle Trails,,,63,3,1816219.138
+KIRKLAND,716,Regular,15,Bridle Trails,,,63,3,1745733.789
+KIRKLAND,717,Regular,15,Bridle Trails,,,63,3,3507933.8
+KIRKLAND,718,Elementary School,15,Bridle Trails,,,63,3,537743.5498
+KIRKLAND,719,Regular,15,Bridle Trails,,,63,3,2845227.922
+KIRKLAND,720,Regular,15,Bridle Trails,,,63,3,2518632.07
+KIRKLAND,721,Regular,15,Bridle Trails,,,63,3,1229284.063
+KIRKLAND,722,Regular,15,Bridle Trails,,,63,3,2158457.913
+KIRKLAND,723,Regular,16,South Rose Hill,,,63,3,2067535.713
+KIRKLAND,724,Regular,16,South Rose Hill,,,63,3,1753089.431
+KIRKLAND,725,Regular,16,South Rose Hill,,,63,3,1772950.805
+KIRKLAND,726,Regular,16,South Rose Hill,,,63,3,1731479.661
+KIRKLAND,727,Regular,16,South Rose Hill,,,63,3,1740899.726
+KIRKLAND,728,Regular,16,South Rose Hill,,,63,3,1885764.391
+KIRKLAND,729,Regular,16,South Rose Hill,,,63,3,871679.0523
+KIRKLAND,730,High School,16,South Rose Hill,,,63,3,1775087.394
+KIRKLAND,731,Regular,16,South Rose Hill,,,63,3,853366.6345
+KIRKLAND,732,Regular,29,Everest,,,63,3,2933132.891
+KIRKLAND,733,Regular,29,Everest,,,63,3,1009251.04
+KIRKLAND,734,Regular,29,Everest,,,63,3,3044341.956
+KIRKLAND,735,Regular,29,Everest,,,63,3,831699.4283
+KIRKLAND,736,Regular,29,Everest,,,63,3,243590.5359
+KIRKLAND,737,Regular,28,Moss Bay,,,63,3,427652.7364
+KIRKLAND,738,Regular,28,Moss Bay,,,63,3,555751.219
+KIRKLAND,739,Regular,28,Moss Bay,,,63,3,306064.4322
+KIRKLAND,740,Regular,28,Moss Bay,,,63,3,413543.0204
+KIRKLAND,741,Regular,28,Moss Bay,,,63,3,812124.8694
+KIRKLAND,742,Regular,28,Moss Bay,,,63,3,1595792.936
+KIRKLAND,743,Regular,28,Moss Bay,,,63,3,983639.5099
+KIRKLAND,744,Regular,28,Moss Bay,,,63,3,1207869.714
+KIRKLAND,745,Regular,28,Moss Bay,,,63,3,609999.818
+KIRKLAND,746,Regular,28,Moss Bay,,,63,3,1109500.148
+KIRKLAND,747,Regular,28,Moss Bay,,,63,3,1360844.197
+KIRKLAND,748,Regular,28,Moss Bay,,,63,3,452384.2873
+KIRKLAND,749,Regular,28,Moss Bay,,,63,3,458276.4756
+KIRKLAND,750,Park,28,Moss Bay,,,63,3,631262.9292
+KIRKLAND,751,Regular,28,Moss Bay,,,63,3,876664.6802
+KIRKLAND,752,Regular,28,Moss Bay,,,63,3,518430.0212
+KIRKLAND,753,Regular,28,Moss Bay,,,63,3,1754945.589
+KIRKLAND,754,Regular,28,Moss Bay,,,63,3,328474.5809
+KIRKLAND,755,Regular,29,Everest,,,63,3,1827805.521
+KIRKLAND,756,Regular,16,South Rose Hill,,,63,3,1274031.368
+KIRKLAND,757,Regular,16,South Rose Hill,,,63,3,1590334.588
+KIRKLAND,758,Regular,16,South Rose Hill,,,63,3,856552.8129
+KIRKLAND,759,Regular,16,South Rose Hill,,,63,3,327820.5919
+KIRKLAND,760,Regular,16,South Rose Hill,,,63,3,869001.8634
+KIRKLAND,761,Regular,16,South Rose Hill,,,63,3,350470.0607
+KIRKLAND,762,Elementary School,16,South Rose Hill,,,63,3,488994.1044
+KIRKLAND,763,Regular,16,South Rose Hill,,,63,3,1535940.107
+KIRKLAND,764,Regular,19,North Rose Hill,,,63,3,2563386.306
+KIRKLAND,765,Regular,19,North Rose Hill,,,63,3,2877819.276
+KIRKLAND,766,Regular,19,North Rose Hill,,,63,3,1312788.974
+KIRKLAND,767,Regular,19,North Rose Hill,,,63,3,1260767.08
+KIRKLAND,768,Regular,17,Norkirk,,,63,3,727659.4767
+KIRKLAND,769,Regular,17,Norkirk,,,63,3,1323688.143
+KIRKLAND,770,Regular,17,Norkirk,,,63,3,1905684.32
+KIRKLAND,771,Regular,26,Market,,,63,3,7461717.735
+KIRKLAND,772,Regular,17,Norkirk,,,63,3,3316112.162
+KIRKLAND,773,Regular,17,Norkirk,,,63,3,4315076.938
+KIRKLAND,774,Regular,17,Norkirk,,,63,3,2234106.065
+KIRKLAND,775,Elementary School,17,Norkirk,,,63,3,574880.021
+KIRKLAND,776,Regular,18,Highlands,,,63,3,8704902.227
+KIRKLAND,777,Regular,19,North Rose Hill,,,63,3,4009751.182
+KIRKLAND,778,Regular,19,North Rose Hill,,,63,3,2704107.934
+KIRKLAND,779,Elementary School,19,North Rose Hill,,,63,3,452831.5409
+KIRKLAND,780,Regular,19,North Rose Hill,,,63,3,1970425.816
+KIRKLAND,781,Regular,19,North Rose Hill,,,63,3,3655282.523
+KIRKLAND,782,Regular,19,North Rose Hill,,,63,3,3396122.983
+KIRKLAND,783,Regular,19,North Rose Hill,,,63,3,3068914.496
+KIRKLAND,784,Regular,18,Highlands,,,63,3,7162485.319
+KIRKLAND,785,Regular,17,Norkirk,,,63,3,755069.0298
+KIRKLAND,786,Park,17,Norkirk,,,63,3,1368426.111
+KIRKLAND,787,Middle School,17,Norkirk,,,63,3,708030.095
+KIRKLAND,788,Regular,17,Norkirk,,,63,3,4302677.042
+KIRKLAND,789,Regular,17,Norkirk,,,63,3,3276825.672
+KIRKLAND,790,Regular,26,Market,,,63,3,8329509.457
+KIRKLAND,791,Park,26,Market,,,63,3,6850900.471
+KIRKLAND,792,Regular,27,South Juanita,,,63,3,3283871.971
+KIRKLAND,793,Regular,27,South Juanita,,,63,3,3082124.468
+KIRKLAND,794,Regular,27,South Juanita,,,63,3,2363138.693
+KIRKLAND,795,Regular,20,Totem Lake,,,63,3,1073381.969
+KIRKLAND,796,Regular,20,Totem Lake,,,63,3,2337783.763
+KIRKLAND,797,Regular,19,North Rose Hill,,,63,3,2810996.232
+KIRKLAND,798,Regular,19,North Rose Hill,,,63,3,3437011.117
+KIRKLAND,799,Regular,19,North Rose Hill,,,63,3,2759582.073
+KIRKLAND,800,College,19,North Rose Hill,,,63,3,2567000.256
+KIRKLAND,801,Regular,19,North Rose Hill,,,63,3,1599523.297
+KIRKLAND,802,Regular,20,Totem Lake,,,63,3,699081.941
+KIRKLAND,803,Regular,20,Totem Lake,,,63,3,1414579.334
+KIRKLAND,804,Regular,20,Totem Lake,,,63,3,1378646.415
+KIRKLAND,805,Regular,27,South Juanita,,,63,3,2497157.465
+KIRKLAND,806,Elementary School,27,South Juanita,,,63,3,499005.2638
+KIRKLAND,807,Regular,27,South Juanita,,,63,3,1420405.238
+KIRKLAND,808,Regular,27,South Juanita,,,63,3,4006880.449
+KIRKLAND,809,Regular,27,South Juanita,,,63,3,3121583.027
+KIRKLAND,810,Regular,20,Totem Lake,,,63,3,2487771.161
+KIRKLAND,811,Regular,20,Totem Lake,,,63,3,1893398.777
+KIRKLAND,812,Regular,27,South Juanita,,,63,3,4753666.836
+KIRKLAND,813,Regular,27,South Juanita,,,63,3,1458312.752
+KIRKLAND,814,Regular,27,South Juanita,,,63,3,1156627.852
+KIRKLAND,815,Regular,27,South Juanita,,,63,3,1272267.879
+KIRKLAND,816,Park,27,South Juanita,,,63,3,1359600.606
+KIRKLAND,817,Regular,27,South Juanita,,,63,3,878334.4819
+KIRKLAND,818,Regular,27,South Juanita,,,63,3,3618747.471
+KIRKLAND,819,Regular,24,Finn Hill,,,63,3,7702701.659
+KIRKLAND,820,Regular,24,Finn Hill,,,63,3,2333850.57
+KIRKLAND,821,Regular,24,Finn Hill,,,63,3,3057630.965
+KIRKLAND,822,Regular,24,Finn Hill,,,63,3,4330520.143
+KIRKLAND,823,Regular,24,Finn Hill,,,63,3,2229564.445
+KIRKLAND,824,Regular,24,Finn Hill,,,63,3,7964867.612
+KIRKLAND,825,Park,24,Finn Hill,,,63,3,1754682.09
+KIRKLAND,826,Park,24,Finn Hill,,,63,3,2209961.509
+KIRKLAND,827,Regular,24,Finn Hill,,,63,3,5231996.204
+KIRKLAND,828,Regular,24,Finn Hill,,,63,3,4153449.513
+KIRKLAND,829,Regular,24,Finn Hill,,,63,3,3851665.381
+KIRKLAND,830,Regular,24,Finn Hill,,,63,3,3915433.517
+KIRKLAND,831,Regular,24,Finn Hill,,,63,3,4079083.314
+KIRKLAND,832,Park,24,Finn Hill,,,63,3,11091769.8
+KIRKLAND,833,Regular,24,Finn Hill,,,63,3,3062756.011
+KIRKLAND,834,Regular,24,Finn Hill,,,63,3,2695633.543
+KIRKLAND,835,Regular,24,Finn Hill,,,63,3,1208252.559
+KIRKLAND,836,Middle School,24,Finn Hill,,,63,3,1313047.955
+KIRKLAND,837,Regular,24,Finn Hill,,,63,3,470467.5767
+KIRKLAND,838,Elementary School,24,Finn Hill,,,63,3,434975.8274
+KIRKLAND,839,Regular,24,Finn Hill,,,63,3,2679232.044
+KIRKLAND,840,Regular,24,Finn Hill,,,63,3,3459511.653
+KIRKLAND,841,Regular,24,Finn Hill,,,63,3,3483106.546
+KIRKLAND,842,Regular,24,Finn Hill,,,63,3,1766097.626
+KIRKLAND,843,Regular,24,Finn Hill,,,63,3,2812198.113
+KIRKLAND,844,Regular,24,Finn Hill,,,63,3,4349872.706
+KIRKLAND,845,Regular,24,Finn Hill,,,63,3,2547785.269
+KIRKLAND,846,Regular,24,Finn Hill,,,63,3,1797423.787
+KIRKLAND,847,Regular,24,Finn Hill,,,63,3,2820498.508
+KIRKLAND,848,Regular,23,North Juanita,,,63,3,3307509.194
+KIRKLAND,849,Regular,23,North Juanita,,,63,3,2985923.432
+KIRKLAND,850,Elementary School,23,North Juanita,,,63,3,402987.4621
+KIRKLAND,851,Regular,24,Finn Hill,,,63,3,9782134.725
+KIRKLAND,852,Regular,24,Finn Hill,,,63,3,6042179.888
+KIRKLAND,853,Regular,24,Finn Hill,,,63,3,3476661.664
+KIRKLAND,854,Regular,23,North Juanita,,,63,3,3621371.874
+KIRKLAND,855,Regular,23,North Juanita,,,63,3,2868933.319
+KIRKLAND,856,Regular,23,North Juanita,,,63,3,6408398.024
+KIRKLAND,857,Elementary School,23,North Juanita,,,63,3,430342.2196
+KIRKLAND,858,Regular,23,North Juanita,,,63,3,5241423.909
+KIRKLAND,859,Regular,23,North Juanita,,,63,3,5492231.272
+KIRKLAND,860,Regular,23,North Juanita,,,63,3,1016799.095
+KIRKLAND,861,Regular,23,North Juanita,,,63,3,2495207.518
+KIRKLAND,862,Regular,23,North Juanita,,,63,3,1071146.592
+KIRKLAND,863,Regular,23,North Juanita,,,63,3,1314537.639
+KIRKLAND,864,High School,23,North Juanita,,,63,3,1837976.954
+KIRKLAND,865,Regular,20,Totem Lake,,,63,3,1616187.021
+KIRKLAND,866,Regular,23,North Juanita,,,63,3,2185917.994
+KIRKLAND,867,Regular,23,North Juanita,,,63,3,2902479.876
+KIRKLAND,868,Regular,20,Totem Lake,,,63,3,1671926.793
+KIRKLAND,869,Regular,20,Totem Lake,,,63,3,1826612.146
+KIRKLAND,870,Regular,20,Totem Lake,,,63,3,798125.7183
+KIRKLAND,871,Regular,20,Totem Lake,,,63,3,1738047.948
+KIRKLAND,872,Regular,20,Totem Lake,,,63,3,2310242.995
+KIRKLAND,873,Regular,20,Totem Lake,,,63,3,1200182.465
+KIRKLAND,874,Regular,20,Totem Lake,,,63,3,912329.7519
+KIRKLAND,875,Regular,19,North Rose Hill,,,63,3,2367086.216
+KIRKLAND,876,Regular,20,Totem Lake,,,63,3,2351865.355
+KIRKLAND,877,Regular,20,Totem Lake,,,63,3,1037834.3
+KIRKLAND,878,Regular,20,Totem Lake,,,63,3,1651096.561
+KIRKLAND,879,Regular,20,Totem Lake,,,63,3,2181878.959
+KIRKLAND,880,Regular,20,Totem Lake,,,63,3,801356.5919
+KIRKLAND,881,Regular,20,Totem Lake,,,63,3,931556.1506
+KIRKLAND,882,Regular,20,Totem Lake,,,63,3,871666.765
+KIRKLAND,883,Regular,22,Kingsgate,,,63,3,1940046.098
+KIRKLAND,884,Regular,22,Kingsgate,,,63,3,1814927.397
+KIRKLAND,885,Regular,22,Kingsgate,,,63,3,2434639.595
+KIRKLAND,886,Regular,22,Kingsgate,,,63,3,7109199.773
+KIRKLAND,887,Regular,22,Kingsgate,,,63,3,1790286.07
+KIRKLAND,888,Regular,22,Kingsgate,,,63,3,3045500.991
+KIRKLAND,889,Elementary School,22,Kingsgate,,,63,3,443678.2622
+KIRKLAND,890,Regular,22,Kingsgate,,,63,3,7432237.196
+KIRKLAND,891,Regular,22,Kingsgate,,,63,3,8136478.459
+KIRKLAND,892,Elementary School,22,Kingsgate,,,63,3,439563.7947
+KIRKLAND,893,Regular,22,Kingsgate,,,63,3,8572348.671
+KIRKLAND,894,Regular,22,Kingsgate,,,63,3,3944880.426
+KIRKLAND,895,Middle School,22,Kingsgate,,,63,3,1294954.419
+KIRKLAND,896,Regular,22,Kingsgate,,,63,3,3256067.078
+KIRKLAND,897,Regular,22,Kingsgate,,,63,3,6593592.564
+KirklandFringe,898,Park,42,Fringe KC,,,60,7,20719908.3
+KirklandFringe,899,Park,42,Fringe KC,,,60,7,13137664.11
+KirklandFringe,900,College,42,Fringe KC,,,60,7,2219536.604
+KirklandFringe,901,Regular,42,Fringe KC,,,60,7,7417264.108
+KirklandFringe,902,Regular,42,Fringe KC,,,60,7,5256792.403
+KirklandFringe,903,Regular,42,Fringe KC,,,60,7,6035118.525
+KirklandFringe,904,Regular,42,Fringe KC,,,60,7,7924204.465
+KirklandFringe,905,Regular,43,Fringe KC,,,60,7,12265521.08
+KirklandFringe,906,Regular,43,Fringe KC,,,60,7,3256786.882
+KirklandFringe,907,Regular,43,Fringe KC,,,60,7,2740165.863
+KirklandFringe,908,Regular,43,Fringe KC,,,60,7,5305969.229
+KirklandFringe,909,Regular,41,Fringe KC,,,60,7,3418332.397
+KirklandFringe,910,Regular,43,Fringe KC,,,60,7,8835563.913
+KirklandFringe,911,Regular,43,Fringe KC,,,60,7,37997265.15
+KirklandFringe,912,Regular,43,Fringe KC,,,60,7,23097692.67
+KirklandFringe,913,Regular,43,Fringe KC,,,60,7,18415254.53
+KirklandFringe,914,Regular,42,Fringe KC,,,60,7,29965368.32
+KirklandFringe,915,Regular,42,Fringe KC,,,60,7,21784725.61
+KirklandFringe,916,Regular,42,Fringe KC,,,60,7,131121645.8
+KirklandFringe,917,Regular,43,Fringe KC,,,60,7,68567300.84
+KirklandFringe,918,Regular,43,Fringe KC,,,60,7,55433217.27
+REDMOND,931,Regular,31,Overlake,,,64,4,1029998.358
+REDMOND,932,Regular,31,Overlake,,,64,4,441492.5644
+REDMOND,933,Regular,31,Overlake,,,64,4,502175.8658
+REDMOND,934,Regular,31,Overlake,,,64,4,273507.3204
+REDMOND,935,Regular,31,Overlake,,,64,4,417945.9901
+REDMOND,936,Regular,31,Overlake,,,64,4,757637.844
+REDMOND,937,Regular,31,Overlake,,,64,4,235579.6121
+REDMOND,938,Regular,31,Overlake,,,64,4,566792.1211
+REDMOND,939,Regular,31,Overlake,,,64,4,934581.5365
+REDMOND,940,Regular,31,Overlake,,,64,4,1267158.672
+REDMOND,941,Regular,31,Overlake,,,64,4,1375157.528
+REDMOND,942,Regular,31,Overlake,,,64,4,448465.7569
+REDMOND,943,Regular,31,Overlake,,,64,4,555484.9645
+REDMOND,944,Regular,31,Overlake,,,64,4,504256.9197
+REDMOND,945,Regular,31,Overlake,,,64,4,2783808.111
+REDMOND,946,Regular,31,Overlake,,,64,4,1157868.666
+REDMOND,947,Regular,31,Overlake,,,64,4,4691096.128
+REDMOND,948,Regular,31,Overlake,,,64,4,1815236.737
+REDMOND,949,Regular,31,Overlake,,,64,4,1125631.948
+REDMOND,950,Regular,31,Overlake,,,64,4,1301093.988
+REDMOND,951,Regular,31,Overlake,,,64,4,1649815.743
+REDMOND,952,Regular,31,Overlake,,,64,4,662856.215
+REDMOND,953,Regular,31,Overlake,,,64,4,2520562.039
+REDMOND,954,Regular,31,Overlake,,,64,4,1369490.166
+REDMOND,955,Regular,31,Overlake,,,64,4,2460116.582
+REDMOND,956,Regular,31,Overlake,,,64,4,571169.0076
+REDMOND,957,Regular,31,Overlake,,,64,4,1427512.708
+REDMOND,958,Regular,31,Overlake,,,64,4,626083.8705
+REDMOND,959,Regular,31,Overlake,,,64,4,1651300.051
+REDMOND,960,Regular,31,Overlake,,,64,4,1904014.428
+REDMOND,961,Regular,30,Idylwood,,,64,4,2217515.77
+REDMOND,962,Regular,30,Idylwood,,,64,4,2875206.143
+REDMOND,963,Regular,30,Idylwood,,,64,4,2758858.805
+REDMOND,964,Regular,30,Idylwood,,,64,4,3458576.236
+REDMOND,965,Regular,30,Idylwood,,,64,4,2147044.271
+REDMOND,966,Regular,30,Idylwood,,,64,4,1719207.99
+REDMOND,967,Regular,30,Idylwood,,,64,4,2191042.241
+REDMOND,968,Regular,30,Idylwood,,,64,4,2128354.222
+REDMOND,969,Regular,30,Idylwood,,,64,4,1783266.635
+REDMOND,970,Regular,30,Idylwood,,,64,4,2656106.486
+REDMOND,971,Regular,30,Idylwood,,,64,4,1879913.235
+REDMOND,972,Elementary School,30,Idylwood,,,64,4,439696.9584
+REDMOND,973,Regular,30,Idylwood,,,64,4,4053015.849
+REDMOND,974,Regular,30,Idylwood,,,64,4,1830349.86
+REDMOND,975,Regular,30,Idylwood,,,64,4,2738086.816
+REDMOND,976,Regular,31,Overlake,,,64,4,3045299.489
+REDMOND,977,Regular,31,Overlake,,,64,4,2876654.017
+REDMOND,978,Regular,31,Overlake,,,64,4,1206878.068
+REDMOND,979,Regular,31,Overlake,,,64,4,1090164.99
+REDMOND,980,Regular,31,Overlake,,,64,4,2583992.558
+REDMOND,981,Regular,31,Overlake,,,64,4,2613374.303
+REDMOND,982,Regular,31,Overlake,,,64,4,3401973.985
+REDMOND,983,Regular,31,Overlake,,,64,4,2560997.566
+REDMOND,984,Regular,31,Overlake,,,64,4,1995352.577
+REDMOND,985,Regular,31,Overlake,,,64,4,1555835.022
+REDMOND,986,Regular,31,Overlake,,,64,4,4789545.785
+REDMOND,987,Regular,32,Grass Lawn,,,64,4,2845591.21
+REDMOND,988,Regular,32,Grass Lawn,,,64,4,788591.2724
+REDMOND,989,Regular,32,Grass Lawn,,,64,4,2682802.249
+REDMOND,990,Regular,32,Grass Lawn,,,64,4,4570707.776
+REDMOND,991,Elementary School,32,Grass Lawn,,,64,4,407755.9788
+REDMOND,992,Regular,32,Grass Lawn,,,64,4,1480640.701
+REDMOND,993,Regular,32,Grass Lawn,,,64,4,2085542.122
+REDMOND,994,Park,32,Grass Lawn,,,64,4,1306301.916
+REDMOND,995,Regular,32,Grass Lawn,,,64,4,1608192.359
+REDMOND,996,Regular,32,Grass Lawn,,,64,4,1854507.1
+REDMOND,997,Regular,32,Grass Lawn,,,64,4,3367945.489
+REDMOND,998,Regular,32,Grass Lawn,,,64,4,1635362.741
+REDMOND,999,Middle School,32,Grass Lawn,,,64,4,1063682.526
+REDMOND,1000,Regular,32,Grass Lawn,,,64,4,2319992.849
+REDMOND,1001,Regular,32,Grass Lawn,,,64,4,3160826.652
+REDMOND,1002,Regular,32,Grass Lawn,,,64,4,2571938.493
+REDMOND,1003,Regular,32,Grass Lawn,,,64,4,2429222.101
+REDMOND,1004,Regular,32,Grass Lawn,,,64,4,1713635.998
+REDMOND,1005,Regular,32,Grass Lawn,,,64,4,541109.3995
+REDMOND,1006,Regular,32,Grass Lawn,,,64,4,534960.2038
+REDMOND,1007,Regular,38,Willows / Rose Hill,,,64,4,2619555.253
+REDMOND,1008,Regular,38,Willows / Rose Hill,,,64,4,1342312.803
+REDMOND,1009,Regular,38,Willows / Rose Hill,,,64,4,910837.1549
+REDMOND,1010,Regular,38,Willows / Rose Hill,,,64,4,1144812.711
+REDMOND,1011,Regular,38,Willows / Rose Hill,,,64,4,3144321.893
+REDMOND,1012,Regular,32,Grass Lawn,,,64,4,2726338.774
+REDMOND,1013,Regular,38,Willows / Rose Hill,,,64,4,2516672.629
+REDMOND,1014,Regular,38,Willows / Rose Hill,,,64,4,2421038.495
+REDMOND,1015,Regular,38,Willows / Rose Hill,,,64,4,3319197.918
+REDMOND,1016,Regular,38,Willows / Rose Hill,,,64,4,2699890.287
+REDMOND,1017,Regular,38,Willows / Rose Hill,,,64,4,4160274.975
+REDMOND,1018,Regular,38,Willows / Rose Hill,,,64,4,912414.5312
+REDMOND,1019,Regular,38,Willows / Rose Hill,,,64,4,7003200.379
+REDMOND,1020,Regular,38,Willows / Rose Hill,,,64,4,5254738.831
+REDMOND,1021,Regular,38,Willows / Rose Hill,,,64,4,4498974.502
+REDMOND,1022,Regular,38,Willows / Rose Hill,,,64,4,1282462.337
+REDMOND,1023,Regular,38,Willows / Rose Hill,,,64,4,2151877.912
+REDMOND,1024,Regular,37,Sammamish Valley,,,64,4,3440575.831
+REDMOND,1025,Park,37,Sammamish Valley,,,64,4,14318495.44
+REDMOND,1026,Regular,39,North Redmond,,,64,4,7539038.547
+REDMOND,1027,Regular,36,Education Hill,,,64,4,4038861.45
+REDMOND,1028,Regular,37,Sammamish Valley,,,64,4,8369033.306
+REDMOND,1029,Regular,35,Downtown,,,65,4,4624459.004
+REDMOND,1030,Regular,35,Downtown,,,65,4,762030.7914
+REDMOND,1031,Regular,35,Downtown,,,65,4,334883.0963
+REDMOND,1032,Regular,35,Downtown,,,65,4,438959.8546
+REDMOND,1033,Regular,35,Downtown,,,65,4,1114542.042
+REDMOND,1034,Regular,37,Sammamish Valley,,,64,4,1395632.044
+REDMOND,1035,Regular,37,Sammamish Valley,,,64,4,2577464.22
+REDMOND,1036,Regular,37,Sammamish Valley,,,64,4,689547.1568
+REDMOND,1037,Regular,35,Downtown,,,65,4,466039.3948
+REDMOND,1038,Regular,35,Downtown,,,65,4,483916.2132
+REDMOND,1039,Regular,35,Downtown,,,65,4,314770.9305
+REDMOND,1040,Regular,35,Downtown,,,65,4,457827.8776
+REDMOND,1041,Regular,36,Education Hill,,,64,4,311457.8841
+REDMOND,1042,Regular,35,Downtown,,,65,4,413857.1278
+REDMOND,1043,Regular,35,Downtown,,,65,4,394030.7448
+REDMOND,1044,Regular,35,Downtown,,,65,4,304958.7685
+REDMOND,1045,Regular,35,Downtown,,,65,4,344759.234
+REDMOND,1046,Regular,35,Downtown,,,65,4,328810.7943
+REDMOND,1047,Regular,35,Downtown,,,65,4,729974.0415
+REDMOND,1048,Regular,35,Downtown,,,65,4,306956.5292
+REDMOND,1049,Regular,35,Downtown,,,65,4,337513.7904
+REDMOND,1050,Regular,35,Downtown,,,65,4,304275.6933
+REDMOND,1051,Regular,35,Downtown,,,65,4,395273.4605
+REDMOND,1052,Elementary School,35,Downtown,,,65,4,648395.5383
+REDMOND,1053,Regular,35,Downtown,,,65,4,151926.4834
+REDMOND,1054,Regular,35,Downtown,,,65,4,295860.7983
+REDMOND,1055,Regular,35,Downtown,,,65,4,243423.4747
+REDMOND,1056,Regular,35,Downtown,,,65,4,222232.0926
+REDMOND,1057,Regular,35,Downtown,,,65,4,71674.33752
+REDMOND,1058,Regular,35,Downtown,,,65,4,86100.18023
+REDMOND,1059,Regular,35,Downtown,,,65,4,64286.91892
+REDMOND,1060,Regular,35,Downtown,,,65,4,200962.6043
+REDMOND,1061,Regular,35,Downtown,,,65,4,239823.7895
+REDMOND,1062,Regular,35,Downtown,,,65,4,697302.0082
+REDMOND,1063,Regular,35,Downtown,,,65,4,765485.1589
+REDMOND,1064,Regular,35,Downtown,,,65,4,453592.2138
+REDMOND,1065,Regular,35,Downtown,,,65,4,210338.4055
+REDMOND,1066,Regular,35,Downtown,,,65,4,292154.4422
+REDMOND,1067,Regular,35,Downtown,,,65,4,173519.9801
+REDMOND,1068,Regular,35,Downtown,,,65,4,133421.2052
+REDMOND,1069,Regular,35,Downtown,,,65,4,210635.8613
+REDMOND,1070,Regular,35,Downtown,,,65,4,111761.8428
+REDMOND,1071,Regular,35,Downtown,,,65,4,108579.0372
+REDMOND,1072,Regular,35,Downtown,,,65,4,99873.77745
+REDMOND,1073,Regular,35,Downtown,,,65,4,248431.6257
+REDMOND,1074,Regular,35,Downtown,,,65,4,88111.95103
+REDMOND,1075,Regular,35,Downtown,,,65,4,254604.1999
+REDMOND,1076,Regular,35,Downtown,,,65,4,146375.8371
+REDMOND,1077,Park,35,Downtown,,,65,4,180502.1302
+REDMOND,1078,Regular,35,Downtown,,,65,4,92462.54362
+REDMOND,1079,Regular,35,Downtown,,,65,4,139380.5052
+REDMOND,1080,Regular,35,Downtown,,,65,4,312732.7317
+REDMOND,1081,Regular,35,Downtown,,,65,4,225913.1739
+REDMOND,1082,Regular,35,Downtown,,,65,4,371401.0737
+REDMOND,1083,Regular,35,Downtown,,,65,4,295548.4604
+REDMOND,1084,Regular,35,Downtown,,,65,4,355605.8967
+REDMOND,1085,Regular,35,Downtown,,,65,4,446945.6312
+REDMOND,1086,Regular,35,Downtown,,,65,4,395588.8558
+REDMOND,1087,Regular,35,Downtown,,,65,4,489458.535
+REDMOND,1088,Regular,35,Downtown,,,65,4,486316.3126
+REDMOND,1089,Park,35,Downtown,,,65,4,2628588.369
+REDMOND,1090,Regular,35,Downtown,,,65,4,371355.1173
+REDMOND,1091,Park,33,SE Redmond,,,64,4,29920037.62
+REDMOND,1092,Regular,33,SE Redmond,,,64,4,1847714.647
+REDMOND,1093,Regular,33,SE Redmond,,,64,4,1886993.075
+REDMOND,1094,Regular,33,SE Redmond,,,64,4,755876.6494
+REDMOND,1095,Regular,33,SE Redmond,,,64,4,1051552.077
+REDMOND,1096,Regular,33,SE Redmond,,,64,4,2207480.744
+REDMOND,1097,Regular,33,SE Redmond,,,64,4,1234009.389
+REDMOND,1098,Regular,35,Downtown,,,65,4,431832.0208
+REDMOND,1099,Regular,35,Downtown,,,65,4,451248.215
+REDMOND,1100,Regular,35,Downtown,,,65,4,666383.9058
+REDMOND,1101,Regular,35,Downtown,,,65,4,179112.8972
+REDMOND,1102,Regular,35,Downtown,,,65,4,338125.098
+REDMOND,1103,Regular,36,Education Hill,,,64,4,386162.7658
+REDMOND,1104,Park,35,Downtown,,,65,4,573606.5564
+REDMOND,1105,Regular,33,SE Redmond,,,64,4,494349.9038
+REDMOND,1106,Regular,33,SE Redmond,,,64,4,2072346.363
+REDMOND,1107,Regular,33,SE Redmond,,,64,4,1521962.516
+REDMOND,1108,Regular,33,SE Redmond,,,64,4,2007250.728
+REDMOND,1109,Regular,33,SE Redmond,,,64,4,456446.3537
+REDMOND,1110,Regular,33,SE Redmond,,,64,4,443281.7998
+REDMOND,1111,Regular,33,SE Redmond,,,64,4,652068.1519
+REDMOND,1112,Regular,33,SE Redmond,,,64,4,836676.0744
+REDMOND,1113,Regular,33,SE Redmond,,,64,4,1317492.38
+REDMOND,1114,Regular,33,SE Redmond,,,64,4,1648088.33
+REDMOND,1115,Regular,33,SE Redmond,,,64,4,635626.7023
+REDMOND,1116,Regular,33,SE Redmond,,,64,4,397103.8155
+REDMOND,1117,Regular,33,SE Redmond,,,64,4,648839.2823
+REDMOND,1118,Regular,33,SE Redmond,,,64,4,906306.5371
+REDMOND,1119,Regular,33,SE Redmond,,,64,4,1132287.191
+REDMOND,1120,Regular,33,SE Redmond,,,64,4,1682832.111
+REDMOND,1121,Regular,33,SE Redmond,,,64,4,2181007.742
+REDMOND,1122,Regular,33,SE Redmond,,,64,4,1375209.493
+REDMOND,1123,Regular,33,SE Redmond,,,64,4,1901497.829
+REDMOND,1124,Regular,33,SE Redmond,,,64,4,1009169.291
+REDMOND,1125,Regular,33,SE Redmond,,,64,4,639822.5466
+REDMOND,1126,Regular,33,SE Redmond,,,64,4,3579002.172
+REDMOND,1127,Regular,33,SE Redmond,,,64,4,1563320.535
+REDMOND,1128,Regular,33,SE Redmond,,,64,4,1781509.344
+REDMOND,1129,Regular,33,SE Redmond,,,64,4,827915.8622
+REDMOND,1130,Regular,33,SE Redmond,,,64,4,1684273.267
+REDMOND,1131,Park,34,Bear Creek,,,64,4,2162162.305
+REDMOND,1132,Regular,34,Bear Creek,,,64,4,5932011.847
+REDMOND,1133,Regular,33,SE Redmond,,,64,4,1668369.776
+REDMOND,1134,Regular,33,SE Redmond,,,64,4,783458.3208
+REDMOND,1135,Regular,34,Bear Creek,,,64,4,303701.9723
+REDMOND,1136,Regular,36,Education Hill,,,64,4,1980468.969
+REDMOND,1137,Regular,36,Education Hill,,,64,4,1270275.414
+REDMOND,1138,Regular,36,Education Hill,,,64,4,1488845.611
+REDMOND,1139,Regular,36,Education Hill,,,64,4,2422963.404
+REDMOND,1140,Regular,36,Education Hill,,,64,4,3090456.329
+REDMOND,1141,Regular,36,Education Hill,,,64,4,1286482.04
+REDMOND,1142,Regular,34,Bear Creek,,,64,4,1920109.928
+REDMOND,1143,Regular,34,Bear Creek,,,64,4,727900.7415
+REDMOND,1144,Regular,34,Bear Creek,,,64,4,2317153.275
+REDMOND,1145,Regular,34,Bear Creek,,,64,4,879842.8418
+REDMOND,1146,Regular,34,Bear Creek,,,64,4,447867.8413
+REDMOND,1147,Regular,34,Bear Creek,,,64,4,1800508.737
+REDMOND,1148,Regular,34,Bear Creek,,,64,4,644819.4609
+REDMOND,1149,Regular,34,Bear Creek,,,64,4,3432039.25
+REDMOND,1150,Regular,36,Education Hill,,,64,4,3683161.178
+REDMOND,1151,Regular,36,Education Hill,,,64,4,1954343.534
+REDMOND,1152,Regular,36,Education Hill,,,64,4,3326904.883
+REDMOND,1153,Regular,36,Education Hill,,,64,4,3011097.397
+REDMOND,1154,Middle School,36,Education Hill,,,64,4,1142366.109
+REDMOND,1155,Regular,36,Education Hill,,,64,4,1903990.879
+REDMOND,1156,Elementary School,36,Education Hill,,,64,4,443285.7336
+REDMOND,1157,Park,36,Education Hill,,,64,4,1779468.613
+REDMOND,1158,Regular,36,Education Hill,,,64,4,2795709.955
+REDMOND,1159,Regular,36,Education Hill,,,64,4,2238953.046
+REDMOND,1160,Regular,36,Education Hill,,,64,4,1025669.452
+REDMOND,1161,Regular,36,Education Hill,,,64,4,2764095.808
+REDMOND,1162,Regular,36,Education Hill,,,64,4,3336258.75
+REDMOND,1163,High School,36,Education Hill,,,64,4,1786456.887
+REDMOND,1164,Regular,36,Education Hill,,,64,4,1810575.168
+REDMOND,1165,Regular,36,Education Hill,,,64,4,2456724.218
+REDMOND,1166,Regular,36,Education Hill,,,64,4,1946174.61
+REDMOND,1167,Regular,36,Education Hill,,,64,4,1853941.148
+REDMOND,1168,Regular,36,Education Hill,,,64,4,1198299.395
+REDMOND,1169,Regular,36,Education Hill,,,64,4,8732909.586
+REDMOND,1170,Elementary School,36,Education Hill,,,64,4,591782.8339
+REDMOND,1171,Regular,39,North Redmond,,,64,4,1754329.991
+REDMOND,1172,Regular,39,North Redmond,,,64,4,1711098.859
+REDMOND,1173,Regular,39,North Redmond,,,64,4,2441082.989
+REDMOND,1174,Regular,39,North Redmond,,,64,4,1776106.776
+REDMOND,1175,Regular,39,North Redmond,,,64,4,1462113.913
+REDMOND,1176,Elementary School,39,North Redmond,,,64,4,564707.7823
+REDMOND,1177,Regular,39,North Redmond,,,64,4,2681871.008
+REDMOND,1178,Regular,39,North Redmond,,,64,4,4398009.473
+REDMOND,1179,Regular,39,North Redmond,,,64,4,2478253.307
+REDMOND,1180,Regular,39,North Redmond,,,64,4,2066199.342
+REDMOND,1181,Regular,39,North Redmond,,,64,4,3324975.925
+REDMOND,1182,Regular,39,North Redmond,,,64,4,4281793.03
+REDMOND,1183,Regular,39,North Redmond,,,64,4,2376153.946
+RedmondFringe,1184,Regular,41,Fringe KC,,,60,7,659779.056
+RedmondFringe,1185,Regular,41,Fringe KC,,,60,7,2923132.772
+RedmondFringe,1186,Park,41,Fringe KC,,,60,7,2807799.546
+RedmondFringe,1187,Regular,41,Fringe KC,,,60,7,3776063.228
+RedmondFringe,1188,Regular,41,Fringe KC,,,60,7,3433114.625
+RedmondFringe,1189,Regular,41,Fringe KC,,,60,7,18055662.65
+RedmondFringe,1190,Regular,41,Fringe KC,,,60,7,13719311.13
+RedmondFringe,1191,Regular,41,Fringe KC,,,60,7,12406359.84
+RedmondFringe,1192,Regular,41,Fringe KC,,,60,7,4642141.463
+RedmondFringe,1193,Regular,45,Fringe KC,,,60,7,10315130.39
+RedmondFringe,1194,Regular,45,Fringe KC,,,60,7,14903226.1
+RedmondFringe,1195,Regular,40,English Hill,,,60,7,32176246.96
+RedmondFringe,1196,Regular,41,Fringe KC,,,60,7,36470568.07
+RedmondFringe,1197,Regular,44,Fringe KC,,,60,7,69392357.09
+RedmondFringe,1198,Regular,44,Fringe KC,,,60,7,44545410.53
+RedmondFringe,1199,Regular,44,Fringe KC,,,60,7,166753198.7
+RedmondFringe,1200,Regular,45,Fringe KC,,,60,7,163309413
+RedmondFringe,1201,Regular,45,Fringe KC,,,60,7,128361414.6
+RedmondFringe,1202,Regular,45,Fringe KC,,,60,7,124637361.3
+RedmondFringe,1203,Regular,45,Fringe KC,,,60,7,88527097.19
+RedmondFringe,1204,Regular,45,Fringe KC,,,60,7,26523859.89
+RedmondFringe,1205,Regular,45,Fringe KC,,,60,7,645203.0862
+RedmondFringe,1206,Regular,45,Fringe KC,,,60,7,19885167.05
+RedmondFringe,1207,Regular,45,Fringe KC,,,60,7,25214463.76
+RedmondFringe,1208,Regular,46,Fringe KC,,,60,7,3793890.895
+RedmondFringe,1209,Regular,46,Fringe KC,,,60,7,2564678.487
+RedmondFringe,1210,Regular,46,Fringe KC,,,60,7,23274481.5
+RedmondFringe,1211,Regular,46,Fringe KC,,,60,7,28671822.16
+RedmondFringe,1212,Regular,46,Fringe KC,,,60,7,67302168.61
+RedmondFringe,1213,Regular,46,Fringe KC,,,60,7,170577130.6
+RedmondFringe,1214,Regular,46,Fringe KC,,,60,7,157655144.8
+RedmondFringe,1215,Regular,46,Fringe KC,,,60,7,294017220.3
+Rest of KC,1231,External,0,,,,60,7,98344478.54
+Rest of KC,1232,External,0,,,,60,7,16088589.55
+Rest of KC,1233,External,0,,,,60,7,51117515.14
+Rest of KC,1234,External,0,,,,60,7,25031786.15
+Rest of KC,1235,External,0,,,,60,7,87609900.83
+Rest of KC,1236,External,0,,,,7,7,70521614.42
+Rest of KC,1237,External,0,,,,7,7,38754165.35
+Rest of KC,1238,External,0,,,,7,7,93733602.16
+Rest of KC,1239,External,0,,,,7,7,55629315.28
+Rest of KC,1240,External,0,,,,7,7,65854711.75
+Rest of KC,1241,External,0,,,,5,5,147499678.7
+Rest of KC,1242,External,0,,,,60,7,365452062.3
+Rest of KC,1243,External,0,,,,5,5,165761362.7
+Rest of KC,1244,External,0,,,,5,5,166379035.5
+Rest of KC,1245,External,0,,,,5,5,94891496.41
+Rest of KC,1246,External,0,,,,4,5,45017059.93
+Rest of KC,1247,External,0,,,,4,6,9846460.774
+Rest of KC,1248,External,0,,,,4,6,11208809.88
+Rest of KC,1249,External,0,,,,4,6,4648115.179
+Rest of KC,1250,External,0,,,,4,6,2974923.908
+Rest of KC,1251,External,0,,,,4,6,3345553.98
+Rest of KC,1252,External,0,,,,4,6,4485431.415
+Rest of KC,1253,External,0,,,,4,6,4071971.106
+Rest of KC,1254,External,0,,,,4,5,37820179.41
+Rest of KC,1255,External,0,,,,4,5,95145764.51
+Rest of KC,1256,External,0,,,,4,6,15459958.66
+Rest of KC,1257,External,0,,,,4,5,140766375.8
+Rest of KC,1258,External,0,,,,3,5,95337888.35
+Rest of KC,1259,External,0,,,,3,5,40496469.92
+Rest of KC,1260,External,0,,,,3,5,55313845.69
+Rest of KC,1261,External,0,,,,3,5,42304408.7
+Rest of KC,1262,External,0,,,,3,5,69721132.62
+Rest of KC,1263,External,0,,,,3,5,40085181.23
+Rest of KC,1264,External,0,,,,3,5,41128645.59
+Rest of KC,1265,External,0,,,,3,5,46287221
+Rest of KC,1266,External,0,,,,3,5,158236231.2
+Rest of KC,1267,External,0,,,,3,5,56667367.68
+Rest of KC,1268,External,0,,,,3,5,33867502.91
+Rest of KC,1269,External,0,,,,3,5,146043502.6
+Rest of KC,1270,External,0,,,,3,5,170791642.3
+Rest of KC,1271,External,0,,,,3,5,80598076.49
+Rest of KC,1272,External,0,,,,3,5,180520556.1
+Rest of KC,1273,External,0,,,,3,5,97044033.77
+Rest of KC,1274,External,0,,,,3,5,305451861.2
+External,1275,External,0,,,,2,7,434797574
+External,1276,External,0,,,,1,7,371090190.5
+External,1277,External,0,,,,1,7,325153701.5
+External,1278,External,0,,,,1,7,1050450786
+External,1279,External,0,,,,2,7,692747193.7
+External,1280,External,0,,,,2,7,726394384.7
+External,1281,External,0,,,,2,7,619180769.4
+External,1282,External,0,,,,2,7,468834930.3
+External,1283,External,0,,,,2,7,847244156.7
+External,1284,External,0,,,,1,7,3178994297
+External,1285,External,0,,,,1,7,2803677026
+External,1286,External,0,,,,1,7,21564667904
+External,1287,External,0,,,,1,7,1622035920
+External,1288,External,0,,,,1,7,6449186086
+External,1289,External,0,,,,1,7,835517090
+External,1290,External,0,,,,1,7,797977647.2
+External,1291,External,0,,,,1,7,1244338945
+External,1292,External,0,,,,1,7,983229511
+External,1293,External,0,,,,1,7,647471985.5
+External,1294,External,0,,,,1,7,15560566347
+Rest of KC,1295,External,0,,,,60,7,886961348.5
+Rest of KC,1296,External,0,,,,60,7,2345785475
+Rest of KC,1297,External,0,,,,60,7,219779332.5
+Rest of KC,1298,External,0,,,,60,7,146996412.4
+Rest of KC,1299,External,0,,,,60,7,294031096.2
+Rest of KC,1300,External,0,,,,60,7,60780345.81
+Rest of KC,1301,External,0,,,,60,7,136728866.8
+Rest of KC,1302,External,0,,,,60,7,66652325.77
+Rest of KC,1303,External,0,,,,60,7,42782104.62
+Rest of KC,1304,External,0,,,,60,7,448559685.8
+Rest of KC,1305,External,0,,,,60,7,678403089.3
+Rest of KC,1306,External,0,,,,60,7,15555944975
+Rest of KC,1307,External,0,,,,60,7,328707757
+Rest of KC,1308,External,0,,,,60,7,242211778.4
+Rest of KC,1309,External,0,,,,60,7,858333981.2
+Rest of KC,1310,External,0,,,,60,7,677334254.8
+Rest of KC,1311,External,0,,,,7,7,17856975676
+Rest of KC,1312,External,0,,,,60,7,1315002719
+Rest of KC,1313,External,0,,,,60,7,299066902.4
+Rest of KC,1314,External,0,,,,60,7,326217581.6
+Rest of KC,1315,External,0,,,,7,7,694424370.8
+Rest of KC,1316,External,0,,,,7,7,394125446.6
+Rest of KC,1317,External,0,,,,7,7,2785768857
+External,1318,External,0,,,,10,7,27248758794
+External,1319,External,0,,,,10,7,3353701192
+External,1320,External,0,,,,10,7,1234068659
+External,1321,External,0,,,,10,7,5397305296
+External,1322,External,0,,,,11,7,5903758686
+External,1323,External,0,,,,8,7,651445069.3
+Rest of KC,1324,External,0,,,,7,7,418359835.7
+Rest of KC,1325,External,0,,,,7,7,1360334939
+Rest of KC,1326,External,0,,,,7,7,293598209.5
+Rest of KC,1327,External,0,,,,7,7,448114830.2
+Rest of KC,1328,External,0,,,,7,7,40379600.29
+Rest of KC,1329,External,0,,,,7,7,60565247.85
+Rest of KC,1330,External,0,,,,7,7,63321255.41
+Rest of KC,1331,External,0,,,,7,7,458960152.9
+Rest of KC,1332,External,0,,,,7,7,267471106.4
+Rest of KC,1333,External,0,,,,7,7,344015369.1
+Rest of KC,1334,External,0,,,,5,7,526656431.4
+Rest of KC,1335,External,0,,,,7,7,188401869.8
+Rest of KC,1336,External,0,,,,5,7,274045534.5
+Rest of KC,1337,External,0,,,,5,7,2290953971
+Rest of KC,1338,External,0,,,,5,5,444168714.8
+Rest of KC,1339,External,0,,,,4,6,51046328.86
+Rest of KC,1340,External,0,,,,4,6,13550339.67
+Rest of KC,1341,External,0,,,,4,5,47790080.97
+Rest of KC,1342,External,0,,,,4,5,108188687.6
+Rest of KC,1343,External,0,,,,3,5,84145216.25
+Rest of KC,1344,External,0,,,,3,5,168837027.7
+Rest of KC,1345,External,0,,,,4,5,442920533.2
+External,1346,External,0,,,,9,7,3861570151
+External,1347,External,0,,,,9,7,5934420250
+External,1348,External,0,,,,9,7,1833878675
+External,1349,External,0,,,,9,7,4147804717
+External,1350,External,0,,,,8,7,699529645.2
+External,1351,External,0,,,,10,7,1054839857
+External,1352,External,0,,,,8,7,777379536.3
+External,1353,External,0,,,,10,7,2127149314
+External,1354,External,0,,,,10,7,1925439785
+Rest of KC,1355,External,0,,,,5,5,601436275.8
