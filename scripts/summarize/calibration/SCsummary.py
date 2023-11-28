@@ -1697,7 +1697,7 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
     trip_time.to_excel(excel_writer = writer, sheet_name = 'Trip Arrival Times by Hour', na_rep = 'NA')
     tour_time_apd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 1)
     tour_time_lpd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 29)
-
+    writer.save()
 
     colwidths = getmaxwidths(location + '/TimeChoiceReport.xlsx')
     colors = ['#004488', '#00C0C0']
@@ -1782,9 +1782,6 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
 
     writer.save()
     
-    
-
-
     print('---Time Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
     
 def report_compile(h5_results_file,h5_results_name,
