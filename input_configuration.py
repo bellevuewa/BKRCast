@@ -115,7 +115,7 @@ tour_purpose_dict = {0: 'all',
 
 # These files are often missing from a run.  We want to check they are present and warn if not.
 # Please add to this list as you find files that are missing.
-commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
+commonly_missing_files = [r'buffered_parcels.txt', r'node_to_node_distance_2014.h5']
 
 #################################### DAYSIM ####################################
 households_persons_file = r'inputs/popsim/hh_and_persons.h5'
