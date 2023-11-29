@@ -361,6 +361,7 @@ def main():
     build_output_dirs()
     update_daysim_modes()
     update_skim_parameters()
+    update_taz_accessibility_file(model_year)    
 
     if run_copy_input_files:
         copy_large_inputs()

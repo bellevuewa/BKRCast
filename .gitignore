@@ -38,3 +38,4 @@ Daysim/last-run.log
 /scripts/summarize/standard/truck_vols.py
 *.png
 /projects/1530to1830/Worksheets/General_worksheet.emw
+/inputs/model/TAZIndex.txt

@@ -446,3 +446,13 @@ def get_current_branch():
             return None
     else:
         return os.path.basename(branch_match) 
+
+def update_taz_accessibility_file(horizon_year):
+    df = pd.read_csv(r'inputs/model/templates/TAZIndex_template.txt', sep ='\t')
+    if int(horizon_year) > 2023:
+        taz_subarea_df = pd.read_csv(r'inputs/subarea_definition/TAZ_subarea.csv')
+        df = df.merge(taz_subarea_df[['BKRCastTAZ', 'Jurisdiction']], left_on = 'Zone_id', right_on = 'BKRCastTAZ', how = 'left')
+        df.loc[df['Jurisdiction'] == 'BELLEVUE', 'Dest_eligible'] = 1
+        df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)   
+    
+    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')                                             
