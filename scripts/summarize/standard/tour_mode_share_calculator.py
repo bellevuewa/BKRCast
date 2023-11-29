@@ -39,6 +39,8 @@ import input_configuration as prj
 # 5/23/2023
 # add Kirkland and Redmond to subarea_code option.
 
+# 11/6/2023
+# add -i option to allow substitue of _tour.tsv file
 
 
 tour_purpose = {0: 'all',
@@ -173,8 +175,9 @@ def select_tours_either_end_in_subarea(tours_df, subarea_taz_df):
 def help():
     print('Calculate mode share from tours in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.')
     print('')
-    print('tour_mode_share_calculator.py -h -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
+    print('tour_mode_share_calculator.py -h -i <input_file> -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
     print('    -h: help')
+    print('    -i input file name. This file, if available, needs to be saved in outputs folder')    
     print('    -o: output file name. This file is saved in outputs folder.')
     print('    -s: subarea definition file name. This file needs absolute file path.')
     print("    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period.")
@@ -195,9 +198,10 @@ def main():
     time_period = ''
     start_time = 0
     end_time = 0
+    tours_file = ''    
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'ho:s:t:', ['stime=', 'etime='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hi:o:s:t:', ['stime=', 'etime='])
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -208,6 +212,8 @@ def main():
             sys.exit(0)
         elif opt == '-o':
             Output_file = os.path.join(prj.project_folder, 'outputs', arg) 
+        elif opt == '-i':
+            tours_file = os.path.join(prj.project_folder, 'outputs', arg)
         elif opt == '-t':
             if arg in time_periods:
                 time_period = arg
@@ -255,12 +261,14 @@ def main():
     else:
         time_period = str(start_time) + '-' + str(end_time)
 
+    if tours_file == '':
+        tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')                
+
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.txt')
     print('Output file: ' + Output_file)
     print('subarea definition file: ' + subarea_taz_file)
 
-    tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')
     hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
     total_tours_df = pd.read_csv(tours_file, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
