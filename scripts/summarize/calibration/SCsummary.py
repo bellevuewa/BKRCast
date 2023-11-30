@@ -200,8 +200,8 @@ def DayPattern(data1, data2, name1, name2, location):
         toursPersPurp1 = weighted_average(PersonsDay1, tc, 'psexpfac', 'pptyp')
         toursPersPurp2 = weighted_average(PersonsDay2, tc, 'psexpfac', 'pptyp')
         #Delete added column to make future iterations faster
-        del PersonsDay1[tc]
-        del PersonsDay2[tc]
+        PersonsDay1.drop(columns = [tc], inplace = True)
+        PersonsDay2.drop(columns = [tc], inplace = True)
         items = OrderedDict(((name1, toursPersPurp1), (name2, toursPersPurp2)))
         toursPersPurp = pd.DataFrame.from_dict(items)
         toursPersPurp = get_differences(toursPersPurp, name1, name2, 2)
@@ -457,7 +457,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     aonewcol = ['0', '1', '2', '3', '4+']
     ao['Number of Vehicles in Household'] = aonewcol
     ao = ao.reset_index()
-    del ao['hhvehs']
+    ao = ao.drop(columns = ['hhvehs'])
     ao = ao.set_index('Number of Vehicles in Household')
 
     cp4 = time.time()
@@ -719,8 +719,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     people_per_district = get_differences(people_per_district, 'Number of People (' + name1 + ')', 'Number of People (' + name2 + ')', 0)
     people_per_district['Difference (People)'] = people_per_district['Difference']
     people_per_district['% Difference (People)'] = people_per_district['% Difference']
-    del people_per_district['Difference']
-    del people_per_district['% Difference']
+    people_per_district = people_per_district.drop(columns = ['Difference', '% Difference'])    
 
     workers_per_taz_1 = data1['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
     workers_per_taz_2 = data2['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
@@ -730,8 +729,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     workers_per_district = get_differences(workers_per_district, 'Number of Workers (' + name1 + ')', 'Number of Workers (' + name2 + ')', 0)
     workers_per_district['Difference (Workers)'] = workers_per_district['Difference']
     workers_per_district['% Difference (Workers)'] = workers_per_district['% Difference']
-    del workers_per_district['Difference']
-    del workers_per_district['% Difference']
+    workers_per_district = workers_per_district.drop(columns = ['Difference', '% Difference'])    
 
     students_per_taz_1 = data1['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
     students_per_taz_2 = data2['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
@@ -741,8 +739,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     students_per_district = get_differences(students_per_district, 'Number of Students (' + name1 + ')', 'Number of Students (' + name2 + ')', 0)
     students_per_district['Difference (Students)'] = students_per_district['Difference']
     students_per_district['% Difference (Students)'] = students_per_district['% Difference']
-    del students_per_district['Difference']
-    del students_per_district['% Difference']
+    students_per_district = students_per_district.drop(columns = ['Difference', '% Difference'])    
 
     people_workers_district = pd.merge(people_per_district, workers_per_district, left_index = True, right_index = True)
     people_workers_students_district = pd.merge(people_workers_district, students_per_district, left_index = True, right_index = True)
@@ -1262,11 +1259,9 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     region_wah_values = [region_wah['ACS'].sum(), region_wah['total'].sum(), region_wah['percent'].sum()]
     wh['ACS'] = region_wah_values
 
-    
     wh = get_differences(wh, name1, 'ACS', [0, 0, 1])
     #By county\
 
-   
     work_home_county_1 = work_home_county_1[0:]
     work_home_county_1= work_home_county_1.reset_index() 
     
@@ -1278,11 +1273,9 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
 
     county_wah = work_at_home_acs.loc[work_at_home_acs['County'] != 'Region']
     whbc = pd.merge(whbc, county_wah, on = 'County')
-    del whbc['total']
-    del whbc['percent']
+    whbc = whbc.drop(columns = ['total', 'percent'])    
 
     whbc = get_differences(whbc, 'Model', 'ACS', 0)
-
 
     cp3 = time.time()
     print('Workers at Home data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
@@ -1426,7 +1419,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     aonewcol=['0', '1', '2', '3', '4+']
     ao['Number of Vehicles in Household'] = aonewcol
     ao = ao.reset_index()
-    del ao['hhvehs']
+    ao = ao.drop(columns = ['hhvehs'])
     ao = ao.set_index('Number of Vehicles in Household')
 
     cp7 = time.time()
