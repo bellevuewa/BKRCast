@@ -1433,8 +1433,8 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     #save results
     store_assign_results(my_project, iteration, prefix = 'traffic_assignment')
 
-    ###bike/walk:
-    # bike_walk_assignment(my_project, 'false')
+    ###bike/walk: calculate skims
+    bike_walk_assignment(my_project, 'false')
     
     ###Only skim for distance if in global distance_skim_tod list
     if my_project.tod in distance_skim_tod:
