@@ -80,6 +80,7 @@ def getmaxwidths(file): #Like the last one, but every non-index or filler column
             if colwidths[colnum] > 1.5 and colwidths[colnum - 1] > 1.5:
                 colwidths[colnum] = non_index_width
         wd.update({sheet: colwidths})
+    book.release_resources()        
     return(wd)
 
 def even_widths_single_index(file):
