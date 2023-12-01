@@ -458,6 +458,7 @@
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
+    <Compile Include="scripts\modeller\LandUse\Import_land_use.py" />
     <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
     <Compile Include="scripts\modeller\Matrix\calculate_trip_ends_density.py" />
     <Compile Include="scripts\modeller\Matrix\Compare_trip_tables.py" />
@@ -565,6 +566,7 @@
     <Folder Include="scripts\modeller\Network\" />
     <Folder Include="scripts\modeller\Model_outputs\" />
     <Folder Include="scripts\modeller\Matrix\" />
+    <Folder Include="scripts\modeller\LandUse\" />
     <Folder Include="scripts\network" />
     <Folder Include="scripts\modeller\" />
     <Folder Include="scripts\skimming" />
