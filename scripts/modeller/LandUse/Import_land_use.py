@@ -128,7 +128,7 @@ class BKRCastLandUseDensity(_modeller.Tool()):
         node_polygon.par('NodeID').set('TAZNUM')   
         node_polygon.par('NodeValue').set(mo.id)    
         node_polygon.par('NodeFilter').set('isZone')
-        node_polygon.par('NodeValues').set(False)         
+        node_polygon.par('NodeValues').set(True)         
 
         color_style = desktop.project.style(style_name).listval
         style_legend = node_polygon.style_legend()  
@@ -137,6 +137,7 @@ class BKRCastLandUseDensity(_modeller.Tool()):
         style_legend.style_index.set(mo.id)
         style_legend.use_breaks.set(True)
         style_legend.break_decimals.set(0)
+        style_legend.break_method.set('QUANTILE')        
         style_legend.compute_breaks.set(True)    
 
         # do not use 'Links' layer, because it is actually a configuration layer which includes multiple 'regular' layers.
