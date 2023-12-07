@@ -82,6 +82,17 @@ def help():
     print('      -p: export households and persons to csv file.')
     print('\n')
 
+def parking_summary(writer, parcels_df): 
+    print('Summaring public off street parking cost and space...') 
+    # find parcels with public off street spaces and parking cost       
+    parking_parcels = parcels_df.loc[(parcels_df['PPRICDYP'] > 0) | (parcels_df['PPRICHRP'] > 0) | (parcels_df['PARKDY_P'] > 0) | (parcels_df['PARKHR_P'] > 0), ['PARCELID', 'TAZ_P', 'PPRICDYP', 'PPRICHRP', 'PARKDY_P', 'PARKHR_P']]    
+    parking_parcels = parking_parcels.sort_values(by = ['TAZ_P', 'PARCELID'])
+    
+    agg_parking_df = parking_parcels.groupby('TAZ_P').agg({'PPRICDYP':['mean', 'max', 'min'], 'PPRICHRP':['mean', 'max', 'min'], 'PARKDY_P':'sum', 'PARKHR_P':'sum'}).rename(columns = {'PARKDY_P':'Daily Spaces', 'PARKHR_P':'Hourly Spaces'})
+    agg_parking_df = agg_parking_df.round(0).astype(int)    
+    agg_parking_df.to_excel(writer, sheet_name = 'parking') 
+    parking_parcels.to_excel(writer, sheet_name = 'parcels_with_parking_cost', index = False)       
+    
 def main():
     export_parcel_level_dataset = False    
 
@@ -102,22 +113,22 @@ def main():
     #for arg in args:
     
     Output_Field = ['EMPEDU_P', 'EMPFOO_P', 'EMPGOV_P', 'EMPIND_P', 'EMPMED_P', 'EMPOFC_P', 'EMPOTH_P', 'EMPRET_P', 'EMPSVC_P', 'EMPTOT_P', 'STUGRD_P', 'STUHGH_P', 'STUUNI_P', 'HH_P']
-    writer = pd.ExcelWriter(os.path.join(prj.report_summary_output_location, "land_use_summary_report.xlsx"), engine = 'xlsxwriter')
-    wksheet = writer.book.add_worksheet('readme')
-    wksheet.write(0, 0, str(datetime.datetime.now()))
-    wksheet.write(1, 0, 'model folder')
-    wksheet.write(1, 1, prj.project_folder)
-    wksheet.write(2, 0, 'parcel file')
-    wksheet.write(2, 1, prj.parcels_file_folder)
+    with pd.ExcelWriter(os.path.join(prj.report_summary_output_location, "land_use_summary_report.xlsx"), engine = 'xlsxwriter') as writer:
+        wksheet = writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now()))
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, prj.project_folder)
+        wksheet.write(2, 0, 'parcel file')
+        wksheet.write(2, 1, prj.parcels_file_folder)
 
-    taz_subarea = pd.read_csv(os.path.join(prj.main_inputs_folder, 'subarea_definition','TAZ_Subarea.csv'), sep = ',')
-    parcels_df = pd.read_csv(os.path.join(prj.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
-    lookup_parcels_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
+        taz_subarea = pd.read_csv(os.path.join(prj.main_inputs_folder, 'subarea_definition','TAZ_Subarea.csv'), sep = ',')
+        parcels_df = pd.read_csv(os.path.join(prj.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
+        lookup_parcels_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
 
-    parcel_file_summary(writer, Output_Field, taz_subarea, parcels_df)
-    synthetic_population_summary(writer, taz_subarea, lookup_parcels_df, export_parcel_level_dataset)
+        parcel_file_summary(writer, Output_Field, taz_subarea, parcels_df)
+        synthetic_population_summary(writer, taz_subarea, lookup_parcels_df, export_parcel_level_dataset)
+        parking_summary(writer, parcels_df)        
 
-    writer.save()
     print('Done')
 
 if __name__ == '__main__':

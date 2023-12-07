@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
 base_year = '2018'  # BKRCast base year
 model_year = '2018'
