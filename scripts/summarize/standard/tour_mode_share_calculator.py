@@ -42,6 +42,9 @@ import input_configuration as prj
 # 11/6/2023
 # add -i option to allow substitue of _tour.tsv file
 
+# 1/2/2024
+# add outputs excluding workbased subtours
+
 
 tour_purpose = {0: 'all',
                 1: 'work',
@@ -325,6 +328,9 @@ def main():
     print('Tour mode share by workplace (with subtours) is finished.')
 
     CalModeSharebyPurpose(0, tours_work_purpose_df, Output_file, comments='By Workplace Only (without subtours)')        
+    print('Tour mode share by workplace (without subtours) is finished.')
+
+    CalModeSharebyPurpose(1, tours_work_purpose_df, Output_file, comments='By Workplace Only (without subtours)')        
     print('Tour mode share by workplace (without subtours) is finished.')
 
     CalModeSharebyPurpose(0, work_subtours_df, Output_file, comments='Subtours at Workplace Only')        
