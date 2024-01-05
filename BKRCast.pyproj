@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>run_bkrcast.py</StartupFile>
+    <StartupFile>scripts\modeller\LandUse\Import_land_use_growth.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -458,6 +458,7 @@
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
     <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
+    <Compile Include="scripts\modeller\LandUse\Import_land_use_growth.py" />
     <Compile Include="scripts\modeller\LandUse\Import_land_use.py" />
     <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
     <Compile Include="scripts\modeller\Matrix\calculate_trip_ends_density.py" />
