@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\modeller\LandUse\Import_land_use_growth.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\tour_mode_share_calculator.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-i screenline_2018.json</CommandLineArguments>
+    <CommandLineArguments>Bellevue</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
