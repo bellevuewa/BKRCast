@@ -45,6 +45,12 @@ import input_configuration as prj
 
 # 5/23/2023
 # add Kirkand and Redmond to subarea_code option
+
+# 1/4/2024
+# add outputs closely comparable to ACS survey method (means of trans to work, residence and workplace)
+
+# 1/6/2024
+# export outputs to excel spreadsheet.
 #################################################################################################################
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
 purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
@@ -99,15 +105,15 @@ def get_time_period_by_minutes(period):
         exit()
     return start_time, end_time
 
-def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=False, comments=''):
+def calculateModeSharebyTripPurpose(purpose, trip_df):
     if purpose == -1:
         # all purpose
         model_df = trip_df[['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
     elif purpose >=0 and purpose <= 10:
-        model_df = trip_df.loc[((trip_df['opurp'] == 0) & (trip_df['dpurp'] == purpose)) | ((trip_df['opurp'] == purpose) & (trip_df['dpurp'] == 0))][['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
+        model_df = trip_df.loc[((trip_df['dpurp'] == purpose))][['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
     else:
         print('Purpose ' + str(purpose) + 'is invalid')
-        return
+        return None
 
     model_df['share'] = model_df['trexpfac'] / model_df['trexpfac'].sum()
     model_df['avgdist'] = model_df['travdist'] / model_df['trexpfac']
@@ -115,20 +121,19 @@ def calculateModeSharebyTripPurpose(purpose, trip_df, Output_file, overwritten=F
     model_df.replace({'mode': mode_dict}, inplace = True)
     model_df.columns = ['mode', 'trips', 'total_dist', 'share', 'avgdist']
     model_df['trips'] = model_df['trips'].astype(int)
+   
+    # create a sum row in dataframe, then append it to the bottom of the original one. 
+    columns_to_sum = ['trips', 'total_dist', 'share'] 
+    sum_values = model_df[columns_to_sum].sum()
+    sum_df = pd.DataFrame([sum_values], columns = columns_to_sum)
+    sum_df['avgdist'] = sum_df['total_dist'] / sum_df['trips']
+
+    model_df = model_df.append(sum_df, ignore_index = True)    
     model_df['total_dist'] = model_df['total_dist'].map('{:.1f}'.format)
-    model_df['share'] = model_df['share'].map('{:.1%}'.format)
     model_df['avgdist'] = model_df['avgdist'].map('{:.1f}'.format)
-
-    if overwritten:
-        filemode = 'w'
-    else: 
-        filemode = 'a'
-
-    with open(Output_file, filemode) as output:
-        output.write(comments + '\n')
-        output.write('Mode Share from trips, ' + purp_dict[purpose] + '\n')
-        output.write('%s' % model_df)
-        output.write('\n\n')     
+    model_df['share'] = model_df['share'].map('{:.1%}'.format)
+    
+    return model_df
 
 def select_trips_either_end_in_subarea(trips_df, subarea_taz_df):
     subarea_trips_1 = select_trips_by_subarea(trips_df, subarea_taz_df, True, False)
@@ -316,7 +321,7 @@ def main():
         trips_file = os.path.join(prj.project_folder, 'outputs\daysim', '_trip.tsv')
 
     if Output_file == '':
-        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.txt')
+        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.xlsx')
     if Output_file_trip_dist == '':
         Output_file_trip_dist = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name +'_' + subarea_code + '_' + time_period + '_trip_distance.txt')
     print('Input file: ' + trips_file)
@@ -329,6 +334,9 @@ def main():
     subarea_taz_df = pd.read_csv(subarea_taz_file)
     subarea_taz_df.reset_index(inplace = True)
     trips_df = select_trips_by_time(total_trips_df, start_time, end_time)
+    tours_df = pd.read_csv(os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv'), low_memory = True, sep = '\t')
+    tours_df.rename(columns = {'id':'tour_id'}, inplace = True)    
+    trips_df = trips_df.merge(tours_df[['tour_id','parent']], left_on = 'tour_id', right_on = 'tour_id', how = 'left')           
     hhs_df = pd.read_csv(hhs_file, sep = '\t' )
 
     
@@ -348,44 +356,64 @@ def main():
         output.write('Time period: ' + time_period + '\n')
         output.write('\n')
 
-    print('Calculating mode share (all trip purpose)... either end inside the subarea...')
-    calculateModeSharebyTripPurpose(-1, either_end_in_subarea_trips_df, Output_file, overwritten = False,comments = 'Either end in the subarea')
+    with pd.ExcelWriter(Output_file, engine = 'xlsxwriter') as writer:
+        # write readme tab        
+        wksheet = writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now())) 
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, prj.project_folder)
+        wksheet.write(2, 0, 'tour file')
+        wksheet.write(2, 1, trips_file)
+        wksheet.write(3, 0, 'household file')
+        wksheet.write(3, 1, hhs_file)
+        wksheet.write(4, 0, 'subarea')
+        wksheet.write(4, 1, subarea_taz_file)
+        wksheet.write(5, 0, 'mode share area') 
+        wksheet.write(5, 1, subarea_code)     
+        wksheet.write(6, 0, 'start time')        
+        wksheet.write(6, 1, str(start_time))
+        wksheet.write(7, 0, 'end time')
+        wksheet.write(7, 1, str(end_time))
+        wksheet.write(8, 0, 'time period') 
+        wksheet.write(8, 1, time_period)        
 
-    print('Calculating mode share (HBW only)...either end inside the subarea...')
-    hbw_df = either_end_in_subarea_trips_df.loc[((either_end_in_subarea_trips_df['oadtyp']==1) & (either_end_in_subarea_trips_df['dadtyp']==2))| ((either_end_in_subarea_trips_df['oadtyp']==2) & (either_end_in_subarea_trips_df['dadtyp']==1))]
-    calculateModeSharebyTripPurpose(-1, hbw_df, Output_file, overwritten = False, comments = 'HBW')
+        print('Calculating mode share (all trip purpose)... either end inside the subarea...')
+        cal_mode_share_by_each_purpose(writer, either_end_in_subarea_trips_df, 'either_end_in_subarea', comments = 'Either end in the subarea') 
+          
+        print('Calculating mode share (HBW only)...either end inside the subarea...')
+        hbw_df = either_end_in_subarea_trips_df.loc[((either_end_in_subarea_trips_df['oadtyp']==1) & (either_end_in_subarea_trips_df['dadtyp']==2))| ((either_end_in_subarea_trips_df['oadtyp']==2) & (either_end_in_subarea_trips_df['dadtyp']==1))]
+        cal_mode_share_by_each_purpose(writer, hbw_df, 'HBW', comments = 'HBW') 
 
-    print('Calculating mode share by other purposes... either end inside the subarea...')
-    for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
-        calculateModeSharebyTripPurpose(purpose, either_end_in_subarea_trips_df, Output_file, overwritten = False, comments = 'Either end in the subarea')
+        print('Calculating mode share (all trip purpose)...within the subarea...')
+        subarea_trip_df = select_trips_by_subarea(trips_df, subarea_taz_df, True, True)
+        cal_mode_share_by_each_purpose(writer, subarea_trip_df, 'inside_subarea', comments = 'both ends inside the subarea') 
+        
+        # calculate mode share by residence, all trips made by residents
+        print('Calculating mode share by residence...')
+        hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
+        trips_by_residence_df = trips_df.merge(hhs_df, left_on = 'hhno', right_on = 'hhno', how = 'left')
+        trips_by_residence_df = trips_by_residence_df.merge(subarea_taz_df, left_on = 'hhtaz', right_on = 'TAZ', how = 'inner')
+        cal_mode_share_by_each_purpose(writer, trips_by_residence_df, 'residence', comments = 'by residence only') 
+        
 
-    print('Calculating mode share (all trip purpose)...within the subarea...')
-    subarea_trip_df = select_trips_by_subarea(trips_df, subarea_taz_df, True, True)
-    calculateModeSharebyTripPurpose(-1, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
-    print('Calculating mode share by other purposes... either end inside the subarea...')
-    for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
-        calculateModeSharebyTripPurpose(purpose, subarea_trip_df, Output_file, overwritten = False,comments = 'within the subarea')
+        # calculate mode share by residents, excluding subtours, suitable for comparison with ACS data
+        print('Calculating mode share by residence, going to workplace only, excluding subtours, suitable for comparison with ACS survey')
+        trips_by_residence_no_subtour_df = trips_by_residence_df.loc[(trips_by_residence_df['parent'] == 0)]
+        trips_by_residence_no_subtour_to_work_df = trips_by_residence_no_subtour_df.loc[(trips_by_residence_no_subtour_df['dadtyp'] == 2)]
+        cal_mode_share_by_each_purpose(writer, trips_by_residence_no_subtour_to_work_df, 'residence_ACS', comments = 'by residence only, going to workplace only, excluding subtours') 
 
-    # calculate mode share by residence
-    print('Calculating mode share by residence...')
-    hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
-    trips_by_residence_df = trips_df.merge(hhs_df, left_on = 'hhno', right_on = 'hhno', how = 'left')
-    trips_by_residence_df = trips_by_residence_df.merge(subarea_taz_df, left_on = 'hhtaz', right_on = 'TAZ', how = 'inner')
-    calculateModeSharebyTripPurpose(-1, trips_by_residence_df, Output_file, comments = 'by residence only' )
-    print('Calculating mode share by other purposes... ')
-    for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
-        calculateModeSharebyTripPurpose(purpose, trips_by_residence_df, Output_file, overwritten = False, comments = 'by residence only')
+        # calculate mode share by workplace
+        print('Calculating mode share by workplace...')
+        trips_to_workplace_df = trips_df.loc[trips_df['dadtyp'] == 2].merge(subarea_taz_df, left_on = 'dtaz', right_on = 'TAZ', how = 'inner')
+        trips_from_workplace_df = trips_df.loc[trips_df['oadtyp'] == 2].merge(subarea_taz_df, left_on = 'otaz', right_on = 'TAZ', how = 'inner')
+        trips_by_workplace_df = pd.concat([trips_to_workplace_df, trips_from_workplace_df])
+        cal_mode_share_by_each_purpose(writer, trips_by_workplace_df, 'workplace', comments = 'by workplace only (either trip end at workplace)') 
 
-    # calculate mode share by workplace
-    print('Calculating mode share by workplace...')
-    trips_to_workplace_df = trips_df.loc[trips_df['dadtyp'] == 2].merge(subarea_taz_df, left_on = 'dtaz', right_on = 'TAZ', how = 'inner')
-    trips_from_workplace_df = trips_df.loc[trips_df['oadtyp'] == 2].merge(subarea_taz_df, left_on = 'otaz', right_on = 'TAZ', how = 'inner')
-    trips_by_workplace_df = pd.concat([trips_to_workplace_df, trips_from_workplace_df])
-    calculateModeSharebyTripPurpose(-1, trips_by_workplace_df, Output_file, comments = 'by workplace only')
-    print('Calculating mode share by other purposes... ')
-    for purpose in [1,2,3,4,5,6,7, 8, 9, 10]:
-        calculateModeSharebyTripPurpose(purpose, trips_by_workplace_df, Output_file, overwritten = False, comments = 'by workplace only')
-    print('Mode share calculation is finished.')
+        # calculate mode share by workplace, excluding subtours. suitable for comparison with ACS data
+        print('Calculating mode share by workplace, coming to workplace only, excluding subtours, suitable for comparison with ACS survey')
+        trips_to_workplace_no_subtours_df = trips_to_workplace_df.loc[trips_to_workplace_df['parent'] == 0]    
+        cal_mode_share_by_each_purpose(writer, trips_to_workplace_no_subtours_df, 'workplace_ACS', comments = 'by workplace only,  going to workplace only, excluding subtours') 
+        print('Mode share calculation is finished.')
 
     print('Calculating tirp distance , all mode...')
     # output to file
@@ -414,6 +442,40 @@ def main():
 
 
     print('Done')
+
+def cal_mode_share_by_each_purpose(writer, trip_df, sheet_name, comments):
+    df_all = calculateModeSharebyTripPurpose(-1, trip_df) 
+    dict_df = {f'{comments}, {purp_dict[-1]}': df_all}           
+    for purpose in [1,2,3,4,5,6,7,8,9,10]:
+        df = calculateModeSharebyTripPurpose(purpose, trip_df) 
+        dict_df[f'{comments}, {purp_dict[purpose]}'] = df.copy() 
+
+    write_to_sheet(writer, sheet_name, dict_df)                       
+
+def write_to_sheet(writer, name_of_sheet, dict_dfs, write_index = True, horizontal = True):
+    '''
+       writer: ExcelWriter variable
+       name_of_sheet: the sheet that dfs are to be exported
+       dict_dfs: dictionary of dfs: {title1: df1, title2:df2...}
+       write_index: write indices if True
+       horizontal: export dfs horizontally or vertically. Default is horizontal
+    '''    
+    srow = 1
+    scol = 0
+    bold_format = writer.book.add_format({'bold':True})    
+    for title, df in dict_dfs.items():
+        df.to_excel(writer, sheet_name = name_of_sheet, index = write_index, startrow = srow, startcol = scol)
+        sheet = writer.sheets[name_of_sheet]
+        sheet.write(srow - 1, scol, title, bold_format)
+        if horizontal == True:
+            srow = srow + df.shape[0] + 3
+        else:
+            if write_index == True:
+                scol = scol + df.shape[1] + len(df.index.names) + 3
+            else:
+                scol = scol + df.shape[1] + 3
+
+    return srow, scol
 
 if __name__ == '__main__':
     main()
