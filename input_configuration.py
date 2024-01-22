@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # BKRCast base year
-model_year = '2018'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU'
+base_year = '2019'  # BKRCast base year
+model_year = '2044'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2018' #name of the folder with scenario data
+scenario_name = '2044' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2019' 
@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False 
+run_accessibility_calcs = True 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
@@ -40,7 +40,7 @@ run_import_networks = False
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = False
+run_skims_and_paths_seed_trips = True
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True

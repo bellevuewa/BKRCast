@@ -15,7 +15,7 @@
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import os, sys
-
+import toml
 import pandas as pd
 import json
 #from multiprocessing import Pool, pool
@@ -29,6 +29,7 @@ from input_configuration import *
 
 class EmmeProject:
     def __init__(self, filepath):
+        self.config = toml.load(os.path.join(os.getcwd(), 'configuration/input_configuration.toml'))        
         self.desktop = app.start_dedicated(True, modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
         #delete locki:
@@ -52,7 +53,6 @@ class EmmeProject:
         for database in self.data_explorer.databases():
             #print database.title()
             if database.title() == database_name:
-                
                 database.open()
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
@@ -293,7 +293,7 @@ class EmmeProject:
 
         return ret
     
-    def export_matrices(self, output_mat_file):
+    def export_omx_matrices(self, output_mat_file):
         matrix_dict = text_to_dictionary('demand_matrix_dictionary')
         uniqueMatrices = set(matrix_dict.values())
         NAMESPACE = "inro.emme.data.matrix.export_to_omx"
@@ -301,6 +301,16 @@ class EmmeProject:
         export_to_omx(uniqueMatrices, output_mat_file, append_to_file=False,
                       scenario=self.current_scenario,
                       omx_key = 'NAME')
+
+    def export_matrix(self, matrix, matrix_path_name):
+        NAMESPACE = "inro.emme.data.matrix.export_matrices"
+        process = self.m.tool(NAMESPACE)
+        process(matrices=matrix,
+                export_file=matrix_path_name, 
+                field_separator=' ',
+                export_format="PROMPT_DATA_FORMAT",
+                skip_default_values=True,
+                full_matrix_line_format="ONE_ENTRY_PER_LINE")
 
     def closeDesktop(self):
         self.bank.dispose()
@@ -369,10 +379,24 @@ class EmmeProject:
      
          #busses:
          self.network_calculator("link_calculation", result = '@bveh', expression = '@trnv3/2.0')
-     
-         #calc total vehicles, store in @tveh 
-         str_expression = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
+
+         ###################################################################  
+         # Need to ensure delivery truck is included in the model (supplemental module)  
+         if self.config['include_delivery']:
+             self.network_calculator("link_calculation", result='@dveh', expression='@lttrk/1.5') # delivery trucks       
+        #####################################################################        
+         # Calculate total vehicles as @tveh, depending on which modes are included
+         str_base = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
                                     + @h3tl2 + @h3tl3 + @h3nt1 + @h3nt2 + @h3nt3 + @lttrk + @mveh + @hveh + @bveh'
+
+         str_expression = str_base                                
+         # AV is not active in BKRCast
+         #                            
+         # av_str = '+ @av_sov_inc1 + @av_sov_inc2 + @av_sov_inc3 + @av_hov2_inc1 + @av_hov2_inc2 + @av_hov2_inc3 + ' + \
+         #                   '@av_hov3_inc1 + @av_hov3_inc2 + @av_hov3_inc3 '
+    
+         # there is no tnc related volumes in assignment, even though tnc mode is on. The TNC trip tables will be added to general trip tables before assignment.
+         # so str_base includes tnc volumes if the tnc mode is on.
          self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
 
         

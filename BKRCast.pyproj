@@ -5,8 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>scripts\supplemental\distribute_non_work_ixxi.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -27,6 +26,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="configuration\emme_configuration.toml" />
+    <Content Include="configuration\input_configuration.toml" />
+    <Content Include="configuration\network_configuration.toml" />
+    <Content Include="configuration\summary_configuration.toml" />
     <Content Include="daysim_configuration_template.properties" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new.dat" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new_inbkr.dat" />
@@ -330,6 +333,7 @@
     <Content Include="inputs\skim_params\transit_fare_dictionary.json" />
     <Content Include="inputs\skim_params\transit_line_calculation.json" />
     <Content Include="inputs\skim_params\transit_line_definition.json" />
+    <Content Include="inputs\skim_params\transit_path_analysis.json" />
     <Content Include="inputs\skim_params\transit_segment_calculation.json" />
     <Content Include="inputs\skim_params\transit_skim_aggregate_matrix_names.json" />
     <Content Include="inputs\skim_params\transit_skim_setup.json" />
@@ -338,6 +342,7 @@
     <Content Include="inputs\skim_params\transit_skim_setup_ferry.json" />
     <Content Include="inputs\skim_params\transit_skim_setup_light_rail.json" />
     <Content Include="inputs\skim_params\transit_skim_setup_passenger_ferry.json" />
+    <Content Include="inputs\skim_params\transit_traversal.json" />
     <Content Include="inputs\skim_params\truck_model.json" />
     <Content Include="inputs\skim_params\user_classes.json" />
     <Content Include="inputs\subarea_definition\BellevueDTTAZ.txt" />
@@ -559,6 +564,7 @@
     <Folder Include="inputs\worksheets\9to1530\" />
     <Folder Include="inputs\worksheets\Supplementals\" />
     <Folder Include="inputs\worksheets\TruckModel\" />
+    <Folder Include="configuration\" />
     <Folder Include="psrc_to_bkrcast_scripts" />
     <Folder Include="scripts" />
     <Folder Include="scripts\accessibility" />

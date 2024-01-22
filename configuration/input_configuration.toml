@@ -1,0 +1,26 @@
+include_tnc = false
+include_delivery = false
+include_av = false
+
+
+#################################### CALIBRATION/VALIDATION ####################################
+
+# Calibration Summary Configuration
+h5_results_file = 'outputs/daysim/daysim_outputs.h5'
+h5_results_name = 'DaysimOutputs'
+h5_comparison_file = 'inputs/model/survey/survey.h5'
+h5_comparison_name = 'Survey'
+guidefile = 'inputs/model/CatVarDict.xlsx'
+districtfile = 'inputs/model/TAZ_TAD_County.csv'
+FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
+LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
+
+acs_data = 'inputs/model/survey/ACS_2014.xlsx'
+
+report_output_location = 'outputs/daysim'
+report_lu_output_location = 'outputs/landuse'
+report_bikes_output_location = 'outputs/bike'
+report_net_output_location = 'outputs/network'
+report_summary_output_location = 'outputs/summary'
+
+
