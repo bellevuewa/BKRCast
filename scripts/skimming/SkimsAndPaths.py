@@ -1,5 +1,4 @@
 
-from ssl import Purpose
 from typing import overload
 import inro.emme.desktop.app as app
 import inro.modeller as _m
@@ -13,7 +12,6 @@ import os,sys
 import h5py
 from multiprocessing import Pool
 from functools import partial
-from functools import reduce
 import logging
 import getopt
 import shutil
@@ -1092,10 +1090,10 @@ def start_delete_matrices_pool(project_list):
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
     #instance of modeler issue. Will change code to be more generalized later.
-    pool = Pool(processes=4)
-    pool.map(run_transit,project_list[0:4])
-
+    pool = Pool(processes=parallel_instances)
+    pool.map(run_transit, project_list[0:parallel_instances])
     pool.close()
+    pool.join()    
 
 def run_transit(project_name):
     start_of_run = time.time()
@@ -1146,7 +1144,7 @@ def run_transit(project_name):
         matrix_calc(mod_calc)
 
     my_project.closeDesktop()
-    print("finished run_transit")
+    print(f"finished run_transit {my_project.tod}")
 
 def export_to_hdf5_pool(project_list, survey_seed_trips, free_flow_skims ):
     pool = Pool(processes=parallel_instances)
@@ -1322,38 +1320,36 @@ def feedback_check(emmebank_path_list):
      return passed
 
 def create_node_attributes(node_attribute_dict, my_project):
-        current_scenario = my_project.current_scenario
-        my_bank = my_project.bank
-        tod = my_project.tod
-        NAMESPACE = "inro.emme.data.extra_attribute.create_extra_attribute"
-        create_extra = my_project.m.tool(NAMESPACE)
-        print(tod)
+    tod = my_project.tod
+    print(tod)
+    try:        
         for key, value in node_attribute_dict.items():
             print(key, value)
-            new_att = create_extra(extra_attribute_type="NODE",
-                       extra_attribute_name=value['name'],
-                       extra_attribute_description=key,
-                       extra_attribute_default_value = value['init_value'],
-                       overwrite=True)
+            my_project.create_extra_attribute("NODE", value['name'], key, True, value['init_value'])
+    except Exception as e:
+        print(f'create node extra attribute crashed in {tod}. {key}: {value}')  
+        print(f'The following are error message')                                  
+        print(f'{e}') 
+        logging.debug(f'{e}')        
+        sys.exit(3)               
 
+    # network_calc = my_project.m.tool("inro.emme.network_calculation.network_calculator")  
+    # node_calculator_spec = json_to_dictionary("node_calculation")
+    transit_tod = transit_network_tod_dict[tod]
         
-        network_calc = my_project.m.tool("inro.emme.network_calculation.network_calculator")  
-        node_calculator_spec = json_to_dictionary("node_calculation")
-        transit_tod = transit_network_tod_dict[tod]
-        
-        if transit_tod in transit_node_constants.keys():
+    if transit_tod in transit_node_constants.keys():
+        try:            
             for line_id, attribute_dict in transit_node_constants[transit_tod].items():
-                
                 for attribute_name, value in attribute_dict.items():
                     print(line_id, attribute_name, value)
-                    
-                    #Load in the necessary Dictionarie
-                    mod_calc = node_calculator_spec
-                    mod_calc["result"] = attribute_name
-                    mod_calc["expression"] = value
-                    mod_calc["selections"]["node"] = "Line = " + line_id
-                    network_calc(mod_calc)
-        print('finished create node attributes for ' + tod)
+                    my_project.network_calculator("node_calculation", result = attribute_name, expression = value, selections_by_node = "Line = " + line_id)                    
+        except Exception as e:
+            print(f'node calculatiom crashed in {transit_tod}. line: {line_id}, {attribute_name}: {value}')
+            print('The following are error messages')
+            print(f'{e}') 
+            logging.debug(f'{e}')        
+            sys.exit(4)                                                               
+    print('finished create node attributes for ' + tod)
 
 def delete_matrices_parallel(project_name):
     my_project = EmmeProject(project_name)
@@ -1398,7 +1394,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
    
     ##delete and create new demand and skim matrices:
     for matrix_type in ['FULL', 'ORIGIN', 'DESTINATION']:
-        delete_matrices(my_project, matrix_type)
+        my_project.delete_matrices(matrix_type)
 
     define_matrices(my_project)
 
@@ -1451,6 +1447,52 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     # update @mveh, @hveh, @bveh and @tveh.   They will be updated again in bike_model.py
     my_project.create_extra_attributes(extra_attributes_dict)
     my_project.calc_total_vehicles()
+
+    ################################################################
+    ## Below are for transit assignment, skims, and related calculation, originally implemented in run_transit().
+    # because it often runs into issues when trying to gain access to modeller tools, we decided to combine auto and transit together in one function.
+    print(f'Starting transit assignment and skims..')
+    create_node_attributes(transit_node_attributes, my_project)
+    count = 0
+    for submode, class_name in {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry',
+            'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}.items():
+        if count > 0:
+            add_volume = True
+        else:
+            add_volume = False
+
+        print('    for submode: ' + submode)
+        transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
+        transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
+        count += 1
+    
+    print("finished transit assignment and skimming")
+
+    #Calc Wait Times
+    app.App.refresh_data
+    matrix_calculator = json_to_dictionary("matrix_calculation")
+    matrix_calc = my_project.m.tool("inro.emme.matrix_calculation.matrix_calculator")
+
+    #Wait time for general teeansit 
+    total_wait_matrix = my_project.bank.matrix('twtwa').id
+    initial_wait_matrix = my_project.bank.matrix('iwtwa').id
+    transfer_wait_matrix = my_project.bank.matrix('xfrwa').id
+    mod_calc = matrix_calculator
+    mod_calc["result"] = transfer_wait_matrix
+    mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
+    matrix_calc(mod_calc)
+
+    #wait time for transit submodes
+    for submode in ['r','f','p','c']:
+        total_wait_matrix = my_project.bank.matrix('twtw' + submode).id
+        initial_wait_matrix = my_project.bank.matrix('iwtw' + submode).id
+        transfer_wait_matrix = my_project.bank.matrix('xfrw' + submode).id
+
+        mod_calc = matrix_calculator
+        mod_calc['result'] = transfer_wait_matrix
+        mod_calc['expression'] = total_wait_matrix + '-' + initial_wait_matrix
+        matrix_calc(mod_calc)
+    print(f"finished run_transit {my_project.tod}")
 
     ##dispose emmebank
     my_project.closeDesktop()
@@ -1585,19 +1627,29 @@ def main():
 
     start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
     #run_assignments_parallel(project_list[2])
-    start_transit_pool(project_list)
+    # transit operation is now merged into start_pool. start_transit_pool() is no longer needed.
+    # start_transit_pool(project_list)
    
     f = open('inputs/converge.txt', 'w')
    
     #If using seed_trips, we are starting the first iteration and do not want to compare skims from another run. 
     if (survey_seed_trips == False and free_flow_skims == False):
            #run feedback check 
-          if feedback_check(feedback_list) == False:
-              go = 'continue'
-              json.dump(go, f)
-          else:
-              go = 'stop'
-              json.dump(go, f)
+            try:
+              # if anything goes wrong with the convergence check, simply ignore the check and move on to the next run              
+              if feedback_check(feedback_list) == False:
+                  go = 'continue'
+                  json.dump(go, f)
+              else:
+                  go = 'stop'
+                  json.dump(go, f)
+            except Exception as e:
+                print('feedback check error. Continue the feedback loop.')
+                print('below is the error messages.')
+                print(f'{e}')  
+                logging.debug(f'{e}')                                              
+                go = 'continue'
+                json.dump(go, f)
     else:
         go = 'continue'
         json.dump(go, f)

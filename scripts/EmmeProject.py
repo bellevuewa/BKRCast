@@ -15,14 +15,12 @@
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import os, sys
-
+import time
 import pandas as pd
 import json
-#from multiprocessing import Pool, pool
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from input_configuration import *
-#from EmmeProject import *
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -31,8 +29,6 @@ class EmmeProject:
     def __init__(self, filepath):
         self.desktop = app.start_dedicated(True, modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
-        #delete locki:
-        #self.m.emmebank.dispose()
         pathlist = filepath.split("/")
         self.fullpath = filepath
         self.filename = pathlist.pop()
@@ -75,7 +71,6 @@ class EmmeProject:
         if self.network_counts_by_element('links') > 0:
             NAMESPACE = "inro.emme.data.network.base.delete_links"
             delete_links = self.m.tool(NAMESPACE)
-            #delete_links(selection="@dist=9", condition="cascade")
             delete_links(condition="cascade")
 
     def delete_nodes(self):
@@ -176,36 +171,34 @@ class EmmeProject:
         return report
 
     def matrix_transaction(self, transactionFile):
-        NAMESPACE=("inro.emme.data.matrix.matrix_transaction")
+        NAMESPACE="inro.emme.data.matrix.matrix_transaction"
         process = self.m.tool(NAMESPACE)
         process(transaction_file = transactionFile,
                        throw_on_error = True,
                        scenario = self.current_scenario)
 
     def initialize_zone_partition(self, partition_name):
-        NAMESPACE=("inro.emme.data.zone_partition.init_partition")
+        NAMESPACE="inro.emme.data.zone_partition.init_partition"
         process = self.m.tool(NAMESPACE)
         process(partition=partition_name)
         
-    
-
     def process_zone_partition(self, transactionFile):
-        NAMESPACE=("inro.emme.data.zone_partition.partition_transaction")
+        NAMESPACE="inro.emme.data.zone_partition.partition_transaction"
         process = self.m.tool(NAMESPACE)
         process(transaction_file = transactionFile,
                        throw_on_error = True,
                        scenario = self.current_scenario)
 
-    def create_extra_attribute(self, type, name, description, overwrite):
-        NAMESPACE=("inro.emme.data.extra_attribute.create_extra_attribute")
+    def create_extra_attribute(self, type, name, description, overwrite, default_value = 0):
+        NAMESPACE="inro.emme.data.extra_attribute.create_extra_attribute"
         process = self.m.tool(NAMESPACE)
         process(extra_attribute_type=type,
                       extra_attribute_name= name,
-                      extra_attribute_description= description,
-                      overwrite=overwrite)
+                      extra_attribute_description= description, overwrite=overwrite, 
+                      extra_attribute_default_value = default_value)
 
     def delete_extra_attribute(self, name):
-        NAMESPACE=("inro.emme.data.extra_attribute.delete_extra_attribute")
+        NAMESPACE="inro.emme.data.extra_attribute.delete_extra_attribute"
         process = self.m.tool(NAMESPACE)
         process(name)
 
@@ -214,6 +207,8 @@ class EmmeProject:
         for name, value in kwargs.items():
             if name == 'selections_by_link':
                 spec['selections']['link'] = value
+            elif name == 'selections_by_node':
+                spec['selections']['node'] = value
             else:
                 spec[name] = value
         NAMESPACE = "inro.emme.network_calculation.network_calculator"
@@ -221,7 +216,7 @@ class EmmeProject:
         self.network_calc_result = network_calc(spec)
 
     def process_function_file(self, file_name):
-        NAMESPACE=("inro.emme.data.function.function_transaction" )
+        NAMESPACE="inro.emme.data.function.function_transaction"
         process = self.m.tool(NAMESPACE)
         process(file_name ,throw_on_error = True)
 
@@ -374,8 +369,6 @@ class EmmeProject:
          str_expression = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
                                     + @h3tl2 + @h3tl3 + @h3nt1 + @h3nt2 + @h3nt3 + @lttrk + @mveh + @hveh + @bveh'
          self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
-
-        
 
 def json_to_dictionary(dict_name):
 
