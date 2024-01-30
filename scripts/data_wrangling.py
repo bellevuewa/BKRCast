@@ -24,10 +24,12 @@ import random
 import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"inputs", "skim_params"))
 from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
 from accessibility.accessibility_configuration import *
+import skim_templates as emme_specs
 import input_configuration
 import emme_configuration
 import pandas as pd
@@ -197,22 +199,14 @@ def copy_large_inputs():
     dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
     print('  bikes..')
     dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
-    print('  supplemental..')
-    dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
+    #print('  supplemental..')
+    #dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
     dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
     dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
     print('  park and ride capacity..')
     dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
-#@timed
-#def copy_seed_supplemental_trips():
-#    print('Copying seed supplemental trips')
-#    if not os.path.exists('outputs/supplemental'):
-#       os.makedirs('outputs/supplemental')
-#    for filename in glob.glob(os.path.join(project_folder+'/inputs/supplemental/trips', '*.*')):
-#        shutil.copy(filename, project_folder+'/outputs/supplemental')
-    
 @timed
 def rename_network_outs(iter):
     for summary_name in network_summary_files:
@@ -267,6 +261,129 @@ def check_inputs():
         for file in missing_list:
             logger.info('- ' + file)
             print(file)
+
+def update_skim_parameters():
+    """
+    Generate skim parameter spec files from templates.
+    """
+
+    # Based on toggles from input_configuration, remove modes if not used
+    # from user_class and demand matrix list in skim_parameters input folder.
+
+    keywords = []
+    # AV is not implemented yet
+    #if not include_av:
+    #    keywords.append('av_')
+    if not include_tnc:  ##########################################################################################
+        keywords.append('tnc_')
+    # delivery truck not included (Light truck)
+    #if not include_delivery:
+    #    keywords.append('delivery_')
+
+    root_path = os.path.join(os.getcwd(),r'inputs/skim_params')
+
+    # Remove unused modes from demand_matrix_dictionary
+    with open(os.path.join(root_path, 'templates/demand_matrix_dictionary_template.json')) as template_file, open(os.path.join(root_path, 'demand_matrix_dictionary.json'), 'w') as newfile: 
+        for line in template_file:
+            if not any(keyword in line for keyword in keywords):
+                newfile.write(line)
+
+    user_class = json.load(open(os.path.join(root_path, 'templates/user_classes_template.json')))
+    rows_to_be_removed = []
+    # never modify a list while enumerating it through. Keep the indexes first.
+    for idx, row in enumerate(user_class['Highway']):
+        for keyword in keywords:
+            if keyword in row['Name']:
+                rows_to_be_removed.append(idx)
+
+    # instead of deleting what we do not need, update the list with what we need
+    user_class['Highway'] = [row for idx, row in enumerate(user_class['Highway']) if idx not in rows_to_be_removed]
+
+    with open(os.path.join(root_path, 'user_classes.json'), 'w') as file:
+        file.write(json.dumps(user_class, indent = 4))
+
+    ## SC will create a few json files for skimming, because SC will run TNC trip tables explicitly on network and save TNC
+    #  link volumes in extra attributes. At this moment, we do not see the need for such detailed information. 
+    # So we decide to run the TNC assignment combined with regular auto mode. 
+    # therefore, origional json files for skimming still work for this purpose.
+
+
+def update_daysim_modes():
+    """
+    Apply settings in input_configuration to daysim_configuration and roster files:
+
+    include_tnc: PaidRideShareModeIsAvailable,
+    include_av: AV_IncludeAutoTypeChoice,
+    tnc_av: AV_PaidRideShareModeUsesAVs 
+    """
+
+    # Store values from input_configuration in a dictionary:
+    # av_settings = ['include_av', 'include_tnc', 'tnc_av']
+    #av_settings = ['include_tnc']
+
+    #daysim_dict = {
+    #    'AV_IncludeAutoTypeChoice': 'include_av',
+    #    'AV_UseSeparateAVSkimMatricesByOccupancy': 'include_av',    # Must be updated or causes issues with roster 
+    #    'PaidRideShareModeIsAvailable':'include_tnc',
+    #    'AV_PaidRideShareModeUsesAVs': 'tnc_av',
+    #}
+
+    #daysim_dict = {
+    #    'PaidRideShareModeIsAvailable':'include_tnc'
+    #}
+
+    #mode_config_dict = {}    
+    #for setting in av_settings:
+    #    mode_config_dict[setting] = globals()[setting]
+  
+    ## Copy temp file to use 
+    #daysim_config_path = os.path.join(os.getcwd(),'daysim_configuration_template.properties')
+    #new_file_path = os.path.join(os.getcwd(),'daysim_configuration_template_tmp.properties')
+
+    #with open(daysim_config_path) as template_file, open(new_file_path, 'w') as newfile:
+    #    for line in template_file:
+    #        if any(value in line for value in daysim_dict.keys()):
+    #            var = line.split(" = ")[0]
+    #            line = var + " = " + str(mode_config_dict[daysim_dict[var]]).lower() + "\n"
+    #            newfile.write(line)
+    #        else:
+    #            newfile.write(line)
+
+    ## Replace the original daysim_configuration_template file with the updated version
+    #try:
+    #    os.remove(daysim_config_path)
+    #    os.rename(new_file_path, daysim_config_path)
+    #except OSError as e:  ## if failed, report it back to the user ##
+    #    print('Error: ' + e.filename + ' - ' + e.strerror)
+
+    # Write Daysim roster and roster-combination files from template
+    # Exclude AV alternatives if not included in scenario
+
+    df = pd.read_csv(r'inputs/model/templates/bkr_roster_template.csv')
+    # AV is not implemented yet.
+    #if not include_av:     # Remove AV from mode list
+    #    df = df[-df['mode'].isin(['av1','av2','av3'])]
+    if not include_tnc_to_transit:    # remove TNC-to-transit from potential path types
+        df = df[-df['path-type'].isin(filter(lambda x: 'tnc' in x, df['path-type'].unique()))]
+    #if not include_knr_to_transit:
+    #    df = df[-df['path-type'].isin(filter(lambda x: 'knr' in x, df['path-type'].unique()))]
+    df.fillna('null').to_csv(r'inputs/model/bkr_roster.csv',index=False)
+
+    df = pd.read_csv(r'inputs/model/templates/bkr-roster.combinations_template.csv', index_col='#')
+    # AV is not implemented yet
+    #if not include_av:
+    #    df[['av1','av2','av3']] = 'FALSE'
+    if not include_tnc:
+        df = df[~df.index.str.contains('-tnc')]
+
+    # Adjust KNR path types
+    # KNR is not implemented yet
+    #if not include_knr_to_transit:
+    #    df.loc[['ferry-knr'],'transit'] = 'FALSE'
+    if include_tnc and (not include_tnc_to_transit):
+        df.loc[['local-bus-tnc','light-rail-tnc'],'transit'] = 'FALSE'
+    df.to_csv(r'inputs/model/bkr-roster.combinations.csv')
+
 
 def h5_to_df(h5_file, group_name):
     """
@@ -329,3 +446,13 @@ def get_current_branch():
             return None
     else:
         return os.path.basename(branch_match) 
+
+def update_taz_accessibility_file(horizon_year):
+    df = pd.read_csv(r'inputs/model/templates/TAZIndex_template.txt', sep ='\t')
+    if int(horizon_year) > 2023:
+        taz_subarea_df = pd.read_csv(r'inputs/subarea_definition/TAZ_subarea.csv')
+        df = df.merge(taz_subarea_df[['BKRCastTAZ', 'Jurisdiction']], left_on = 'Zone_id', right_on = 'BKRCastTAZ', how = 'left')
+        df.loc[df['Jurisdiction'] == 'BELLEVUE', 'Dest_eligible'] = 1
+        df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)   
+    
+    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')                                             

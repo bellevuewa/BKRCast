@@ -34,6 +34,8 @@ from shutil import copy2 as shcopy
 from distutils import dir_util
 import re
 import logging
+
+from numpy import isin
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
@@ -49,16 +51,6 @@ from data_wrangling import *
 @timed
 def accessibility_calcs():
     copy_accessibility_files()
-
-    print('adding military jobs to regular jobs')
-    print('adding JBLM workers to external workers')
-    print('adjusting non-work externals')
-    print('creating ixxi file for Daysim')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
-    if returncode != 0:
-        print('Military Job loading failed')
-        sys.exit(1)
-    print('military jobs loaded')
 
     if run_update_parking:
         if base_year == model_year:
@@ -123,15 +115,22 @@ def modify_config(config_vals):
      sys.exit(1)
     
 @timed
-def build_shadow_only(iter):
+def build_shadow_only(include_tnc_mode):
      for shad_iter in range(0, len(shadow_work)):
-        modify_config([("$SHADOW_PRICE", "true"),("$SAMPLE",shadow_work[shad_iter]),("$RUN_ALL", "false")])
+        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
+        #use operating cost 0.36 after 2044, otherwise 0.20.
+        if int(model_year) >= 2044:
+            daysim_config_update.append(("$OP_COST", 0.36))
+        else:
+            daysim_config_update.append(("$OP_COST", 0.20))
+        modify_config(daysim_config_update)
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
 
         if returncode != 0:
+            logger.info('Shadow pricing crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
+        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
         shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
@@ -155,15 +154,18 @@ def run_truck_supplemental(iteration):
         if iteration == 0:
             returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
             if returncode != 0:
+                logger.info('Supplemental trip generation crashed unexpectedly. The return code is', str(returncode))
                 sys.exit(1)
 
         #run distribution
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
         if returncode != 0:
+            logger.info('Distribute_non_work_ixxi.py crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
 
         returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
         if returncode != 0:
+            logger.info('Airport model crashed unexpectedly. The return code is ', str(returncode))
             sys.exit(1)
 
 
@@ -183,10 +185,10 @@ def daysim_assignment(iteration):
 
          #run daysim
          returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-         logger.info("End of %s iteration of Daysim", str(iteration))
          if returncode != 0:
-             #send_error_email(recipients, returncode)
+             logger.info("daysim crashed unexpectedly. The return code is ", str(returncode))
              sys.exit(1)
+         logger.info("End of %s iteration of Daysim", str(iteration))
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
      run_truck_supplemental(iteration)
@@ -196,13 +198,14 @@ def daysim_assignment(iteration):
          logger.info("Start of %s iteration of Skims and Paths", str(iteration))
          returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
-         logger.info("End of %s iteration of Skims and Paths", str(iteration))
-         print('return code from skims and paths is ' + str(returncode))
          if returncode != 0:
+            logger.info('Skims crashed unexpectedly. The return code from skims and paths is ', str(returncode))
             sys.exit(1)
+         logger.info("End of %s iteration of Skims and Paths", str(iteration))
 
          returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
          if returncode != 0:
+            logger.info('Bike model crashed unexpectedly. The return code from skims and paths is ', str(returncode))
             sys.exit(1)
 
 '''
@@ -320,6 +323,17 @@ def run_all_summaries():
    if run_truck_summary:
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
+def clean_output_folder():
+    folders_kept = ['landuse'] # subfolders inside outputs
+    list_directory = os.listdir('outputs')
+    for item in list_directory:
+        full_path = os.path.join(project_folder, 'outputs', item)
+        if os.path.isfile(full_path):
+            os.remove(full_path)
+        elif os.path.isdir(full_path) and (not(item in folders_kept)):
+            shutil.rmtree(full_path)
+                
+                                
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
@@ -337,13 +351,21 @@ def main():
     if not os.path.exists('outputs'):
         os.makedirs('outputs')
 
+    if include_tnc and run_daysim:
+        include_tnc_mode = 'true'
+    else:
+        include_tnc_mode = 'false'
+    
+    # delete everything inside outputs/ folder, except accessibility outputs which resides in landuse subfolder.
+    clean_output_folder()    
     build_output_dirs()
+    update_daysim_modes()
+    update_skim_parameters()
+    update_taz_accessibility_file(model_year)    
+
     if run_copy_input_files:
         copy_large_inputs()
     
-    #if run_copy_seed_supplemental_trips:
-    #    copy_seed_supplemental_trips()
-
     if run_copy_daysim_code:
         copy_daysim_code()
 
@@ -364,12 +386,18 @@ def main():
         if returncode != 0:
            sys.exit(1)
 
+    print('adding military jobs to regular jobs')
+    print('adding JBLM workers to external workers')
+    print('adjusting non-work externals')
+    print('creating ixxi file for Daysim')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
+    if returncode != 0:
+        print('Military Job loading failed')
+        sys.exit(1)
+    print('military jobs loaded')
+
     if run_accessibility_calcs:
         accessibility_calcs()
-
-    if run_accessibility_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/parcel_summary.py'])
-
 
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
@@ -388,7 +416,7 @@ def main():
         #run daysim popsampler
         if run_daysim_popsampler:
             daysim_popsampler(sampling_option)
-       
+        
         for iteration in range(len(pop_sample)):
             print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))
@@ -408,18 +436,36 @@ def main():
                         sys.exit(1)
 
                 # Set up your Daysim Configration
-                modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
-
+                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                if int(model_year) >= 2044:
+                    daysim_config_update.append(("$OP_COST", 0.36))
+                else:
+                    daysim_config_update.append(("$OP_COST", 0.20))
+                modify_config(daysim_config_update)
             else:
                 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
                 # 3 daysim iterations
-                build_shadow_only(iteration)             
+                build_shadow_only(include_tnc_mode)
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    modify_config([("$SHADOW_PRICE" ,"false"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                    if int(model_year) >= 2044:
+                        daysim_config_update.append(("$OP_COST", 0.36))
+                    else:
+                        daysim_config_update.append(("$OP_COST", 0.20))
+                    modify_config(daysim_config_update)
                 else:
-                    modify_config([("$SHADOW_PRICE" ,"true"),("$SAMPLE",pop_sample[iteration]),("$RUN_ALL", "true")])
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
+                    if int(model_year) >= 2044:
+                        daysim_config_update.append(("$OP_COST", 0.36))
+                    else:
+                        daysim_config_update.append(("$OP_COST", 0.20))
+
+                    modify_config(daysim_config_update)
             
             ## Run Skimming and/or Daysim
             daysim_assignment(iteration)

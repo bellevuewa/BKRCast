@@ -95,14 +95,14 @@ def main():
     ###########################################################
     # PSRC Zone System for TAZ joining
     ###########################################################
-    df_psrc = pd.read_csv('inputs/supplemental/BKR_zones.csv')
+    df_psrc = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'BKR_zones.csv'))
     df_psrc['BKRCastTAZ'] = df_psrc['BKRCastTAZ'].astype(int)
     df_psrc = df_psrc.loc[:,['BKRCastTAZ','county','jblm','external']]
 
     ###########################################################
     # Auto External Stations
     ###########################################################
-    df_external = pd.read_csv('inputs/supplemental/auto_externals_bkr.csv')
+    df_external = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'auto_externals_bkr.csv'))
     df_external['BKRCastTAZ'] = df_external['BKRCastTAZ'].astype(int)
     df_external = df_external.loc[:,['BKRCastTAZ','year'] + trip_productions + trip_attractions]
     data_year = int(df_external['year'][0])
@@ -126,7 +126,7 @@ def main():
     ###########################################################
     # Enlisted Personnel
     ###########################################################
-    df_enlisted = pd.read_csv('inputs/supplemental/enlisted_personnel_bkr.csv')
+    df_enlisted = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'enlisted_personnel_bkr.csv'))
 
 
     # Select data for model year only
@@ -137,7 +137,7 @@ def main():
     enlisted_taz['BKRCastTAZ'] = enlisted_taz['BKRCastTAZ'].astype('int')
 
     # Read in rates and calculate Enlisted Personnel related trips by Purpose
-    df_rates = pd.read_csv('inputs/supplemental/trip_rates.csv')
+    df_rates = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'trip_rates.csv'))
 
     df_enlisted_rates = df_rates[df_rates['group'] == 'enlisted']
   
@@ -154,7 +154,7 @@ def main():
     ###########################################################
     # Group Quarters
     ###########################################################
-    total_gq_df = pd.read_csv('inputs/supplemental/group_quarters_bkr.csv')
+    total_gq_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'group_quarters_bkr.csv'))
     total_gq_df[['dorm_share','military_share','other_share']] = total_gq_df[['dorm_share','military_share','other_share']].astype('float')
 
     # Calculate the Inputs for the Year of the model
@@ -198,7 +198,7 @@ def main():
     ###########################################################
     ### Joint Base Lewis McChord
     ###########################################################
-    jblm_df = pd.read_csv('inputs/supplemental/jblm_trips_bkr.csv')
+    jblm_df = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'jblm_trips_bkr.csv'))
     jblm_matrix = int(jblm_df['matrix_id'][0])
     data_year = int(jblm_df['year'][0])
 
@@ -266,7 +266,7 @@ def main():
     ###########################################################
     # Heavy Truck Productions, grown from ATRI data
     ###########################################################
-    heavy_trucks = pd.read_csv('inputs/supplemental/heavy_trucks_bkr.csv')
+    heavy_trucks = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'heavy_trucks_bkr.csv'))
     heavy_trucks = heavy_trucks[['BKRCastTAZ','year','htkpro','htkatt']]
 
     # Calculate the Inputs for the Year of the model
@@ -300,7 +300,7 @@ def main():
     ###########################################################
     # SeaTac Airport enplanment value up to year of 2050
     ############################################################
-    df_seatac = pd.read_csv('inputs/supplemental/seatac_bkr.csv')
+    df_seatac = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'seatac_bkr.csv'))
     seatac_enplanements = df_seatac[df_seatac['year'] == int(bkr_config.model_year)]['enplanements'].values[0]
 
     ###########################################################
@@ -308,7 +308,7 @@ def main():
     ###########################################################
 
     # Special generator trips are assumed of type HBO
-    df_special = pd.read_csv('inputs/supplemental/special_generators_bkr.csv')
+    df_special = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'special_generators_bkr.csv'))
 
     # Calculate the Inputs for the Year of the model
     max_input_year = df_special['year'].max()
@@ -454,7 +454,7 @@ def main():
     df_parcels['dtkpro'] = 0
 
     # Trip Attractions based on employment categories
-    df_job_attraction_rates = pd.read_csv('inputs/supplemental/job_attractions.csv')
+    df_job_attraction_rates = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'job_attractions.csv'))
     df_job_attraction_rates.set_index('employment-type', inplace=True)
     attraction_purposes = trip_attractions + ['cvhatt','mtkatt','dtkatt']
 
@@ -464,7 +464,7 @@ def main():
             df_parcels[purpose] = df_parcels[purpose] + (df_parcels[jobs] * df_job_attraction_rates.loc[jobs,purpose])
 
     # Trip Productions based on employment categories
-    df_job_production_rates = pd.read_csv('inputs/supplemental/job_productions.csv')
+    df_job_production_rates = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'job_productions.csv'))
     df_job_production_rates.set_index('employment-type', inplace=True)
     productions_purposes = trip_productions + ['cvhpro','mtkpro','dtkpro']
 
@@ -529,7 +529,7 @@ def main():
     df_taz.to_csv(supplemental_loc+'/5_add_externals.csv',index=True)
 
     #Soundcast uses pre-determined HSP trips to meet external counts. Need to adjust these here for non-work-ixxi:
-    external_trip_table =  pd.read_csv('inputs/supplemental/externals_unadjusted_bkr.csv') 
+    external_trip_table =  pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'externals_unadjusted_bkr.csv'))
     external_trip_table.set_index('BKRCastTAZ', inplace = True)
     external_trip_table = external_trip_table[['hsppro', 'hspatt']]
     df_taz.update(external_trip_table)
@@ -544,7 +544,7 @@ def main():
         df_taz.loc[df_taz['jblm'] == 1, purposes] = 0
 
     # Adjust the taz level data based on trip rate adjustments
-    df_rate_adjustments = pd.read_csv('inputs/supplemental/rate_adjustments.csv')
+    df_rate_adjustments = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'rate_adjustments.csv'))
     df_rate_adjustments.set_index('trip-purpose', inplace=True)
     all_purposes = trip_productions + ['cvhpro','mtkpro','htkpro'] + trip_attractions + ['cvhatt','mtkatt','htkatt']
 

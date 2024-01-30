@@ -1,16 +1,19 @@
 import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as app
 import os, sys
+from pathlib2 import Path
 import numpy as np
 import pandas as pd
+import json
+import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
 from emme_configuration import *
-import json
-import shutil
+
 from distutils import dir_util
 from EmmeProject import *
+from data_wrangling import *
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -18,9 +21,15 @@ from EmmeProject import *
 # 11/16/2022
 # export daily network to shape file.
 
+# 5/28/2023
+# export daily transit boarding by transit line to external file
+# create LINK extra attribute @voltransit_daily
+# Create node extra attribute @daily_boarding and @daily_alighting at each transit stop
+
 print(os.getcwd())
 
 daily_network_fname = 'outputs/network/daily_network_results.csv'
+daily_transit_boarding_fname = 'outputs/network/daily_boarding_by_transit_line.csv'
 keep_atts = ['@type']
 def json_to_dictionary(dict_name):
 
@@ -76,6 +85,7 @@ def merge_networks(master_network, merge_network):
             new_node = master_network.create_regular_node(node.id)
             new_node.x = node.x
             new_node.y = node.y
+            new_node.is_intersection = node.is_intersection
       
     for link in merge_network.links():
         if not master_network.link(link.i_node, link.j_node):
@@ -125,6 +135,10 @@ def main():
     daily_scenario = daily_emmebank.scenario(1002)
     daily_network = daily_scenario.get_network()
 
+    # if demand_matrix_dictionary.json is missing create one
+    demand_matrix_dict_file = Path('inputs/skim_params/demand_matrix_dictionary.json')
+    if demand_matrix_dict_file.is_file() == False:    
+        update_skim_parameters()        
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
     uniqueMatrices = set(matrix_dict.values())
 
@@ -135,7 +149,8 @@ def main():
        
     ################ create new matrices in daily emmebank for trip tables only ##############
 
-    for unique_name in uniqueMatrices:
+    for unique_name in sorted(uniqueMatrices):
+        print(unique_name)
         daily_matrix = daily_emmebank.create_matrix(daily_emmebank.available_matrix_identifier('FULL')) #'FULL' means the full-type of trip table
         daily_matrix.name = unique_name
 
@@ -181,41 +196,120 @@ def main():
         if extra_attribute not in keep_atts:
             daily_scenario.delete_extra_attribute(extra_attribute)
     daily_volume_attr = daily_scenario.create_extra_attribute('LINK', '@tveh')
+    daily_volume_attr.description = 'daily auto volume'
     daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
+    daily_bike_vol_attr.description = 'daily bike volume'
     daily_network = daily_scenario.get_network()
 
+    segments = []
+    templates = []
     for tod, time_period in sound_cast_net_dict.items():
         path = os.path.join('Banks', tod, 'emmebank')
         print(path)
         bank = _emmebank.Emmebank(path)
         scenario = bank.scenario(1002)
-        network = scenario.get_network()
         if daily_scenario.extra_attribute('@v' + tod[:4]):
             daily_scenario.delete_extra_attribute('@v' + tod[:4])
         if daily_scenario.extra_attribute('@bvol' + tod[:4]):
             daily_scenario.delete_extra_attribuet('@bvol' + tod[:4])
-        if daily_scenario.extra_attribute('@bvoldaily'):
-            daily_scenario.delete_extra_attribute('@bvoldaily')
+        if daily_scenario.extra_attribute('@tv' + tod[:4]):
+            daily_scenario.delete_extra_attribute('@tv' + tod[:4])
 
+        # copy auto volume in each tod to daily bank
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod[:4])
+        attr.description = 'auto volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@tveh'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        # copy transit volume (on link) in each tod to daily bank
+        attr = daily_scenario.create_extra_attribute('LINK', '@tv' + tod[:4])
+        attr.description = 'transit volume on link ' + tod
+        if scenario.extra_attribute('@voltr_l'):
+            scenario.delete_extra_attribute('@voltr_l')
+
+        # calculate transit volume on each link in each tod, by looping through all transit segments on each link
+        # be aware that create_attribute() only creates an attribute in memory. 
+        network = scenario.get_network()
+        network.create_attribute('LINK', 'voltr_l', default_value = 0)
+        for link in network.links():
+            sum_voltr = 0
+            for seg in link.segments():
+                sum_voltr += seg.transit_volume
+            link['voltr_l'] = sum_voltr
+        values = network.get_attribute_values('LINK', ['voltr_l'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # create bike volume for each TOD
         attr = daily_scenario.create_extra_attribute('LINK', '@bvol' + tod[:4])
+        attr.description = 'bike volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@bvol'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
+        # load transit segment boarding into dataframe
+        # unlike auto network in daily bank, we do not have a daily transit network. Can only export daily boarding 
+        # in dataframe.
+        segment_df = get_transit_segment_data(scenario)
+        segment_df.rename(columns =  {'transit_boardings':'board_'+ tod}, inplace = True)
+        segments.append(segment_df[['id', 'board_'+ tod]])
+        templates.append(segment_df[['id', 'line']])
 
-    daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
+        ## copy boarding alighting at transit stop in each tod to daily bank.
+        # calculate daily boarding/alighting at each stop.
+        # to be done.
+        attr = daily_scenario.create_extra_attribute('NODE', '@board_' + tod)
+        attr.description = 'boardings at transit stop ' + tod
+        values = scenario.get_attribute_values('NODE', ['initial_boardings'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@alight_'+tod)
+        attr.description = 'alightings at transit stop ' + tod
+        values = scenario.get_attribute_values('NODE', ['final_alightings'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+    # assemble transit segment dataframe by TOD in one dataframe
+    # calculate daily boarding by transit line
+    # export the dataframe to an external file.
+    assembled_segment_df = pd.concat(templates)
+    assembled_segment_df = assembled_segment_df.drop_duplicates(subset = ['id'])
+    for df in segments:
+        assembled_segment_df = assembled_segment_df.merge(df, on = 'id', how = 'left')
+    
+    transit_line_df = assembled_segment_df.groupby('line').sum()
+    transit_line_df['daily_boarding'] = 0
+    for tod in load_transit_tod:
+        transit_line_df['daily_boarding'] += transit_line_df['board_' + tod]
+        transit_line_df['board_' + tod] = transit_line_df['board_' + tod].astype(int)
+
+    transit_line_df['daily_boarding'] = transit_line_df['daily_boarding'].astype(int)
+    transit_line_df.to_csv(daily_transit_boarding_fname)
+    print(f"Daily transit boarding is exported to {daily_transit_boarding_fname}")
+
+    attr = daily_scenario.create_extra_attribute('LINK', '@voltransit_daily')
+    attr.description = 'daily transit volume'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_boarding')
+    attr.description = 'daily boarding at transit stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_alighting')
+    attr.description = 'daily alighting at transit stop'
+
     daily_network = daily_scenario.get_network()
-    attr_list = ['@tv' + x for x in tods]
-    attr_list.extend(['@bvol' + x for x in tods])
 
+    attr_list = ['@v' + x for x in tods]
+    attr_list.extend(['@bvol' + x for x in tods])
+    attr_list.extend(['@tv' + x for x in tods])
+
+    # calculate daily volumes: auto, bike, and transit
     for link in daily_network.links():
         for item in tods:
             link['@tveh'] = link['@tveh'] + link['@v' + item[:4]]
             link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item[:4]]
+            link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item[:4]]
+
+    # calculate daily boarding and alightings at transit stops
+    for node in daily_network.nodes():
+        for tod in tods:
+            node['@daily_boarding'] += node['@board_' + tod]
+            node['@daily_alighting'] += node['@alight_' + tod]
+
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 
     print('The following extra attributes are updated: ')
@@ -227,6 +321,29 @@ def main():
     my_project = EmmeProject('projects/daily/daily.emp')
 
     export_link_values(my_project)
+
+def get_transit_segment_data(scenario):
+    network = scenario.get_network()
+    segment_data = {'i_node':[], 'j_node':[]}
+    segment_data.update({k: [] for k in network.attributes('TRANSIT_SEGMENT')})
+    segment_data.update({'id': [], 'line': []})
+
+    for segment in network.transit_segments():
+        segment_data['i_node'].append(segment.i_node.id)
+        if segment.j_node != None:
+            segment_data['j_node'].append(segment.j_node.id)
+        else:
+            segment_data['j_node'].append(None)
+
+        for k in network.attributes('TRANSIT_SEGMENT'):
+            segment_data[k].append(segment[k])
+
+        segment_data['id'].append(segment.id)
+        segment_data['line'].append(segment.line.id)
+
+    segment_df = pd.DataFrame(segment_data)
+
+    return segment_df
 
 
 def create_daily_project_folder():

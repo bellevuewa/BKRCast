@@ -1,4 +1,5 @@
 
+from ssl import Purpose
 from typing import overload
 import inro.emme.desktop.app as app
 import inro.modeller as _m
@@ -12,6 +13,7 @@ import os,sys
 import h5py
 from multiprocessing import Pool
 from functools import partial
+from functools import reduce
 import logging
 import getopt
 import shutil
@@ -133,7 +135,8 @@ def define_matrices(my_project):
 
     for x in range (0, len(my_skim_matrix_designation)):
             for y in range (0, len(matrix_dict["Highway"])):
-                my_project.create_matrix(matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x], 
+                if 'tnc_' not in matrix_dict["Highway"][y]["Name"]:
+                    my_project.create_matrix(matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x], 
                                           matrix_dict["Highway"][y]["Description"], "FULL")
                    
     #Create Generalized Cost Skims matrices for only for tod in generalized_cost_tod
@@ -245,7 +248,8 @@ def intitial_extra_attributes(my_project):
 
     # Create the link extra attributes to store volume results
     for x in range (0, len(matrix_dict["Highway"])):
-        my_project.create_extra_attribute("LINK", "@"+matrix_dict["Highway"][x]["Name"], matrix_dict["Highway"][x]["Description"], True)
+        if 'tnc_' not in matrix_dict["Highway"][x]["Name"]:
+            my_project.create_extra_attribute("LINK", "@"+matrix_dict["Highway"][x]["Name"], matrix_dict["Highway"][x]["Description"], True)
                      
 
     # Create the link extra attributes to store the auto equivalent of bus vehicles
@@ -273,7 +277,20 @@ def traffic_assignment(my_project, max_iteration):
     #Load in the necessary Dictionaries
     assignment_specification = json_to_dictionary("general_path_based_assignment")
     my_user_classes= json_to_dictionary("user_classes")
-
+    tnc_auto_ar = json_to_dictionary("tnc_auto_map")    
+    tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
+    
+    # Add TNC trips to Auto trips  if include_tnc is on
+    if include_tnc:
+        logging.debug('Adding TNC trips to Auto trips')
+        for tnc_mat_name, auto_mat_name in tnc_auto_map.items():
+            tnc_mat_id = my_project.bank.matrix(tnc_mat_name).id
+            auto_mat_id = my_project.bank.matrix(auto_mat_name).id
+            my_project.matrix_calculator(result = auto_mat_id,
+                                         expression = tnc_mat_id + ' + ' + auto_mat_id)
+        logging.debug('Finished adding TNC trips to Auto trips')
+    
+    
     # Modify the Assignment Specifications for the Closure Criteria and Perception Factors
     mod_assign = assignment_specification
     mod_assign["stopping_criteria"]["max_iterations"]= max_iteration
@@ -282,7 +299,7 @@ def traffic_assignment(my_project, max_iteration):
     #mod_assign["stopping_criteria"]["normalized_gap"]= normalized_gap
 
     for x in range (0, len(mod_assign["classes"])):
-        vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)
+        vot = ((1/float(my_user_classes["Highway"][x]["Value of Time"]))*60)    # reciprocol of VOT converted to cents/minute.
         mod_assign["classes"][x]["generalized_cost"]["perception_factor"] = vot
         mod_assign["classes"][x]["generalized_cost"]["link_costs"] = my_user_classes["Highway"][x]["Toll"]
         mod_assign["classes"][x]["demand"] = "mf"+ my_user_classes["Highway"][x]["Name"]
@@ -575,20 +592,21 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     for x in range (0, len(my_skim_matrix_designation)):
 
         for y in range (0, len(matrix_dict["Highway"])):
-            matrix_name= matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x]
-            if my_skim_matrix_designation[x] == 'c':
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 1, 99999)
-            elif my_skim_matrix_designation[x] == 'd':
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 100, 2000)
-            else:
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 100, 2000)  
-            #open old skim and average
-            print(matrix_name)
-            if average_skims:
-                matrix_value = average_matrices(np_old_matrices[matrix_name], matrix_value)
-            #delete old skim so new one can be written out to h5 container
-            my_store["Skims"].create_dataset(matrix_name, data=matrix_value.astype('uint16'),compression='gzip')
-            print(matrix_name +' was transferred to the HDF5 container.')
+            if 'tnc_' not in matrix_dict["Highway"][y]["Name"]:
+                matrix_name= matrix_dict["Highway"][y]["Name"]+my_skim_matrix_designation[x]
+                if my_skim_matrix_designation[x] == 'c':
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 1, 99999)
+                elif my_skim_matrix_designation[x] == 'd':
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 100, 2000)
+                else:
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_project.bank, 'uint16', 100, 2000)  
+                #open old skim and average
+                #print matrix_name
+                if average_skims:
+                    matrix_value = average_matrices(np_old_matrices[matrix_name], matrix_value)
+                #delete old skim so new one can be written out to h5 container
+                my_store["Skims"].create_dataset(matrix_name, data=matrix_value.astype('uint16'),compression='gzip')
+                print(matrix_name +' was transferred to the HDF5 container.')
 
     #transit skims
     if my_project.tod in transit_skim_tod:
@@ -660,58 +678,78 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     print('It took' + str(round((end_export_hdf5-start_export_hdf5)/60,2)) + ' minutes to export all skims to the HDF5 File.')
     logging.debug(text)
 
-def remove_additional_HBO_trips_during_biz_hours(trips_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
+def remove_additional_HBO_trips_during_biz_hours(trips_df, tours_df, normal_biz_hrs_start, normal_biz_hrs_end, converted_workers_filename, percent_trips_to_remove):
     purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
     trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
     trips_df['tripid'] = trips_df.reset_index().index
+    tours_df['pid'] = f"{tours_df['hhno']}_{tours_df['pno']}" 
+    tours_df['tourid'] = tours_df.reset_index().index
+        
     import pandas as pd
-    workers_df = pd.read_csv(converted_workers_filename)
+    print('loading files...')
+    # file for WHF is under the root folder.    
+    workers_df = pd.read_csv(os.path.join(converted_workers_filename))
     workers_df['pid']= workers_df['hhno'].astype('str') + '_' + workers_df['pno'].astype('str')
-
     tazs = workers_df['hhtaz'].unique()
+
+    purpose = [3, 4, 5, 7] # 3: escort, 4: personal biz; 5: shopping; 7:social
+    trips_df['pid'] = trips_df['hhno'].astype('str') + '_' + trips_df['pno'].astype('str') 
+    # id attribute has duplicated values so it cannot be used as index. Report this bug to RSG. need to create an index for trips_df
+    trips_df['tripid'] = trips_df.reset_index().index
+    tours_df['pid'] = tours_df['hhno'].astype('str') + '_' + tours_df['pno'].astype('str')
+    print(f'number of workers working from home: {workers_df.shape[0]}')
+
+    # find people who make errand trips when they work from home, these people will be stored in selected.    
     selected = pd.DataFrame()
     # these trips are one way trips starting from their home
     for taz in tazs:
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
-            selected_workers = workers.sample(frac = percent_trips_to_remove)
+            selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
             selected = selected.append(selected_workers)
 
-    selected_trips_df = pd.merge(trips_df, selected[['pid', 'hhparcel']], on = 'pid', how = 'inner')
-    selected_trips_df = selected_trips_df.loc[(selected_trips_df['deptm'] >= normal_biz_hrs_start) & (selected_trips_df['deptm'] < normal_biz_hrs_end) & (selected_trips_df['dpurp'].isin(purpose))]
-
-    trips_from = selected_trips_df.shape[0]
-    text = 'Trips to be removed: (from any location) ' + str(trips_from)
+    text = f'WFH workers wouldnt make errand tours during core biz hours: {selected.shape[0]}'
     print(text)
     logging.debug(text)
+            
+    selected_tours_df = pd.merge(tours_df, selected[['pid']], on = 'pid', how = 'inner')
+    selected_tours_df = selected_tours_df.loc[(selected_tours_df['tlvorig'] >= normal_biz_hrs_start) & (selected_tours_df['tlvorig'] < normal_biz_hrs_end) & (selected_tours_df['pdpurp'].isin(purpose))]   
+    updated_tours_df = tours_df[~tours_df['id'].isin(selected_tours_df['id'])].copy()
+    selected_tours_df.drop(columns = ['pid'], axis =1, inplace = True)
 
-    returntrips = pd.merge(trips_df, selected_trips_df[['pid', 'opcl', 'dpcl', 'hhparcel']], left_on = ['opcl','dpcl', 'pid'], right_on = ['dpcl', 'hhparcel', 'pid'], how = 'inner')
-    selected_trips_df = selected_trips_df.append(returntrips)
-    selected_trips_df.drop(['opcl_x','opcl_y','dpcl_x','dpcl_y'], axis = 1, inplace = True)
-    selected_trips_df.drop_duplicates()
-
-    text = 'Trips to be removed: (going back home) ' + str(selected_trips_df.shape[0] - trips_from)
+    text = f'Errand tours saved due to WFH {selected_tours_df.shape[0]}'
     print(text)
     logging.debug(text)
+            
+    updated_tours_df.drop(['pid'], axis = 1, inplace = True) 
+    updated_tours_df.to_csv(os.path.join(report_output_location, '_updated_tours_df.tsv'), index = False, sep = '\t')    
+    text = f'Total tours after adjustment: {updated_tours_df.shape[0]}'
+    logging.debug(text)    
 
-    summarize_trips(selected_trips_df)
-    # remove the selected trips from trips_df
-    trips_df = trips_df[~trips_df['tripid'].isin(selected_trips_df['tripid'])]
-    trips_df.drop(['tripid', 'pid'], axis = 1, inplace = True)
-    text = 'Total remaining trips after adjustment: ' + str(trips_df.shape[0])
-
-    updated_trip_name = os.path.join(report_output_location, '_updated_trips_df.tsv')
-    trips_df.to_csv(updated_trip_name, index = False, sep ='\t')
-    print(text)
+    selected_trips_df = trips_df.merge(selected_tours_df[['id']], left_on = 'tour_id', right_on = 'id')
+    text = f'Total trips saved due to WFH: {selected_trips_df.shape[0]}'
+    print(text)    
     logging.debug(text)
-    return trips_df
+        
+    updated_trips_df = trips_df[~trips_df['tripid'].isin(selected_trips_df['tripid'])].copy()
+    updated_trips_df.drop(columns = ['tripid', 'pid'], axis = 1, inplace = True)
+    updated_trips_df.to_csv(os.path.join(report_output_location, '_updated_trips_df.tsv'), index = False, sep = '\t')
+    text = f'Total trips after adjustment: {updated_trips_df.shape[0]}'
+    print(text)
+    logging.debug(text)    
 
-def summarize_trips(trips_df):
-    removed_filename = os.path.join(report_output_location, 'trips_to_be_removed.csv')
-    trips_df.to_csv(removed_filename, index = False)
-    filename = os.path.join(report_output_location, 'summary_removed_trips.txt')
+    summarize_trips(selected_trips_df, selected_tours_df)
+    return updated_trips_df
+
+def summarize_trips(trips_df, tours_df):
+    reduced_trip_filename = os.path.join(report_output_location, 'reduced_trips_due_to_WFH.csv')
+    reduced_tour_filename = os.path.join(report_output_location, 'reduced_tours_due_to_WFH.csv')   
     
-    subtotal_trips = trips_df['trexpfac'].count()
+    trips_df.to_csv(reduced_trip_filename, index = False)
+    tours_df.to_csv(reduced_tour_filename, index = False)    
+    filename = os.path.join(report_output_location, 'WFH_summary.txt')
+    
+    subtotal_trips = trips_df['trexpfac'].sum()
     trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp').sum()
     trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
     trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
@@ -723,15 +761,35 @@ def summarize_trips(trips_df):
     trips_by_purpose['share'] = trips_by_purpose['share'].map('{:.1%}'.format)
     trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
 
+    subtotal_tours = tours_df['toexpfac'].sum()
+    tours_by_purpose = tours_df[['pdpurp', 'tautodist', 'toexpfac']].groupby('pdpurp').sum()
+    tours_by_purpose['share'] = tours_by_purpose['toexpfac'] / subtotal_tours
+    tours_by_purpose['avg_auto_dist'] = tours_by_purpose['tautodist'] / tours_by_purpose['toexpfac']
+    tours_by_purpose.reset_index(inplace = True)
+    tours_by_purpose.replace({'pdpurp': tour_purpose_dict}, inplace = True)
+    tours_by_purpose.columns = ['purp', 'dist', 'tours', 'share', 'avgdist']            
+    tours_by_purpose['avgdist'] = tours_by_purpose['avgdist'].map('{:.1f}'.format)
+    tours_by_purpose['dist'] = tours_by_purpose['dist'].map('{:.1f}'.format)
+    tours_by_purpose['share'] = tours_by_purpose['share'].map('{:.1%}'.format)
+    tours_by_purpose['tours'] = tours_by_purpose['tours'].astype(int)
+   
     with open(filename, 'w') as f:
         f.write(str(datetime.datetime.now()) + '\n')
-        f.write('This is the summary of trips_to_be_removed.csv\n')
-        f.write('Total trips removed: ' + str(subtotal_trips))
+        f.write('This is the summary of reduced_trips_due_to_WFH.csv\n')
+        f.write('Total trips reduced: ' + str(subtotal_trips))
         f.write('\n')
-        f.write('Trip by Purpose\n')
+        f.write('Trip by purpose\n')
         f.write('%s' % trips_by_purpose)
-    print('Removed trips are saved in ' + removed_filename)
-    print('Summary is saved in ' + filename)
+
+        f.write('\n')
+        f.write('This is the summary of reduced_tours_due_to_WFH.csv\n')
+        f.write('Total tours reduced: ' + str(subtotal_tours)) 
+        f.write('\n')
+        f.write('Tours by purpose\n') 
+        f.write('%s' % tours_by_purpose)                                      
+    print(f'Reduced trips are saved in {reduced_trip_filename}')
+    print(f'Reduced tours are saved in {reduced_tour_filename}')    
+    print(f'Summary is saved in {filename}')
 
 def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     start_time = time.time()
@@ -761,8 +819,14 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
 
     #Read the Matrix File from the Dictionary File and Set Unique Matrix Names
     matrix_dict = text_to_dictionary('demand_matrix_dictionary')
-    uniqueMatrices = set(matrix_dict.values())
-
+    uniqueMatrices = set(matrix_dict.values())    
+    tnc_auto_ar = json_to_dictionary("tnc_auto_map")
+    
+    tnc_frac_assign = {tnc.get('Name'):tnc.get('FracToAssign') for tnc in tnc_auto_ar}
+    tnc_auto_map = {tnc.get('Name'):tnc.get('Auto') for tnc in tnc_auto_ar}
+    
+    # #Stores in the HDF5 Container to read or write to
+    # daysim_set = my_store['Trip']
 
     #Store arrays from Daysim/Trips Group into numpy arrays, indexed by TOD.
     #This means that only trip info for the current Time Period will be included in each array.
@@ -816,7 +880,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     # Create empty demand matrices for other modes without supplemental trips
     for matrix in list(uniqueMatrices):
         if matrix not in demand_matrices.keys():
-            demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
+            demand_matrix = np.zeros((zonesDim,zonesDim), np.float64)
             demand_matrices.update({matrix : demand_matrix})
 
     #Start going through each trip & assign it to the correct Matrix. Using Otaz, but array length should be same for all
@@ -834,7 +898,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     #some missing Os&Ds in seed trips!
                     if dictZoneLookup.has_key[otaz[x]] and dictZoneLookup.has_key[dtaz[x]]:
                         myOtaz = dictZoneLookup[otaz[x]]
-                        myDtaz = dictZoneLookupd[dtaz[x]]
+                        myDtaz = dictZoneLookup[dtaz[x]]
                         print(myOtaz, myDtaz) 
                         trips = np.asscalar(np.float32(trexpfac[x]))
                         trips = round(trips, 2)
@@ -864,7 +928,19 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     trips = np.asscalar(np.float32(trexpfac[x]))
                     trips = round(trips, 2)
                     demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
-  
+            if mode[x] == 9:
+                # Paid ride share
+                if dorp[x] > 10 and dorp[x] < 14:
+                    mat_name_tnc = matrix_dict[(int(dorp[x]+1),int(vot[x]),int(toll_path[x]))]
+                    myOtaz = dictZoneLookup[otaz[x]]
+                    myDtaz = dictZoneLookup[dtaz[x]]
+                    #add the trip, if it's not in a special generator location
+                    trips = np.asscalar(np.float32(trexpfac[x]))*tnc_frac_assign.get(mat_name_tnc)
+                    trips = round(trips, 2)
+                    text = 'TOD: {}, Mode Name: {}, Trips: {}'.format(my_project.tod, mat_name_tnc, trips)
+                    print(text) #Debugging statement by aditya.gore@rsginc.com
+                    logging.debug(text)
+                    demand_matrices[mat_name_tnc][myOtaz, myDtaz] = demand_matrices[mat_name_tnc][myOtaz, myDtaz] + trips
   #all in-memory numpy matrices populated, now write out to emme
     if survey_seed_trips:
         for matrix in demand_matrices.values():
@@ -874,8 +950,9 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
         matrix_id = my_project.bank.matrix(str(mat_name)).id
         np_array = demand_matrices[mat_name]
         emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')
-        print(mat_name)
-        print(np_array.shape)
+        text = 'TOD: {}, Name: {}, Shape: {}, Sum: {}'.format(my_project.tod, mat_name, np_array.shape, np_array.sum())
+        print(text) #Debugging statement by aditya.gore@rsginc.com
+        logging.debug(text)
         emme_matrix.from_numpy(np_array)
         my_project.bank.matrix(matrix_id).set_data(emme_matrix, my_project.current_scenario)
     
@@ -918,7 +995,7 @@ def load_supplemental_trips(my_project, matrix_name, zonesDim):
 
     tod = my_project.tod
     # Create empty array to fill with trips
-    demand_matrix = np.zeros((zonesDim,zonesDim), np.float16)
+    demand_matrix = np.zeros((zonesDim,zonesDim), np.float64)
     hdf_file = h5py.File(supplemental_loc + tod + '.h5', "r")
     # Call correct mode name by removing income class value when needed
     if matrix_name in ['svtl2', 'h2tl2', 'h3tl2']:
@@ -1210,35 +1287,36 @@ def feedback_check(emmebank_path_list):
         for y in range (0, len(matrix_dict["Highway"])):
            #trips
             matrix_name= matrix_dict["Highway"][y]["Name"]
-            matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
-            
-            trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
-            print('trips')
-            print(trips[563,547])
-            
-            #new skims
-            matrix_name = matrix_name + 't'
-            matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
-            new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
-            
-            print(matrix_name)
-            print('new_skim')
-            print(new_skim[563,547])
-            
-            #now old skims
-            old_skim = np.asmatrix(my_store['Skims'][matrix_name])
-            print('old_skim')
-            print(old_skim[563,547])
-          
-
-            change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
-            print('test value')
-            print(change_test)
-            text = tod + " " + str(change_test) + " " + matrix_name
-            logging.debug(text)
-            if change_test > STOP_THRESHOLD:
-                passed = False
-                break
+            if 'tnc_' not in matrix_name:
+                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
+                
+                trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                print('trips')
+                print(trips[563,547])
+                
+                #new skims
+                matrix_name = matrix_name + 't'
+                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
+                new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                
+                print(matrix_name)
+                print('new_skim')
+                print(new_skim[563,547])
+                
+                #now old skims
+                old_skim = np.asmatrix(my_store['Skims'][matrix_name])
+                print('old_skim')
+                print(old_skim[563,547])
+              
+    
+                change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
+                print('test value')
+                print(change_test)
+                text = tod + " " + str(change_test) + " " + matrix_name
+                logging.debug(text)
+                if change_test > STOP_THRESHOLD:
+                    passed = False
+                    break
 
         my_bank.dispose()
      return passed
@@ -1286,32 +1364,29 @@ def delete_matrices_parallel(project_name):
     delete_matrices(my_project, "DESTINATION")
 
 #save highway assignment results for sensitivity tests
-def store_assign_results(project_name, iteration):
+def store_assign_results(project_name, iteration, prefix=''):
     print('save assignment results')
     tod = project_name.tod
     network = project_name.current_scenario.get_network()
     
-    #empty list to save link data
+    link_attrs = network.attributes('LINK')
+    attr_ls = network.get_attribute_values('LINK', link_attrs)
     link_data = []
-    
-    #go through each link and store data
     for link in network.links():
-        #print(link.id)
-        link_data.append({'link_id': link.id,
-                          'length': link.length,
-                          'from_node': link.i_node,
-                          'to_node': link.j_node,
-                          'vol_auto': link.auto_volume,
-                          'time_auto': link.auto_time})
-    #convert to dataframe
+        dict = {}
+        dict['link_id'] = link.id
+        for attr in link_attrs:
+            val = link[attr]
+            dict[attr] = val
+        link_data.append(dict)
+
     link_data_df = pd.DataFrame(link_data, columns = link_data[0].keys())
-	
     #make a directory in outputs folder
     if not os.path.exists(os.path.join(project_folder, 'outputs', 'iter'+str(iteration))):
         os.makedirs(os.path.join(project_folder, 'outputs', 'iter'+str(iteration)))
     
     #write out hwy assignment results    
-    file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '.csv')
+    file_path = os.path.join(project_folder, 'outputs', 'iter'+str(iteration), 'hwyload_' + tod + '_'+prefix+ '.csv')
     link_data_df.to_csv(file_path, index = False)
 
 def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_file, iteration, free_flow_skims):
@@ -1354,13 +1429,11 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     
     ##run auto assignment/skims
     traffic_assignment(my_project, max_iteration)
-    
+    attribute_based_skims(my_project, "Time")    
     #save results
-    store_assign_results(my_project, iteration)
-   
-    attribute_based_skims(my_project, "Time")
+    store_assign_results(my_project, iteration, prefix = 'traffic_assignment')
 
-    ###bike/walk:
+    ###bike/walk: calculate skims
     bike_walk_assignment(my_project, 'false')
     
     ###Only skim for distance if in global distance_skim_tod list
@@ -1371,8 +1444,15 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     for toll_class in ['@toll1', '@toll2', '@toll3', '@trkc2', '@trkc3']:
         attribute_based_toll_cost_skims(my_project, toll_class)
     class_specific_volumes(my_project)
+    
+    #save results
+    store_assign_results(my_project, 'skim')
 
-    ###dispose emmebank
+    # update @mveh, @hveh, @bveh and @tveh.   They will be updated again in bike_model.py
+    my_project.create_extra_attributes(extra_attributes_dict)
+    my_project.calc_total_vehicles()
+
+    ##dispose emmebank
     my_project.closeDesktop()
     print(my_project.tod + " finished")
     end_of_run = time.time()
@@ -1488,9 +1568,10 @@ def main():
     if ((converted_workers_file_name) != ''):
         my_store = h5py.File(hdf5_file_path, 'r')
         wfh_adj_trips_df = data_wrangling.h5_to_df(my_store, 'Trip')
+        tours_df = data_wrangling.h5_to_df(my_store, 'Tour')        
         my_store.close()
         #remove some HB trips occuring during normal business hours that are made by wfh full-time workers (newly converted non-workers) 
-        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, time_start, time_end, converted_workers_file_name, percent)
+        wfh_adj_trips_df = remove_additional_HBO_trips_during_biz_hours(wfh_adj_trips_df, tours_df, time_start, time_end, converted_workers_file_name, percent)
         text = 'Some home based trips are adjusted for WFH estimate.'
         print(text)
         logging.debug(text)

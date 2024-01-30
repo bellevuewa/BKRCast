@@ -14,16 +14,11 @@
 
 import inro.emme.desktop.app as app
 import inro.modeller as _m
-import inro.emme.matrix as ematrix
-import inro.emme.database.matrix
-import inro.emme.database.emmebank as _eb
 import os, sys
-import re 
-import multiprocessing as mp
-import subprocess
+
 import pandas as pd
 import json
-from multiprocessing import Pool, pool
+#from multiprocessing import Pool, pool
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 from input_configuration import *
@@ -46,11 +41,13 @@ class EmmeProject:
         self.tod = self.bank.title
         self.current_scenario = list(self.bank.scenarios())[0]
         self.data_explorer = self.desktop.data_explorer()
+
     def network_counts_by_element(self, element):
         network = self.current_scenario.get_network()
         d = network.element_totals
         count = d[element]
         return count
+
     def change_active_database(self, database_name):
         for database in self.data_explorer.databases():
             #print database.title()
@@ -60,6 +57,7 @@ class EmmeProject:
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
                 self.current_scenario = list(self.bank.scenarios())[0]
+
     def process_modes(self, mode_file):
         NAMESPACE = "inro.emme.data.network.mode.mode_transaction"
         process_modes = self.m.tool(NAMESPACE)
@@ -294,16 +292,90 @@ class EmmeProject:
                 ret = {'VMT': VMT, 'VHT': VHT, 'VDT': VDT, 'TotalVol':total_vol, 'LinkLength':total_length}
 
         return ret
+    
+    def export_matrices(self, output_mat_file):
+        matrix_dict = text_to_dictionary('demand_matrix_dictionary')
+        uniqueMatrices = set(matrix_dict.values())
+        NAMESPACE = "inro.emme.data.matrix.export_to_omx"
+        export_to_omx = self.m.tool(NAMESPACE)
+        export_to_omx(uniqueMatrices, output_mat_file, append_to_file=False,
+                      scenario=self.current_scenario,
+                      omx_key = 'NAME')
 
     def closeDesktop(self):
         self.bank.dispose()
         self.desktop.close()
 
-    def import_attribute_values(self, file_path, scen_id, field_seperator, revert_on_error):
+    def import_attribute_values(self, file_path, revert_on_error):
         NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
         import_values = self.m.tool(NAMESPACE)
-        scen = self.bank.scenario(scen_id)
-        import_values(file_path, scenario = scen, field_separator = field_seperator, revert_on_error = revert_on_error)
+        import_values(file_path, scenario = self.current_scenario, column_labels = 'FROM_HEADER',revert_on_error = revert_on_error)
+
+    def emme_links_to_df(self):
+        '''
+            load emme links to dataframe. Add a few boolean variables to the links_df. These boolean variables are:
+                isAuto, isConnector, isOneWay, isTransit
+        '''
+        network = self.current_scenario.get_network()
+        network.create_attribute('NODE', 'numIn')
+        network.create_attribute('NODE', 'numOut')
+        for node in network.nodes():
+            node.numIn = len(list(node.incoming_links()))        
+            node.numOut = len(list(node.outgoing_links()))
+
+        network.create_attribute('LINK', 'isAuto')
+        network.create_attribute('LINK', 'isTransit')
+        network.create_attribute('LINK', 'isConnector')
+        network.create_attribute('LINK', 'isOneWay')
+        auto_mode = set([m for m in network.modes() if m.type == 'AUTO'])
+        transit_mode = set([m for m in network.modes() if m.type == 'TRANSIT'])
+
+        link_data = {'i_node':[], 'j_node': []}
+        link_data.update({k: [] for k in network.attributes('LINK')})
+        for link in network.links():
+            link.isAuto = bool(link.modes.intersection(auto_mode))
+            link.isTransit = bool(link.modes.intersection(transit_mode))
+            link.isConnector = (link.i_node.is_centroid or link.j_node.is_centroid)
+            link.isOneWay = network.link(link.j_node, link.i_node) is None
+
+            for k in network.attributes('LINK'):
+                link_data[k].append(link[k])
+
+            link_data['i_node'].append(link.i_node.number)
+            link_data['j_node'].append(link.j_node.number)
+        links_df = pd.DataFrame(link_data)
+
+        return links_df
+
+    def set_primary_scenario(self, scen_id):
+        scen = self.data_explorer.scenario_by_number(scen_id)
+        if scen != None:
+            self.data_explorer.replace_parimary_scenario(scen)
+
+    def create_extra_attributes(self, attr_dict):
+        for attrname, desc in attr_dict.items():
+            if attrname in self.current_scenario.extra_attributes():
+                self.delete_extra_attribute(attrname)
+            self.create_extra_attribute('LINK', attrname, desc, 'True')
+
+    def calc_total_vehicles(self):
+         '''calculate link level volume, store as extra attribute on the link'''
+    
+         #medium trucks
+         self.network_calculator("link_calculation", result = '@mveh', expression = '@metrk/1.5')
+     
+         #heavy trucks:
+         self.network_calculator("link_calculation", result = '@hveh', expression = '@hvtrk/2.0')
+     
+         #busses:
+         self.network_calculator("link_calculation", result = '@bveh', expression = '@trnv3/2.0')
+     
+         #calc total vehicles, store in @tveh 
+         str_expression = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
+                                    + @h3tl2 + @h3tl3 + @h3nt1 + @h3nt2 + @h3nt3 + @lttrk + @mveh + @hveh + @bveh'
+         self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
+
+        
 
 def json_to_dictionary(dict_name):
 
@@ -312,4 +384,17 @@ def json_to_dictionary(dict_name):
     my_dictionary = json.load(open(input_filename))
 
     return(my_dictionary)
+
+def text_to_dictionary(dict_name):
+
+    input_filename = os.path.join('inputs/skim_params/',dict_name+'.json').replace("\\","/")
+    my_file=open(input_filename)
+    my_dictionary = {}
+
+    for line in my_file:
+        k, v = line.split(':')
+        my_dictionary[eval(k)] = v.strip()
+
+    return(my_dictionary)
+
 

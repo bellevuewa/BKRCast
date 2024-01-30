@@ -30,9 +30,23 @@ import input_configuration as prj
 # 10/25/2021
 # modified to be compatible with python 3
 
+# 2/16/2022
+# add TNC mode
+
 # 3/1/2022
 # new features: calculate mode share by business locations.
 
+# 5/23/2023
+# add Kirkland and Redmond to subarea_code option.
+
+# 11/6/2023
+# add -i option to allow substitue of _tour.tsv file
+
+# 1/2/2024
+# add outputs excluding workbased subtours
+
+# 1/5/2024
+# write outputs to excel file xlsx rather than text file.
 
 
 tour_purpose = {0: 'all',
@@ -43,10 +57,10 @@ tour_purpose = {0: 'all',
                 5: 'shopping',
                 6: 'meal',
                 7: 'social'}
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit_walk_access', 7: 'Transit_auto_access', 8:'School_Bus'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit_walk_access', 7: 'Transit_auto_access', 8:'School_Bus', 9:'TNC'}
 time_periods = ['daily', 'am', 'md', 'pm', 'ni']
-#purpose: 0: all purpose, 1: work, 2:school,3:escort, 4: personal buz, 5: shopping, 6: meal, 7: social/recreational, 8: not defined, 9: not defined
-def CalModeSharebyPurpose(purpose, tour_df, Output_file, overwritten=False, comments=''):
+
+def CalModeSharebyPurpose(purpose, tour_df):
     purpose_df = None
     if (purpose > 0 and purpose <= 7): 
         print('Calculating mode share for purpose ', purpose, ':', tour_purpose[purpose]);
@@ -56,30 +70,24 @@ def CalModeSharebyPurpose(purpose, tour_df, Output_file, overwritten=False, comm
         purpose_df = tour_df[['tmodetp', 'toexpfac']].groupby('tmodetp').sum()
     else:
         print('invalid purpose ', purpose)
-        return
+        return None
 
     purpose_df['share'] = purpose_df['toexpfac'] / purpose_df['toexpfac'].sum()
     purpose_df.reset_index(inplace = True)
     purpose_df.replace({'tmodetp': mode_dict}, inplace = True)
-    purpose_df.columns = ['mode', 'trips', 'share']
-    purpose_df['trips'] = purpose_df['trips'].astype(int)
+    purpose_df.columns = ['mode', 'tours', 'share']
+    purpose_df['tours'] = purpose_df['tours'].astype(int)
+
+    # create a sum row in dataframe, then add it to the original one
+    columns_to_sum = ['tours', 'share']
+    sum_values = purpose_df[columns_to_sum].sum()    
+    sum_df = pd.DataFrame([sum_values], columns = columns_to_sum) 
+    
     purpose_df['share'] = purpose_df['share'].map('{:.1%}'.format)
+    sum_df['share'] = sum_df['share'].map('{:.1%}'.format)
+    purpose_df = purpose_df.append(sum_df, ignore_index = True)           
 
-    if overwritten:
-        filemode = 'w'
-    else:
-        filemode = 'a'
-
-    with open(Output_file, filemode) as output:
-        if comments != '':
-            output.write(comments + '\n')
-        if purpose == 0:
-            output.write('All purposes\n')
-        else: 
-            output.write(tour_purpose[purpose] + '\n')
-        output.write('%s' % purpose_df)
-        output.write('\n\n')
-
+    return purpose_df    
 
 def get_time_period_by_minutes(period):
     # start_time and end_time are number of minutes from midnight.
@@ -167,17 +175,20 @@ def select_tours_either_end_in_subarea(tours_df, subarea_taz_df):
 def help():
     print('Calculate mode share from tours in a defined subarea and time period. Region wide is the default if no subarea is specified. Daily is the default if no time period is specified.')
     print('')
-    print('tour_mode_share_calculator.py -h -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
+    print('tour_mode_share_calculator.py -h -i <input_file> -o <output_file> -s <subarea_definition_file> -t <time period> --stime <start_time> -- etime <end_time> subarea_code')
     print('    -h: help')
-    print('    -o: output file name. This file is saved in outputs folder.')
+    print('    -i input file name. This file, if available, needs to be saved in outputs folder')    
+    print('    -o: output file name. This file is saved in outputs/summary folder.')
     print('    -s: subarea definition file name. This file needs absolute file path.')
     print("    -t: time period. Can only be either of 'daily, 'am', 'md', 'pm', 'ni'. This predefined time period is superior to the user defined time period.")
     print('    --stime: start time in number of minutes from midnight.')
     print('    --etime: end time in number of minutes from midnight.')
     print('    subarea_code: ')
-    print("        'Region': the whole region")
-    print("        'Bellevue': Bellevue")
-    print("        'BelDT':   Bellevue downtown")
+    print("        'Region':    the whole region")
+    print("        'Bellevue':  Bellevue")
+    print("        'BelDT':     Bellevue downtown")
+    print("        'Kirkland':  Kirkland")
+    print("        'Redmond':   Redmond")
     print('')
 
 def main():
@@ -187,9 +198,10 @@ def main():
     time_period = ''
     start_time = 0
     end_time = 0
+    tours_file = ''    
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'ho:s:t:', ['stime=', 'etime='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hi:o:s:t:', ['stime=', 'etime='])
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -200,6 +212,8 @@ def main():
             sys.exit(0)
         elif opt == '-o':
             Output_file = os.path.join(prj.project_folder, 'outputs', arg) 
+        elif opt == '-i':
+            tours_file = os.path.join(prj.project_folder, 'outputs', arg)
         elif opt == '-t':
             if arg in time_periods:
                 time_period = arg
@@ -225,6 +239,12 @@ def main():
         elif arg == 'BelDT':
             subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'BellevueDTTAZ.txt')
             subarea_code = arg
+        elif arg == 'Kirkland':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Kirkland_TAZ.txt')
+            subarea_code = arg
+        elif arg == 'Redmond':
+            subarea_taz_file = os.path.join(prj.main_inputs_folder, 'subarea_definition', 'Redmond_TAZ.txt')
+            subarea_code = arg
         else:
             print('invalid argument. Use -h for help.')
             sys.exit(2)
@@ -241,12 +261,14 @@ def main():
     else:
         time_period = str(start_time) + '-' + str(end_time)
 
+    if tours_file == '':
+        tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')                
+
     if Output_file == '':
-        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.txt')
+        Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.xlsx')
     print('Output file: ' + Output_file)
     print('subarea definition file: ' + subarea_taz_file)
 
-    tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')
     hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
     total_tours_df = pd.read_csv(tours_file, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
@@ -259,90 +281,107 @@ def main():
         either_end_in_subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, True, False)
     else:
         either_end_in_subarea_tours_df = select_tours_either_end_in_subarea(tours_df, subarea_taz_df)
-    # write file headers.    
-    with open(Output_file, 'w') as output:
-        output.write(str(datetime.datetime.now()) + '\n')
-        output.write(tours_file + '\n')
-        output.write(hhs_file + '\n')
-        output.write(subarea_taz_file + '\n')
-        output.write('Mode share area: ' + subarea_code + '\n')
-        output.write('Start time: ' + str(start_time) + '\n')
-        output.write('End time: ' + str(end_time) + '\n')
-        output.write('Time period: ' + time_period + '\n')
-        output.write('\n')
-    CalModeSharebyPurpose(0, either_end_in_subarea_tours_df, Output_file, comments = 'Either end in the subarea')        
 
-    subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, True, False)
-    CalModeSharebyPurpose(0, subarea_tours_df, Output_file, comments = 'from the subarea')        
+    with pd.ExcelWriter(Output_file, engine = 'xlsxwriter') as writer:
+        # write readme tab        
+        wksheet = writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now())) 
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, prj.project_folder)
+        wksheet.write(2, 0, 'tour file')
+        wksheet.write(2, 1, tours_file)
+        wksheet.write(3, 0, 'household file')
+        wksheet.write(3, 1, hhs_file)
+        wksheet.write(4, 0, 'subarea')
+        wksheet.write(4, 1, subarea_taz_file)
+        wksheet.write(5, 0, 'mode share area') 
+        wksheet.write(5, 1, subarea_code)     
+        wksheet.write(6, 0, 'start time')        
+        wksheet.write(6, 1, str(start_time))
+        wksheet.write(7, 0, 'end time')
+        wksheet.write(7, 1, str(end_time))
+        wksheet.write(8, 0, 'time period') 
+        wksheet.write(8, 1, time_period)        
 
-    subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, False, True)
-    CalModeSharebyPurpose(0, subarea_tours_df, Output_file, comments = 'to the subarea')        
+               
+        cal_mode_share_by_each_purpose(writer, either_end_in_subarea_tours_df, 'either_end_in_subarea', comments = 'Either end in the subarea')   
 
-    subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, True, True)
-    CalModeSharebyPurpose(0, subarea_tours_df, Output_file, comments = 'inside the subarea')        
+        subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, True, False)
+        cal_mode_share_by_each_purpose(writer, subarea_tours_df, 'from_subarea', comments = 'from the subarea')   
+                                            
+        subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, False, True)
+        cal_mode_share_by_each_purpose(writer, subarea_tours_df, 'to_subarea', comments = 'to the subarea')
 
-    for purpose in [1,2,3,4,5,6,7]:
-        CalModeSharebyPurpose(purpose, either_end_in_subarea_tours_df, Output_file, comments = 'either end in the subarea')        
+        subarea_tours_df = select_tours_by_subarea(tours_df, subarea_taz_df, True, True)
+        cal_mode_share_by_each_purpose(writer, subarea_tours_df, 'inside_subarea', comments = 'inside the subarea')
 
-    print('Tour mode share calculation is finished.')
-    hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
-    tours_by_residence_df = select_tours_by_residence(hhs_df, tours_df, subarea_taz_df)
-    CalModeSharebyPurpose(0, tours_by_residence_df, Output_file, comments='By Residence Only')        
-    for purpose in [1,2,3,4,5,6,7]:
-        CalModeSharebyPurpose(purpose, tours_by_residence_df, Output_file, comments='By Residence Only')        
 
-    print('Tour mode share by residence is finished.')
+        hhs_df = hhs_df[['hhno','hhparcel', 'hhtaz']]
+        tours_by_residence_df = select_tours_by_residence(hhs_df, tours_df, subarea_taz_df)
+        cal_mode_share_by_each_purpose(writer, tours_by_residence_df, 'residence', comments = 'by Residence Only')
+        print('Tour mode share by residence is finished.')
 
-    # tours by workplace = tours from home for work purpose + all subtours from workplace.
-    tours_work_purpose_df = select_tours_by_workplace(tours_df, subarea_taz_df)
-    work_subtours_df = select_work_subtours(tours_df, subarea_taz_df)
-    tours_by_workplace_df = pd.concat([tours_work_purpose_df, work_subtours_df])
-    CalModeSharebyPurpose(0, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
-    for purpose in [1,2,3,4,5,6,7]:
-        CalModeSharebyPurpose(purpose, tours_by_workplace_df, Output_file, comments='By Workplace Only (with subtours)')        
-    print('Tour mode share by workplace (with subtours) is finished.')
+        # tours by workplace = tours from home for work purpose + all subtours from workplace.
+        tours_work_purpose_df = select_tours_by_workplace(tours_df, subarea_taz_df)
+        work_subtours_df = select_work_subtours(tours_df, subarea_taz_df)
+        tours_by_workplace_df = pd.concat([tours_work_purpose_df, work_subtours_df])
+        cal_mode_share_by_each_purpose(writer, tours_by_workplace_df, 'workplace(w subtours)', comments = 'By Workplace Only (with subtours)')
+        print('Tour mode share by workplace (with subtours) is finished.')
 
-    CalModeSharebyPurpose(0, tours_work_purpose_df, Output_file, comments='By Workplace Only (without subtours)')        
-    print('Tour mode share by workplace (without subtours) is finished.')
+        cal_mode_share_by_each_purpose(writer, tours_work_purpose_df, 'workplace(no subtours)', comments = 'By Workplace Only (without subtours)')
+        print('Tour mode share by workplace (without subtours) is finished.')
 
-    CalModeSharebyPurpose(0, work_subtours_df, Output_file, comments='Subtours at Workplace Only')        
-    for purpose in [1,2,3,4,5,6,7]:
-        CalModeSharebyPurpose(purpose, work_subtours_df, Output_file, comments='Subtours at Workplace Only')
-    print('Tour mode share by subtours at workplace is finished.')
-
-    # school by destination
-    tours_school_df = select_tours_by_purpose(tours_df, subarea_taz_df, 2)
-    CalModeSharebyPurpose(0, tours_school_df, Output_file, comments='By School Locations')    
-    print('Tour mode share by school locations is finished.')
-
-    #school by destination
-    tours_escort_df = select_tours_by_purpose(tours_df, subarea_taz_df, 3)
-    CalModeSharebyPurpose(0, tours_escort_df, Output_file, comments='By Escort Locations')    
-    print('Tour mode share by escort locations is finished.')
-
-    # personal business by destination 
-    tours_person_biz_df = select_tours_by_purpose(tours_df, subarea_taz_df, 4)
-    CalModeSharebyPurpose(0, tours_person_biz_df, Output_file, comments='By Personal Biz Locations')    
-    print('Tour mode share by personal business locations is finished.')
-   
-    # shopping by destination
-    tours_shopping_df = select_tours_by_purpose(tours_df, subarea_taz_df, 5)
-    CalModeSharebyPurpose(0, tours_shopping_df, Output_file, comments='By Shopping Locations')    
-    print('Tour mode share by shopping locations is finished.')
-
-    # meal by destination
-    tours_meal_df = select_tours_by_purpose(tours_df, subarea_taz_df, 6)
-    CalModeSharebyPurpose(0, tours_meal_df, Output_file, comments='By Meal Locations')    
-    print('Tour mode share by meal locations is finished.')
-
-    #social by destination
-    tours_social_df = select_tours_by_purpose(tours_df, subarea_taz_df, 7)
-    CalModeSharebyPurpose(0, tours_social_df, Output_file, comments='By Social Locations')    
-    print('Tour mode share by social locations is finished.')
+        cal_mode_share_by_each_purpose(writer, work_subtours_df, 'subtours', comments = 'Subtours at Workplace Only')
+        print('Tour mode share by subtours at workplace is finished.')
+        
+        cal_mode_share_by_other_destinations(writer, tours_df, subarea_taz_df, 'Other Locations', 'by other activity locations')        
 
     print('Done.')
 
+def cal_mode_share_by_other_destinations(writer, tour_df, subarea_taz_df, sheet_name, comments):
+    dict_df = {}    
+    for purpose in [2, 3, 4, 5, 6, 7]:
+        selected_tours_df = select_tours_by_purpose(tour_df, subarea_taz_df, purpose)    
+        share_df_locations = CalModeSharebyPurpose(0, selected_tours_df)
+        dict_df[f'By {tour_purpose[purpose]} Locations'] = share_df_locations
+        print(f'Tour mode share by {tour_purpose[purpose]} Locations is finished.')
 
+    write_to_sheet(writer, 'by other locations', dict_df)              
+    print(f'{sheet_name} tab is created.')
+
+def cal_mode_share_by_each_purpose(writer, tour_df, sheet_name, comments):
+    df_0 = CalModeSharebyPurpose(0, tour_df) 
+    dict_df = {f'{comments}, {tour_purpose[0]}': df_0}           
+    for purpose in [1,2,3,4,5,6,7]:
+        df = CalModeSharebyPurpose(purpose, tour_df) 
+        dict_df[f'{comments}, {tour_purpose[purpose]}'] = df.copy() 
+
+    write_to_sheet(writer, sheet_name, dict_df)                       
+
+def write_to_sheet(writer, name_of_sheet, dict_dfs, write_index = True, horizontal = True):
+    '''
+       writer: ExcelWriter variable
+       name_of_sheet: the sheet that dfs are to be exported
+       dict_dfs: dictionary of dfs: {title1: df1, title2:df2...}
+       write_index: write indices if True
+       horizontal: export dfs horizontally or vertically. Default is horizontal
+    '''    
+    srow = 1
+    scol = 0
+    bold_format = writer.book.add_format({'bold':True})    
+    for title, df in dict_dfs.items():
+        df.to_excel(writer, sheet_name = name_of_sheet, index = write_index, startrow = srow, startcol = scol)
+        sheet = writer.sheets[name_of_sheet]
+        sheet.write(srow - 1, scol, title, bold_format)
+        if horizontal == True:
+            srow = srow + df.shape[0] + 3
+        else:
+            if write_index == True:
+                scol = scol + df.shape[1] + len(df.index.names) + 3
+            else:
+                scol = scol + df.shape[1] + 3
+
+    return srow, scol
 
 if __name__  == '__main__':
     main()

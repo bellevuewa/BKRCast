@@ -1,6 +1,6 @@
 import math
 import sys
-
+import input_configuration as input_config
 # 10/25/2021
 # modified to be compatible with python 3
 
@@ -14,17 +14,25 @@ add_hot_lane_tolls = True
 #HOT_rate_dict = {'am' : 35, 'md' : 10, 'pm' : 35, 'ni' : 10}    # PSRC
 
 
-# HOT lane rate per mile
+# HOT lane rate per mile. Use adjusted toll rate after 2044.
 # @tolllane
 # 1: I405 toll lane, north section, leaving Bellevue
 # 2: I405 toll lane, north section, going Bellevue
 # 3: I405 toll lane, south section, leaving Bellevue
 # 4: I405 toll lane, south section, going Bellevue
 # 6: HOT2+ (for SR167)
-HOT_rate_dict = {'am' : {1: 10, 2: 35, 3: 10, 4: 35, 6: 35},
-                  'md' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10},
-                  'pm' : {1: 35, 2: 10, 3: 35, 4: 10, 6: 35},
-                  'ni' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10}}
+
+if int(input_config.model_year) >= 2044:
+    HOT_rate_dict = {'am' : {1: 15, 2: 50, 3: 15, 4: 50, 6: 35},
+                  'md' : {1: 15, 2: 15, 3: 15, 4: 15, 6: 10},
+                  'pm' : {1: 50, 2: 15, 3: 50, 4: 15, 6: 35},
+                  'ni' : {1: 15, 2: 15, 3: 15, 4: 15, 6: 10}}
+else:
+    HOT_rate_dict = {'am' : {1: 10, 2: 35, 3: 10, 4: 35, 6: 35},
+                 'md' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10},
+                 'pm' : {1: 35, 2: 10, 3: 35, 4: 10, 6: 35},
+                 'ni' : {1: 10, 2: 10, 3: 10, 4: 10, 6: 10}}
+
 
 ##################################### NETWORK IMPORTER ####################################
 master_project = 'LoadTripTables'
@@ -44,6 +52,7 @@ no_toll_modes = ['s', 'h']
 unit_of_length = 'mi'    # units of miles in Emme
 coord_unit_length = 0.0001894    # network links measured in feet, converted to miles (1/5280)
 headway_file = 'sc_headways.csv'
+zone_partition_file = 'zone_partitions.txt'
 
 #extra attribute - add to the list in dictionary format
 #format = {'type':'LINK', 'name': '@test', 'description': 'desc1', 'overwrite': True}}
@@ -79,7 +88,7 @@ NI_extra_attributes = [{'type':'TRANSIT_LINE', 'name': '@nihdwy', 'description':
 
 ################################### SKIMS AND PATHS ####################################
 log_file_name = 'skims_log.txt'
-STOP_THRESHOLD = 0.015
+STOP_THRESHOLD = 0.005
 parallel_instances = 4   # Number of simultaneous parallel processes. Must be a factor of 4.
 max_iter = 50             # Assignment Convergence Criteria
 best_relative_gap = 0.01  # Assignment Convergence Criteria
@@ -181,3 +190,5 @@ toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmv
 
 # Home delivery trips, must be > 0
 total_delivery_trips = 1 
+
+pkhrfac_dict = {'pm': 0.35, 'am': 0.38, 'md': 0.154}

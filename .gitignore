@@ -7,6 +7,7 @@ Daysim/last-run.log
 *.tex
 *.alo
 *.Rhistory
+*.xlsx
 /inputs
 /daysim
 /outputs
@@ -22,3 +23,19 @@ Daysim/last-run.log
 /scripts/trucks/truck_model_old.py
 /scripts/trucks/truck_configuration_old.py
 /scripts/supplemental/mode_choice_supplemental.py
+/2019_bike_volums_comparison.xlsx
+/Auto_traffic_validation_bkr0v1-02.xlsx
+/inputs/skim_params/user_classes.json
+/inputs/skim_params/demand_matrix_dictionary.json
+/inputs/model/bkr_roster.csv
+/inputs/model/bkr-roster.combinations.csv
+/inputs/skim_params/user_classes.json
+/inputs/skim_params/demand_matrix_dictionary.json
+/inputs/model/bkr_roster.csv
+/inputs/model/bkr-roster.combinations.csv
+/scripts/summarize/standard/calculate_AVO.py
+/scripts/summarize/standard/RegionalCenterSummaries.py
+/scripts/summarize/standard/truck_vols.py
+*.png
+/projects/1530to1830/Worksheets/General_worksheet.emw
+/inputs/model/TAZIndex.txt

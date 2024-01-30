@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\BKRCastCodeandTestBed\BKRCast'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
 base_year = '2018'  # BKRCast base year
 model_year = '2018'
@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
@@ -49,10 +49,16 @@ run_truck_model = True
 run_supplemental_trips = True
 run_daysim = True
 run_daysim_popsampler = False
-run_accessibility_summary = True
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
+
+##############################
+# Modes and Path Types
+##############################
+# In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
+include_tnc = False
+include_tnc_to_transit = False # AV to transit path type allowed
 
 # Specific reports to run
 run_daysim_report = True
@@ -91,16 +97,25 @@ transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commu
 
 input_ensemble = r"inputs/landuse/parking_gz.csv"
 
+input_folder_for_supplemental = 'inputs/supplemental'
+
 # daysim mode definition
-mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus'}
+mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
-
+tour_purpose_dict = {0: 'all',
+                1: 'work',
+                2: 'school',
+                3: 'escort',
+                4: 'personal business',
+                5: 'shopping',
+                6: 'meal',
+                7: 'social'}
 #################################### INPUT CHECKS ####################################
 
 # These files are often missing from a run.  We want to check they are present and warn if not.
 # Please add to this list as you find files that are missing.
-commonly_missing_files = ['buffered_parcels.dat', 'tazdata.in']
+commonly_missing_files = [r'buffered_parcels.txt', r'node_to_node_distance_2014.h5']
 
 #################################### DAYSIM ####################################
 households_persons_file = r'inputs/popsim/hh_and_persons.h5'
@@ -169,6 +184,20 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
 
+### Equity analysis
+# 2016 federal poverty line   
+fed_poverty_1st_person = 11770
+fed_poverty_extra_person = 4160
+income_bins = [-1, 0, 0.5, 1, 2, 5, 10, 500]  # by how many times of the fed poverty line
+income_bins2 = [-1, 1, 500]
+income_bins3 = [-1, 2, 500]
+veh_bins = [-1, 0, 1, 2, 3, 10]
+age_bins = [0, 5, 15, 30, 50, 65, 200]
+hhsize_bins = [0, 1, 2, 3, 4, 20]
+trip_distance_bin = [0, 1, 2, 3, 5, 200]
+
+### GHG and VMT
+auto_speed_bins = [0, 2.5, 7.5, 12.5, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5, 62.5, 67.5, 72.5, 100 ]
 
 #################################### CALIBRATION/VALIDATION ####################################
 
@@ -183,6 +212,8 @@ FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
 LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
 
 acs_data = 'inputs/model/survey/ACS_2014.xlsx'
+
+network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
 report_output_location = 'outputs/daysim'
 report_lu_output_location = 'outputs/landuse'

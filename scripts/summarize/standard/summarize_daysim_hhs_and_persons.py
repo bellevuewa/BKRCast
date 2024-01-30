@@ -18,8 +18,10 @@ def summarize_hhs(output_file, customized_location_file = ''):
     hhs_df = pd.read_csv(os.path.join(prj.project_folder,  prj.report_output_location, daysim_hhs_output_file), sep = '\t')
     taz_subarea_df = pd.read_csv(os.path.join(prj.main_inputs_folder, 'subarea_definition', 'TAZ_subarea.csv'))
     hhs_df = pd.merge(hhs_df, taz_subarea_df, left_on = 'hhtaz', right_on = 'BKRCastTAZ', how = 'left')
-    hh_summary_list = ['hhsize', 'hhvehs', 'hhwkrs', 'hhftw', 'hhptw', 'hhwhome','hhret', 'hhoad', 'hhuni', 'hhhsc', 'hh515', 'hhcu5']
-
+    hh_summary_list = ['hhexpfac', 'hhsize', 'hhvehs', 'hhwkrs', 'hhftw', 'hhptw', 'hhwhome','hhret', 'hhoad', 'hhuni', 'hhhsc', 'hh515', 'hhcu5']
+    # for unknow reason, hhwkrs is negative. so need to recalculate the total workers of each household
+    hhs_df['hhwkrs'] = hhs_df['hhftw'] + hhs_df['hhptw']
+    
     persons_df = pd.read_csv(os.path.join(prj.project_folder, prj.report_output_location, daysim_persons_output_file), sep = '\t')
     persons_df = pd.merge(persons_df, hhs_df[['hhno', 'hhparcel']], on = 'hhno', how = 'left')
     work_at_home_df = persons_df.query('pwpcl == hhparcel').groupby('hhno')[['psexpfac']].sum()
@@ -29,6 +31,13 @@ def summarize_hhs(output_file, customized_location_file = ''):
     hhs_by_taz_df = hhs_df.groupby('hhtaz')[hh_summary_list].sum()
     hhs_by_subarea_df = hhs_df.groupby('Subarea')[hh_summary_list].sum()
     hhs_by_jurisdiction_df = hhs_df.groupby('Jurisdiction')[hh_summary_list].sum()
+
+        
+
+    # calculate average household size    
+    hhs_by_jurisdiction_df['avg_hhsize'] = (hhs_by_jurisdiction_df['hhsize'] / hhs_by_jurisdiction_df['hhexpfac']).round(2)
+    hhs_by_subarea_df['avg_hhsize'] = (hhs_by_subarea_df['hhsize'] / hhs_by_subarea_df['hhexpfac']).round(2)
+    hhs_by_taz_df['avg_hhsize'] = (hhs_by_taz_df['hhsize'] / hhs_by_taz_df['hhexpfac']).round(2)
 
     hhs_by_restype_df = hhs_df.groupby('hrestype')[['hhexpfac']].sum()
     
@@ -173,7 +182,7 @@ def process_person_age(persons_df, export_file, mode):
     persons_df_copy['agecode'] = (persons_df_copy['pagey'] / 10.0)
     persons_df_copy['agecode'] = persons_df_copy['agecode'].apply(np.floor).astype(int)
     age_df = persons_df_copy.groupby('agecode')[['psexpfac']].sum()
-    ages = {1: '<10', 1: '11 - 20', 2:'21-30', 3:'31-40', 4:'41-50', 5:'51-60', 6:'61-70', 7:'71-80', 8: '81-90', 9:'91-100', 10:'>100'}
+    ages = {0: '<10', 1: '11-20', 2:'21-30', 3:'31-40', 4:'41-50', 5:'51-60', 6:'61-70', 7:'71-80', 8: '81-90', 9:'91-100', 10:'>100'}
     agecode_df = pd.DataFrame(list(ages.items()), columns = ['agecode', 'ages'])
     age_df = pd.merge(age_df, agecode_df, on = 'agecode', how = 'left')
     with open(export_file, mode) as f:

@@ -5,7 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\pacalculator.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +14,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-f</CommandLineArguments>
+    <CommandLineArguments>Bellevue</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -290,6 +291,9 @@
     <Content Include="inputs\model\TAZIndex.txt" />
     <Content Include="inputs\model\TAZ_District_CrossWalk.csv" />
     <Content Include="inputs\model\TAZ_TAD_County.csv" />
+    <Content Include="inputs\model\templates\bkr-roster.combinations_template.csv" />
+    <Content Include="inputs\model\templates\bkr_roster_template.csv" />
+    <Content Include="inputs\model\templates\TAZIndex_template.txt" />
     <Content Include="inputs\model\transit_agency_dict.json" />
     <Content Include="inputs\model\variable_labels.csv" />
     <Content Include="inputs\skim_params\bike_assignment.json" />
@@ -298,7 +302,6 @@
     <Content Include="inputs\skim_params\bike_walk_assignment.json" />
     <Content Include="inputs\skim_params\bike_walk_matrix_dict.json" />
     <Content Include="inputs\skim_params\demand_crosswalk_ab_4k_dictionary.json" />
-    <Content Include="inputs\skim_params\demand_matrix_dictionary.json" />
     <Content Include="inputs\skim_params\emme_bank_dimensions.json" />
     <Content Include="inputs\skim_params\extended_transit_assignment.json" />
     <Content Include="inputs\skim_params\extended_transit_assignment_bus.json" />
@@ -316,6 +319,10 @@
     <Content Include="inputs\skim_params\matrix_calculation.json" />
     <Content Include="inputs\skim_params\matrix_calc_spec.json" />
     <Content Include="inputs\skim_params\node_calculation.json" />
+    <Content Include="inputs\skim_params\SOLA_assignment.json" />
+    <Content Include="inputs\skim_params\templates\demand_matrix_dictionary_template.json" />
+    <Content Include="inputs\skim_params\tnc_auto_map.json" />
+    <Content Include="inputs\skim_params\templates\user_classes_template.json" />
     <Content Include="inputs\skim_params\temp_link_calculation.json" />
     <Content Include="inputs\skim_params\time_of_day.json" />
     <Content Include="inputs\skim_params\time_of_day_crosswalk_ab_4k_dictionary.json" />
@@ -351,11 +358,51 @@
     <Content Include="inputs\subarea_definition\Bellevue_TAZ.txt" />
     <Content Include="inputs\subarea_definition\BKR_+Fringe_area_TAZ.txt" />
     <Content Include="inputs\subarea_definition\BKR_only_TAZ.txt" />
+    <Content Include="inputs\subarea_definition\Kirkland_TAZ.txt" />
     <Content Include="inputs\subarea_definition\Redmond_TAZ.txt" />
     <Content Include="inputs\subarea_definition\Regional.txt" />
     <Content Include="inputs\subarea_definition\TAZ_subarea.csv" />
+    <Content Include="inputs\supplemental\auto_externals_bkr.csv" />
+    <Content Include="inputs\supplemental\base_year_scaling.csv" />
+    <Content Include="inputs\supplemental\bkr_zones.csv" />
+    <Content Include="inputs\supplemental\enlisted_personnel_bkr.csv" />
+    <Content Include="inputs\supplemental\externals_unadjusted_bkr.csv" />
+    <Content Include="inputs\supplemental\external_trip_distribution_bkr.csv" />
+    <Content Include="inputs\supplemental\gravity_model_coefficients.csv" />
+    <Content Include="inputs\supplemental\group_quarters_bkr.csv" />
+    <Content Include="inputs\supplemental\heavy_trucks_bkr.csv" />
+    <Content Include="inputs\supplemental\ixxi_mode_share.csv" />
+    <Content Include="inputs\supplemental\jblm_trips_bkr.csv" />
+    <Content Include="inputs\supplemental\job_attractions.csv" />
+    <Content Include="inputs\supplemental\job_productions.csv" />
+    <Content Include="inputs\supplemental\mode_choice_parameters.csv" />
+    <Content Include="inputs\supplemental\rate_adjustments.csv" />
+    <Content Include="inputs\supplemental\seatac_bkr.csv" />
+    <Content Include="inputs\supplemental\special_generators_bkr.csv" />
+    <Content Include="inputs\supplemental\time_of_day_factors_bkr.csv" />
+    <Content Include="inputs\supplemental\trip_rates.csv" />
+    <Content Include="inputs\worksheets\1530to1830\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\1530to1830\Compare_traffic_volume_and_times.emw" />
+    <Content Include="inputs\worksheets\1530to1830\general.emu" />
+    <Content Include="inputs\worksheets\1530to1830\General_worksheet.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Links_table.emt" />
+    <Content Include="inputs\worksheets\1530to1830\Local_Count_Scatterplot.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Local_Count_Scatterplot_BelCBD.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Screenline_Scatterplot.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Select_link_analysis.emw" />
+    <Content Include="inputs\worksheets\1530to1830\Transit_lines.emt" />
+    <Content Include="inputs\worksheets\1830to6\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\1830to6\Test_1830to6.txt" />
+    <Content Include="inputs\worksheets\6to9\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\6to9\Test_6to9.txt" />
+    <Content Include="inputs\worksheets\9to1530\Boarding_Alighting.emt" />
+    <Content Include="inputs\worksheets\9to1530\Test_9to1530.txt" />
+    <Content Include="inputs\worksheets\Supplementals\Test_supplemental.txt" />
+    <Content Include="inputs\worksheets\TruckModel\Test_truck.txt" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
+    <Content Include="screenline_2014.json" />
+    <Content Include="screenline_2018.json" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
     <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\am_transit.csv" />
@@ -377,8 +424,10 @@
     <Content Include="scripts\summarize\mapping\dframe_explorer.html" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="build_toolbox.py" />
     <Compile Include="daysim_summaries\update_data.py" />
     <Compile Include="emme_configuration.py" />
+    <Compile Include="inputs\skim_params\skim_templates.py" />
     <Compile Include="input_configuration.py" />
     <Compile Include="input_configuration_simple.py" />
     <Compile Include="psrc_to_bkrcast_scripts\batchRepackH5.py" />
@@ -409,19 +458,29 @@
     <Compile Include="scripts\data_wrangling.py" />
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />
-    <Compile Include="scripts\modeller\ExportAllAttributes.py" />
-    <Compile Include="scripts\modeller\generate_bus_stops.py" />
-    <Compile Include="scripts\modeller\Pathbased_assignment_on_multiple_scenarios.py" />
-    <Compile Include="scripts\modeller\PopulateNetwork.py" />
-    <Compile Include="scripts\modeller\PopulateNetwork2.py" />
-    <Compile Include="scripts\modeller\SOLA_assignment_on_multiple_scenarios.py" />
-    <Compile Include="scripts\modeller\TM611Util.py" />
+    <Compile Include="scripts\modeller\Assignment\run_transit_assignment.py" />
+    <Compile Include="scripts\modeller\LandUse\Import_land_use_growth.py" />
+    <Compile Include="scripts\modeller\LandUse\Import_land_use.py" />
+    <Compile Include="scripts\modeller\Master_network_only\ExportAllAttributes.py" />
+    <Compile Include="scripts\modeller\Matrix\calculate_trip_ends_density.py" />
+    <Compile Include="scripts\modeller\Matrix\Compare_trip_tables.py" />
+    <Compile Include="scripts\modeller\Matrix\Compare_two_matrics.py" />
+    <Compile Include="scripts\modeller\Matrix\Export_trip_tables.py" />
+    <Compile Include="scripts\modeller\Model_outputs\export_intersection_volumes.py" />
+    <Compile Include="scripts\modeller\Network\auto_terminal_time.py" />
+    <Compile Include="scripts\modeller\Network\generate_bus_stops.py" />
+    <Compile Include="scripts\modeller\Assignment\Pathbased_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\Master_network_only\PopulateNetwork.py" />
+    <Compile Include="scripts\modeller\Master_network_only\PopulateNetwork2.py" />
+    <Compile Include="scripts\modeller\Assignment\SOLA_assignment_on_multiple_scenarios.py" />
+    <Compile Include="scripts\modeller\Network\TM611Util.py" />
     <Compile Include="scripts\network\daysim_zone_inputs.py" />
     <Compile Include="scripts\network\network_importer.py" />
     <Compile Include="scripts\popsampler.py" />
     <Compile Include="scripts\skimming\SkimsAndPaths.py" />
     <Compile Include="scripts\summarize\benefit_cost\benefit_cost.py" />
     <Compile Include="scripts\summarize\calibration\daysim_summary.py" />
+    <Compile Include="scripts\summarize\calibration\equity.py" />
     <Compile Include="scripts\summarize\calibration\get_skims.py" />
     <Compile Include="scripts\summarize\calibration\SCsummary.py" />
     <Compile Include="scripts\summarize\calibration\summary_functions.py" />
@@ -433,19 +492,18 @@
     <Compile Include="scripts\summarize\standard\calculate_AVO.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="scripts\summarize\standard\calculate_VMT.py" />
+    <Compile Include="scripts\summarize\standard\calculate_daily_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
     <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
+    <Compile Include="scripts\summarize\standard\network_volume_validation.py" />
     <Compile Include="scripts\summarize\standard\net_summary_simplify.py" />
     <Compile Include="scripts\summarize\standard\pacalculator.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="scripts\summarize\standard\parcel_summary.py" />
     <Compile Include="scripts\summarize\standard\RegionalCenterSummaries.py" />
     <Compile Include="reset_project_folders.py" />
     <Compile Include="scripts\summarize\standard\summarize_daysim_hhs_and_persons.py" />
-    <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
     <Compile Include="scripts\summarize\standard\tour_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\trip_mode_share_calculator.py" />
     <Compile Include="scripts\summarize\standard\truck_vols.py" />
@@ -489,13 +547,29 @@
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\model\" />
     <Folder Include="inputs\model\survey\" />
+    <Folder Include="inputs\model\templates\" />
     <Folder Include="inputs\skim_params\" />
+    <Folder Include="inputs\skim_params\templates\" />
     <Folder Include="inputs\subarea_definition\" />
+    <Folder Include="inputs\supplemental\" />
+    <Folder Include="inputs\worksheets\" />
+    <Folder Include="inputs\worksheets\1530to1830\" />
+    <Folder Include="inputs\worksheets\1830to6\" />
+    <Folder Include="inputs\worksheets\6to9\" />
+    <Folder Include="inputs\worksheets\9to1530\" />
+    <Folder Include="inputs\worksheets\Supplementals\" />
+    <Folder Include="inputs\worksheets\TruckModel\" />
     <Folder Include="psrc_to_bkrcast_scripts" />
     <Folder Include="scripts" />
     <Folder Include="scripts\accessibility" />
     <Folder Include="scripts\archive" />
     <Folder Include="scripts\bikes" />
+    <Folder Include="scripts\modeller\Master_network_only\" />
+    <Folder Include="scripts\modeller\Assignment\" />
+    <Folder Include="scripts\modeller\Network\" />
+    <Folder Include="scripts\modeller\Model_outputs\" />
+    <Folder Include="scripts\modeller\Matrix\" />
+    <Folder Include="scripts\modeller\LandUse\" />
     <Folder Include="scripts\network" />
     <Folder Include="scripts\modeller\" />
     <Folder Include="scripts\skimming" />
@@ -513,7 +587,6 @@
     <Folder Include="scripts\utils" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="CondaEnv|CondaEnv|BKRCast" />
     <InterpreterReference Include="Global|VisualStudio|BKRCast" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

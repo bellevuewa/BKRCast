@@ -24,11 +24,6 @@
     "TripBasedMode": "auto",
     "FirstTripBasedClass": "avehs3"
   },
-  "h3tl3": {
-    "FirstTripBasedFactor": 0.25,
-    "TripBasedMode": "auto",
-    "FirstTripBasedClass": "avehs3"
-  },
   "metrk": {
     "FirstTripBasedFactor": 1,
     "TripBasedMode": "auto",
