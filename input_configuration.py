@@ -10,8 +10,8 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU\DT_rebalance_btw_job_category'
 base_year = '2019'  # BKRCast base year
 model_year = '2044'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
@@ -57,7 +57,7 @@ run_truck_summary = False
 # Modes and Path Types
 ##############################
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
-include_tnc = False
+include_tnc = True
 include_tnc_to_transit = False # AV to transit path type allowed
 
 # Specific reports to run
