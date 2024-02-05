@@ -23,32 +23,17 @@ import pandas as pd
 import numpy as np
 import json
 import h5py
-from pyproj import Proj, transform
-import nbformat
 from sqlalchemy import create_engine
-from nbconvert.preprocessors import ExecutePreprocessor
 from EmmeProject import EmmeProject
 from input_configuration import *
-# from input_configuration import *
-# from emme_configuration import *
-pd.options.mode.chained_assignment = None  # mute chained assignment warnings
 import toml
-
+import data_wrangling
 
 config = toml.load(os.path.join(os.getcwd(), 'configuration/input_configuration.toml'))
 network_config = toml.load(os.path.join(os.getcwd(), 'configuration/network_configuration.toml'))
 emme_config = toml.load(os.path.join(os.getcwd(), 'configuration/emme_configuration.toml'))
 sum_config = toml.load(os.path.join(os.getcwd(), 'configuration/summary_configuration.toml'))
 
-def json_to_dictionary(dict_name):
-    """ Read skim parameter JSON inputs as dictionary """
-
-    skim_params_loc = os.path.abspath(os.path.join(os.getcwd(),"inputs/skim_params")) 
-    input_filename = os.path.join(skim_params_loc,dict_name+'.json').replace("\\","/")
-    my_dictionary = json.load(open(input_filename))
-
-    return(my_dictionary)
- 
 def get_intrazonal_vol(emmeproject, df_vol):
     """Calculate intrazonal volumes for all modes"""
 
@@ -215,44 +200,44 @@ def summarize_network(df, writer):
     """ Calculate VMT, VHT, and Delay from link-level results """
 
     # @class = 0 are links outside of BKR area
-    df = df[df['@class'] != 0]   
+    bkr_df = df[df['@class'] != 0].copy()   
 
     # calculate total link VMT and VHT
-    df['VMT'] = df['@tveh']*df['length']
-    df['VHT'] = df['@tveh']*df['auto_time']/60
+    bkr_df['VMT'] = bkr_df['@tveh'] * bkr_df['length']
+    bkr_df['VHT'] = bkr_df['@tveh'] * bkr_df['auto_time'] / 60
 
     # Define facility type
-    df.loc[df['@class'].isin([1]), 'facility_type'] = 'highway'
-    df.loc[df['@class'].isin([10,20,30,40]), 'facility_type'] = 'arterial'
-    df.loc[df['@class'].isin([50]), 'facility_type'] = 'connector'
+    bkr_df.loc[bkr_df['@class'].isin([1]), 'facility_type'] = 'highway'
+    bkr_df.loc[bkr_df['@class'].isin([10,20,30,40]), 'facility_type'] = 'arterial'
+    bkr_df.loc[bkr_df['@class'].isin([50]), 'facility_type'] = 'connector'
 
     # Calculate delay
     # Select links from overnight time of day
-    delay_df = df.loc[df['tod'] == '20to5'][['ij','auto_time']]
+    delay_df = bkr_df.loc[bkr_df['tod'] == '20to5', ['ij','auto_time']].copy()
     delay_df.rename(columns={'auto_time':'freeflow_time'}, inplace=True)
 
     # Merge delay field back onto network link df
-    df = pd.merge(df, delay_df, on='ij', how='left')
+    bkr_df = pd.merge(bkr_df, delay_df, on='ij', how='left')
 
     # Calcualte hourly delay
-    df['delay'] = ((df['auto_time']-df['freeflow_time'])*df['@tveh'])/60    # sum of (volume)*(travtime diff from freeflow)
+    bkr_df['delay'] = ((bkr_df['auto_time'] - bkr_df['freeflow_time']) * bkr_df['@tveh']) / 60    # sum of (volume)*(travtime diff from freeflow)
 
     # Add time-of-day group (AM, PM, etc.)
     tod_df = pd.read_json(r'inputs/skim_params/time_of_day_crosswalk_ab_4k_dictionary.json', orient='index')
     tod_df = tod_df[['TripBasedTime']].reset_index()
     tod_df.columns = ['tod','period']
-    df = pd.merge(df,tod_df,on='tod',how='left')
+    bkr_df = pd.merge(bkr_df,tod_df,on='tod',how='left')
 
     # Totals by functional classification
     for metric in ['VMT','VHT','delay']:
-        _df = pd.pivot_table(df, values=metric, index=['tod','period'],columns='facility_type', aggfunc='sum').reset_index()
+        _df = pd.pivot_table(bkr_df, values=metric, index=['tod','period'],columns='facility_type', aggfunc='sum').reset_index()
         _df = sort_df(df=_df, sort_list=network_config['tods'] , sort_column='tod')
         _df = _df.reset_index(drop=True)
         _df.to_excel(writer, sheet_name=metric+' by FC')
         _df.to_csv(r'outputs/network/' + metric.lower() +'_facility.csv', index=False)
 
-    df['lane_miles'] = df['length'] * df['num_lanes']
-    lane_miles = df[df['tod']=='6to9']
+    bkr_df['lane_miles'] = bkr_df['length'] * bkr_df['num_lanes']
+    lane_miles = bkr_df[bkr_df['tod']=='6to9'].copy()
     lane_miles = pd.pivot_table(lane_miles, values='lane_miles', index='@bkrlink',columns='facility_type', aggfunc='sum').reset_index()
     lane_miles['@bkrlink'] = lane_miles['@bkrlink'].astype(int).astype(str)
     lane_miles = lane_miles.replace({'@bkrlink': sum_config['bkrlink_map']})
@@ -260,7 +245,7 @@ def summarize_network(df, writer):
     lane_miles.rename(columns = {col:col+'_lane_miles' for col in lane_miles.columns if col in ['highway', 'arterial', 'connector']}, inplace = True)
     
 
-    city_vmt = pd.pivot_table(df, values='VMT', index=['@bkrlink'],columns='facility_type', aggfunc='sum').reset_index()
+    city_vmt = pd.pivot_table(bkr_df, values='VMT', index=['@bkrlink'],columns='facility_type', aggfunc='sum').reset_index()
     city_vmt['@bkrlink'] = city_vmt['@bkrlink'].astype(int).astype(str)
     city_vmt = city_vmt.replace({'@bkrlink': sum_config['bkrlink_map']})
     city_vmt.rename(columns = {col:col+'_vmt' for col in city_vmt.columns if col in ['highway', 'arterial', 'connector']}, inplace = True)
@@ -292,18 +277,18 @@ def summarize_network(df, writer):
     #             new_uc_list.append(uc)
                 
     # VMT
-    _df = df.copy()
+    _df = bkr_df.copy()
     for uc in new_uc_list:
-        _df[uc] = df[uc]*df['length']
+        _df[uc] = _df[uc] * _df['length']
     _df = _df[new_uc_list+['tod']].groupby('tod').sum().reset_index()
     _df = sort_df(df=_df, sort_list=network_config['tods'], sort_column='tod')
     _df.to_excel(excel_writer=writer, sheet_name="VMT by UC")
     _df.to_csv(r'outputs/network/vmt_user_class.csv', index=False)
 
     # VHT
-    _df = df.copy()
+    _df = bkr_df.copy()
     for uc in new_uc_list:
-        _df[uc] = df[uc]*df['auto_time']/60
+        _df[uc] = _df[uc] * _df['auto_time'] / 60
     _df = _df[new_uc_list+['tod']].groupby('tod').sum().reset_index()
     _df = sort_df(df=_df, sort_list=network_config['tods'], sort_column='tod')
     _df = _df.reset_index(drop=True)
@@ -311,7 +296,7 @@ def summarize_network(df, writer):
     _df.to_csv(r'outputs/network/vht_user_class.csv', index=False)
 
     # Delay
-    _df = df.copy()
+    _df = bkr_df.copy()
     for uc in new_uc_list:
         _df[uc] = ((_df['auto_time']-_df['freeflow_time'])*_df[uc])/60
     _df = _df[new_uc_list+['tod']].groupby('tod').sum().reset_index()
@@ -322,9 +307,9 @@ def summarize_network(df, writer):
 
     # Results by County
     
-    df['city_name'] = df['@bkrlink'].map(sum_config['bkrlink_map'])
-    df['city_name'].fillna('Outside BKR', inplace=True)
-    _df = df.groupby('city_name').sum()[['VMT','VHT','delay']].reset_index()
+    bkr_df['city_name'] = bkr_df['@bkrlink'].map(sum_config['bkrlink_map'])
+    bkr_df['city_name'].fillna('Outside BKR', inplace=True)
+    _df = bkr_df.groupby('city_name').sum()[['VMT','VHT','delay']].reset_index()
     _df.to_excel(excel_writer=writer, sheet_name='City Results')
     _df.to_csv(r'outputs/network/city_network.csv', index=False)
 
@@ -547,7 +532,7 @@ def main():
 
                         # Transit path analysis
                         transit_path_analysis = my_project.m.tool('inro.emme.transit_assignment.extended.path_based_analysis')
-                        _spec = json_to_dictionary("transit_path_analysis")
+                        _spec = data_wrangling.json_to_dictionary("transit_path_analysis")
                         transit_path_analysis(_spec, class_name=class_name)
                         
                         # Write this path OD table to sparse CSV

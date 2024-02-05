@@ -29,7 +29,6 @@ from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
 from accessibility.accessibility_configuration import *
-import skim_templates as emme_specs
 import input_configuration
 import emme_configuration
 import pandas as pd

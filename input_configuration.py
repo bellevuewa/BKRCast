@@ -32,10 +32,10 @@ modeller_initial = "hd"
 run_update_parking = False #Only update parking for future-year analysis!
 run_accessibility_calcs = True 
 run_copy_daysim_code = False
-run_copy_input_files = False
-run_setup_emme_project_folders = False
-run_setup_emme_bank_folders = False
-run_import_networks = False
+run_copy_input_files = True
+run_setup_emme_project_folders = True
+run_setup_emme_bank_folders = True
+run_import_networks = True
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
