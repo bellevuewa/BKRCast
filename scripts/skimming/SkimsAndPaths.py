@@ -1278,45 +1278,45 @@ def feedback_check(emmebank_path_list):
         print(emmebank_path)
         my_bank =  _eb.Emmebank(emmebank_path)
         tod = my_bank.title
-        my_store=h5py.File('inputs/' + tod + '.h5', "r+")
-        #put current time skims in numpy:
-        skims_dict = {}
+        with h5py.File('inputs/' + tod + '.h5', "r+") as my_store:
+            #put current time skims in numpy:
+            skims_dict = {}
 
-        for y in range (0, len(matrix_dict["Highway"])):
-           #trips
-            matrix_name= matrix_dict["Highway"][y]["Name"]
-            if 'tnc_' not in matrix_name:
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
+            for y in range (0, len(matrix_dict["Highway"])):
+               #trips
+                matrix_name= matrix_dict["Highway"][y]["Name"]
+                if 'tnc_' not in matrix_name:
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
                 
-                trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
-                print('trips')
-                print(trips[563,547])
+                    trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                    print('trips')
+                    print(trips[563,547])
                 
-                #new skims
-                matrix_name = matrix_name + 't'
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
-                new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                    #new skims
+                    matrix_name = matrix_name + 't'
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
+                    new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
                 
-                print(matrix_name)
-                print('new_skim')
-                print(new_skim[563,547])
+                    print(matrix_name)
+                    print('new_skim')
+                    print(new_skim[563,547])
                 
-                #now old skims
-                old_skim = np.asmatrix(my_store['Skims'][matrix_name])
-                print('old_skim')
-                print(old_skim[563,547])
+                    #now old skims
+                    old_skim = np.asmatrix(my_store['Skims'][matrix_name])
+                    print('old_skim')
+                    print(old_skim[563,547])
               
     
-                change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
-                print('test value')
-                print(change_test)
-                text = tod + " " + str(change_test) + " " + matrix_name
-                logging.debug(text)
-                if change_test > STOP_THRESHOLD:
-                    passed = False
-                    break
+                    change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
+                    print('test value')
+                    print(change_test)
+                    text = tod + " " + str(change_test) + " " + matrix_name
+                    logging.debug(text)
+                    if change_test > STOP_THRESHOLD:
+                        passed = False
+                        break
 
-        my_bank.dispose()
+            my_bank.dispose()
      return passed
 
 def create_node_attributes(node_attribute_dict, my_project):
@@ -1630,8 +1630,10 @@ def main():
     # transit operation is now merged into start_pool. start_transit_pool() is no longer needed.
     # start_transit_pool(project_list)
    
+    import gc
+    gc.collect()    
     f = open('inputs/converge.txt', 'w')
-   
+    print('Check convergence...')
     #If using seed_trips, we are starting the first iteration and do not want to compare skims from another run. 
     if (survey_seed_trips == False and free_flow_skims == False):
            #run feedback check 
@@ -1640,9 +1642,11 @@ def main():
               if feedback_check(feedback_list) == False:
                   go = 'continue'
                   json.dump(go, f)
+                  print('Not converged yet.')                  
               else:
                   go = 'stop'
                   json.dump(go, f)
+                  print('Converged.')                  
             except Exception as e:
                 print('feedback check error. Continue the feedback loop.')
                 print('below is the error messages.')
@@ -1653,7 +1657,9 @@ def main():
     else:
         go = 'continue'
         json.dump(go, f)
+        print('Not converged yet')        
 
+    print('Exporting...')
     #export skims even if skims converged
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]
