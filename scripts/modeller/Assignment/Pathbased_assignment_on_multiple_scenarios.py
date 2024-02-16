@@ -1,10 +1,4 @@
-import sys
 import inro.modeller as _modeller
-import inro.emme.desktop.app as _app
-import inro.emme.core.exception as _exception
-import itertools as _itertools
-import datetime
-import os
 import json as _json
 
 class BKRCastPathBasedAssignments(_modeller.Tool()):

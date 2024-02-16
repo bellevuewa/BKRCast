@@ -1,7 +1,6 @@
 
 from typing import overload
 import inro.emme.desktop.app as app
-import inro.modeller as _m
 import inro.emme.matrix as ematrix
 import inro.emme.database.emmebank as _eb
 import json

@@ -7,7 +7,6 @@ sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
 from input_configuration import *
 from emme_configuration import *
-#from bike_configuration import *
 
 # 10/25/2021
 # modified to be compatible with python 3
