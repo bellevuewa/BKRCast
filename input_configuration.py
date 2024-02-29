@@ -58,7 +58,7 @@ run_truck_summary = False
 ##############################
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
 include_tnc = True
-include_tnc_to_transit = False # AV to transit path type allowed
+include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
 
 # Specific reports to run
 run_daysim_report = True

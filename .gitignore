@@ -39,3 +39,6 @@ Daysim/last-run.log
 *.png
 /projects/1530to1830/Worksheets/General_worksheet.emw
 /inputs/model/TAZIndex.txt
+/daysim_2021
+/final_converted_non_workers.csv
+/converted_non_workers.csv

@@ -12,15 +12,13 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import os,sys,datetime,re
+import os,sys
 import subprocess
 import inro.emme.desktop.app as app
 import json
 from shutil import copy2 as shcopy
 from distutils import dir_util
-import re
 import inro.emme.database.emmebank as _eb
-import random
 import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
@@ -29,13 +27,11 @@ from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
 from accessibility.accessibility_configuration import *
-import input_configuration
-import emme_configuration
 import pandas as pd
+import glob
+
 import numpy as np
 import h5py
-
-import glob
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -206,15 +202,6 @@ def copy_large_inputs():
     print('  park and ride capacity..')
     dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
 
-@timed
-def rename_network_outs(iter):
-    for summary_name in network_summary_files:
-        csv_output = os.path.join(os.getcwd(), 'outputs',summary_name+'.csv')
-        if os.path.isfile(csv_output):
-            shcopy(csv_output, os.path.join(os.getcwd(), 'outputs',summary_name+str(iter)+'.csv'))
-            os.remove(csv_output)
-
-
 @timed          
 def clean_up():
     delete_files = ['working\\household.bin', 'working\\household.pk', 'working\\parcel.bin',
@@ -223,7 +210,7 @@ def clean_up():
                    'working\\zone.pk']
 
     if (delete_parcel_data):
-        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels, buffered_parcels_csv])
+        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels])
     
     for file in delete_files: 
         if (os.path.isfile(file)):

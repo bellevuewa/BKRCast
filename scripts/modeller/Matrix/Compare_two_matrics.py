@@ -2,7 +2,6 @@ import inro.modeller as _modeller
 import inro.emme.database.emmebank as _eb
 import traceback as _traceback
 import pml as _html
-import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 import os

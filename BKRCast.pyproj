@@ -406,6 +406,7 @@
     <Content Include="inputs\worksheets\TruckModel\Test_truck.txt" />
     <Content Include="psrc_to_bkrcast_scripts\psrc_to_bkr.txt" />
     <Content Include="psrc_to_bkrcast_scripts\taz_sample_rate_new.txt" />
+    <Content Include="pyrightconfig.json" />
     <Content Include="screenline_2014.json" />
     <Content Include="screenline_2018.json" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />

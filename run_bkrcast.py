@@ -26,20 +26,13 @@
 import os
 import sys
 import datetime
-import re
 import subprocess
-import inro.emme.desktop.app as app
 import json
 from shutil import copy2 as shcopy
-from distutils import dir_util
-import re
-import logging
-
 from numpy import isin
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
-import inro.emme.database.emmebank as _eb
 import random
 import datetime
 import pandas as pd
