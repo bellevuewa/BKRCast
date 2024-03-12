@@ -14,7 +14,7 @@ from data_wrangling import *
 # modified to be compatible with python 3
 
 # 5/5/2023
-# calculate VMT/VHT/VDT by link speed in 5MPH interval.
+# calculate VMT/VHT/VHD by link speed in 5MPH interval.
 
 # file will be exported to default output folder.
 outputfilename = 'system_metrics.txt'
@@ -22,9 +22,9 @@ outputfilename = 'system_metrics.txt'
 def calculate_system_metrics(links_df, tod, groupby):
     links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
     links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
-    links_df[tod+'_VDT'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
+    links_df[tod+'_VHD'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
 
-    ret = links_df[[groupby, tod+'_VMT', tod+'_VHT', tod+'_VDT']].groupby(groupby).sum()
+    ret = links_df[[groupby, tod+'_VMT', tod+'_VHT', tod+'_VHD']].groupby(groupby).sum()
 
     return ret
 
@@ -33,17 +33,17 @@ def calculate_for_GHG(links_df, tod, attr):
     links_df['speed_bins'] = pd.cut(links_df['speedau'], bins = prj.auto_speed_bins)
     links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
     links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
-    links_df[tod+'_VDT'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
-    ret = links_df[['speed_bins', attr, tod+'_VMT',tod+'_VHT', tod+'_VDT']].groupby([attr, 'speed_bins']).sum()
+    links_df[tod+'_VHD'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
+    ret = links_df[['speed_bins', attr, tod+'_VMT',tod+'_VHT', tod+'_VHD']].groupby([attr, 'speed_bins']).sum()
     return ret
     
 
 
 def help():
-    print(' This script is used to calculate VMT, VHT and VDT in different time of day and then aggregated to daily metrics.')
+    print(' This script is used to calculate VMT, VHT and VHD in different time of day and then aggregated to daily metrics.')
     print(' The metrics are aggregated to subareas flagged by an extra link attribute. The default attribute is @bkrlink.')
     print(' User can define own attribute to tag links. ')
-    print(' In addition, VMT, VHT and VDT are also aggregated by link speed in 5mph interval, to match emission factors from Move.')
+    print(' In addition, VMT, VHT and VHD are also aggregated by link speed in 5mph interval, to match emission factors from Move.')
     print(' The output file is saved in outputs/network/system_metrics.txt.')
     print()
     print(' python calculate_daily_VMT.py -h -t extra_link_attribute_tag')
@@ -81,7 +81,7 @@ def main():
                 groupby_description = ''
 
         links_df = my_project.emme_links_to_df()
-        print(f'calculating vmt, vht, and vdt in {value}')
+        print(f'calculating vmt, vht, and vhd in {value}')
         auto_non_connectors_df = links_df.loc[(links_df['isAuto'] == True) & (links_df['isConnector'] == False)].copy()
         ret = calculate_system_metrics(auto_non_connectors_df, value, attr)
         metrics = pd.merge(metrics, ret, how = 'outer', left_index = True, right_index = True)
@@ -97,23 +97,23 @@ def main():
 
     ghg_metric.fillna(0, inplace = True)
 
-    # calculate daily VMT, VHT, and VDT
-    print(f'calculating daily vmt, vht, and vdt')
+    # calculate daily VMT, VHT, and VHD
+    print(f'calculating daily vmt, vht, and vhd')
     metrics['daily_VMT'] = 0
     metrics['daily_VHT'] = 0
-    metrics['daily_VDT'] = 0
+    metrics['daily_VHD'] = 0
 
     ghg_metric['daily_VMT'] = 0
     ghg_metric['daily_VHT'] = 0
-    ghg_metric['daily_VDT'] = 0
+    ghg_metric['daily_VHD'] = 0
 
     for key, value in sound_cast_net_dict.items():  
         metrics['daily_VMT'] = metrics['daily_VMT'] + metrics[value + '_VMT']
         metrics['daily_VHT'] = metrics['daily_VHT'] + metrics[value + '_VHT']
-        metrics['daily_VDT'] = metrics['daily_VDT'] + metrics[value + '_VDT']
+        metrics['daily_VHD'] = metrics['daily_VHD'] + metrics[value + '_VHD']
         ghg_metric['daily_VMT'] = ghg_metric['daily_VMT'] + ghg_metric[value + '_VMT']
         ghg_metric['daily_VHT'] = ghg_metric['daily_VHT'] + ghg_metric[value + '_VHT']
-        ghg_metric['daily_VDT'] = ghg_metric['daily_VDT'] + ghg_metric[value + '_VDT']
+        ghg_metric['daily_VHD'] = ghg_metric['daily_VHD'] + ghg_metric[value + '_VHD']
     
     for col in metrics.columns:
         metrics[col] = metrics[col].map('{:.1f}'.format)
@@ -122,7 +122,7 @@ def main():
 
  
 
-    # export to file also calculate daily VMT/VHT/VDT
+    # export to file also calculate daily VMT/VHT/VHD
     with open(outputfile, 'w')  as f:
         f.write(str(datetime.datetime.now()) + '\n')
         f.write(f'Project folder: {prj.project_folder}\n\n')
