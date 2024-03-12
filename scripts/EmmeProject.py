@@ -19,17 +19,17 @@ import time
 import toml
 import pandas as pd
 import json
+import numpy as np
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-from input_configuration import *
+import input_configuration as input_config
 
 # 10/25/2021
 # modified to be compatible with python 3
 
 class EmmeProject:
     def __init__(self, filepath):
-        self.config = toml.load(os.path.join(os.getcwd(), 'configuration/input_configuration.toml'))        
-        self.desktop = app.start_dedicated(True, modeller_initial, filepath)
+        self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
         pathlist = filepath.split("/")
         self.fullpath = filepath
@@ -379,7 +379,8 @@ class EmmeProject:
 
          ###################################################################  
          # Need to ensure delivery truck is included in the model (supplemental module)  
-         if self.config['include_delivery']:
+         # delivery truck/light truck is no longer explicitly modeled. They are now treated as SOV         
+         if input_config.include_delivery:
              self.network_calculator("link_calculation", result='@dveh', expression='@lttrk/1.5') # delivery trucks       
         #####################################################################        
          # Calculate total vehicles as @tveh, depending on which modes are included
@@ -395,6 +396,56 @@ class EmmeProject:
          # there is no tnc related volumes in assignment, even though tnc mode is on. The TNC trip tables will be added to general trip tables before assignment.
          # so str_base includes tnc volumes if the tnc mode is on.
          self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
+
+    def transit_summary(self):
+        """Export transit line, segment, and mode attributes"""
+
+        network = self.current_scenario.get_network()
+        tod = self.tod
+
+        # Extract Transit Line Data
+        transit_line_data = []
+        for line in network.transit_lines():
+            transit_line_data.append({'line_id': line.id, 
+                                      'route_code': line.id, # line name
+                                      'mode': str(line.mode),
+                                      'description': line.description,
+                                      'boardings': line['@board'], 
+                                      'time': line['@timtr']})
+        _df_transit_line = pd.DataFrame(transit_line_data)
+        _df_transit_line['tod'] = tod
+   
+        # Extract Transit Node Data
+        transit_node_data = []
+        for node in network.nodes():
+            transit_node_data.append({'node_id': int(node.id), 
+                                      'initial_boardings': node.initial_boardings,
+                                      'final_alightings': node.final_alightings})
+
+        _df_transit_node = pd.DataFrame(transit_node_data)
+        _df_transit_node['tod'] = tod
+    
+        # Extract Transit Segment Data
+        transit_segment_data = []
+        for tseg in network.transit_segments():
+            if tseg.j_node is None:
+                transit_segment_data.append({'line_id': tseg.line.id, 
+                                      'segment_boarding': tseg.transit_boardings, 
+                                      'segment_volume': tseg.transit_volume, 
+                                      'i_node': tseg.i_node.number,
+                                      'j_node': np.nan})
+            else:
+                transit_segment_data.append({'line_id': tseg.line.id, 
+                                      'segment_boarding': tseg.transit_boardings, 
+                                      'segment_volume': tseg.transit_volume, 
+                                      'i_node': tseg.i_node.number,
+                                      'j_node': tseg.j_node.number})
+    
+        _df_transit_segment = pd.DataFrame(transit_segment_data)
+        _df_transit_segment['tod'] = tod
+
+        return _df_transit_line, _df_transit_node, _df_transit_segment
+         
 
 def json_to_dictionary(dict_name):
 

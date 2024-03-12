@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\network_summary.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\emissions.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -26,10 +26,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="configuration\emme_configuration.toml" />
-    <Content Include="configuration\input_configuration.toml" />
-    <Content Include="configuration\network_configuration.toml" />
-    <Content Include="configuration\summary_configuration.toml" />
     <Content Include="daysim_configuration_template.properties" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new.dat" />
     <Content Include="daysim_summaries\bkrcast_all\data\Household_bkr_new_inbkr.dat" />
@@ -282,6 +278,10 @@
     <Content Include="inputs\model\bkr-roster.combinations.csv" />
     <Content Include="inputs\model\bkr_roster.csv" />
     <Content Include="inputs\model\CatVarDict.xlsx" />
+    <Content Include="inputs\model\emission\bus_vehicles_bkr.csv" />
+    <Content Include="inputs\model\emission\running_emission_rates_by_veh_type.csv" />
+    <Content Include="inputs\model\emission\start_emission_rates_by_veh_type.csv" />
+    <Content Include="inputs\model\emission\vehicle_population_bkr.csv" />
     <Content Include="inputs\model\FAZ_TAZ.xlsx" />
     <Content Include="inputs\model\HFAZ_WFAZ_LEHD2014.xlsx" />
     <Content Include="inputs\model\node_index_2014.txt" />
@@ -500,6 +500,7 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_daily_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
+    <Compile Include="scripts\summarize\standard\emissions.py" />
     <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\network_volume_validation.py" />
@@ -552,6 +553,7 @@
     <Folder Include="inputs\" />
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\model\" />
+    <Folder Include="inputs\model\emission\" />
     <Folder Include="inputs\model\survey\" />
     <Folder Include="inputs\model\templates\" />
     <Folder Include="inputs\skim_params\" />

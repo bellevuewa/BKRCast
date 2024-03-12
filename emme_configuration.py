@@ -192,3 +192,9 @@ toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmv
 total_delivery_trips = 1 
 
 pkhrfac_dict = {'pm': 0.35, 'am': 0.38, 'md': 0.154}
+
+#####Interested Transit lines
+# Transit Line OD Table list 
+transit_line_dict = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
+special_route_lookup = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
+
