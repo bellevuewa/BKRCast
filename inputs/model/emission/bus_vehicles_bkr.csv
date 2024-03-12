@@ -1,0 +1,16 @@
+agency,year,Jurisdiction,county,bus_vehicles_in_service
+King County Metro,2018,Bellevue,king,152.25
+King County Metro,2018,Kirkland,king,152.25
+King County Metro,2018,Redmond,king,152.25
+King County Metro,2018,Rest of KC,king,558.25
+Sound Transit,2018,Bellevue,king,12.9
+Sound Transit,2018,Kirkland,king,12.9
+Sound Transit,2018,Redmond,king,12.9
+Sound Transit,2018,Rest of KC,king,129
+Sound Transit,2018,Outside of KC,snohomish,38.7
+Sound Transit,2018,Outside of KC,pierce,38.7
+Sound Transit,2018,Outside of KC,kitsap,12.9
+Pierce Transit,2018,Outside of KC,pierce,123
+Community Transit,2018,Outside of KC,snohomish,114
+Kitsap Transit,2018,Outside of KC,kitsap,92
+Everett Transit,2018,Outside of KC,snohomish,33

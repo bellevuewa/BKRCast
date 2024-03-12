@@ -16,18 +16,20 @@ import inro.emme.desktop.app as app
 import inro.modeller as _m
 import os, sys
 import time
+import toml
 import pandas as pd
 import json
+import numpy as np
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
-from input_configuration import *
+import input_configuration as input_config
 
 # 10/25/2021
 # modified to be compatible with python 3
 
 class EmmeProject:
     def __init__(self, filepath):
-        self.desktop = app.start_dedicated(True, modeller_initial, filepath)
+        self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
         self.m = _m.Modeller(self.desktop)
         pathlist = filepath.split("/")
         self.fullpath = filepath
@@ -48,7 +50,7 @@ class EmmeProject:
         for database in self.data_explorer.databases():
             #print database.title()
             if database.title() == database_name:
-                
+                self.bank.dispose()                
                 database.open()
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
@@ -288,7 +290,7 @@ class EmmeProject:
 
         return ret
     
-    def export_matrices(self, output_mat_file):
+    def export_omx_matrices(self, output_mat_file):
         matrix_dict = text_to_dictionary('demand_matrix_dictionary')
         uniqueMatrices = set(matrix_dict.values())
         NAMESPACE = "inro.emme.data.matrix.export_to_omx"
@@ -296,6 +298,16 @@ class EmmeProject:
         export_to_omx(uniqueMatrices, output_mat_file, append_to_file=False,
                       scenario=self.current_scenario,
                       omx_key = 'NAME')
+
+    def export_matrix(self, matrix, matrix_path_name):
+        NAMESPACE = "inro.emme.data.matrix.export_matrices"
+        process = self.m.tool(NAMESPACE)
+        process(matrices=matrix,
+                export_file=matrix_path_name, 
+                field_separator=' ',
+                export_format="PROMPT_DATA_FORMAT",
+                skip_default_values=True,
+                full_matrix_line_format="ONE_ENTRY_PER_LINE")
 
     def closeDesktop(self):
         self.bank.dispose()
@@ -364,11 +376,76 @@ class EmmeProject:
      
          #busses:
          self.network_calculator("link_calculation", result = '@bveh', expression = '@trnv3/2.0')
-     
-         #calc total vehicles, store in @tveh 
-         str_expression = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
+
+         ###################################################################  
+         # Need to ensure delivery truck is included in the model (supplemental module)  
+         # delivery truck/light truck is no longer explicitly modeled. They are now treated as SOV         
+         if input_config.include_delivery:
+             self.network_calculator("link_calculation", result='@dveh', expression='@lttrk/1.5') # delivery trucks       
+        #####################################################################        
+         # Calculate total vehicles as @tveh, depending on which modes are included
+         str_base = '@svtl1 + @svtl2 + @svtl3 + @svnt1 +  @svnt2 + @svnt3 + @h2tl1 + @h2tl2 + @h2tl3 + @h2nt1 + @h2nt2 + @h2nt3 + @h3tl1\
                                     + @h3tl2 + @h3tl3 + @h3nt1 + @h3nt2 + @h3nt3 + @lttrk + @mveh + @hveh + @bveh'
+
+         str_expression = str_base                                
+         # AV is not active in BKRCast
+         #                            
+         # av_str = '+ @av_sov_inc1 + @av_sov_inc2 + @av_sov_inc3 + @av_hov2_inc1 + @av_hov2_inc2 + @av_hov2_inc3 + ' + \
+         #                   '@av_hov3_inc1 + @av_hov3_inc2 + @av_hov3_inc3 '
+    
+         # there is no tnc related volumes in assignment, even though tnc mode is on. The TNC trip tables will be added to general trip tables before assignment.
+         # so str_base includes tnc volumes if the tnc mode is on.
          self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
+
+    def transit_summary(self):
+        """Export transit line, segment, and mode attributes"""
+
+        network = self.current_scenario.get_network()
+        tod = self.tod
+
+        # Extract Transit Line Data
+        transit_line_data = []
+        for line in network.transit_lines():
+            transit_line_data.append({'line_id': line.id, 
+                                      'route_code': line.id, # line name
+                                      'mode': str(line.mode),
+                                      'description': line.description,
+                                      'boardings': line['@board'], 
+                                      'time': line['@timtr']})
+        _df_transit_line = pd.DataFrame(transit_line_data)
+        _df_transit_line['tod'] = tod
+   
+        # Extract Transit Node Data
+        transit_node_data = []
+        for node in network.nodes():
+            transit_node_data.append({'node_id': int(node.id), 
+                                      'initial_boardings': node.initial_boardings,
+                                      'final_alightings': node.final_alightings})
+
+        _df_transit_node = pd.DataFrame(transit_node_data)
+        _df_transit_node['tod'] = tod
+    
+        # Extract Transit Segment Data
+        transit_segment_data = []
+        for tseg in network.transit_segments():
+            if tseg.j_node is None:
+                transit_segment_data.append({'line_id': tseg.line.id, 
+                                      'segment_boarding': tseg.transit_boardings, 
+                                      'segment_volume': tseg.transit_volume, 
+                                      'i_node': tseg.i_node.number,
+                                      'j_node': np.nan})
+            else:
+                transit_segment_data.append({'line_id': tseg.line.id, 
+                                      'segment_boarding': tseg.transit_boardings, 
+                                      'segment_volume': tseg.transit_volume, 
+                                      'i_node': tseg.i_node.number,
+                                      'j_node': tseg.j_node.number})
+    
+        _df_transit_segment = pd.DataFrame(transit_segment_data)
+        _df_transit_segment['tod'] = tod
+
+        return _df_transit_line, _df_transit_node, _df_transit_segment
+         
 
 def json_to_dictionary(dict_name):
 

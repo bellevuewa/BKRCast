@@ -1,0 +1,43 @@
+year,Jurisdiction,county,type,vehicles
+2014,Bellevue,King,light,94381
+2014,Bellevue,King,medium,11495
+2014,Bellevue,King,heavy,696
+2014,Kirkland,King,light,59454
+2014,Kirkland,King,medium,7241
+2014,Kirkland,King,heavy,439
+2014,Redmond,King,light,40462
+2014,Redmond,King,medium,4928
+2014,Redmond,King,heavy,298
+2014,Rest of KC,King,light,1239242
+2014,Rest of KC,King,medium,150933
+2014,Rest of KC,King,heavy,9141
+2014,Rest of KC,kitsap,light,199872
+2014,Rest of KC,kitsap,medium,28830
+2014,Rest of KC,kitsap,heavy,1342
+2014,Rest of KC,pierce,light,585681
+2014,Rest of KC,pierce,medium,82607
+2014,Rest of KC,pierce,heavy,4305
+2014,Rest of KC,snohomish,light,559557
+2014,Rest of KC,snohomish,medium,77685
+2014,Rest of KC,snohomish,heavy,3884
+2018,Bellevue,King,light,111525
+2018,Bellevue,King,medium,14825
+2018,Bellevue,King,heavy,436
+2018,Kirkland,King,light,70254
+2018,Kirkland,King,medium,9338
+2018,Kirkland,King,heavy,275
+2018,Redmond,King,light,47812
+2018,Redmond,King,medium,6355
+2018,Redmond,King,heavy,187
+2018,Rest of KC,King,light,1464351
+2018,Rest of KC,King,medium,194650
+2018,Rest of KC,King,heavy,5723
+2018,Rest of KC,kitsap,light,245637
+2018,Rest of KC,kitsap,medium,30772
+2018,Rest of KC,kitsap,heavy,812
+2018,Rest of KC,pierce,light,719314
+2018,Rest of KC,pierce,medium,93218
+2018,Rest of KC,pierce,heavy,2642
+2018,Rest of KC,snohomish,light,684585
+2018,Rest of KC,snohomish,medium,87796
+2018,Rest of KC,snohomish,heavy,2427

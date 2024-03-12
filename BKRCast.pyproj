@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\data_wrangling.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\emissions.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -278,6 +278,10 @@
     <Content Include="inputs\model\bkr-roster.combinations.csv" />
     <Content Include="inputs\model\bkr_roster.csv" />
     <Content Include="inputs\model\CatVarDict.xlsx" />
+    <Content Include="inputs\model\emission\bus_vehicles_bkr.csv" />
+    <Content Include="inputs\model\emission\running_emission_rates_by_veh_type.csv" />
+    <Content Include="inputs\model\emission\start_emission_rates_by_veh_type.csv" />
+    <Content Include="inputs\model\emission\vehicle_population_bkr.csv" />
     <Content Include="inputs\model\FAZ_TAZ.xlsx" />
     <Content Include="inputs\model\HFAZ_WFAZ_LEHD2014.xlsx" />
     <Content Include="inputs\model\node_index_2014.txt" />
@@ -329,6 +333,7 @@
     <Content Include="inputs\skim_params\transit_fare_dictionary.json" />
     <Content Include="inputs\skim_params\transit_line_calculation.json" />
     <Content Include="inputs\skim_params\transit_line_definition.json" />
+    <Content Include="inputs\skim_params\transit_path_analysis.json" />
     <Content Include="inputs\skim_params\transit_segment_calculation.json" />
     <Content Include="inputs\skim_params\transit_skim_aggregate_matrix_names.json" />
     <Content Include="inputs\skim_params\transit_skim_setup.json" />
@@ -337,6 +342,7 @@
     <Content Include="inputs\skim_params\transit_skim_setup_ferry.json" />
     <Content Include="inputs\skim_params\transit_skim_setup_light_rail.json" />
     <Content Include="inputs\skim_params\transit_skim_setup_passenger_ferry.json" />
+    <Content Include="inputs\skim_params\transit_traversal.json" />
     <Content Include="inputs\skim_params\truck_model.json" />
     <Content Include="inputs\skim_params\user_classes.json" />
     <Content Include="inputs\subarea_definition\BellevueDTTAZ.txt" />
@@ -494,6 +500,7 @@
     </Compile>
     <Compile Include="scripts\summarize\standard\calculate_daily_VMT.py" />
     <Compile Include="scripts\summarize\standard\daily_bank.py" />
+    <Compile Include="scripts\summarize\standard\emissions.py" />
     <Compile Include="scripts\summarize\standard\landuse_summary.py" />
     <Compile Include="scripts\summarize\standard\network_summary.py" />
     <Compile Include="scripts\summarize\standard\network_volume_validation.py" />
@@ -546,6 +553,7 @@
     <Folder Include="inputs\" />
     <Folder Include="inputs\coefficients\" />
     <Folder Include="inputs\model\" />
+    <Folder Include="inputs\model\emission\" />
     <Folder Include="inputs\model\survey\" />
     <Folder Include="inputs\model\templates\" />
     <Folder Include="inputs\skim_params\" />
@@ -559,6 +567,7 @@
     <Folder Include="inputs\worksheets\9to1530\" />
     <Folder Include="inputs\worksheets\Supplementals\" />
     <Folder Include="inputs\worksheets\TruckModel\" />
+    <Folder Include="configuration\" />
     <Folder Include="psrc_to_bkrcast_scripts" />
     <Folder Include="scripts" />
     <Folder Include="scripts\accessibility" />
