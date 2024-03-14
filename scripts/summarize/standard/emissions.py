@@ -202,7 +202,7 @@ def calculate_intrazonal_emissions(df_running_rates, df_intra_vmt):
 
     # For intrazonals, assume standard speed bin and roadway type for all intrazonal trips
     speedbin = 4
-    roadtype = 5
+    roadtype = 4
 
     iz_rates = df_running_rates[(df_running_rates['avgSpeedBinID'] == speedbin) &
 	                    (df_running_rates['roadTypeID'] == roadtype)].copy()
@@ -231,9 +231,17 @@ def calculate_start_emissions(start_rates_df):
     tot_veh = df_hh['hhvehs'].sum()
 
     # Scale county vehicles by total change
-    tot_veh_model_base_year = 3007056
-    veh_scale = 1.0+(tot_veh - tot_veh_model_base_year)/tot_veh_model_base_year
-    df_veh['vehicles'] = df_veh['vehicles']*veh_scale
+    base_year_scaling_df = pd.read_csv(os.path.join(input_config.input_folder_for_supplemental, 'base_year_scaling.csv'))    
+    ret_vals = base_year_scaling_df.loc[(base_year_scaling_df['year'] == int(input_config.base_year)) & (base_year_scaling_df['field'] == 'total_veh_base_year_model'), 'value']
+    if ret_vals.empty:
+        print(f'{Fore.GREEN}Did not find total vehicles in base year {input_config.base_year}. Check the file base_year_scaling.csv.')            
+        exit(-1)
+    else:
+        tot_veh_model_base_year = ret_vals.values[0]                        
+
+    # tot_veh_model_base_year = 3007056  # PSRC hard coded base year modelled vehs
+    veh_scale = 1.0 + (tot_veh - tot_veh_model_base_year)/tot_veh_model_base_year
+    df_veh['vehicles'] = df_veh['vehicles'] * veh_scale
 
     # Join with rates to calculate total emissions
     # Sum total emissions across all times of day, by county, for each pollutant
