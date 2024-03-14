@@ -223,8 +223,6 @@ pollutant_map = {
     '90': 'Atmospheric CO2',
     '91': 'Total Energy',
     '98': 'CO2 Equivalent',
-    'PM10': 'PM10 Total',
-    'PM25': 'PM25 Total',
     '100': 'PM10 Exhaust',
     '106': 'PM10 Brakewear',
     '107': 'PM10 Tirewear',
