@@ -54,7 +54,7 @@ def calculate_interzonal_vmt():
     df['heavy_truck_vmt'] = df['@hveh'] * df['length']
 
     # Convert TOD periods into hours used in emission rate files
-    df['hourId'] = df['tod'].map(input_config.tod_lookup).astype('int')
+    df['hourId'] = df['tod'].map(input_config.emission_tod_lookup).astype('int')
 
     # Calculate congested speed to separate time-of-day link results into speed bins
     df['congested_speed'] = (df['length']/df['auto_time']) * 60
@@ -140,7 +140,7 @@ def calculate_intrazonal_vmt():
 
     # Sum up SOV, HOV2, and HOV3 volumes across user classes 1, 2, and 3 by time of day
     # Calcualte VMT for these trips too; rename truck volumes for clarity
-    for tod in input_config.tod_lookup.keys():
+    for tod in input_config.emission_tod_lookup.keys():
         df_iz['sov_' + tod + '_vol'] = df_iz['svtl1_' + tod] + df_iz['svtl2_' + tod] + df_iz['svtl3_' + tod] + df_iz['svnt1_' + tod] + df_iz['svnt2_' + tod] + df_iz['svnt3_' + tod]
         df_iz['hov2_' + tod + '_vol'] = df_iz['h2tl1_' + tod] + df_iz['h2tl2_' + tod] + df_iz['h2tl3_' + tod] + df_iz['h2nt1_' + tod] + df_iz['h2nt2_' + tod] + df_iz['h2nt3_' + tod]
         df_iz['hov3_' + tod + '_vol'] = df_iz['h3tl1_' + tod] + df_iz['h3tl2_' + tod] + df_iz['h3tl3_' + tod] + df_iz['h3nt1_' + tod] + df_iz['h3nt2_' + tod] + df_iz['h3nt3_' + tod]
@@ -173,7 +173,7 @@ def calculate_intrazonal_vmt():
     df.columns = ['county', 'Jurisdiction', 'VMT','tod','vehicle_type']
 
     # Use hourly periods from emission rate files
-    df['hourId'] = df['tod'].map(input_config.tod_lookup).astype('int')
+    df['hourId'] = df['tod'].map(input_config.emission_tod_lookup).astype('int')
 
     # Export this file for use with other rate calculations
     # Includes total VMT for each group for which rates are available

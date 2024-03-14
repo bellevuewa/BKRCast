@@ -205,7 +205,7 @@ trip_distance_bin = [0, 1, 2, 3, 5, 200]
 auto_speed_bins = [-999999, 2.5, 7.5, 12.5, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5, 62.5, 67.5, 72.5, 999999 ]
 
 # to decide which hour of emission rate should be used.
-tod_lookup = {'6to9': 7, '9to1530': 12, '1530to1830': 17, '1830to6': 19}
+emission_tod_lookup = {'6to9': 7, '9to1530': 12, '1530to1830': 17, '1830to6': 19}
 # List of pollutants to be summarized for summer
 # All other are to be summarized for winter season
 # using wintertime rates for all start emission rates except for VOCs
