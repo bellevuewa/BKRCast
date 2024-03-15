@@ -23,6 +23,7 @@ import pandas as pd
 import json
 import h5py
 import datetime
+import getopt
 from colorama import Fore, init
 from EmmeProject import EmmeProject
 import data_wrangling
@@ -223,6 +224,24 @@ def sort_df(df, sort_list, sort_column_list):
 
     return df
 
+def help():
+    print('This script will generates the following results:')
+    print('  outputs/network:')
+    print('      network_summary.xlsx: lane miles/VMT/VHT/VHD by facility type and jurisdiction, and by user class and jurisdiction')
+    print('      network_results.csv: links with all attributes')
+    print('      iz_vol.csv: intrazonal trips') 
+    print('  outputs/transit:')       
+    print('      OD tables for selected transit lines')
+    print('      boardings_by_stop.csv: transit boardings by stop')        
+    print('      daily_boardings_special_routes.csv: daily transit boardings on selected routes')    
+    print('      jobs_by_transit_access.xlsx: jobs/hhs accessible within 1/4 mile radius of transit stops')    
+    print('      light_rail_boardings.csv: LRT daily boardings')    
+    print('      total_transit_trips.csv: total transit trips by submode')    
+    print('      transit_line_results.csv: all lines with boardings and travel time by TOD')  
+    print('      transit_node_results.csv: transit initial boarding and final alighting at each stop by TOD')  
+    print('      transit_segment_results.csv: transit boarding and volume on each segment by TOD') 
+    print('      transit_transfers.csv: transfers between transit lines')           
+    
 def summarize_network(df):
     """ Calculate VMT, VHT, and Delay from link-level results """
     """ BKR area only """    
@@ -443,7 +462,19 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     df_total.to_csv(input_config.light_rail_boardings_path)
 
 def main():
-    # Delete any existing files
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'h')
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+    
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+    
+    # Delete any existing files    
     print('Delete existing output fiiles.')    
     for _path in [input_config.transit_line_path, input_config.transit_node_path, input_config.transit_segment_path, input_config.network_results_path]:
         if os.path.exists(_path ):
