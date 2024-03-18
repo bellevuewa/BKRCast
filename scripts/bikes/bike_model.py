@@ -165,20 +165,20 @@ def bike_assignment(my_project, tod):
     # Invoke the Emme assignment tool
     extended_assign_transit = my_project.m.tool("inro.emme.transit_assignment.extended_transit_assignment")
     bike_spec = json.load(open(r'inputs\skim_params\bike_assignment.json'))
-    extended_assign_transit(bike_spec, add_volumes=True)
+    extended_assign_transit(bike_spec, save_strategies = True, add_volumes = True, class_name = bike_mode_class_lookup['bike'])
 
     print('bike assignment complete, now skimming')
 
     skim_bike = my_project.m.tool("inro.emme.transit_assignment.extended.matrix_results")
     bike_skim_spec = json.load(open(r'inputs\skim_params\bike_skim_setup.json'))
-    skim_bike(bike_skim_spec)
+    skim_bike(bike_skim_spec, class_name = bike_mode_class_lookup['bike'])
 
     # Add bike volumes to bvol network attribute
     bike_network_vol = my_project.m.tool("inro.emme.transit_assignment.extended.network_results")
 
     # Skim for final bike assignment results
     bike_network_spec = json.load(open(r'inputs\skim_params\bike_network_setup.json'))
-    bike_network_vol(bike_network_spec)
+    bike_network_vol(bike_network_spec, class_name = bike_mode_class_lookup['bike'])
 
     # Export skims to h5
     for matrix in ["mfbkpt", "mfbkat"]:

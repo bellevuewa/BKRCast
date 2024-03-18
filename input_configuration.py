@@ -30,17 +30,17 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True 
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
-run_copy_input_files = True
-run_setup_emme_project_folders = True
-run_setup_emme_bank_folders = True
-run_import_networks = True
+run_copy_input_files = False
+run_setup_emme_project_folders = False
+run_setup_emme_bank_folders = False
+run_import_networks = False
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = True
+run_skims_and_paths_seed_trips = False
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True

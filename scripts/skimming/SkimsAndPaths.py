@@ -332,7 +332,7 @@ def transit_assignment(my_project, spec, keep_exisiting_volumes, class_name=None
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
     assignment_specification["waiting_time"]["perception_factor"] = transit_node_attributes['wait_time_perception']['name'] 
     assignment_specification["in_vehicle_time"]["perception_factor"] = transit_node_attributes['in_vehicle_time']['name']
-    assign_transit(assignment_specification,  add_volumes=keep_exisiting_volumes, class_name=class_name)
+    assign_transit(assignment_specification,  save_strategies = True, add_volumes=keep_exisiting_volumes, class_name=class_name)
 
     end_transit_assignment = time.time()
     print('It took ' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + 'minutes to run the transit assignment.')
@@ -1103,8 +1103,7 @@ def run_transit(project_name):
     print("starting transit assignment and skimming...")
 
     count = 0
-    for submode, class_name in {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry',
-            'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}.items():
+    for submode, class_name in transit_submode_class_lookup.items():
         if count > 0:
             add_volume = True
         else:
@@ -1453,8 +1452,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     print(f'Starting transit assignment and skims..')
     create_node_attributes(transit_node_attributes, my_project)
     count = 0
-    for submode, class_name in {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry',
-            'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}.items():
+    for submode, class_name in transit_submode_class_lookup.items():
         if count > 0:
             add_volume = True
         else:
@@ -1462,7 +1460,9 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
 
         print('    for submode: ' + submode)
         transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
+
         transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
+        
         count += 1
     
     print("finished transit assignment and skimming")
@@ -1480,6 +1480,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     mod_calc["result"] = transfer_wait_matrix
     mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
     matrix_calc(mod_calc)
+
 
     #wait time for transit submodes
     for submode in ['r','f','p','c']:

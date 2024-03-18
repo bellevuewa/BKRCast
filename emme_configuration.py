@@ -129,6 +129,7 @@ gc_skims = {'light_trucks' : 'lttrk', 'medium_trucks' : 'metrk', 'heavy_trucks' 
 
 # Bike/Walk Skims
 bike_walk_skim_tod = ['6to9']
+bike_mode_class_lookup = {'bike':'bike'}
 
 # Transit Inputs:
 transit_skim_tod = load_transit_tod
@@ -153,7 +154,8 @@ transit_tod = {'6to9' : {'4k_tp' : 'am', 'num_of_hours' : 3},
                '9to1530' : {'4k_tp' : 'md', 'num_of_hours' : 6.5}, 
                '1530to1830' : {'4k_tp' : 'pm', 'num_of_hours' : 3},
                '1830to6' : {'4k_tp' : 'ni', 'num_of_hours' : 3.5}} #2 hours of service in PSRC - trying 3.5 hours in BKR, assuming service till 10pm
-                
+
+transit_submode_class_lookup = {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry', 'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}                
 # Transit Fare:
 zone_file = 'inputs/Fares/transit_fare_zones.grt'
 peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
