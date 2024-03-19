@@ -250,7 +250,7 @@ def intitial_extra_attributes(my_project):
                      
 
     # Create the link extra attributes to store the auto equivalent of bus vehicles
-    my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles",True)
+    my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles in PCE",True)
  
     # Create the link extra attribute to store the arterial delay in
     #my_project.create_extra_attribute("LINK", "@rdly","Intersection Delay", True)
