@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\emissions.py</StartupFile>
+    <StartupFile>scripts\bikes\recreational_bike.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -461,6 +461,7 @@
     <Compile Include="scripts\archive\archive.py" />
     <Compile Include="scripts\archive\revive.py" />
     <Compile Include="scripts\bikes\bike_model.py" />
+    <Compile Include="scripts\bikes\recreational_bike.py" />
     <Compile Include="scripts\data_wrangling.py" />
     <Compile Include="scripts\EmmeProject.py" />
     <Compile Include="scripts\logcontroller.py" />

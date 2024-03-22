@@ -256,7 +256,7 @@ network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
 report_output_location = 'outputs/daysim'
 report_lu_output_location = 'outputs/landuse'
-report_bikes_output_location = 'outputs/bike'
+report_bikes_output_location = 'outputs/bikes'
 report_net_output_location = 'outputs/network'
 report_summary_output_location = 'outputs/summary'
 
