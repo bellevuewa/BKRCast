@@ -446,7 +446,23 @@ class EmmeProject:
 
         return _df_transit_line, _df_transit_node, _df_transit_segment
          
+    def create_partition(self, partition_id, p_descr, dicts_of_val_zones):
+        # if partition exists in the databank, print a warning message, then delete it.
+        partition = self.bank.partition(partition_id)        
+        if partition == None:
+            print(f'partition {partition_id} does not exist. ')
 
+        partition.initialize()
+        partition.description = p_descr
+        partition_val = partition.get_data()
+
+        # set value for each taz
+        for val, list_zones in dicts_of_val_zones.items():
+            for taz in list_zones:
+                partition_val.set(taz, val)
+
+        partition.set_data(partition_val)                
+                                            
 def json_to_dictionary(dict_name):
 
     #Determine the Path to the input files and load them

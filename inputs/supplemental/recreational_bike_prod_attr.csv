@@ -1,19 +1,18 @@
-Park,PSRC_ID,BKRCastTAZ,RecBikeProd,RecBikeAttr
-Marymoor Park,757987,1091,200,200
-Redmond City Hall,1126722,1033,50,50
-60Acres Park,1258073,1186,50,50
-Woodiville ,734591,1197,50,50
-Lake Sammamish Park,833733,1301,200,200
-Northshore Athletic Field,788573,1197,30,30
-Bothell Landing,1259115,917,30,30
-Rhododendron Park,1073016,914,30,30
-St. Edward State Park,857497,899,50,50
-Big Finn hill Park,864616,832,50,50
-Juanita Park,925174,791,50,50
-Washington Park Arboretum,840622,1257,100,100
-Seward Park,856933,1243,200,200
-Luther Burbank Park,713625,1242,100,100
-Colman Park,740427,1244,100,100
-Newcastle Beak Park,803683,486,100,100
-Gene Coulon Beach Park,949287,1238,50,50
-UW,797163,1259,500,500
+Park,PSRC_ID,BKRCastTAZ,Year,recbpro,recbatt
+Newcastle Beak Park,803683,486,2019,100,100
+Juanita Park,925174,791,2019,50,50
+Big Finn hill Park,864616,832,2019,50,50
+St. Edward State Park,857497,899,2019,50,50
+Rhododendron Park,1073016,914,2019,30,30
+Bothell Landing,1259115,917,2019,30,30
+Redmond City Hall,1126722,1033,2019,50,50
+Marymoor Park,757987,1091,2019,200,200
+60Acres Park,1258073,1186,2019,50,50
+Woodiville ,734591,1197,2019,50,50
+Gene Coulon Beach Park,949287,1238,2019,50,50
+Luther Burbank Park,713625,1242,2019,100,100
+Seward Park,856933,1243,2019,200,200
+Colman Park,740427,1244,2019,100,100
+Washington Park Arboretum,840622,1257,2019,100,100
+UW,797163,1259,2019,500,500
+Lake Sammamish Park,833733,1301,2019,200,200

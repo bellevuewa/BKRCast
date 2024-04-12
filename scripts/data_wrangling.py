@@ -441,4 +441,30 @@ def update_taz_accessibility_file(horizon_year):
         df.loc[df['Jurisdiction'] == 'BELLEVUE', 'Dest_eligible'] = 1
         df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)   
     
-    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')                                             
+    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')      
+
+def balance_trips(df, trip_purposes, balanced_to):
+    """ Balance trips to productions or attractions."""
+    if balanced_to == 'pro':
+        to_balance = 'att'
+        
+    else:
+        to_balance = 'pro'
+        
+    for purposes in trip_purposes:
+        total_to_match = sum(df[purposes+balanced_to])
+        total_to_balance = sum(df[purposes+to_balance])
+        ratio = total_to_match / total_to_balance
+        df[purposes+to_balance] = df[purposes+to_balance] * ratio
+    
+    return df
+
+def load_skims(skim_file_loc, mode_name, divide_by_100=False):
+    ''' Loads H5 skim matrix for specified mode. '''
+    with h5py.File(skim_file_loc, "r") as f:
+        skim_file = f['Skims'][mode_name][:]
+    # Divide by 100 since decimals were removed in H5 source file through multiplication
+    if divide_by_100:
+        return skim_file.astype(float)/100
+    else:
+        return skim_file

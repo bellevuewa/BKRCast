@@ -168,7 +168,11 @@ def run_truck_supplemental(iteration):
         if returncode != 0:
             sys.exit(1)
 
-        
+    if include_rec_bike:
+        returncode = subprocess.call([sys.excutable, 'scripts/supplemental/recreational_bike.py'])  
+        if returncode != 0:
+            logger.info('Recreational bike model crashed unexpectedly. The return code is ', str(returncode))
+            sys.exit(1)                              
 @timed
 def daysim_assignment(iteration):
 

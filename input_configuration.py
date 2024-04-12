@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU\DT_rebalance_btw_job_category'
 base_year = '2019'  # BKRCast base year
 model_year = '2044'
@@ -59,6 +59,9 @@ run_truck_summary = False
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
 include_tnc = True
 include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
+
+## Recreational bike
+include_rec_bike = True # inplemented as part of supplemental
 
 include_delivery = False
 
