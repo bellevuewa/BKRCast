@@ -384,6 +384,7 @@
     <Content Include="inputs\supplemental\rate_adjustments.csv" />
     <Content Include="inputs\supplemental\recreational_bike_prod_attr.csv" />
     <Content Include="inputs\supplemental\rec_bike_gravity_model_coefficients.csv" />
+    <Content Include="inputs\supplemental\rec_bike_tod_factors.csv" />
     <Content Include="inputs\supplemental\seatac_bkr.csv" />
     <Content Include="inputs\supplemental\special_generators_bkr.csv" />
     <Content Include="inputs\supplemental\time_of_day_factors_bkr.csv" />

@@ -34,17 +34,11 @@ def calc_fric_fac(cost_skim, dist_skim, _coeff_df, selected_zones):
 
 def matrix_to_emme(matrix, mfname, description, matrix_type, my_project):
     matrix_name_list = [matrix.name for matrix in my_project.bank.matrices()]
-    zones = my_project.current_scenario.zone_numbers
     if mfname not in matrix_name_list:
         my_project.create_matrix(mfname, description, matrix_type) 
     
-    if matrix_type == 'FULL':               
-        emme_matrix = ematrix.MatrixData(indices=[zones,zones],type='f')    # Access Matrix API
-    else:
-        emme_matrix = ematrix.MatrixData(indices=[zones],type='f')    # Access Matrix API
-    emme_matrix.from_numpy(matrix)
     matrix_id = my_project.bank.matrix(mfname).id    
-    my_project.bank.matrix(matrix_id).set_data(emme_matrix, my_project.current_scenario)
+    my_project.bank.matrix(matrix_id).set_numpy_data(matrix, my_project.current_scenario)
     
 def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
     ''' Loads data to Emme matrices: Ps and As and friction factor by trip purpose.
@@ -78,7 +72,6 @@ def balance_matrices(trip_purps, my_project):
         my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = '0', 
                                  constraint_by_zone_origins = 'gd0',
                                  constraint_by_zone_destinations = 'all') 
-        # my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = 'mf' + purpose + 'fri' + ' * gd(p) != gd(q)') 
         
         my_project.matrix_calculator(result = 'mf' + purpose + 'fri', expression = 'mf' + purpose + 'fri' + '* (p!=q)') 
         print("create P-A table, for purpose: " + str(purpose))
@@ -113,6 +106,28 @@ def initialize_matrix(trip_purps, my_project):
             my_project.delete_matrix(f'{purpose}od')
         my_project.create_matrix(f'{purpose}od', f'{purpose} O-D trip table', "FULL")                               
 
+def split_rec_bike_by_tod(recb_tod_factors, my_project):
+    matrix_dict = {}
+    recb_daily_od_np = my_project.bank.matrix('recbod').get_numpy_data()
+
+    for tod in recb_tod_factors['time_of_day'].unique():
+        tod_fac = recb_tod_factors.loc[recb_tod_factors['time_of_day'] == tod, 'value'].values[0]
+        recb_tod_np = recb_daily_od_np * tod_fac
+        matrix_dict[f'{tod}'] = recb_tod_np 
+        matrix_to_emme(recb_tod_np, f'recb_{tod}', f'rec bike od at {tod}', 'FULL', my_project)    
+    
+    return matrix_dict                                    
+
+def export_recb_trips(path, matrix_dict):
+    mode_lookup = {'recb': 'recb'}    
+    for tod in matrix_dict.keys():
+        print(f'exporting rec bike trips for time period: {tod}') 
+        with h5py.File(os.path.join(path, f'{tod}.h5'), 'a') as my_store:
+            table_name = mode_lookup['recb']
+            if table_name in my_store:
+                del my_store[table_name]                                        
+            my_store.create_dataset(mode_lookup['recb'], data = matrix_dict[tod], compression = 'gzip')                         
+    
 def main():
     print('Calculating recreational bike trips...')    
     trip_nhb_prod = ['recbpro']    
@@ -165,6 +180,12 @@ def main():
     balance_matrices(trip_purpose_list, my_project)
     calculate_daily_rec_bike_trips(trip_purpose_list, my_project)    
 
+    print('Split daily rec bike to different TOD')
+    tod_fac = pd.read_csv(os.path.join(input_config.input_folder_for_supplemental, 'rec_bike_tod_factors.csv'))
+    recb_tod_fac = tod_fac[tod_fac['mode'] == 'recb']    
+    recb_tod_matrices_dict = split_rec_bike_by_tod(recb_tod_fac, my_project)
+    
+    export_recb_trips(emme_config.supplemental_loc, recb_tod_matrices_dict)
     my_project.closeDesktop()
 
 
