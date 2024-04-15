@@ -43,7 +43,8 @@
 {"Name": "walk", "Description": "Walk Trips","Mode": "w","Time": "@timau","Distance": "@dist"} 
 ],
 "Bike": [
-{"Name": "bike", "Description": "Bike Trips","Mode": "l","Time": "@timau","Distance": "@dist"} 
+{"Name": "bike", "Description": "Bike Trips","Mode": "l","Time": "@timau","Distance": "@dist"}, 
+{"Name": "recbike", "Description": "Recreational Bike Trips","Mode": "q","Time": "@timau","Distance": "@dist"} 
 ],
 "Transit": [
 {"Name": "trnst", "Description": "Transit Trips","Mode": "t","Time": "@timau","Distance": "@dist"} 
