@@ -129,7 +129,7 @@ gc_skims = {'light_trucks' : 'lttrk', 'medium_trucks' : 'metrk', 'heavy_trucks' 
 
 # Bike/Walk Skims
 bike_walk_skim_tod = ['6to9']
-bike_mode_class_lookup = {'bike':'bike'}
+bike_mode_class_lookup = {'bike':'bike', 'recb':'recbike'}
 
 # Transit Inputs:
 transit_skim_tod = load_transit_tod

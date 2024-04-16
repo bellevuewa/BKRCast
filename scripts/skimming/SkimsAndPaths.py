@@ -871,7 +871,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     # Load in supplemental trips
     # We're assuming all trips are only for income 2, toll classes
     for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk', 'ferry', 'passenger_ferry', 'litrat', 'commuter_rail']:
-        demand_matrix = load_supplemental_trips(my_project, matrix_name, zonesDim)
+        demand_matrix = my_project.load_supplemental_trips(matrix_name)
         demand_matrices.update({matrix_name : demand_matrix})
 
     # Create empty demand matrices for other modes without supplemental trips
@@ -984,31 +984,6 @@ def load_trucks(my_project, matrix_name, zonesDim):
 
     return demand_matrix
 
-
-def load_supplemental_trips(my_project, matrix_name, zonesDim):
-    ''' Load externals, special generator, and group quarters trips
-        from the supplemental trip model. Supplemental trips are assumed
-        only on Income Class 2, so only these income class modes are modified here. '''
-
-    tod = my_project.tod
-    # Create empty array to fill with trips
-    demand_matrix = np.zeros((zonesDim,zonesDim), np.float64)
-    hdf_file = h5py.File(supplemental_loc + tod + '.h5', "r")
-    # Call correct mode name by removing income class value when needed
-    if matrix_name in ['svtl2', 'h2tl2', 'h3tl2']:
-        mode_name = matrix_name[:-1]
-    else:
-        mode_name = matrix_name
-
-    # Open mode-specific array for this TOD and mode
-    hdf_array = hdf_file[mode_name]
-    
-    # Extract specified array size and store as NumPy array 
-    sub_demand_matrix = hdf_array[0:zonesDim, 0:zonesDim]
-    sub_demand_array = (np.asarray(sub_demand_matrix))
-    demand_matrix[0:len(sub_demand_array), 0:len(sub_demand_array)] = sub_demand_array
-
-    return demand_matrix
 
 def create_trip_tod_indices(tod, hdf5_file, adj_trips_df):
     #creates an index for those trips that belong to tod (time of day)

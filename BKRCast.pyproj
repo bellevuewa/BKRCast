@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\supplemental\recreational_bike.py</StartupFile>
+    <StartupFile>scripts\bikes\bike_model.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -299,6 +299,8 @@
     <Content Include="inputs\model\templates\TAZIndex_template.txt" />
     <Content Include="inputs\model\transit_agency_dict.json" />
     <Content Include="inputs\model\variable_labels.csv" />
+    <Content Include="inputs\skim_params\rec_bike_network_setup.json" />
+    <Content Include="inputs\skim_params\rec_bike_assignment.json" />
     <Content Include="inputs\skim_params\bike_assignment.json" />
     <Content Include="inputs\skim_params\bike_network_setup.json" />
     <Content Include="inputs\skim_params\bike_skim_setup.json" />

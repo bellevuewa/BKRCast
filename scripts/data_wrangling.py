@@ -262,6 +262,9 @@ def update_skim_parameters():
     #    keywords.append('av_')
     if not include_tnc:  ##########################################################################################
         keywords.append('tnc_')
+
+    if not include_rec_bike:
+        keywords.append('recb')                
     # delivery truck not included (Light truck)
     #if not include_delivery:
     #    keywords.append('delivery_')
@@ -284,6 +287,13 @@ def update_skim_parameters():
 
     # instead of deleting what we do not need, update the list with what we need
     user_class['Highway'] = [row for idx, row in enumerate(user_class['Highway']) if idx not in rows_to_be_removed]
+    rows_to_be_removed = []
+    for idx, row in enumerate(user_class['Bike']):
+        for keyword in keywords:
+            if keyword in row['Name']:
+                rows_to_be_removed.append(idx)
+    user_class['Bike'] = [row for idx, row in enumerate(user_class['Bike']) if idx not in rows_to_be_removed]
+
 
     with open(os.path.join(root_path, 'user_classes.json'), 'w') as file:
         file.write(json.dumps(user_class, indent = 4))
@@ -468,3 +478,4 @@ def load_skims(skim_file_loc, mode_name, divide_by_100=False):
         return skim_file.astype(float)/100
     else:
         return skim_file
+

@@ -5,11 +5,15 @@ import h5py
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
-from input_configuration import *
-from emme_configuration import *
+import data_wrangling
+import input_configuration as input_config
+import emme_configuration as emme_config
 
 # 10/25/2021
 # modified to be compatible with python 3
+
+# 4/12/2024
+# add rec bike assignment
 
 def get_link_attribute(attr, network):
     ''' Return dataframe of link attribute and link ID'''
@@ -34,12 +38,12 @@ def bike_facility_weight(my_project, link_df):
     df = get_link_attribute('@bkfac', network)
     df = pd.merge(df, link_df, on = 'link_id', how = 'inner')
     #df = df.merge(link_df)
-    df = df.replace(bike_facility_crosswalk)
+    df = df.replace(input_config.bike_facility_crosswalk)
 
     # Replace the facility ID with the estimated  marginal rate of substituion
     # value from Broach et al., 2012 (e.g., replace 'standard' with -0.108)
     df['facility_wt'] = df['@bkfac']
-    df = df.replace(facility_dict)
+    df = df.replace(input_config.facility_dict)
 
     return df
 
@@ -47,9 +51,9 @@ def volume_weight(my_project, df):
     ''' For all links without bike lanes, apply a factor for the adjacent traffic (AADT).'''
 
     # Separate auto volume into bins
-    df['volume_wt'] = pd.cut(df['@tveh'], bins=aadt_bins, labels=aadt_labels, right=False)
+    df['volume_wt'] = pd.cut(df['@tveh'], bins = input_config.aadt_bins, labels = input_config.aadt_labels, right=False)
     df['volume_wt'] = df['volume_wt'].astype('int')
-    df = df.replace(to_replace = aadt_dict)
+    df = df.replace(to_replace = input_config.aadt_dict)
     # remove volume weight value from premium facility.
     df.loc[df['@bkfac'] == 'premium', 'volume_wt'] = 0
 
@@ -90,9 +94,9 @@ def process_slope_weight(df, my_project):
     upslope_df = upslope_df.merge(df)
 
     # Separate the slope into bins with the penalties as indicator values
-    upslope_df['slope_wt'] = pd.cut(upslope_df['@upslp'], bins=slope_bins, labels=slope_labels, right=False)
+    upslope_df['slope_wt'] = pd.cut(upslope_df['@upslp'], bins = input_config.slope_bins, labels = input_config.slope_labels, right = False)
     upslope_df['slope_wt'] = upslope_df['slope_wt'].astype('float')
-    upslope_df = upslope_df.replace(to_replace=slope_dict)
+    upslope_df = upslope_df.replace(to_replace = input_config.slope_dict)
 
     return upslope_df
 
@@ -130,8 +134,8 @@ def calc_bike_weight(my_project, link_df):
     # Calculate total weights
     # add inverse of premium bike coeffient to set baseline as a premium bike facility with no slope (removes all negative weights)
     # add 1 so this weight can be multiplied by original link travel time to produced "perceived travel time"
-    df.loc[df['@bkfac'] == 'premium', 'total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt']
-    df.loc[df['@bkfac'] != 'premium', 'total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
+    df.loc[df['@bkfac'] == 'premium', 'total_wt'] = 1 - np.float(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt']
+    df.loc[df['@bkfac'] != 'premium', 'total_wt'] = 1 - np.float(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
     #df['total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
 
     # Write link data for analysis
@@ -144,16 +148,17 @@ def bike_assignment(my_project, tod):
     ''' Assign bike trips using links weights based on slope, traffic, and facility type, for a given TOD.'''
 
     my_project.change_active_database(tod)
-
+    matrix_name_list = [matrix.name for matrix in my_project.bank.matrices()]
     # Create attributes for bike weights (inputs) and final bike link volumes (outputs)
     for attr in ['@bkwt', '@bvol']:
         if attr not in my_project.current_scenario.attributes('LINK'):
             my_project.current_scenario.create_extra_attribute('LINK',attr)   
 
     # Create matrices for bike assignment and skim results
-    for matrix in ['bkpt', 'bkat', ]:
-        if matrix not in [i.name for i in my_project.bank.matrices()]:
-            my_project.create_matrix(matrix, '', 'FULL')
+    if 'bkpt' not in matrix_name_list:
+        my_project.create_matrix(matrix, 'bike percepted travel time', 'FULL')
+    if 'bkat' not in matrix_name_list:
+        my_project.create_matrix(matrix, 'bike actual travel time', 'FULL')
 
     # Load in bike weight link attributes
     import_attributes = my_project.m.tool("inro.emme.data.network.import_attribute_values")
@@ -165,21 +170,41 @@ def bike_assignment(my_project, tod):
     # Invoke the Emme assignment tool
     extended_assign_transit = my_project.m.tool("inro.emme.transit_assignment.extended_transit_assignment")
     bike_spec = json.load(open(r'inputs\skim_params\bike_assignment.json'))
-    extended_assign_transit(bike_spec, save_strategies = True, add_volumes = True, class_name = bike_mode_class_lookup['bike'])
+    extended_assign_transit(bike_spec, save_strategies = True, add_volumes = False, class_name = emme_config.bike_mode_class_lookup['bike'])
 
     print('bike assignment complete, now skimming')
 
     skim_bike = my_project.m.tool("inro.emme.transit_assignment.extended.matrix_results")
     bike_skim_spec = json.load(open(r'inputs\skim_params\bike_skim_setup.json'))
-    skim_bike(bike_skim_spec, class_name = bike_mode_class_lookup['bike'])
+    skim_bike(bike_skim_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
 
     # Add bike volumes to bvol network attribute
     bike_network_vol = my_project.m.tool("inro.emme.transit_assignment.extended.network_results")
 
     # Skim for final bike assignment results
     bike_network_spec = json.load(open(r'inputs\skim_params\bike_network_setup.json'))
-    bike_network_vol(bike_network_spec, class_name = bike_mode_class_lookup['bike'])
+    bike_network_vol(bike_network_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
 
+    if input_config.include_rec_bike:
+        print('Assign rec bike trips...')
+        recbike_name = 'recbike'
+        # load rec bike trip table into emme, if recbike trips is not in the matrix list.
+        if recbike_name not in matrix_name_list:
+            my_project.create_matrix('recbike', 'rec bike trip table', 'FULL') 
+        recbike_trips = my_project.load_supplemental_trips('recb')
+        my_project.matrix_to_emme(recbike_trips, 'recbike', 'rec bike trip table', 'FULL')                         
+
+        # create @recbike overwrite if it exists
+        my_project.create_extra_attribute('LINK', '@recbvol', 'rec bike volume', overwrite = True)
+        
+        recbike_spec = json.load(open(r'inputs\skim_params\rec_bike_assignment.json'))
+        extended_assign_transit(recbike_spec, save_strategies = True, add_volumes = True, class_name = emme_config.bike_mode_class_lookup['recb'])
+
+        # no need to calculate skims for recbike. Use skims for bike mode instead.
+                
+        recbike_network_spec = json.load(open(r'inputs\skim_params\rec_bike_network_setup.json'))
+        bike_network_vol(recbike_network_spec, class_name = emme_config.bike_mode_class_lookup['recb'])
+        
     # Export skims to h5
     for matrix in ["mfbkpt", "mfbkat"]:
         print('exporting skim: ' + str(matrix))
@@ -195,7 +220,7 @@ def export_skims(my_project, matrix_name, tod):
     matrix_value = my_project.bank.matrix(matrix_name).get_numpy_data()
 
     # scale to store as integer
-    matrix_value = matrix_value * bike_skim_mult
+    matrix_value = matrix_value * input_config.bike_skim_mult
     matrix_value = matrix_value.astype('uint16')
 
     # Remove unreasonably high values, replace with max allowed by numpy
@@ -236,11 +261,11 @@ def get_aadt(my_project):
     
     link_list = []
 
-    for key, value in sound_cast_net_dict.items():
+    for key, value in emme_config.sound_cast_net_dict.items():
         my_project.change_active_database(key)
         
         # Create extra attributes to store link volume data
-        for name, desc in extra_attributes_dict.items():
+        for name, desc in input_config.extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, desc, 'True')
         
         # Calculate total vehicles for each link
@@ -271,7 +296,7 @@ def write_link_counts(my_project, tod):
     network = my_project.current_scenario.get_network()
 
     # Load bike count data from file
-    bike_counts = pd.read_csv(bike_count_data)
+    bike_counts = pd.read_csv(input_config.bike_count_data)
 
     # Load edges file to join proper node IDs - don't need for BKR - nagendra.dhakar@rsginc.com
     #edges_df = pd.read_csv(edges_file)
@@ -299,25 +324,25 @@ def write_link_counts(my_project, tod):
 
     df_count =  pd.DataFrame(list_model_vols)
 
-    if os.path.exists(bike_link_vol):
+    if os.path.exists(input_config.bike_link_vol):
         '''append column to existing TOD results'''
-        df = pd.read_csv(bike_link_vol)
+        df = pd.read_csv(input_config.bike_link_vol)
         df['bvol'+tod] = df_count['bvol'+tod]
-        df.to_csv(bike_link_vol,index=False) 
+        df.to_csv(input_config.bike_link_vol,index=False) 
     else:
-        df_count.to_csv(bike_link_vol,index=False) 
+        df_count.to_csv(input_config.bike_link_vol,index=False) 
 
 def main():
     print('running bike model')
 
     # Remove any existing results
-    if os.path.exists(bike_link_vol):
+    if os.path.exists(input_config.bike_link_vol):
         try:
-            os.remove(bike_link_vol)
+            os.remove(input_config.bike_link_vol)
         except OSError:
             pass
 
-    filepath = r'projects/' + master_project + r'/' + master_project + '.emp'
+    filepath = f'projects/{emme_config.master_project}/{emme_config.master_project}.emp'
     print(filepath) #debug
     my_project = EmmeProject(filepath)
 
@@ -328,12 +353,14 @@ def main():
     calc_bike_weight(my_project, link_df)
 
     # Assign all AM trips (unable to assign trips without transit networks)
-    for tod in bike_assignment_tod:
+    for tod in input_config.bike_assignment_tod:
         print('assigning bike trips for: ' + str(tod))
         bike_assignment(my_project, tod)
 
         # Write link volumes
         write_link_counts(my_project, tod)
 
+    my_project.closeDesktop()
+    
 if __name__ == "__main__":
     main()

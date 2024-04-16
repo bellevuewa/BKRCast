@@ -12,7 +12,7 @@ sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import * 
 import emme_configuration as emme_config
-import input_configuration as bkr_config
+import input_configuration as bkr_config                                   
 import accessibility.accessibility_configuration as access_config
 import data_wrangling
 
@@ -32,14 +32,6 @@ def calc_fric_fac(cost_skim, dist_skim, _coeff_df, selected_zones):
         
     return friction_fac_dic
 
-def matrix_to_emme(matrix, mfname, description, matrix_type, my_project):
-    matrix_name_list = [matrix.name for matrix in my_project.bank.matrices()]
-    if mfname not in matrix_name_list:
-        my_project.create_matrix(mfname, description, matrix_type) 
-    
-    matrix_id = my_project.bank.matrix(mfname).id    
-    my_project.bank.matrix(matrix_id).set_numpy_data(matrix, my_project.current_scenario)
-    
 def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
     ''' Loads data to Emme matrices: Ps and As and friction factor by trip purpose.
         Also initializes empty trip distribution and O-D result tables. '''
@@ -50,12 +42,12 @@ def load_matrices_to_emme(trip_table_in, trip_purps, fric_facs, my_project):
 
         for p_a in ['pro', 'att']:
             trips = np.array(trip_table_in[purpose + p_a])
-            matrix_to_emme(trips, str(purpose)+ p_a , str(purpose) + p_a, "ORIGIN", my_project)            
+            my_project.matrix_to_emme(trips, str(purpose)+ p_a , str(purpose) + p_a, "ORIGIN")            
             np.savetxt(os.path.join(emme_config.supplemental_loc, f'{purpose}{p_a}.csv'), trips, delimiter = ',', fmt = '%.2f')            
 
         # Load friction factors by trip purpose
         fri_fac = fric_facs[purpose]
-        matrix_to_emme(fri_fac, purpose + "fri", str(purpose) + "friction factors", 'FULL', my_project)        
+        my_project.matrix_to_emme(fri_fac, purpose + "fri", str(purpose) + "friction factors", 'FULL')        
 
 def calculate_daily_rec_bike_trips(trip_purps,  my_project):
     for purp in trip_purps:
@@ -114,7 +106,7 @@ def split_rec_bike_by_tod(recb_tod_factors, my_project):
         tod_fac = recb_tod_factors.loc[recb_tod_factors['time_of_day'] == tod, 'value'].values[0]
         recb_tod_np = recb_daily_od_np * tod_fac
         matrix_dict[f'{tod}'] = recb_tod_np 
-        matrix_to_emme(recb_tod_np, f'recb_{tod}', f'rec bike od at {tod}', 'FULL', my_project)    
+        my_project.matrix_to_emme(recb_tod_np, f'recb_{tod}', f'rec bike od at {tod}', 'FULL')    
     
     return matrix_dict                                    
 
@@ -174,8 +166,8 @@ def main():
     # Compute friction factors by trip purpose
     fric_facs = calc_fric_fac(bkat_skim, bkpt_skim, coeff_df.loc[coeff_df['purpose'] == 'recb'], df_nhb_recbike_model_year['BKRCastTAZ'].to_numpy())
     load_matrices_to_emme(trip_table, trip_purpose_list, fric_facs, my_project)
-    matrix_to_emme(bkat_skim, "bkat", 'bike actual time (avg of am and pm)', 'FULL', my_project)
-    matrix_to_emme(bkpt_skim, "bkpt", 'bike perceived time (avg of am and pm)', 'FULL', my_project)
+    my_project.matrix_to_emme(bkat_skim, "bkat", 'bike actual time (avg of am and pm)', 'FULL')
+    my_project.matrix_to_emme(bkpt_skim, "bkpt", 'bike perceived time (avg of am and pm)', 'FULL')
             
     balance_matrices(trip_purpose_list, my_project)
     calculate_daily_rec_bike_trips(trip_purpose_list, my_project)    
