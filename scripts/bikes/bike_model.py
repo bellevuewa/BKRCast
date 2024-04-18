@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os, sys
 import h5py
+import getopt
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
@@ -144,7 +145,7 @@ def calc_bike_weight(my_project, link_df):
     # export total link weight as an Emme attribute file ('@bkwt.in')
     write_generalized_time(df=df)
 
-def bike_assignment(my_project, tod):
+def bike_assignment(my_project, tod, increment_volume_flag):
     ''' Assign bike trips using links weights based on slope, traffic, and facility type, for a given TOD.'''
 
     my_project.change_active_database(tod)
@@ -170,7 +171,7 @@ def bike_assignment(my_project, tod):
     # Invoke the Emme assignment tool
     extended_assign_transit = my_project.m.tool("inro.emme.transit_assignment.extended_transit_assignment")
     bike_spec = json.load(open(r'inputs\skim_params\bike_assignment.json'))
-    extended_assign_transit(bike_spec, save_strategies = True, add_volumes = False, class_name = emme_config.bike_mode_class_lookup['bike'])
+    extended_assign_transit(bike_spec, save_strategies = True, add_volumes = increment_volume_flag, class_name = emme_config.bike_mode_class_lookup['bike'])
 
     print('bike assignment complete, now skimming')
 
@@ -289,7 +290,12 @@ def get_aadt(my_project):
         
    
 def write_link_counts(my_project, tod):
-    '''Write bike link volumes to file for comparisons to counts '''
+    ''' Write bike link volumes to file for comparisons to counts
+        We need to think about how to better export link volumes. If we want to generate a pre-selected of link list with bike volumes (and rec bike),
+        we need to find a better way to generate the selected list that will be always consistent with current network.
+        Probably code bike volumes in master network, then generate the list of links with bike counts.                     
+    '''        
+        
 
     my_project.change_active_database(tod)
 
@@ -317,10 +323,11 @@ def write_link_counts(my_project, tod):
         #x['gdbJNode'] = df.iloc[row]['JNode']
         if link != None:
             x['bvol' + tod] = link['@bvol']
+            x['recbvol' + tod] = link['@recbvol']            
         else:
             x['bvol' + tod] = None
+            x['recbvol' + tod] = None            
         list_model_vols.append(x)
-    print(len(list_model_vols))
 
     df_count =  pd.DataFrame(list_model_vols)
 
@@ -332,8 +339,38 @@ def write_link_counts(my_project, tod):
     else:
         df_count.to_csv(input_config.bike_link_vol,index=False) 
 
+def help():
+    print('Assign general bike trip tables (generated from the daysim model) and recreational bike trip tables (from supplemental module).')
+    print('Calculate bike skims from general bike trips.  ')
+    print('The bike assignment employs an extended transit assignment procedure, distinguishing between two classes: "bike" and "recbike".' )
+    print('Users can opt to replace existing auxiliary transit volume with the new bike assignment. ') 
+    print('By default, the bike assignment is an increment of existing aux transit volume.')       
+    print('')
+    print('    python bike_model.py -h -n')   
+    print('       where: ')             
+    print('            -h: help')
+    print('            -n: new volume to replace the existing aux transit volume')        
+    
 def main():
-    print('running bike model')
+
+    increment_volume_flag = True
+    
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hn') 
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+        elif opt == '-n':
+            increment_volume_flag = False
+        else:
+            print('Invalid option: ' + opt)
+            print('Use -h to display help.')
+            exit(2)
 
     # Remove any existing results
     if os.path.exists(input_config.bike_link_vol):
@@ -342,6 +379,7 @@ def main():
         except OSError:
             pass
 
+    print('running bike model')
     filepath = f'projects/{emme_config.master_project}/{emme_config.master_project}.emp'
     print(filepath) #debug
     my_project = EmmeProject(filepath)
@@ -355,7 +393,7 @@ def main():
     # Assign all AM trips (unable to assign trips without transit networks)
     for tod in input_config.bike_assignment_tod:
         print('assigning bike trips for: ' + str(tod))
-        bike_assignment(my_project, tod)
+        bike_assignment(my_project, tod, increment_volume_flag)
 
         # Write link volumes
         write_link_counts(my_project, tod)
