@@ -3,6 +3,7 @@ import numpy as np
 import os, sys
 import h5py
 import getopt
+from colorama import init, Fore
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
@@ -157,9 +158,9 @@ def bike_assignment(my_project, tod, increment_volume_flag):
 
     # Create matrices for bike assignment and skim results
     if 'bkpt' not in matrix_name_list:
-        my_project.create_matrix(matrix, 'bike percepted travel time', 'FULL')
+        my_project.create_matrix('bkpt', 'bike percepted travel time', 'FULL')
     if 'bkat' not in matrix_name_list:
-        my_project.create_matrix(matrix, 'bike actual travel time', 'FULL')
+        my_project.create_matrix('bkat', 'bike actual travel time', 'FULL')
 
     # Load in bike weight link attributes
     import_attributes = my_project.m.tool("inro.emme.data.network.import_attribute_values")
@@ -340,10 +341,13 @@ def write_link_counts(my_project, tod):
         df_count.to_csv(input_config.bike_link_vol,index=False) 
 
 def help():
+    init(autoreset = True)    
     print('Assign general bike trip tables (generated from the daysim model) and recreational bike trip tables (from supplemental module).')
     print('Calculate bike skims from general bike trips.  ')
-    print('The bike assignment employs an extended transit assignment procedure, distinguishing between two classes: "bike" and "recbike".' )
+    print('The bike assignment employs the extended transit assignment procedure, distinguishing between two classes: "bike" and "recbike".' )
     print('Users can opt to replace existing auxiliary transit volume with the new bike assignment. ') 
+    print(f'{Fore.GREEN}If user wants to keep other transit strategy files in place, first run SkimsAndPaths.py with -t option (transit assignment and skims only).')
+    print('then run bike_model.py without -n option.')    
     print('By default, the bike assignment is an increment of existing aux transit volume.')       
     print('')
     print('    python bike_model.py -h -n')   

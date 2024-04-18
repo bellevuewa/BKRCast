@@ -52,7 +52,7 @@ class EmmeProject:
         for database in self.data_explorer.databases():
             #print database.title()
             if database.title() == database_name:
-                self.bank.dispose()                
+                # self.bank.dispose()                
                 database.open()
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title

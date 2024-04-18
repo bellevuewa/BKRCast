@@ -536,7 +536,6 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     print(project)
     start_export_hdf5 = time.time()
     bike_walk_matrix_dict = json_to_dictionary("bike_walk_matrix_dict")
-    my_user_classes = json_to_dictionary("user_classes")
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
@@ -1055,12 +1054,6 @@ def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration, f
     pool.close()
     pool.join()
 
-def start_delete_matrices_pool(project_list):
-    pool = Pool(processes=parallel_instances)
-    pool.map(delete_matrices_parallel, project_list[0:parallel_instances])
-    pool.close()
-    pool.join()
-
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
     #instance of modeler issue. Will change code to be more generalized later.
@@ -1071,53 +1064,17 @@ def start_transit_pool(project_list):
 
 def run_transit(project_name):
     start_of_run = time.time()
-
     my_project = EmmeProject(project_name)
-    create_node_attributes(transit_node_attributes, my_project)
-
-    print("starting transit assignment and skimming...")
-
-    count = 0
-    for submode, class_name in transit_submode_class_lookup.items():
-        if count > 0:
-            add_volume = True
-        else:
-            add_volume = False
-
-        print('    for submode: ' + submode)
-        transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
-        transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
-        count += 1
-    
-    print("finished transit assignment and skimming")
-
-    #Calc Wait Times
-    app.App.refresh_data
-    matrix_calculator = json_to_dictionary("matrix_calculation")
-    matrix_calc = my_project.m.tool("inro.emme.matrix_calculation.matrix_calculator")
-
-    #Wait time for general teeansit 
-    total_wait_matrix = my_project.bank.matrix('twtwa').id
-    initial_wait_matrix = my_project.bank.matrix('iwtwa').id
-    transfer_wait_matrix = my_project.bank.matrix('xfrwa').id
-    mod_calc = matrix_calculator
-    mod_calc["result"] = transfer_wait_matrix
-    mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
-    matrix_calc(mod_calc)
-
-    #wait time for transit submodes
-    for submode in ['r','f','p','c']:
-        total_wait_matrix = my_project.bank.matrix('twtw' + submode).id
-        initial_wait_matrix = my_project.bank.matrix('iwtw' + submode).id
-        transfer_wait_matrix = my_project.bank.matrix('xfrw' + submode).id
-
-        mod_calc = matrix_calculator
-        mod_calc['result'] = transfer_wait_matrix
-        mod_calc['expression'] = total_wait_matrix + '-' + initial_wait_matrix
-        matrix_calc(mod_calc)
+    transit_assignment_skims(my_project)    
 
     my_project.closeDesktop()
+    end_of_run = time.time()
+    
     print(f"finished run_transit {my_project.tod}")
+    text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute transit processes for ' + my_project.tod
+    print(text)
+    logging.debug(text)
+    
 
 def export_to_hdf5_pool(project_list, survey_seed_trips, free_flow_skims ):
     pool = Pool(processes=parallel_instances)
@@ -1324,14 +1281,6 @@ def create_node_attributes(node_attribute_dict, my_project):
             sys.exit(4)                                                               
     print('finished create node attributes for ' + tod)
 
-def delete_matrices_parallel(project_name):
-    my_project = EmmeProject(project_name)
-   
-    ##delete and create new demand and skim matrices:
-    delete_matrices(my_project, "FULL")
-    delete_matrices(my_project, "ORIGIN")
-    delete_matrices(my_project, "DESTINATION")
-
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name, iteration, prefix=''):
     print('save assignment results')
@@ -1424,21 +1373,25 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     ################################################################
     ## Below are for transit assignment, skims, and related calculation, originally implemented in run_transit().
     # because it often runs into issues when trying to gain access to modeller tools, we decided to combine auto and transit together in one function.
+    transit_assignment_skims(my_project)
+
+    ##dispose emmebank
+    my_project.closeDesktop()
+    print(my_project.tod + " finished")
+    end_of_run = time.time()
+    text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute all processes for ' + my_project.tod
+    print(text)
+    logging.debug(text)
+
+def transit_assignment_skims(my_project):
     print(f'Starting transit assignment and skims..')
     create_node_attributes(transit_node_attributes, my_project)
-    count = 0
+    add_volume = False
     for submode, class_name in transit_submode_class_lookup.items():
-        if count > 0:
-            add_volume = True
-        else:
-            add_volume = False
-
-        print('    for submode: ' + submode)
+        print(f'    for submode: {submode}')
         transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
-
         transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
-        
-        count += 1
+        add_volume = True
     
     print("finished transit assignment and skimming")
 
@@ -1456,7 +1409,6 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
     matrix_calc(mod_calc)
 
-
     #wait time for transit submodes
     for submode in ['r','f','p','c']:
         total_wait_matrix = my_project.bank.matrix('twtw' + submode).id
@@ -1469,20 +1421,13 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
         matrix_calc(mod_calc)
     print(f"finished run_transit {my_project.tod}")
 
-    ##dispose emmebank
-    my_project.closeDesktop()
-    print(my_project.tod + " finished")
-    end_of_run = time.time()
-    text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute all processes for ' + my_project.tod
-    print(text)
-    logging.debug(text)
-
 def help():
     print('Run skims and paths on EMME databanks.')
     print('')
-    print('SkimsAndPaths.py -h -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag')
+    print('SkimsAndPaths.py -h -t -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag')
     print('       iteration_number: nth iteration')
     print('      -h: help')
+    print('      -t: run transit assignment and skims only. No auto modes are included.')
     print('      -i: iteration_number')
     print('      -f: file_name for the converted workers')
     print('      -s: start time of the core business hours in minutes, starting from mid-night')
@@ -1510,9 +1455,10 @@ def main():
     global free_flow_skims
     global iteration
     global hdf5_file_path
+    run_transit_only_flag = False    
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hi:s:e:p:f:') 
+        opts, args = getopt.getopt(sys.argv[1:], 'hti:s:e:p:f:') 
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -1521,6 +1467,8 @@ def main():
         if opt == '-h':
             help()
             sys.exit(0)
+        if opt == '-t':
+            run_transit_only_flag = True            
         elif opt == '-f':
             converted_workers_file_name = arg
         elif opt == '-s':
@@ -1600,7 +1548,10 @@ def main():
         text = '% of trips for adjustment made by workers working from home: ' + str(percent)
         logging.debug(text)
 
-    start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
+    if run_transit_only_flag:
+        start_transit_pool(project_list)
+    else:                
+        start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
     #run_assignments_parallel(project_list[2])
     # transit operation is now merged into start_pool. start_transit_pool() is no longer needed.
     # start_transit_pool(project_list)
@@ -1611,24 +1562,24 @@ def main():
     print('Check convergence...')
     #If using seed_trips, we are starting the first iteration and do not want to compare skims from another run. 
     if (survey_seed_trips == False and free_flow_skims == False):
-           #run feedback check 
-            try:
-              # if anything goes wrong with the convergence check, simply ignore the check and move on to the next run              
-              if feedback_check(feedback_list) == False:
-                  go = 'continue'
-                  json.dump(go, f)
-                  print('Not converged yet.')                  
-              else:
-                  go = 'stop'
-                  json.dump(go, f)
-                  print('Converged.')                  
-            except Exception as e:
-                print('feedback check error. Continue the feedback loop.')
-                print('below is the error messages.')
-                print(f'{e}')  
-                logging.debug(f'{e}')                                              
+        #run feedback check 
+        try:
+            # if anything goes wrong with the convergence check, simply ignore the check and move on to the next run              
+            if feedback_check(feedback_list) == False:
                 go = 'continue'
                 json.dump(go, f)
+                print('Not converged yet.')                  
+            else:
+                go = 'stop'
+                json.dump(go, f)
+                print('Converged.')                  
+        except Exception as e:
+            print('feedback check error. Continue the feedback loop.')
+            print('below is the error messages.')
+            print(f'{e}')  
+            logging.debug(f'{e}')                                              
+            go = 'continue'
+            json.dump(go, f)
     else:
         go = 'continue'
         json.dump(go, f)
