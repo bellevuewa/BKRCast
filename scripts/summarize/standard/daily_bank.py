@@ -135,6 +135,14 @@ def main():
     daily_scenario = daily_emmebank.scenario(1002)
     daily_network = daily_scenario.get_network()
 
+    # delete all other scenarios 
+    scens = daily_emmebank.scenarios()
+    for s in scens:
+        if s.id != '1002':
+            s.modify_protected = False
+            s.delete_protected = False
+            daily_emmebank.delete_scenario(s.id)                        
+
     # if demand_matrix_dictionary.json is missing create one
     user_class_dict_file = Path('inputs/skim_params/user_classes.json')    
     if user_class_dict_file.is_file() == False:
@@ -194,10 +202,14 @@ def main():
         print(f'{extra_attribute} is removed from daily databank')
         if extra_attribute not in keep_atts:
             daily_scenario.delete_extra_attribute(extra_attribute)
+            
     daily_volume_attr = daily_scenario.create_extra_attribute('LINK', '@tveh')
     daily_volume_attr.description = 'daily auto volume'
     daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
     daily_bike_vol_attr.description = 'daily bike volume'
+    daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@recbvoldaily')
+    daily_bike_vol_attr.description = 'daily rec bike volume'
+    
     daily_network = daily_scenario.get_network()
 
     segments = []
@@ -207,21 +219,23 @@ def main():
         print(path)
         bank = _emmebank.Emmebank(path)
         scenario = bank.scenario(1002)
-        if daily_scenario.extra_attribute('@v' + tod[:4]):
-            daily_scenario.delete_extra_attribute('@v' + tod[:4])
-        if daily_scenario.extra_attribute('@bvol' + tod[:4]):
-            daily_scenario.delete_extra_attribuet('@bvol' + tod[:4])
-        if daily_scenario.extra_attribute('@tv' + tod[:4]):
-            daily_scenario.delete_extra_attribute('@tv' + tod[:4])
+        if daily_scenario.extra_attribute('@v' + tod):
+            daily_scenario.delete_extra_attribute('@v' + tod)
+        if daily_scenario.extra_attribute('@bvol' + tod):
+            daily_scenario.delete_extra_attribuet('@bvol' + tod)
+        if daily_scenario.extra_attribute('@tv' + tod):
+            daily_scenario.delete_extra_attribute('@tv' + tod)
+        if daily_scenario.extra_attribute('@recbvol' + tod):
+            daily_scenario.delete_extra_attribute('@recbvol' + tod)
 
         # copy auto volume in each tod to daily bank
-        attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod[:4])
+        attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod)
         attr.description = 'auto volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@tveh'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # copy transit volume (on link) in each tod to daily bank
-        attr = daily_scenario.create_extra_attribute('LINK', '@tv' + tod[:4])
+        attr = daily_scenario.create_extra_attribute('LINK', '@tv' + tod)
         attr.description = 'transit volume on link ' + tod
         if scenario.extra_attribute('@voltr_l'):
             scenario.delete_extra_attribute('@voltr_l')
@@ -239,9 +253,15 @@ def main():
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # create bike volume for each TOD
-        attr = daily_scenario.create_extra_attribute('LINK', '@bvol' + tod[:4])
+        attr = daily_scenario.create_extra_attribute('LINK', '@bvol' + tod)
         attr.description = 'bike volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@bvol'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        # create bike volume for each TOD
+        attr = daily_scenario.create_extra_attribute('LINK', '@recbvol' + tod)
+        attr.description = 'rec bike volume ' + tod
+        values = scenario.get_attribute_values('LINK', ['@recbvol'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # load transit segment boarding into dataframe
@@ -295,13 +315,16 @@ def main():
     attr_list = ['@v' + x for x in tods]
     attr_list.extend(['@bvol' + x for x in tods])
     attr_list.extend(['@tv' + x for x in tods])
+    attr_list.extend(['@recbvol' + x for x in tods])
+    
 
     # calculate daily volumes: auto, bike, and transit
     for link in daily_network.links():
         for item in tods:
-            link['@tveh'] = link['@tveh'] + link['@v' + item[:4]]
-            link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item[:4]]
-            link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item[:4]]
+            link['@tveh'] = link['@tveh'] + link['@v' + item]
+            link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
+            link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
+            link['@recbvoldaily']  = link['@recbvoldaily'] + link['@recbvol' + item]
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
