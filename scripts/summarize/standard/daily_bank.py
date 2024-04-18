@@ -9,7 +9,7 @@ import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
-from emme_configuration import *
+import emme_configuration as emme_config
 
 from distutils import dir_util
 from EmmeProject import *
@@ -136,11 +136,10 @@ def main():
     daily_network = daily_scenario.get_network()
 
     # if demand_matrix_dictionary.json is missing create one
-    demand_matrix_dict_file = Path('inputs/skim_params/demand_matrix_dictionary.json')
-    if demand_matrix_dict_file.is_file() == False:    
+    user_class_dict_file = Path('inputs/skim_params/user_classes.json')    
+    if user_class_dict_file.is_file() == False:
         update_skim_parameters()        
-    matrix_dict = text_to_dictionary('demand_matrix_dictionary')
-    uniqueMatrices = set(matrix_dict.values())
+    matrix_dict = json_to_dictionary('user_classes')
 
     ################## delete all matrices #################
 
@@ -148,12 +147,12 @@ def main():
         daily_emmebank.delete_matrix(matrix.id)
        
     ################ create new matrices in daily emmebank for trip tables only ##############
-
-    for unique_name in sorted(uniqueMatrices):
-        print(unique_name)
-        daily_matrix = daily_emmebank.create_matrix(daily_emmebank.available_matrix_identifier('FULL')) #'FULL' means the full-type of trip table
-        daily_matrix.name = unique_name
-
+    for x in range(0, len(emme_config.emme_matrix_subgroups)):
+        for y in range(0, len(matrix_dict[emme_config.emme_matrix_subgroups[x]])):
+            daily_matrix = daily_emmebank.create_matrix(daily_emmebank.available_matrix_identifier('FULL'))
+            daily_matrix.name = matrix_dict[emme_config.emme_matrix_subgroups[x]][y]['Name']
+            daily_matrix.description = matrix_dict[emme_config.emme_matrix_subgroups[x]][y]['Description']
+            
     daily_matrix_dict = {}
     for matrix in daily_emmebank.matrices():
         daily_arr = matrix.get_numpy_data()
