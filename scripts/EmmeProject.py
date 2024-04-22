@@ -320,6 +320,28 @@ class EmmeProject:
         import_values = self.m.tool(NAMESPACE)
         import_values(file_path, scenario = self.current_scenario, column_labels = 'FROM_HEADER',revert_on_error = revert_on_error)
 
+    def emme_nodes_to_df(self):
+        '''
+            load emme nodes to dataframe.         
+        '''
+        network = self.current_scenario.get_network()
+        network.create_attribute('NODE', 'numIn')
+        network.create_attribute('NODE', 'numOut')
+        for node in network.nodes():
+            node.numIn = len(list(node.incoming_links()))        
+            node.numOut = len(list(node.outgoing_links()))
+        
+        node_data = {'id':[]}
+        node_data.update({k: [] for k in network.attributes('NODE')})        
+        for node in network.nodes():
+            for k in network.attributes('NODE'):
+                node_data[k].append(node[k])  
+
+            node_data['id'].append(node.number)  
+
+        nodes_df = pd.DataFrame(node_data)
+        return nodes_df                                                
+
     def emme_links_to_df(self):
         '''
             load emme links to dataframe. Add a few boolean variables to the links_df. These boolean variables are:
