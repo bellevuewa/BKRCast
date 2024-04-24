@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\bikes\bike_model.py</StartupFile>
+    <StartupFile>scripts\accessibility\bike_accessibility.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -462,6 +462,7 @@
     <Compile Include="run_bkrcast.py" />
     <Compile Include="scripts\accessibility\accessibility.py" />
     <Compile Include="scripts\accessibility\accessibility_configuration.py" />
+    <Compile Include="scripts\accessibility\bike_accessibility.py" />
     <Compile Include="scripts\accessibility\__init__.py" />
     <Compile Include="scripts\archive\archive.py" />
     <Compile Include="scripts\archive\revive.py" />

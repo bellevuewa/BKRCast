@@ -56,4 +56,5 @@ col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype
 # Values correspond the names in the add-on dataset.
 transit_attributes = ["tstops"]
 intersections = ["nodes1", "nodes3", "nodes4"]
+bike_accessibility = ['biketype']
 
