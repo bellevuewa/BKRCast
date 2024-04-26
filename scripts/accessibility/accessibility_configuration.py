@@ -11,6 +11,7 @@ distances = { # in meters;
              2: 5280 # 1 mile
              }
 
+bike_facility_width = {'trail': 1, 'bike lane': 3}
 
 parcels_file_name = 'parcels_urbansim.txt'
 buffered_parcels = 'buffered_parcels.txt'

@@ -16,6 +16,7 @@ import os,sys
 import subprocess
 import inro.emme.desktop.app as app
 import json
+import re
 from shutil import copy2 as shcopy
 from distutils import dir_util
 import inro.emme.database.emmebank as _eb
@@ -26,9 +27,8 @@ sys.path.append(os.path.join(os.getcwd(),"inputs", "skim_params"))
 from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
-from accessibility.accessibility_configuration import *
+import accessibility.accessibility_configuration as access_config
 import pandas as pd
-import glob
 
 import numpy as np
 import h5py
@@ -210,7 +210,7 @@ def clean_up():
                    'working\\zone.pk']
 
     if (delete_parcel_data):
-        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels])
+        delete_files.extend(['inputs\\accessibility\\'+ access_config.parcels_file_name, access_config.output_parcels])
     
     for file in delete_files: 
         if (os.path.isfile(file)):
@@ -479,3 +479,56 @@ def load_skims(skim_file_loc, mode_name, divide_by_100=False):
     else:
         return skim_file
 
+def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
+    """Adds an attribute node_ids to the given dataset."""
+    dataset[column_name] = network.get_node_ids(dataset[x_name].values, dataset[y_name].values)
+
+def process_net_attribute(network, attr, fun):
+    print("Processing %s" % attr)
+    newdf = None
+    for dist_index, dist in access_config.distances.items():        
+        res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
+        aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
+        if newdf is None:
+            newdf = pd.DataFrame({res_name: aggr, "node_ids": aggr.index.values})
+        else:
+            newdf[res_name] = aggr
+    return newdf
+
+def load_parcel_data():
+    parcels = pd.read_csv(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
+    #capitalize field names to avoid errors
+    parcels.columns = [i.upper() for i in parcels.columns]
+    #check for missing data!
+    for col_name in parcels.columns:
+        # daysim does not use EMPRSC_P
+        if col_name != 'EMPRSC_P':
+            if parcels[col_name].sum() == 0:
+                print(col_name + ' column sum is zero! Exiting program.')
+                sys.exit(1)
+
+    # not using. causes bug in daysim (copied from soundcast)
+    parcels['APARKS'] = 0
+    parcels['NPARKS'] = 0
+    return parcels    
+
+def build_pandana_network():
+    import pandana as pdna    
+    # nodes must be indexed by node_id column, which is the first column
+    all_street_nodes = pd.read_csv(access_config.nodes_file_name, index_col = 'node_id')
+    all_street_links = pd.read_csv(access_config.links_file_name, index_col = None )
+    # get rid of circular links
+    all_street_links = all_street_links.loc[(all_street_links.from_node_id != all_street_links.to_node_id)]
+    # assign impedance
+    imp = pd.DataFrame(all_street_links.Shape_Length)
+    imp = imp.rename(columns = {'Shape_Length':'distance'})
+
+    all_street_links['from_node_id'] = all_street_links['from_node_id'].astype('int')
+    all_street_links['to_node_id'] = all_street_links['to_node_id'].astype('int')
+
+    # create pandana network
+    net = pdna.network.Network(all_street_nodes.x, all_street_nodes.y, all_street_links.from_node_id, all_street_links.to_node_id, imp)
+    for dist in access_config.distances:
+        net.precompute(dist)
+
+    return net, all_street_links, all_street_nodes        
