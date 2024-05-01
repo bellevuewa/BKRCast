@@ -143,8 +143,8 @@ def convert_bike_links_to_nodes(non_directional_bike_link_df, spacing = 20):
 
     return geolink_gdf, geonode_gdf    
         
-       
-parcels = data_wrangling.load_parcel_data()
+parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)       
+parcels = data_wrangling.load_parcel_data(parcel_path)
 pm_model_path = f'projects/1530to1830/1530to1830.emp'
 non_directional_bike_link_df = create_non_directional_bike_links_df(pm_model_path, [1, 2])
 net, all_street_links, all_street_nodes = data_wrangling.build_pandana_network()

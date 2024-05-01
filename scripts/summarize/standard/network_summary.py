@@ -13,18 +13,22 @@
 #limitations under the License.
 
 import os, sys, shutil
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(CURRENT_DIR))
-sys.path.append(os.path.join(os.getcwd(),"inputs"))
-sys.path.append(os.path.join(os.getcwd(),"scripts"))
-sys.path.append(os.getcwd())
-import inro.emme.database.emmebank as _eb
+# sys.path.append(os.path.join(os.getcwd(),"inputs"))
+# sys.path.append(os.path.join(os.getcwd(),"scripts"))
+# sys.path.append(os.getcwd())
 import pandas as pd
+import geopandas as gpd
+import numpy as np
 import json
 import h5py
 import datetime
 import getopt
+from scipy import spatial
+from shapely.geometry import Point
+from scipy.spatial import KDTree
 from colorama import Fore, init
+import inro.emme.database.emmebank as _eb
+
 from EmmeProject import EmmeProject
 import data_wrangling
 import accessibility.accessibility_configuration as access_config
@@ -34,6 +38,10 @@ import emme_configuration as emme_config
 # 3/7/2024
 # imported to BKRCast. Revised to focus on Bellevue, Kirkland and Redmond area. 
 # Calculation is limited to King County. Links outside of King County are not included. 
+
+# 4/30/2024
+# calculate jobs/hhs accessible within 1/4 mile radius of each transit stop. Export the parcel list in txt file and shape file as well. 
+
 
 def get_intrazonal_vol(emmeproject, df_vol):
     """Calculate intrazonal volumes for all modes"""
@@ -131,56 +139,6 @@ def freeflow_skims(my_project, dictZoneLookup):
     trip_df = pd.merge(trip_df, skim_df[['od','sov_ff_time']], on='od', how='left')
     trip_df.to_csv(r'outputs/daysim/_trip.tsv', sep='\t', index=False)
 
-def jobs_transit():
-    # should produce access by BKR area
-    if os.path.exists(access_config.output_parcels) == False:
-        print('bufferred parcel file is not found. Please rerun accessibility first.') 
-        return
-                      
-    buf = pd.read_csv(access_config.output_parcels, sep=' ')
-    lookup_parcels_df = pd.read_csv(os.path.join(input_config.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
-
-    # distance to any transit stop
-    lu_list = ['hh_p', u'stugrd_p', u'stuhgh_p', u'stuuni_p', u'empedu_p', u'empfoo_p', u'empgov_p', u'empind_p', u'empmed_p', u'empofc_p', u'empret_p', u'empsvc_p', u'empoth_p', u'emptot_p']
-    dist_list = ['dist_lbus','dist_crt','dist_fry','dist_lrt']
-    all_attr_list = ['parcelid'] + dist_list + lu_list   
-    df = buf[all_attr_list]
-
-    df = df.merge(lookup_parcels_df[['PSRC_ID', 'Jurisdiction', 'BKRCastTAZ']], left_on = 'parcelid', right_on = 'PSRC_ID', how = 'left')    
-    df.index = df['parcelid']
-    df.drop(columns = ['PSRC_ID'], inplace = True)    
-
-    # Use minimum distance to any transit stop
-    newdf = pd.DataFrame(df[dist_list].min(axis=1))
-    newdf = newdf.reset_index()
-    df = df.reset_index(drop=True)
-    newdf.rename(columns={0:'nearest_transit'}, inplace=True)
-    df = pd.merge(df, newdf[['parcelid','nearest_transit']], on='parcelid')
-
-    # only sum for parcels closer than quarter mile to stop
-    quarter_mile_jobs = pd.DataFrame(df[df['nearest_transit'] <= 0.25].sum())
-    quarter_mile_jobs.rename(columns={0:'quarter_mile_transit'}, inplace=True)
-    # all_jobs = pd.DataFrame(df.sum())
-    all_jobs = df[lu_list + ['Jurisdiction']].groupby('Jurisdiction').sum()  
-    quarter_mile_jobs = df.loc[df['nearest_transit'] <= 0.25, lu_list + ['Jurisdiction']].groupby('Jurisdiction').sum()  
-
-    with pd.ExcelWriter(input_config.job_access_by_transit_file,  engine='xlsxwriter') as writer:
-        wksheet = writer.book.add_worksheet('readme')
-        wksheet.write(0, 0, str(datetime.datetime.now()))
-        wksheet.write(1, 0, 'model folder')
-        wksheet.write(1, 1, input_config.project_folder)
-        wksheet.write(2, 0, 'parcel file')
-        wksheet.write(2, 1, input_config.parcels_file_folder)
-
-        all_jobs.to_excel(writer, sheet_name = 'job_access', startrow = 1)
-        job_access_sheet = writer.sheets['job_access']
-        job_access_sheet.write(0, 0, 'Total Jobs/Hhs by Jurisdiction')   
-
-        srow = all_jobs.shape[0] + 5                     
-        quarter_mile_jobs.to_excel(writer, sheet_name = 'job_access', startrow = srow)  
-        job_access_sheet.write(srow - 1, 0, 'Jobs/Hhs within 1/4 mile radius of Transit Stops')         
-           
-
 def export_network_attributes(network):
     """ Calculate link-level results by time-of-day, append to csv """
 
@@ -240,7 +198,11 @@ def help():
     print('      transit_line_results.csv: all lines with boardings and travel time by TOD')  
     print('      transit_node_results.csv: transit initial boarding and final alighting at each stop by TOD')  
     print('      transit_segment_results.csv: transit boarding and volume on each segment by TOD') 
-    print('      transit_transfers.csv: transfers between transit lines')           
+    print('      transit_transfers.csv: transfers between transit lines')
+    print('      jobs_hhs_access_{buffer_distance}_ft_from_transit_stops.csv: jobs/hhs accessible in {buffer_distance} feet radius of each transit stop')
+    print('      parcels_in_{buffer_distance}_ft_transit_stops.txt: parcels residing in {buffer_distance} ft radius of each transit stop') 
+    print('      transit_stop_buffer_{buffer_distance}_ft: transit stop buffer shape file') 
+    print('      merged_buffer_{buffer_distance}_ft: merged transit stop buffer by jurisdiction')          
     
 def summarize_network(df):
     """ Calculate VMT, VHT, and Delay from link-level results """
@@ -461,6 +423,135 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     df_total.loc['Total',cols] = df[cols].sum().values
     df_total.to_csv(input_config.light_rail_boardings_path)
 
+def count_and_sum_landuse_data(node, tree, radius, attributes_df):
+    captured_pts = tree.query_ball_point((node.geometry.x, node.geometry.y), radius)
+    captured_attributes = attributes_df.iloc[captured_pts]
+
+    sum_landuse = captured_attributes.sum().to_dict()
+    sum_landuse['Num_Parcels'] = len(captured_pts)
+    sum_landuse['inode'] = node.node   
+    sum_landuse['parcels'] = captured_attributes['PARCELID'].to_list()   
+    sum_landuse['bkrnode'] = node['@bkrnode']
+
+    return sum_landuse               
+
+
+def convert_point_data_to_geo_df(data_df, crs, x_coord_name, y_coord_name):
+    geometry = [Point(xy) for xy in zip(data_df[x_coord_name], data_df[y_coord_name])]
+
+    parcels_gdf = gpd.GeoDataFrame(data_df, geometry = geometry, crs = crs)
+    parcels_gdf = parcels_gdf.drop([x_coord_name, y_coord_name], axis = 1)  
+    return parcels_gdf          
+
+
+def calculate_landuse_service_by_transitstops(emme_node_df):
+    # should produce access by BKR area
+    if os.path.exists(access_config.output_parcels) == False:
+        print('bufferred parcel file is not found. Please rerun accessibility first.') 
+        return
+                      
+    parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)  
+    parcels_df = data_wrangling.load_parcel_data(parcel_path)
+    # Assign NAD83(HARN) / Washington North (ftUS) CRS
+    crs = 'EPSG:2926'
+
+    households_df = pd.read_csv('outputs/daysim/_household.tsv', sep = '\t')
+    hhs_parcels_df = households_df[['hhparcel', 'hhsize', 'hhvehs', 'hhftw', 'hhptw', 'hhret', 'hhhsc', 'hh515', 'hhcu5']].groupby('hhparcel').sum().reset_index()
+    relevant_parcel_attributes = ['PARCELID', "HH_P", "STUGRD_P", "STUHGH_P", "STUUNI_P", 
+                      "EMPMED_P", "EMPOFC_P", "EMPEDU_P", "EMPFOO_P", "EMPGOV_P", "EMPIND_P", 
+                      "EMPSVC_P", "EMPOTH_P", "EMPTOT_P", "EMPRET_P",
+                      "PARKDY_P", "PARKHR_P", "NPARKS", "APARKS", 'XCOORD_P', 'YCOORD_P']      
+    parcels_df = parcels_df[relevant_parcel_attributes].merge(hhs_parcels_df, left_on = 'PARCELID', right_on = 'hhparcel', how = 'left')
+    parcels_df = parcels_df.fillna(0)                   
+    parcels_gdf = convert_point_data_to_geo_df(parcels_df, crs, 'XCOORD_P', 'YCOORD_P')
+
+    bus_stop_path = os.path.join('inputs/networks/transit_stops.csv')
+    bus_stop_df = pd.read_csv(bus_stop_path)
+    if not emme_node_df.empty:    
+        bus_stop_df = bus_stop_df.merge(emme_node_df[['id', '@bkrnode']], left_on = 'node', right_on = 'id', how = 'left')    
+    bus_stop_gdf = convert_point_data_to_geo_df(bus_stop_df, crs, 'x', 'y')            
+
+    object_coords = np.array([(geom.x, geom.y) for geom in parcels_gdf.geometry]) 
+    tree = KDTree(object_coords)   
+    buffer_dist = 1320    
+    result = bus_stop_gdf.apply(lambda row: count_and_sum_landuse_data(row, tree, buffer_dist, parcels_gdf), axis = 1) 
+    
+    quarter_mile_transit_stops_df = pd.DataFrame.from_dict(result.to_list())
+    quarter_mile_transit_stops_df = pd.concat([quarter_mile_transit_stops_df.pop('inode'), quarter_mile_transit_stops_df], axis = 1)    
+    quarter_mile_transit_stops_df[['inode', 'parcels']].to_json(f'outputs/transit/parcels_in_{buffer_dist}_ft_transit_stops.txt', orient = 'records', lines = True)
+    quarter_mile_transit_stops_df.drop(columns = ['PARCELID', 'hhparcel', 'geometry', 'parcels'], inplace = True)
+    quarter_mile_transit_stops_df.to_csv(f'outputs/transit/jobs_hhs_access_{buffer_dist}_ft_from_transit_stops.csv', index = False)    
+    
+    # create buffer shape for verification
+    if emme_node_df.empty:
+        print('@bkrnode attribute is missing.') 
+    else:                   
+        print(f'export {buffer_dist}_feet buffer to shape file')    
+        bufferred_stops_gdf = gpd.GeoDataFrame()    
+        for juris in bus_stop_gdf['@bkrnode'].unique():
+            bus_stop_juris_gdf = bus_stop_gdf.loc[bus_stop_gdf['@bkrnode'] == juris].copy()
+            bus_stop_juris_gdf['buffer_geometry'] = bus_stop_juris_gdf['geometry'].buffer(buffer_dist)
+            bufferred_stops_gdf = bufferred_stops_gdf.append(bus_stop_juris_gdf, ignore_index = True)
+        bufferred_stops_gdf.drop(columns = ['geometry', 'id'], inplace = True)
+        bufferred_stops_gdf.rename(columns = {'buffer_geometry':'geometry'}, inplace = True) 
+        # attribute names longer than 10 chars will be truncated per ESRI shapefile standard.        
+        bufferred_stops_gdf.to_file(f'outputs/transit/transit_stop_buffer_{buffer_dist}_ft', driver = 'ESRI Shapefile', crs = crs) 
+
+        from shapely.ops import unary_union    
+        merged_buffer_shape = bufferred_stops_gdf.groupby('@bkrnode')['geometry'].apply(unary_union)
+        merged_buffer_gdf = gpd.GeoDataFrame(geometry = merged_buffer_shape, crs = crs).reset_index()
+        merged_buffer_gdf.to_file(f'outputs/transit/merged_buffer_{buffer_dist}_ft', driver = 'ESRI Shapefile', crs = crs)    
+        from geopandas.tools import sjoin
+        spatial_joined_gdf = sjoin(parcels_gdf, merged_buffer_gdf, how = 'inner', predicate = 'within')
+        lu_sum_by_bkrnode = spatial_joined_gdf.groupby('@bkrnode').sum()
+        lu_sum_by_bkrnode.drop(columns = ['PARCELID', 'hhparcel'], inplace = True)    
+        lu_sum_by_bkrnode.to_csv(f'outputs/transit/land_use_summary_by_{buffer_dist}_ft_buffer_of_stops_by_jurisdiction.csv', index = True)        
+ 
+    # from buffer file, find out jobs and hhs served by transit stops within 1/4 mile distance from parcel centroid, aggregated by jurisdiction
+    buffer = pd.read_csv(access_config.output_parcels, sep=' ')
+    lookup_parcels_df = pd.read_csv(os.path.join(input_config.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
+
+    # distance to any transit stop
+    buffer_lu_list = ['hh_p', u'stugrd_p', u'stuhgh_p', u'stuuni_p', u'empedu_p', u'empfoo_p', u'empgov_p', u'empind_p', u'empmed_p', u'empofc_p', u'empret_p', u'empsvc_p', u'empoth_p', u'emptot_p']
+    dist_list = ['dist_lbus','dist_crt','dist_fry','dist_lrt']
+    all_attr_list = ['parcelid'] + dist_list + buffer_lu_list   
+    df = buffer[all_attr_list]
+
+    df = df.merge(lookup_parcels_df[['PSRC_ID', 'Jurisdiction', 'BKRCastTAZ']], left_on = 'parcelid', right_on = 'PSRC_ID', how = 'left')    
+    df.index = df['parcelid']
+    df.drop(columns = ['PSRC_ID'], inplace = True)    
+
+    # Use minimum distance to any transit stop
+    newdf = pd.DataFrame(df[dist_list].min(axis=1)).reset_index()
+    df = df.reset_index(drop=True)
+    newdf.rename(columns={0:'nearest_transit'}, inplace=True)
+    df = pd.merge(df, newdf[['parcelid','nearest_transit']], on='parcelid')
+
+    # only sum for parcels closer than quarter mile to stop
+    all_jobs = df[buffer_lu_list + ['Jurisdiction']].groupby('Jurisdiction').sum()  
+    quarter_mile_jobs = df.loc[df['nearest_transit'] <= 0.25, buffer_lu_list + ['Jurisdiction']].groupby('Jurisdiction').sum()  
+
+    with pd.ExcelWriter(input_config.job_access_by_transit_file,  engine='xlsxwriter') as writer:
+        wksheet = writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now()))
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, input_config.project_folder)
+        wksheet.write(2, 0, 'parcel file')
+        wksheet.write(2, 1, input_config.parcels_file_folder)
+
+        all_jobs.to_excel(writer, sheet_name = 'job_access', startrow = 1)
+        job_access_sheet = writer.sheets['job_access']
+        job_access_sheet.write(0, 0, 'Total Jobs/Hhs by Jurisdiction')   
+
+        srow = all_jobs.shape[0] + 5                     
+        quarter_mile_jobs.to_excel(writer, sheet_name = 'job_access', startrow = srow)  
+        job_access_sheet.write(srow - 1, 0, 'Jobs/Hhs within 1/4 Mile Radius of Transit Stops, Aggregated by Parcels in Each Jurisdiction')    
+
+        # Same data have been saved in a csv file for easy inter application data sharing.
+        quarter_mile_transit_stops_df.to_excel(writer, sheet_name = 'access_by_stop', startrow = 1, index = False)
+        access_by_stop_sheet = writer.sheets['access_by_stop']
+        access_by_stop_sheet.write(0, 0, 'Jobs/HHs Accessed within 1/4 Mile Radius of Each Transit Stop')                           
+    
 def main():
 
     try:
@@ -473,7 +564,7 @@ def main():
         if opt == '-h':
             help()
             sys.exit(0)
-    
+   
     # Delete any existing files    
     print('Delete existing output fiiles.')    
     for _path in [input_config.transit_line_path, input_config.transit_node_path, input_config.transit_segment_path, input_config.network_results_path]:
@@ -501,7 +592,8 @@ def main():
     os.makedirs(directory)
     
     transit_line_od_period_list = ['6to9', '1530to1830']
-
+    emme_nodes_df = None
+    
     # Loop through all Time-of-Day banks to get network summaries
     # Initialize extra network and transit attributes
     for tod_hour, tod_segment in emme_config.sound_cast_net_dict.items():
@@ -531,7 +623,7 @@ def main():
 
             # Calculate transit line OD table for select lines
             print('  create OD table for selected transit lines')            
-            if tod_hour in transit_line_od_period_list:         
+            if tod_hour in transit_line_od_period_list: 
                 for line_id, name in emme_config.transit_line_dict.items():
                     # Calculate results for all path types
                     for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
@@ -574,6 +666,8 @@ def main():
         _network_df['tod'] = my_project.tod
         network_df = network_df.append(_network_df)
 
+    my_project.change_active_database('1530to1830')
+    emme_nodes_df = my_project.emme_nodes_to_df()
     my_project.closeDesktop()
     
     ######################################## TO DO #########################
@@ -594,8 +688,9 @@ def main():
     df_transit_transfers.to_csv(input_config.transit_transfer_file)
 
     # Export number of jobs near transit stops
-    print('generate number of jobs/hhs accessible within 1/4 mile radius of transit stops.')       
-    jobs_transit()
+    print('calculate number of jobs, household and people within 1/4 mile radius of each transit stop')
+    
+    calculate_landuse_service_by_transitstops(emme_nodes_df)
 
     # Create basic spreadsheet summary of network
     print('calculate VMT/VHT/VHD by facility type, by user class, and by jurisdiction')    

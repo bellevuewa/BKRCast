@@ -495,8 +495,8 @@ def process_net_attribute(network, attr, fun):
             newdf[res_name] = aggr
     return newdf
 
-def load_parcel_data():
-    parcels = pd.read_csv(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
+def load_parcel_data(parcel_path):
+    parcels = pd.read_csv(parcel_path, sep = " ", index_col = None )
     #capitalize field names to avoid errors
     parcels.columns = [i.upper() for i in parcels.columns]
     #check for missing data!
@@ -507,9 +507,9 @@ def load_parcel_data():
                 print(col_name + ' column sum is zero! Exiting program.')
                 sys.exit(1)
 
-    # not using. causes bug in daysim (copied from soundcast)
-    parcels['APARKS'] = 0
-    parcels['NPARKS'] = 0
+    # # not using. causes bug in daysim (copied from soundcast)
+    # parcels['APARKS'] = 0
+    # parcels['NPARKS'] = 0
     return parcels    
 
 def build_pandana_network():
