@@ -11,8 +11,6 @@ distances = { # in meters;
              2: 5280 # 1 mile
              }
 
-bike_facility_width = {'trail': 1, 'bike lane': 3}
-
 parcels_file_name = 'parcels_urbansim.txt'
 buffered_parcels = 'buffered_parcels.txt'
 land_use_output_folder = 'outputs/landuse/'
@@ -22,6 +20,8 @@ nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
 daily_parking_cost = "inputs\\accessibility\\daily_parking_costs.csv"
 hourly_parking_cost = "inputs\\accessibility\\hourly_parking_costs.csv"
+park_file = "inputs\\accessibility\\KC_parks.csv"
+
 
 
 # These will be disaggregated from the parcel data to the network.
@@ -57,5 +57,9 @@ col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype
 # Values correspond the names in the add-on dataset.
 transit_attributes = ["tstops"]
 intersections = ["nodes1", "nodes3", "nodes4"]
-bike_accessibility = ['biketype']
+recbike_accessibility = ['biketype']
+
+# @biketype:width_in_feet
+# @biketype == 1: bike lane @biketype == 10: trail
+bike_lane_width = {1: 4, 10: 10}
 
