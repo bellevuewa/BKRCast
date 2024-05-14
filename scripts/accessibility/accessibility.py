@@ -1,6 +1,7 @@
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import pandas as pd
 import numpy as np
 import re

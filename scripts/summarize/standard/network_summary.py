@@ -566,7 +566,7 @@ def main():
             sys.exit(0)
    
     # Delete any existing files    
-    print('Delete existing output fiiles.')    
+    print('Delete existing output files.')    
     for _path in [input_config.transit_line_path, input_config.transit_node_path, input_config.transit_segment_path, input_config.network_results_path]:
         if os.path.exists(_path ):
             os.remove(_path )

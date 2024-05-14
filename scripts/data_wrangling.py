@@ -24,10 +24,12 @@ import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"inputs", "skim_params"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+sys.path.append(os.path.join(os.getcwd(),"scripts", 'accessibility'))
+import accessibility_configuration as access_config
 from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
-import accessibility.accessibility_configuration as access_config
 import pandas as pd
 
 import numpy as np
