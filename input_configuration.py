@@ -57,7 +57,7 @@ run_truck_summary = False
 # Modes and Path Types
 ##############################
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
-include_tnc = True
+include_tnc = False
 include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
 
 ## Recreational bike
@@ -153,10 +153,10 @@ aadt_bins = [0,5000,10000,15000,9999999]
 aadt_labels = [0,1,2,3] # Corresponding "bucket" labels for AADT segmentation for aadt_dict
 
 # Crosswalk of bicycle facilities from geodatabase to a 2-tier typology - premium, standard (and none)
-# premium (@biketype=1) - Trail/Separated bike lane
+# premium (@biketype=1, 10) - 1: Separated bike lane, 10: trail
 # standard (@biketype=2,3,4) - bike lane striped, Bike shoulder, and Wider lane/shared shoulder (Redmond does not have this category)
 bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'premium', 2:'standard', 
-                                        3:'standard', 4:'standard'}}
+                                        3:'standard', 4:'standard', 10:'premium'}}
 
 # Perception factor values corresponding to these tiers, from Broch et al., 2012
 facility_dict = {'facility_wt': {	'premium': -0.860,
