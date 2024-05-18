@@ -335,6 +335,7 @@
     <Content Include="inputs\skim_params\transit_fare_dictionary.json" />
     <Content Include="inputs\skim_params\transit_line_calculation.json" />
     <Content Include="inputs\skim_params\transit_line_definition.json" />
+    <Content Include="inputs\skim_params\transit_network_results.json" />
     <Content Include="inputs\skim_params\transit_path_analysis.json" />
     <Content Include="inputs\skim_params\transit_segment_calculation.json" />
     <Content Include="inputs\skim_params\transit_skim_aggregate_matrix_names.json" />

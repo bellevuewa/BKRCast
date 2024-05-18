@@ -13,9 +13,9 @@
 #limitations under the License.
 
 import os, sys, shutil
-# sys.path.append(os.path.join(os.getcwd(),"inputs"))
-# sys.path.append(os.path.join(os.getcwd(),"scripts"))
-# sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+sys.path.append(os.getcwd())
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -601,7 +601,7 @@ def main():
         my_project.change_active_database(tod_hour)
         print('  create link extra attributes')        
         for name, description in input_config.extra_attributes_dict.items():
-            my_project.create_extra_attribute('LINK', name, description, 'True')
+            my_project.create_extra_attribute('LINK', name, description, True)
         
         print('  analyze line to line transfer.')            
         if tod_hour in emme_config.transit_tod.keys():
@@ -612,8 +612,10 @@ def main():
         # Calculate transit results for time periods with transit assignment:
         if my_project.tod in emme_config.transit_tod.keys():
             for name, desc in input_config.transit_extra_attributes_dict.items():
-                my_project.create_extra_attribute('TRANSIT_LINE', name, desc, 'True')
+                my_project.create_extra_attribute('TRANSIT_LINE', name, desc, True)
                 my_project.transit_segment_calculator(result=name, expression=name[1:])
+                
+            my_project.calculate_transit_alighting_by_segment()                                   
             _df_transit_line, _df_transit_node, _df_transit_segment = my_project.transit_summary()
             df_transit_line = df_transit_line.append(_df_transit_line)
             df_transit_node = df_transit_node.append(_df_transit_node)
@@ -631,7 +633,7 @@ def main():
                             if matrix.name == 'eline':
                                 my_project.delete_matrix(matrix)
                                 my_project.delete_extra_attribute('@eline')
-                        my_project.create_extra_attribute('TRANSIT_LINE', '@eline', name, 'True')
+                        my_project.create_extra_attribute('TRANSIT_LINE', '@eline', name, True)
                         my_project.create_matrix('eline', 'Demand from select transit line', "FULL")
 
                         # Add an identifier to the chosen line

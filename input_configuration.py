@@ -191,6 +191,9 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@ovol' : 'observed volume', 
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
+transit_segment_extra_attributes_dict = {'@talight':'total segment alighting', '@finalight': 'final alighting', '@transalight':'transfer alighting', 
+                                         '@tboard': 'total segment boarding', 
+                                         '@iboard':'initial boarding', '@trsboard': 'transfer boarding'}
 
 ### Equity analysis
 # 2016 federal poverty line   

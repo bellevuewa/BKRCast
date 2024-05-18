@@ -1,0 +1,11 @@
+{
+  "aggregated_from_segments": null,
+  "analyzed_demand": null,
+  "at_nodes": null,
+  "constraint": null,
+  "on_links": null,
+  "on_segments": {
+    "total_alightings": "@alight"
+  },
+  "type": "EXTENDED_TRANSIT_NETWORK_RESULTS"
+}
