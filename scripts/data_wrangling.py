@@ -117,6 +117,7 @@ def setup_emme_bank_folders():
         emmebank.title = period
         emmebank.unit_of_length = unit_of_length
         emmebank.coord_unit_length = coord_unit_length  
+        emmebank.use_engineering_notation = False   # do not use engr notation     
         scenario = emmebank.create_scenario(1002)
         network = scenario.get_network()
         #need to have at least one mode defined in scenario. Real modes are imported in network_importer.py
