@@ -497,27 +497,27 @@ class EmmeProject:
         transit_segment_data = []
         for tseg in network.transit_segments():
             if tseg.j_node is None:
-                transit_segment_data.append({'line_id': tseg.line.id, 
-                                      'segment_boarding': tseg.transit_boardings, 
-                                      'segment_initial_boarding': tseg['@iboard'], 
-                                      'segment_transfer_boarding': tseg['@trsboard'], 
-                                      'segment_volume': tseg.transit_volume, 
-                                      'segment_alighting': tseg['@talight'],                                      
-                                      'segment_transfer_alighting': tseg['@transalight'],                                      
-                                      'segment_final_alighting': tseg['@finalight'],                                      
-                                      'i_node': tseg.i_node.number,
+                transit_segment_data.append({'line_id': int(tseg.line.id), 
+                                      'segment_boarding': float(tseg.transit_boardings), 
+                                      'segment_initial_boarding': float(tseg['@iboard']), 
+                                      'segment_transfer_boarding': float(tseg['@trsboard']), 
+                                      'segment_volume': float(tseg.transit_volume), 
+                                      'segment_alighting': float(tseg['@talight']),                                      
+                                      'segment_transfer_alighting': float(tseg['@transalight']),                                      
+                                      'segment_final_alighting': float(tseg['@finalight']),                                      
+                                      'i_node': int(tseg.i_node.number),
                                       'j_node': np.nan})
             else:
-                transit_segment_data.append({'line_id': tseg.line.id, 
-                                      'segment_boarding': tseg.transit_boardings, 
-                                      'segment_initial_boarding': tseg['@iboard'], 
-                                      'segment_transfer_boarding': tseg['@trsboard'], 
-                                      'segment_volume': tseg.transit_volume, 
-                                      'segment_alighting': tseg['@talight'],                                      
-                                      'segment_transfer_alighting': tseg['@transalight'],                                      
-                                      'segment_final_alighting': tseg['@finalight'],                                      
-                                      'i_node': tseg.i_node.number,
-                                      'j_node': tseg.j_node.number})
+                transit_segment_data.append({'line_id': int(tseg.line.id), 
+                                      'segment_boarding': float(tseg.transit_boardings), 
+                                      'segment_initial_boarding': float(tseg['@iboard']), 
+                                      'segment_transfer_boarding': float(tseg['@trsboard']), 
+                                      'segment_volume': float(tseg.transit_volume), 
+                                      'segment_alighting': float(tseg['@talight']),                                      
+                                      'segment_transfer_alighting': float(tseg['@transalight']),                                      
+                                      'segment_final_alighting': float(tseg['@finalight']),                                      
+                                      'i_node': int(tseg.i_node.number),
+                                      'j_node': int(tseg.j_node.number)})
     
         _df_transit_segment = pd.DataFrame(transit_segment_data)
         _df_transit_segment['tod'] = tod

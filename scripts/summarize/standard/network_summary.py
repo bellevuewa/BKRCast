@@ -41,7 +41,7 @@ import emme_configuration as emme_config
 
 # 4/30/2024
 # calculate jobs/hhs accessible within 1/4 mile radius of each transit stop. Export the parcel list in txt file and shape file as well. 
-
+# add total boarding, total alighting, transfer boarding, transfer alighting for each segment.
 
 def get_intrazonal_vol(emmeproject, df_vol):
     """Calculate intrazonal volumes for all modes"""
@@ -344,7 +344,12 @@ def line_to_line_transfers(emme_project, tod):
     for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
         report = process(spec, class_name = class_name, output_file = 'outputs/transit/traversal_results.txt') 
         traversal_df = pd.read_csv('outputs/transit/traversal_results.txt', skiprows=16, skipinitialspace=True, sep = ' ', names = ['from_line', 'to_line', 'boardings'])
-    
+        traversal_df['from_line'] = traversal_df['from_line'].astype(int)
+        traversal_df['to_line'] = traversal_df['to_line'].astype(int)
+        # in case engineering notation (only when values are very small or very big) is used (string instead of numbers)        
+        traversal_df['boardings'] = pd.to_numeric(traversal_df['boardings'], errors = 'coerce')
+        traversal_df['boardings'] = traversal_df['boardings'].fillna(0)        
+        
         traversal_df = traversal_df.merge(transit_lines, left_on= 'from_line', right_on='lindex')
         traversal_df = traversal_df.rename(columns={'line':'from_line_id', 'mode':'from_mode'})
         traversal_df.drop(columns=['lindex'], inplace = True)
@@ -356,7 +361,7 @@ def line_to_line_transfers(emme_project, tod):
         os.remove('outputs/transit/traversal_results.txt')
         
     df = pd.concat(df_list)
-    df = df.groupby(['from_line', 'to_line']).agg({'from_line_id' : min, 'to_line_id' : min, 'from_mode' : min, 'to_mode' : min, 'boardings' : sum, })
+    df = df.groupby(['from_line', 'to_line']).agg({'from_line_id' : 'min', 'to_line_id' : 'min', 'from_mode' : 'min', 'to_mode' : 'min', 'boardings' : 'sum'})
     df.reset_index(inplace = True)
     df['tod'] = tod
     return df
@@ -685,6 +690,8 @@ def main():
     for filepath, df in output_dict.items():
        df.to_csv(filepath, index=False)
 
+    calculate_boarding_for_partner_cities(df_transit_segment)
+    
     # Export transit transfers
     print('export transit transfer')       
     df_transit_transfers.to_csv(input_config.transit_transfer_file)
@@ -704,5 +711,29 @@ def main():
     summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segment)
     print('Done')    
 
+# to calculate boarding, alighting numbers that only occur on transit lines within each partner city's boundary.
+def calculate_boarding_for_partner_cities(df_transit_segment):
+    transit_route_lookup_dict = data_wrangling.json_to_dictionary("local_transit_lines_lookup")   
+    subarea_df = pd.read_csv(r'inputs\subarea_definition\TAZ_subarea.csv') 
+    subarea_df = subarea_df.loc[subarea_df['Subarea'] > 0, ['Jurisdiction', 'Subarea', 'SubareaName']].drop_duplicates()    
+
+    with pd.ExcelWriter(os.path.join(input_config.report_transit_location, 'transit_boarding_for_BKR_cities.xlsx'), engine = 'xlsxwriter') as writer:  
+              
+        for city, transit_routes in transit_route_lookup_dict.items():
+            route_list = []        
+            for route_name, line_ids in transit_routes.items():
+                route_list.extend(line_ids)            
+
+            selected_segments = df_transit_segment.loc[df_transit_segment['line_id'].isin(route_list) & (df_transit_segment['i_node_subarea'] > 0)]
+            selected_segments.to_excel(writer, sheet_name = f'{city}_raw', startrow = 1, index = False)
+            wksheet = writer.sheets[f'{city}_raw']
+            wksheet.write(0, 0, f'List of Transit Segments in {city}')                                     
+            total_by_subarea_df = selected_segments.groupby('line_id').sum()  
+            total_by_subarea_df = total_by_subarea_df.merge(subarea_df, left_on = 'i_node_subarea', right_on = 'Subarea', how = 'left')
+            total_by_subarea_df.to_excel(writer, sheet_name = f'{city}', startrow = 1, index = True) 
+            wksheet = writer.sheets[f'{city}']
+            wksheet.write(0, 0, f'Transit Ridership Summary in {city}')                                     
+
+                         
 if __name__ == "__main__":
     main()

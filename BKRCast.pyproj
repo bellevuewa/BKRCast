@@ -299,6 +299,7 @@
     <Content Include="inputs\model\templates\TAZIndex_template.txt" />
     <Content Include="inputs\model\transit_agency_dict.json" />
     <Content Include="inputs\model\variable_labels.csv" />
+    <Content Include="inputs\skim_params\local_transit_lines_lookup.json" />
     <Content Include="inputs\skim_params\rec_bike_network_setup.json" />
     <Content Include="inputs\skim_params\rec_bike_assignment.json" />
     <Content Include="inputs\skim_params\bike_assignment.json" />

@@ -265,6 +265,7 @@ report_lu_output_location = 'outputs/landuse'
 report_bikes_output_location = 'outputs/bikes'
 report_net_output_location = 'outputs/network'
 report_summary_output_location = 'outputs/summary'
+report_transit_location = 'outputs/transit'
 
 ## Summary files ##
 network_results_path = 'outputs/network/network_results.csv'
