@@ -748,25 +748,39 @@ def calculate_boarding_for_partner_cities(df_transit_line, df_transit_segment):
             wksheet.write(0, 0, f'List of Transit Segments in {city}')   
 
             # calculate boarding/alighting/transfer by transit route and each city.
-            # export daily summary first, followed by each TOD            
+            # export daily summary first, followed by each TOD     
+            # This block summarizes transit stats by directional routes for daily     
             summary_attribute_mask = selected_segments.columns.str.contains('line_id|board|alight', case = False)
             total_by_subarea_df = selected_segments.loc[:, summary_attribute_mask].groupby('line_id').sum().reset_index()  
-            total_by_subarea_df = total_by_subarea_df.merge(route_lineid_lookup, on = 'line_id', how = 'left')            
+            total_by_subarea_df = total_by_subarea_df.merge(route_lineid_lookup, on = 'line_id', how = 'left') 
             total_by_subarea_df.to_excel(writer, sheet_name = f'{city}', startrow = 1, index = False) 
             wksheet = writer.sheets[f'{city}']
-            wksheet.write(0, 0, f'Daily Transit Ridership Summary in {city}')                                     
+            wksheet.write(0, 0, f'Daily Transit Ridership Summary in {city}')  
+            
+            # This block summarizes stats with both directions for daily. 
+            bidirec_summary_attr_mask = total_by_subarea_df.columns.str.contains('route|board|alight', case = False)       
+            startcol =  total_by_subarea_df.shape[1] + 3                                     
+            bidirectional_total_by_subarea_df = total_by_subarea_df.loc[:, bidirec_summary_attr_mask].groupby('route').sum().reset_index()
+            bidirectional_total_by_subarea_df.to_excel(writer, sheet_name = f'{city}', startrow = 1, startcol = startcol, index = False)                                  
+            wksheet.write(0, startcol, f'Daily Transit Ridership Summary in {city}')  
             
             # Calculate and export for each TOD
             startrow = total_by_subarea_df.shape[0] + 3
             for key, val in emme_config.sound_cast_net_dict.items():
                 wksheet.write(startrow, 0, f'Transit Ridership Summary in {city}, {val}')                                     
                  
+                # directional
                 total_by_subarea_df = selected_segments.loc[selected_segments['tod'] == key, summary_attribute_mask].groupby('line_id').sum().reset_index()  
                 total_by_subarea_df = total_by_subarea_df.merge(route_lineid_lookup, on = 'line_id', how = 'left')  
                 total_by_subarea_df.to_excel(writer, sheet_name = f'{city}', startrow = startrow + 1, index = False) 
-                startrow = startrow + total_by_subarea_df.shape[0] + 3
 
-                
+                # bi-directional
+                wksheet.write(startrow, startcol, f'Transit Ridership Summary in {city}, {val}')                                     
+                bidirec_summary_attr_mask = total_by_subarea_df.columns.str.contains('route|board|alight', case = False)       
+                bidirectional_total_by_subarea_df = total_by_subarea_df.loc[:, bidirec_summary_attr_mask].groupby('route').sum().reset_index()
+                bidirectional_total_by_subarea_df.to_excel(writer, sheet_name = f'{city}', startrow = startrow + 1, startcol = startcol, index = False)                                  
+
+                startrow = startrow + total_by_subarea_df.shape[0] + 3
 
  
                         
