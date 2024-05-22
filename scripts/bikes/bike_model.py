@@ -324,10 +324,12 @@ def write_link_counts(my_project, tod):
         #x['gdbJNode'] = df.iloc[row]['JNode']
         if link != None:
             x['bvol' + tod] = link['@bvol']
-            x['recbvol' + tod] = link['@recbvol']            
+            if input_config.include_rec_bike:            
+                x['recbvol' + tod] = link['@recbvol']            
         else:
             x['bvol' + tod] = None
-            x['recbvol' + tod] = None            
+            if input_config.include_rec_bike:            
+                x['recbvol' + tod] = None            
         list_model_vols.append(x)
 
     df_count =  pd.DataFrame(list_model_vols)
