@@ -475,7 +475,7 @@ class EmmeProject:
         # Extract Transit Line Data
         transit_line_data = []
         for line in network.transit_lines():
-            transit_line_data.append({'line_id': line.id, 
+            transit_line_data.append({'line_id': int(line.id), 
                                       'route_code': line.id, # line name
                                       'mode': str(line.mode),
                                       'description': line.description,
