@@ -207,8 +207,9 @@ def main():
     daily_volume_attr.description = 'daily auto volume'
     daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
     daily_bike_vol_attr.description = 'daily bike volume'
-    daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@recbvoldaily')
-    daily_bike_vol_attr.description = 'daily rec bike volume'
+    if input_config.include_rec_bike:    
+        daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@recbvoldaily')
+        daily_bike_vol_attr.description = 'daily rec bike volume'
     
     daily_network = daily_scenario.get_network()
 
@@ -258,11 +259,12 @@ def main():
         values = scenario.get_attribute_values('LINK', ['@bvol'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
-        # create bike volume for each TOD
-        attr = daily_scenario.create_extra_attribute('LINK', '@recbvol' + tod)
-        attr.description = 'rec bike volume ' + tod
-        values = scenario.get_attribute_values('LINK', ['@recbvol'])
-        daily_scenario.set_attribute_values('LINK', [attr], values)
+        # create rec bike volume for each TOD
+        if input_config.include_rec_bike:        
+            attr = daily_scenario.create_extra_attribute('LINK', '@recbvol' + tod)
+            attr.description = 'rec bike volume ' + tod
+            values = scenario.get_attribute_values('LINK', ['@recbvol'])
+            daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # load transit segment boarding into dataframe
         # unlike auto network in daily bank, we do not have a daily transit network. Can only export daily boarding 
@@ -315,16 +317,21 @@ def main():
     attr_list = ['@v' + x for x in tods]
     attr_list.extend(['@bvol' + x for x in tods])
     attr_list.extend(['@tv' + x for x in tods])
-    attr_list.extend(['@recbvol' + x for x in tods])
-    
-
-    # calculate daily volumes: auto, bike, and transit
-    for link in daily_network.links():
-        for item in tods:
-            link['@tveh'] = link['@tveh'] + link['@v' + item]
-            link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
-            link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
-            link['@recbvoldaily']  = link['@recbvoldaily'] + link['@recbvol' + item]
+    if input_config.include_rec_bike:    
+        attr_list.extend(['@recbvol' + x for x in tods])
+        # calculate daily volumes: auto, bike, and transit
+        for link in daily_network.links():
+            for item in tods:
+                link['@tveh'] = link['@tveh'] + link['@v' + item]
+                link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
+                link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
+                link['@recbvoldaily']  = link['@recbvoldaily'] + link['@recbvol' + item]
+    else: 
+        for link in daily_network.links():
+            for item in tods:
+                link['@tveh'] = link['@tveh'] + link['@v' + item]
+                link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
+                link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
