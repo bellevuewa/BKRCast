@@ -13,6 +13,7 @@
 #limitations under the License.
 
 import os, sys, shutil
+from tkinter.font import BOLD
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.getcwd())
@@ -393,40 +394,30 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     df_special[['route_code','description','boardings']].to_csv(input_config.special_routes_path, index=False)
 
     # Daily Boardings by Stop
+    node_df = df_transit_node.loc[df_transit_node['tod'] == '1530to1830', ['node_id', 'node_subarea']]  
     df_transit_segment = pd.read_csv(input_config.transit_segment_path)
-    df_transit_node = pd.read_csv(input_config.transit_node_path)
-    df_transit_segment = df_transit_segment.groupby('i_node').sum().reset_index()
-    df_transit_node = df_transit_node.groupby('node_id').sum().reset_index()
-    df = pd.merge(df_transit_node, df_transit_segment, left_on='node_id', right_on='i_node')
-    df.rename(columns={'segment_boarding': 'total_boardings'}, inplace=True)
-    df['transfers'] = df['total_boardings'] - df['initial_boardings']
-    df.to_csv(input_config.boardings_by_stop_path)
+    df_transit_stops_daily = df_transit_segment.groupby('i_node').sum().reset_index()
+    df_transit_stops_daily = node_df.merge(df_transit_stops_daily, left_on = 'node_id', right_on = 'i_node', how = 'right')        
+    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea'], inplace = True)  
 
-    # Light rail station boardings
-    df = pd.read_csv(input_config.boardings_by_stop_path)
-    # df_obs = pd.read_sql("SELECT * FROM light_rail_station_boardings", con=conn)
-    # df_obs['year'] = df_obs['year'].fillna(0).astype('int')
-    # df_obs = df_obs[(df_obs['year'] == int(config['base_year'])) | (df_obs['year'] == 0)]
+    with pd.ExcelWriter(input_config.boardings_by_stop_path,  engine='xlsxwriter') as writer:    
+        wksheet = writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now()))
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, input_config.project_folder)
+        
+        bold_format = writer.book.add_format({'bold': True})
+        df_transit_stops_daily.to_excel(writer, sheet_name = 'Daily', index = False, startrow = 1)
+        daily_sheet = writer.sheets['Daily']
+        daily_sheet.write(0, 0, 'Daily Boarding/Alighting', bold_format) 
 
-    # Translate daily boardings to 5 to 20
-    # df_line_obs = pd.read_sql("SELECT * FROM observed_transit_boardings WHERE year=" + str(config['base_year']), con=conn)
-    # df_line_obs['route_id'] = df_line_obs['route_id'].astype('int')
-    light_rail_list = [6025, 6026, 6039, 6040]
-    # daily_factor = df_line_obs[df_line_obs['route_id'].isin(light_rail_list)]['daily_factor'].values[0]
-    # df_obs['observed_5to20'] = df_obs['boardings']/daily_factor
-
-    # df = df[df['i_node'].isin(df_obs['emme_node'])]
-    df.rename(columns={'total_boardings':'modeled_5to20'},inplace=True)
-
-    # if len(df_obs) > 0:
-    #     df = df.merge(df_obs, left_on='i_node', right_on='emme_node')
-    #     cols = ['observed_5to20','modeled_5to20']
-    # else:
-    #     cols = ['modeled_5to20']
-    cols = ['modeled_5to20']
-    df_total = df.copy()[cols]
-    df_total.loc['Total',cols] = df[cols].sum().values
-    df_total.to_csv(input_config.light_rail_boardings_path)
+        for tod in emme_config.load_transit_tod:
+            df_transit_stops_tod = df_transit_segment.loc[df_transit_segment['tod'] == tod].groupby('i_node').sum().reset_index()
+            df_transit_stops_tod = node_df.merge(df_transit_stops_tod, left_on = 'node_id', right_on = 'i_node', how = 'right')                   
+            df_transit_stops_tod.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea'], inplace = True)     
+            df_transit_stops_tod.to_excel(writer, sheet_name = tod, index = False, startrow = 1) 
+            tod_sheet = writer.sheets[tod]
+            tod_sheet.write(0, 0, f'Boarding/Alighting in {tod}', bold_format)                                                   
 
 def count_and_sum_landuse_data(node, tree, radius, attributes_df):
     captured_pts = tree.query_ball_point((node.geometry.x, node.geometry.y), radius)
@@ -711,7 +702,7 @@ def main():
     summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segment)
     print('Done')    
 
-# to calculate boarding, alighting numbers that only occur on transit lines within each partner city's boundary.
+# to calculate boarding, alighting numbers that only occur on transit lines within each partner city's boundaries.
 def calculate_boarding_for_partner_cities(df_transit_line, df_transit_segment):
     transit_route_lookup_dict = data_wrangling.json_to_dictionary("local_transit_lines_lookup")   
     subarea_df = pd.read_csv(r'inputs\subarea_definition\TAZ_subarea.csv') 

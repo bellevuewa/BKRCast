@@ -486,9 +486,7 @@ class EmmeProject:
    
         for node in network.nodes():
             transit_node_data.append({'node_id': int(node.id), 
-                                      'node_subarea': node['@ndmma'],                                      
-                                      'initial_boardings': node.initial_boardings,
-                                      'final_alightings': node.final_alightings})
+                                      'node_subarea': node['@ndmma']})
 
         _df_transit_node = pd.DataFrame(transit_node_data)
         _df_transit_node['tod'] = tod
@@ -520,7 +518,13 @@ class EmmeProject:
                                       'j_node': int(tseg.j_node.number)})
     
         _df_transit_segment = pd.DataFrame(transit_segment_data)
-        _df_transit_segment['tod'] = tod
+        _df_transit_stops = _df_transit_segment[['i_node', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_final_alighting', 'segment_transfer_alighting']].groupby('i_node').sum()
+        _df_transit_node = _df_transit_node.merge(_df_transit_stops, left_on = 'node_id', right_index = True, how = 'left').fillna(0)
+        _df_transit_node = _df_transit_node.rename(columns = {'segment_boarding':'total_boarding', 'segment_initial_boarding':'initial_boarding', 'segment_transfer_boarding': 'transfer_boarding', 
+                                 'segment_alighting':'total_alighting', 'segment_final_alighting':'final_alighting', 'segment_transfer_alighting':'transfer_alighting'})                
+        _df_transit_node['tod'] = tod 
+                              
+        _df_transit_segment['tod'] = tod        
         _df_transit_segment = _df_transit_segment.merge(_df_transit_node[['node_id', 'node_subarea']], left_on = 'i_node', right_on = 'node_id', how = 'left') 
         _df_transit_segment.drop(columns = ['node_id'], inplace = True)
         _df_transit_segment.rename(columns = {'node_subarea':'i_node_subarea'}, inplace = True)                       
