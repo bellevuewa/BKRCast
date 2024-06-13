@@ -86,7 +86,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
         tot_scn_spaces = self.current_emmebank.dimensions['scenarios']
         scens = self.current_emmebank.scenarios()
         _modeller.logbook_write("Version", self.version)
-        self.new_scen_title = str(self.horizon_year) + ' network built from scen ' + self.current_scen.id
+        self.new_scen_title = str(self.horizon_year) + self.new_scen_title
 
         num_scns = 0;
         for scen in scens:
