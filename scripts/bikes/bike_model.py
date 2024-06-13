@@ -271,7 +271,8 @@ def get_aadt(my_project):
             my_project.create_extra_attribute('LINK', name, desc, 'True')
         
         # Calculate total vehicles for each link
-        calc_total_vehicles(my_project)
+        my_project.calc_bus_pce()            
+        my_project.calc_total_vehicles()
         
         # Loop through each link, store length and volume
         network = my_project.current_scenario.get_network()

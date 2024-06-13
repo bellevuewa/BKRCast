@@ -250,7 +250,7 @@ def intitial_extra_attributes(my_project):
                      
 
     # Create the link extra attributes to store the auto equivalent of bus vehicles
-    my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles in PCE",True)
+    # my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles in PCE",True)
  
     # Create the link extra attribute to store the arterial delay in
     #my_project.create_extra_attribute("LINK", "@rdly","Intersection Delay", True)
@@ -1340,8 +1340,10 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
 
     ##set up for assignments
     intitial_extra_attributes(my_project)
+    my_project.create_extra_attributes(extra_attributes_dict)
+    
     if my_project.tod in transit_tod:
-        calc_bus_pce(my_project)
+        my_project.calc_bus_pce()
 
     vdf_initial(my_project)
     
@@ -1367,7 +1369,6 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     store_assign_results(my_project, 'skim')
 
     # update @mveh, @hveh, @bveh and @tveh.   They will be updated again in bike_model.py
-    my_project.create_extra_attributes(extra_attributes_dict)
     my_project.calc_total_vehicles()
 
     ################################################################

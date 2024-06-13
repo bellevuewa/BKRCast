@@ -582,6 +582,11 @@ class EmmeProject:
 
         return demand_matrix
                       
+    def calc_bus_pce(self):
+     total_hours = emme_config.transit_tod[self.tod]['num_of_hours']
+     my_expression = str(total_hours) + ' * vauteq * (60/hdw)'
+     self.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
+
                                             
 def json_to_dictionary(dict_name):
 

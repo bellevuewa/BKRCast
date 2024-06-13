@@ -645,7 +645,8 @@ def main():
                         my_project.export_matrix('mfeline', 'outputs/transit/line_od/' + str(line_id) + '_'+ class_name + "_" + tod_hour + '.csv')
 
         # Add total vehicle sum for each link (@tveh)
-        print('  calculate total vehicles.')                        
+        print('  calculate total vehicles.')    
+        my_project.calc_bus_pce()                            
         my_project.calc_total_vehicles()
 
         # Calculate intrazonal volume and distance
