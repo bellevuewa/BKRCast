@@ -144,10 +144,13 @@ def export_network_attributes(network, node_attr_study_area):
     """ Calculate link-level results by time-of-day, append to csv """
 
     _attribute_list = network.attributes('LINK') 
+    auto_mode = set([m for m in network.modes() if m.type == 'AUTO'])
 
     network_data = {k: [] for k in _attribute_list}
     i_node_list = []
     j_node_list = []
+    isAuto_list = []
+    isConnector_list = []        
     network_data['modes'] = []
     for link in network.links():
         for colname, array in network_data.items():
@@ -159,9 +162,15 @@ def export_network_attributes(network, node_attr_study_area):
         i_node_list.append(link.i_node.id)
         j_node_list.append(link.j_node.id)
         network_data['modes'].append(link.modes)
+        
+        isAuto_list.append(bool(link.modes.intersection(auto_mode)))
+        isConnector_list.append(link.i_node.is_centroid or link.j_node.is_centroid)                
 
     network_data['i_node'] = i_node_list
     network_data['j_node'] = j_node_list
+    network_data['isAuto'] = isAuto_list
+    network_data['isConnector'] = isConnector_list
+        
     df = pd.DataFrame.from_dict(network_data)
     df['modes'] = df['modes'].apply(lambda x: ''.join(list([j.id for j in x])))    
     df['modes'] = df['modes'].astype('str').fillna('')
@@ -223,7 +232,7 @@ def help():
     print('      transit_stop_buffer_{buffer_distance}_ft: transit stop buffer shape file') 
     print('      merged_buffer_{buffer_distance}_ft: merged transit stop buffer by jurisdiction')          
     
-def summarize_network(df):
+def summarize_network(df, node_attr_study_area):
     """ Calculate VMT, VHT, and Delay from link-level results """
     """ BKR area only """    
 
@@ -333,13 +342,31 @@ def summarize_network(df):
     
         kc_df['city_name'] = kc_df['@bkrlink'].map(input_config.bkrlink_dict)
         _df = kc_df.groupby('city_name').sum()[['VMT','VHT','VHD']].reset_index()
-        wksheet.write(startrow + 1, 0, 'VMT/VHT/VHD by City') 
+        wksheet.write(startrow, 0, 'VMT/VHT/VHD by City') 
         startrow += 1        
         _df.to_excel(excel_writer=writer, sheet_name = sheet_name, startrow = startrow)
         startrow += _df.shape[0] + 2
         wksheet.write(startrow + 1, 0, 'Notes')
         wksheet.write(startrow + 2, 0, 'VMT/VHT/VHD including centroid connectors')                        
 
+        # calculate vmt, vht, vhd by study area if it is defined
+        if node_attr_study_area != None:
+            _df = pd.pivot_table(kc_df, values=attr_list, index=[node_attr_study_area, 'tod','period'], aggfunc='sum').reset_index()
+            sheet_name = f"metric by {node_attr_study_area}"
+            head_list = [node_attr_study_area, 'tod', 'period']  
+            startrow = 2  
+            
+            for metric in ['_vmt', '_vht', '_vhd']:
+                metric_list = [item for item in _df.columns if metric in item]
+                sub_df = _df[head_list + metric_list]
+                sub_df.to_excel(excel_writer = writer, sheet_name = sheet_name, startrow = startrow, index = False)
+                wksheet = writer.sheets[sheet_name]
+                wksheet.write(startrow - 1, 0, metric[1:].upper())            
+                startrow += sub_df.shape[0] + 2
+                wksheet.write(startrow, 0, 'Notes')
+                wksheet.write(startrow + 1, 0, metric[1:].upper() + ': including centroid connectors')
+                startrow += 5                                                           
+                      
 
 def line_to_line_transfers(emme_project, tod):
     emme_project.create_extra_attribute('TRANSIT_LINE', '@ln2ln', description = 'line to line', overwrite = True)
@@ -690,15 +717,14 @@ def main():
     my_project.closeDesktop()
     
     ######################################## TO DO #########################
-    # it would be nice to export results to xlsx fiel instead of csv. We could add additional analysis data to xlsx later.    
-    output_dict = {input_config.network_results_path: network_df, 
-                   input_config.iz_vol_path: df_iz_vol,
+    # it would be nice to export results to xlsx file instead of csv. We could add additional analysis data to xlsx later.    
+    output_dict = {input_config.iz_vol_path: df_iz_vol,
                    input_config.transit_line_path: df_transit_line,
                    input_config.transit_node_path: df_transit_node,
                    input_config.transit_segment_path: df_transit_segment}
 
     # Append hourly results to file output
-    print('export all links, all transit lines, all transit stops, all transit segments')    
+    print('export all transit lines, all transit stops, all transit segments')    
     for filepath, df in output_dict.items():
        df.to_csv(filepath, index=False)
 
@@ -714,8 +740,9 @@ def main():
     calculate_landuse_service_by_transitstops(emme_nodes_df)
 
     # Create basic spreadsheet summary of network
-    print('calculate VMT/VHT/VHD by facility type, by user class, and by jurisdiction')    
-    summarize_network(network_df)
+    print('calculate VMT/VHT/VHD by facility type, by user class, and by jurisdiction and by study area if defined.') 
+    print('raw link data are aslo exported to the xlsx file.')       
+    summarize_network(network_df, node_attr_study_area)
 
     # create detailed transit summaries
     init(autoreset = True)    
