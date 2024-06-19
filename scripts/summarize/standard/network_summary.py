@@ -140,10 +140,10 @@ def freeflow_skims(my_project, dictZoneLookup):
     trip_df = pd.merge(trip_df, skim_df[['od','sov_ff_time']], on='od', how='left')
     trip_df.to_csv(r'outputs/daysim/_trip.tsv', sep='\t', index=False)
 
-def export_network_attributes(network):
+def export_network_attributes(network, node_attr_study_area):
     """ Calculate link-level results by time-of-day, append to csv """
 
-    _attribute_list = network.attributes('LINK')  
+    _attribute_list = network.attributes('LINK') 
 
     network_data = {k: [] for k in _attribute_list}
     i_node_list = []
@@ -171,6 +171,20 @@ def export_network_attributes(network):
     df['congestion_index'] = df['speed']/df['data2']
     df['congestion_index'] = df['congestion_index'].clip(0,1)
     df['congestion_category'] = pd.cut(df['congestion_index'], bins=[0,.25,.5,.7,1], labels=['Severe','Heavy','Moderate','Light'])
+
+    # add study area node flag to the link dataframe
+    if node_attr_study_area != None:
+        node_data = {'id':[]}
+        node_data.update({k: [] for k in network.attributes('NODE')})        
+        for node in network.nodes():
+            for k in network.attributes('NODE'):
+                node_data[k].append(node[k])  
+            node_data['id'].append(node.id)  
+        nodes_df = pd.DataFrame(node_data)
+
+        df = df.merge(nodes_df[['id', node_attr_study_area]], left_on = 'i_node', right_on = 'id', how = 'left') 
+        df.drop(columns = ['id'], inplace = True)               
+    
    
     return df
     
@@ -184,6 +198,10 @@ def sort_df(df, sort_list, sort_column_list):
     return df
 
 def help():
+    print('network_summary.py -h -s emme_extra_attribute_for_study_area')  
+    print('  -h: help')
+    print('  -s: an EMME node extra attribute defining the study area. default is @ndmma')   
+    print('')           
     print('This script will generates the following results:')
     print('  outputs/network:')
     print('      network_summary.xlsx: lane miles/VMT/VHT/VHD by facility type and jurisdiction, and by user class and jurisdiction')
@@ -248,7 +266,7 @@ def summarize_network(df):
         wksheet.write(5, 0, 'Facility type is defined by @class')
         wksheet.write(6, 0, 'BKR area is defined by @bkrlink. Links outside of King County are not included in the calculation.')    
 
-        
+        df.to_excel(writer, sheet_name = 'daily_links', startrow = 1, index = False)
         lane_miles = kc_df[kc_df['tod']=='6to9'].copy()
         lane_miles = pd.pivot_table(lane_miles, values='lane_miles', index='@bkrlink',columns='facility_type', aggfunc='sum').reset_index()
         lane_miles.rename(columns = {col:col+'_lane_miles' for col in lane_miles.columns if col in ['freeway', 'arterial', 'connector', 'local']}, inplace = True)
@@ -549,9 +567,9 @@ def calculate_landuse_service_by_transitstops(emme_node_df):
         access_by_stop_sheet.write(0, 0, 'Jobs/HHs Accessed within 1/4 Mile Radius of Each Transit Stop')                           
     
 def main():
-
+    node_attr_study_area = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'h')
+        opts, args = getopt.getopt(sys.argv[1:], 'hs:')
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -560,6 +578,8 @@ def main():
         if opt == '-h':
             help()
             sys.exit(0)
+        elif opt == '-s':
+            node_attr_study_area = str(arg)
    
     # Delete any existing files    
     print('Delete existing output files.')    
@@ -612,7 +632,7 @@ def main():
                 my_project.transit_segment_calculator(result=name, expression=name[1:])
                 
             my_project.calculate_transit_alighting_by_segment()                                   
-            _df_transit_line, _df_transit_node, _df_transit_segment = my_project.transit_summary()
+            _df_transit_line, _df_transit_node, _df_transit_segment = my_project.transit_summary(node_attr_study_area)
             df_transit_line = df_transit_line.append(_df_transit_line)
             df_transit_node = df_transit_node.append(_df_transit_node)
             df_transit_segment = df_transit_segment.append(_df_transit_segment)
@@ -661,7 +681,7 @@ def main():
         # create datafrane of all links with multiple attributes
         print('  create dataframe of links')
         network = my_project.current_scenario.get_network()
-        _network_df = export_network_attributes(network)
+        _network_df = export_network_attributes(network, node_attr_study_area)
         _network_df['tod'] = my_project.tod
         network_df = network_df.append(_network_df)
 
