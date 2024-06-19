@@ -321,10 +321,10 @@ class EmmeProject:
         self.bank.dispose()
         self.desktop.close()
 
-    def import_attribute_values(self, file_path, revert_on_error):
+    def import_attribute_values(self, file_path, revert_on_error, import_definitions = False):
         NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
         import_values = self.m.tool(NAMESPACE)
-        import_values(file_path, scenario = self.current_scenario, column_labels = 'FROM_HEADER',revert_on_error = revert_on_error)
+        import_values(file_path, scenario = self.current_scenario, column_labels = 'FROM_HEADER',revert_on_error = revert_on_error, import_definitions = import_definitions)
 
     def emme_nodes_to_df(self):
         '''
@@ -385,9 +385,9 @@ class EmmeProject:
         return links_df
 
     def set_primary_scenario(self, scen_id):
-        scen = self.data_explorer.scenario_by_number(scen_id)
-        if scen != None:
-            self.data_explorer.replace_parimary_scenario(scen)
+        scen = self.data_explorer.active_database().scenario_by_number(scen_id)
+        if scen is not None:
+            self.data_explorer.replace_primary_scenario(scen)
 
     def create_extra_attributes(self, attr_dict):
         for attrname, desc in attr_dict.items():
@@ -450,24 +450,42 @@ class EmmeProject:
             spec['on_segments']['total_boardings'] = '@temp4'
             spec['on_segments']['initial_boardings'] = '@temp5'
             spec['on_segments']['transfer_boardings'] = '@temp6'
-              
+         
+        network = self.current_scenario.get_partial_network(["TRANSIT_LINE", "TRANSIT_SEGMENT"], include_attributes=True) 
+            
         for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
             network_results(spec, class_name = class_name)  
-            self.transit_segment_calculator(result = '@talight', expression = '@talight + @temp1', aggregation = None)                          
-            self.transit_segment_calculator(result = '@transalight', expression = '@transalight + @temp2', aggregation = None)                          
-            self.transit_segment_calculator(result = '@finalight', expression = '@finalight + @temp3', aggregation = None)                          
-            self.transit_segment_calculator(result = '@tboard', expression = '@tboard + @temp4', aggregation =  None)                          
-            self.transit_segment_calculator(result = '@iboard', expression = '@iboard + @temp5', aggregation =  None)                          
-            self.transit_segment_calculator(result = '@trsboard', expression = '@trsboard + @temp6', aggregation =  None)                          
+            # be careful. Below network and scenario are not consistent. We are directly working on network elements. 
+            # After that we need to set changes to scenario. Bentley support #CS0228290            
+            kind, attrs = "TRANSIT_SEGMENT", ["@temp1", "@temp2", "@temp3", "@temp4", "@temp5", "@temp6"]            
+            values = self.current_scenario.get_attribute_values(kind, attrs)
+            network.set_attribute_values(kind, attrs, values)  
 
-    def transit_summary(self):
+            for line in network.transit_lines():
+                for seg in line.segments(True):
+                    seg['@talight'] += seg['@temp1']
+                    seg['@transalight'] += seg['@temp2']
+                    seg['@finalight'] += seg['@temp3']
+                    seg['@tboard'] += seg['@temp4']
+                    seg['@iboard'] += seg['@temp5']
+                    seg['@trsboard'] += seg['@temp6']
+
+        kind, attrs = "TRANSIT_SEGMENT", ["@talight", "@transalight", "@finalight", "@tboard", "@iboard", "@trsboard"]
+        values = network.get_attribute_values(kind, attrs)
+        self.current_scenario.set_attribute_values(kind, attrs, values)        
+
+    def transit_summary(self, node_attr_study_area = '@ndmma'):
         """Export transit line, segment, and mode attributes"""
 
         # Extract Transit Node Data
         transit_node_data = []
-        if self.current_scenario.extra_attribute('@ndmma') == None:
+        if self.current_scenario.extra_attribute(node_attr_study_area) == None:
+            from colorama import Fore, init
+            init(autoreset = True)
+            print(f'The study area node attribute {node_attr_study_area} is not defined in EMME {self.tod} databank. {Fore.GREEN} @ndmma is used instead.')            
             self.create_extra_attribute('NODE', '@ndmma', 'flag for subarea', True)
-            self.import_attribute_values(os.path.join(input_config.project_folder, 'inputs/extra_attributes/@ndmma.txt'), False)   
+            self.import_attribute_values(os.path.join(input_config.project_folder, 'inputs/extra_attributes/@ndmma.txt'), False)  
+            node_attr_study_area = '@ndmma'
          
         network = self.current_scenario.get_network()
         tod = self.tod
@@ -486,7 +504,7 @@ class EmmeProject:
    
         for node in network.nodes():
             transit_node_data.append({'node_id': int(node.id), 
-                                      'node_subarea': node['@ndmma']})
+                                      'node_subarea': node[node_attr_study_area]})
 
         _df_transit_node = pd.DataFrame(transit_node_data)
         _df_transit_node['tod'] = tod
@@ -502,7 +520,11 @@ class EmmeProject:
                                       'segment_volume': float(tseg.transit_volume), 
                                       'segment_alighting': float(tseg['@talight']),                                      
                                       'segment_transfer_alighting': float(tseg['@transalight']),                                      
-                                      'segment_final_alighting': float(tseg['@finalight']),                                      
+                                      'segment_final_alighting': float(tseg['@finalight']),    
+                                      'length': 0,                                                                         
+                                      'ul2':  np.nan,
+                                      'transit_travel_time': tseg.transit_time,
+                                      'isHidden': True,                                                                             
                                       'i_node': int(tseg.i_node.number),
                                       'j_node': np.nan})
             else:
@@ -513,7 +535,11 @@ class EmmeProject:
                                       'segment_volume': float(tseg.transit_volume), 
                                       'segment_alighting': float(tseg['@talight']),                                      
                                       'segment_transfer_alighting': float(tseg['@transalight']),                                      
-                                      'segment_final_alighting': float(tseg['@finalight']),                                      
+                                      'segment_final_alighting': float(tseg['@finalight']),
+                                      'length':tseg.link.length,
+                                      'ul2':  tseg.link.data2,
+                                      'transit_travel_time': float(tseg.transit_time), 
+                                      'isHidden': False,                                                                            
                                       'i_node': int(tseg.i_node.number),
                                       'j_node': int(tseg.j_node.number)})
     
@@ -527,7 +553,11 @@ class EmmeProject:
         _df_transit_segment['tod'] = tod        
         _df_transit_segment = _df_transit_segment.merge(_df_transit_node[['node_id', 'node_subarea']], left_on = 'i_node', right_on = 'node_id', how = 'left') 
         _df_transit_segment.drop(columns = ['node_id'], inplace = True)
-        _df_transit_segment.rename(columns = {'node_subarea':'i_node_subarea'}, inplace = True)                       
+        _df_transit_segment.rename(columns = {'node_subarea':'i_node_subarea'}, inplace = True) 
+
+        _df_transit_segment['PMT'] = _df_transit_segment['segment_volume'] * _df_transit_segment['length']
+        _df_transit_segment['PHT'] = _df_transit_segment['segment_volume'] * _df_transit_segment['transit_travel_time'] / 60 
+        _df_transit_segment['PHD'] = _df_transit_segment['segment_volume'] * (_df_transit_segment['transit_travel_time'] - _df_transit_segment['length'] / _df_transit_segment['ul2'] * 60) / 60                                            
 
         return _df_transit_line, _df_transit_node, _df_transit_segment
          

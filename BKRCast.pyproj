@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\standard\network_summary.py</StartupFile>
+    <StartupFile>scripts\utils\create_extra_attributes.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>Bellevue</CommandLineArguments>
+    <CommandLineArguments>-d  "C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike\test.json"</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -334,6 +334,7 @@
     <Content Include="inputs\skim_params\time_of_day_crosswalk_ab_4k_dictionary.json" />
     <Content Include="inputs\skim_params\tolls.json" />
     <Content Include="inputs\skim_params\transit_fare_dictionary.json" />
+    <Content Include="inputs\skim_params\transit_hub_lookup.json" />
     <Content Include="inputs\skim_params\transit_line_calculation.json" />
     <Content Include="inputs\skim_params\transit_line_definition.json" />
     <Content Include="inputs\skim_params\transit_network_results.json" />

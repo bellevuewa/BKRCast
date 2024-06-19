@@ -1,0 +1,2 @@
+[{"type":"LINK", "name": "@test1", "description": "flag for study area", "overwrite": "True", "file_name":"inputs/extra_attributes/@studyarea.txt"},
+ {"type":"NODE", "name": "@test2", "description": "flag for I405 and ramps in study area", "overwrite": "True", "file_name":"inputs/extra_attributes/@studyarea405.txt"}]
