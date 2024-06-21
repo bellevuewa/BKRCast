@@ -388,7 +388,12 @@ class EmmeProject:
         scen = self.data_explorer.active_database().scenario_by_number(scen_id)
         if scen is not None:
             self.data_explorer.replace_primary_scenario(scen)
-
+        else:
+            from colorama import Fore, init
+            init(autoreset = True)
+            print(f'scenario {scen_id} does not exist in {self.tod}.') 
+            exit(-1)
+            
     def create_extra_attributes(self, attr_dict):
         for attrname, desc in attr_dict.items():
             if attrname in self.current_scenario.extra_attributes():
@@ -511,7 +516,9 @@ class EmmeProject:
     
         # Extract Transit Segment Data
         transit_segment_data = []
+
         for tseg in network.transit_segments():
+            bus_vehs = float(60/tseg.line.headway * emme_config.hwy_tod[emme_config.sound_cast_net_dict[self.tod]])            
             if tseg.j_node is None:
                 transit_segment_data.append({'line_id': int(tseg.line.id), 
                                       'segment_boarding': float(tseg.transit_boardings), 
@@ -524,6 +531,7 @@ class EmmeProject:
                                       'length': 0,                                                                         
                                       'ul2':  np.nan,
                                       'transit_travel_time': tseg.transit_time,
+                                      'bus_vehicles': bus_vehs,   
                                       'isHidden': True,                                                                             
                                       'i_node': int(tseg.i_node.number),
                                       'j_node': np.nan})
@@ -539,6 +547,7 @@ class EmmeProject:
                                       'length':tseg.link.length,
                                       'ul2':  tseg.link.data2,
                                       'transit_travel_time': float(tseg.transit_time), 
+                                      'bus_vehicles': bus_vehs,                                                                            
                                       'isHidden': False,                                                                            
                                       'i_node': int(tseg.i_node.number),
                                       'j_node': int(tseg.j_node.number)})
@@ -558,6 +567,10 @@ class EmmeProject:
         _df_transit_segment['PMT'] = _df_transit_segment['segment_volume'] * _df_transit_segment['length']
         _df_transit_segment['PHT'] = _df_transit_segment['segment_volume'] * _df_transit_segment['transit_travel_time'] / 60 
         _df_transit_segment['PHD'] = _df_transit_segment['segment_volume'] * (_df_transit_segment['transit_travel_time'] - _df_transit_segment['length'] / _df_transit_segment['ul2'] * 60) / 60                                            
+
+        _df_transit_segment['VMT'] = _df_transit_segment['bus_vehicles'] * _df_transit_segment['length']
+        _df_transit_segment['VHT'] = _df_transit_segment['bus_vehicles'] * _df_transit_segment['transit_travel_time'] / 60 
+        _df_transit_segment['VHD'] = _df_transit_segment['bus_vehicles'] * (_df_transit_segment['transit_travel_time'] - _df_transit_segment['length'] / _df_transit_segment['ul2'] * 60) / 60                                            
 
         return _df_transit_line, _df_transit_node, _df_transit_segment
          

@@ -207,9 +207,10 @@ def sort_df(df, sort_list, sort_column_list):
     return df
 
 def help():
-    print('network_summary.py -h -s emme_extra_attribute_for_study_area')  
+    print('network_summary.py -h -t emme_extra_attribute_for_study_area -s scenario_id')  
     print('  -h: help')
-    print('  -s: an EMME node extra attribute defining the study area. default is @ndmma')   
+    print('  -t: an EMME node extra attribute defining the study area. default is @ndmma')
+    print('  -s: id of a scenario on which you want to run the summary')       
     print('')           
     print('This script will generates the following results:')
     print('  outputs/network:')
@@ -595,8 +596,9 @@ def calculate_landuse_service_by_transitstops(emme_node_df):
     
 def main():
     node_attr_study_area = None
+    scenario_id = 1002    
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hs:')
+        opts, args = getopt.getopt(sys.argv[1:], 'hs:t:')
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -605,8 +607,10 @@ def main():
         if opt == '-h':
             help()
             sys.exit(0)
-        elif opt == '-s':
+        elif opt == '-t':
             node_attr_study_area = str(arg)
+        elif opt == '-s':
+            scenario_id = int(arg)                        
    
     # Delete any existing files    
     print('Delete existing output files.')    
@@ -642,6 +646,7 @@ def main():
     for tod_hour, tod_segment in emme_config.sound_cast_net_dict.items():
         print('processing network summary for time period: ' + str(tod_hour))
         my_project.change_active_database(tod_hour)
+        my_project.set_primary_scenario(scenario_id)        
         print('  create link extra attributes')        
         for name, description in input_config.extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, description, True)
