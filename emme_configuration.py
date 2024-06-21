@@ -91,9 +91,9 @@ log_file_name = 'skims_log.txt'
 STOP_THRESHOLD = 0.005
 parallel_instances = 4   # Number of simultaneous parallel processes. Must be a factor of 4.
 max_iter = 50             # Assignment Convergence Criteria
-best_relative_gap = 0.001  # Assignment Convergence Criteria
-relative_gap = .00001
-normalized_gap = 0.001
+best_relative_gap = 0.01  # Assignment Convergence Criteria
+relative_gap = .0001
+normalized_gap = 0.01
 
 MIN_EXTERNAL = 1511      #zone of externals 
 MAX_EXTERNAL = 1528      #zone of externals 
