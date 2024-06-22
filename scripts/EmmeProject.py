@@ -385,7 +385,7 @@ class EmmeProject:
         return links_df
 
     def set_primary_scenario(self, scen_id):
-        scen = self.data_explorer.active_database().scenario_by_number(scen_id)
+        scen = self.bank.scenario(scen_id)
         if scen is not None:
             self.data_explorer.replace_primary_scenario(scen)
             self.current_scenario = scen            
