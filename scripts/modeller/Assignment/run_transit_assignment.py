@@ -5,6 +5,7 @@ import os
 import json
 sys.path.append(os.path.normpath(os.path.join(_modeller.Modeller().emmebank.path, '..\\..\\..\\')))
 sys.path.append(os.path.normpath(os.path.join(_modeller.Modeller().emmebank.path, '..\\..\\..\\scripts')))
+sys.path.append(os.path.normpath(os.path.join(_modeller.Modeller().emmebank.path, '..\\..\\..\\scripts\\accessibility')))
 import emme_configuration as emme_config
 from data_wrangling import *
 
