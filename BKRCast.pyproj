@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\utils\create_extra_attributes.py</StartupFile>
+    <StartupFile>scripts\summarize\standard\network_summary.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-d  "C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike\test.json"</CommandLineArguments>
+    <CommandLineArguments>-t @ndstudy</CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -279,7 +279,7 @@
     <Content Include="inputs\model\bkr_roster.csv" />
     <Content Include="inputs\model\CatVarDict.xlsx" />
     <Content Include="inputs\model\emission\bus_vehicles_bkr.csv" />
-    <Content Include="inputs\model\emission\running_emission_rates_by_veh_type.csv" />
+    <Content Include="inputs\model\emission\running_emission_rates_by_veh_type_bkr.csv" />
     <Content Include="inputs\model\emission\start_emission_rates_by_veh_type.csv" />
     <Content Include="inputs\model\emission\vehicle_population_bkr.csv" />
     <Content Include="inputs\model\FAZ_TAZ.xlsx" />
@@ -417,6 +417,7 @@
     <Content Include="pyrightconfig.json" />
     <Content Include="screenline_2014.json" />
     <Content Include="screenline_2018.json" />
+    <Content Include="screenline_2023.json" />
     <Content Include="scripts\summarize\inputs\benefit_cost\injury_rates.csv" />
     <Content Include="scripts\summarize\inputs\benefit_cost\pollutant_rates.csv" />
     <Content Include="scripts\summarize\inputs\network_summary\am_transit.csv" />

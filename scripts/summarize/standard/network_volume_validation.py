@@ -6,6 +6,8 @@ import datetime
 from scipy import stats
 from EmmeProject import *
 from functools import reduce
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import io
@@ -192,7 +194,7 @@ def main():
         final_sl_summary['total_model_vol'] = final_sl_summary[columns_to_add].sum(axis = 1)
         columns_to_add = final_sl_summary.filter(like='pkhr').columns   
         final_sl_summary['total_pkhr_model_vol'] = final_sl_summary[columns_to_add].sum(axis = 1)
-        columns_to_add = final_sl_summary.filter(like = '@slcnt').columns
+        columns_to_add = final_sl_summary.filter(like = 'cnt').columns
         final_sl_summary['total_pkhr_counts'] = final_sl_summary[columns_to_add].sum(axis = 1)
         imgdata = create_scatter_plot_image(final_sl_summary['total_pkhr_counts'], 'total_pkhr_counts', final_sl_summary['total_pkhr_model_vol'], 'total_pkhr_model_vol', attr, fid)
         fid += 1    
