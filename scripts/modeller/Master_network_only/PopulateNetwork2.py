@@ -22,8 +22,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
     1.3.2 export bus stop file.
     1.3.3 export vehicle file. 
     1.3.4 export zone partition
+    1.3.5 copy @tstart, @tend from master network to the network for horizon year.
     '''
-    version = "1.3.4" # this is the version
+    version = "1.3.5" # this is the version
     default_path = ""
     tool_run_message = ""
     outputFolder = _modeller.Attribute(object)
@@ -161,11 +162,12 @@ class BKRCastExportNetwork(_modeller.Tool()):
             # import active transit lines
             self.deleteTransitLines(horizon_scen, "all")
             self.loadTransitLines(horizon_scen, temptransitname, True)
-            NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
-            import_attribute = _modeller.Modeller().tool(NAMESPACE)
-            tempname = 'extra_transit_lines_' + str(self.new_scen_id) + '.txt'
-            tempname = os.path.join(self.outputFolder, tempname)
-            import_attribute(file_path = tempname, scenario = horizon_scen, revert_on_error = False)
+            # copy extra transit line attributes from current_scen
+            transit_attr_list = ['@nihdwy', '@tstart', '@tend']
+            for attr in transit_attr_list:
+                self.copyAttribute(attr, attr, self.current_scen)
+
+            
 
         with _modeller.logbook_trace(name = 'Remove future non-motorized-only links', value = ""):
             self.removeExtraBikeLinks(horizon_scen)
