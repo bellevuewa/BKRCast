@@ -63,21 +63,22 @@ def calculate_bike_accessibility(parcels, disaggregated_bike_lanes_df, spacing =
     
     biketype_available = disaggregated_bike_lanes_df['biketype'].unique().tolist()  
     #biketype_x_cnt    
-    attr_list = [f'bt_{x}_cnt' for x in biketype_available]    
+    attr_list = []    
 
     for biketype in biketype_available:
         parcels_node_gdf[f'bt_{biketype}_cnt'] = parcels_node_gdf['biketype_sums'].apply(lambda x: x.get(biketype, 0))
         parcels_node_gdf[f'bt_{biketype}_sqft'] = parcels_node_gdf[f'bt_{biketype}_cnt'] * spacing * access_config.bike_lane_width.get(biketype, 0)
+        attr_list.extend([f'bt_{biketype}_cnt', f'bt_{biketype}_sqft'])        
     
     print('Exporting files...') 
     # be careful. ESRI shapefile only allows at most 10 chars in each column name
     parcels_node_gdf.drop(columns = ['biketype_sums']).to_file('outputs/bikes/nearest_node_to_parcel', driver = 'ESRI Shapefile')
     attr_list[0:0] = ['node_id', 'counts']
-    parcels = parcels.merge(parcels_node_gdf[attr_list], on = 'node_id').reset_index() 
+    parcels = parcels.merge(parcels_node_gdf[attr_list], on = 'node_id', how = 'left').reset_index() 
     attr_list.insert(0, 'PARCELID')
     attr_list[2:2] = ['x', 'y']    
     # export PARCELID, node_id, x, y, counts, bt_{biketype}_cnt
-    parcel_accessibility_df = parcels.loc[parcels['count'] > 0, attr_list]    
+    parcel_accessibility_df = parcels[attr_list]    
     parcel_accessibility_df.to_csv('outputs/bikes/parcels_with_bike_access.csv', index = False)    
     return parcel_accessibility_df, parcels_node_gdf       
 
@@ -150,7 +151,7 @@ def main():
     parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)       
     parcels = data_wrangling.load_parcel_data(parcel_path)
     pm_model_path = f'projects/1530to1830/1530to1830.emp'
-    non_directional_bike_link_df = create_non_directional_bike_links_df(pm_model_path, [1, 2])
+    non_directional_bike_link_df = create_non_directional_bike_links_df(pm_model_path, [1, 10])
     net, all_street_links, all_street_nodes = data_wrangling.build_pandana_network()
     geolink_gdf, geonode_gdf = convert_bike_links_to_nodes(non_directional_bike_link_df, spacing = 20)   
 
@@ -162,10 +163,11 @@ def main():
 
     # find accessibility for parks 
     parks_df = pd.read_csv(access_config.park_file)    
-    park_accessibility_df = parks_df[['PSRC_ID', 'KCPARKFID', 'SITENAME']].merge(parcels_accessibility, left_on = 'PSRC_ID', right_on = 'PARCELID', how = 'left')
+    park_accessibility_df = parks_df[['PSRC_ID', 'BKRCastTAZ', 'KCPARKFID', 'SITENAME']].merge(parcels_accessibility, left_on = 'PSRC_ID', right_on = 'PARCELID', how = 'left')
     park_accessibility_df.fillna(0, inplace = True)
     park_accessibility_df.to_csv('outputs/bikes/park_accessibility.csv') 
-    # parK_access_by_TAZ = park_accessibility_df.groupby('BKRCastTAZ').sum()       
+    parK_access_by_TAZ = park_accessibility_df.groupby('BKRCastTAZ').sum()  
+    parK_access_by_TAZ.to_csv('outputs/bikes/park_accessibility_by_TAZ.csv', index = True)     
            
     print('Recreational ike accessibility is finished')
 
