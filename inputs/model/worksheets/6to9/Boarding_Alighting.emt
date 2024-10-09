@@ -1,0 +1,175 @@
+292ED8A4-37FA-4242-AE4E-D78DB768CA1D 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 0 0
+# Emme table generated on Mon Nov 5 09:26:08 2018
+# File: D:/2035BKRCastBaseline/2035BKRCastBaseline/projects/1830to6/Worksheets/Boarding_Alighting.emt
+#
+[Configurable attribute list]
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_out
+# Text Description: description of configurable attribute (tr,subst)
+Description = number of outgoing links
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = 1
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pi
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = +
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_in
+# Text Description: description of configurable attribute (tr,subst)
+Description = number of incoming links
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = 1
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pj
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = +
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_out_auto
+# Text Description: description of configurable attribute (tr,subst)
+Description = number of outgoing links with auto mode
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = 1
+# Filter Filter: filter used to compute attribute values (tr,link,string,max. 2 values)
+Filter = [road network] isAuto
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pi
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = +
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_in_auto
+# Text Description: description of configurable attribute (tr,subst)
+Description = number of incoming links with auto mode
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = 1
+# Filter Filter: filter used to compute attribute values (tr,link,string,max. 2 values)
+Filter = [road network] isAuto
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pj
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = +
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_dead_end
+# Text Description: description of configurable attribute (tr,subst)
+Description = dead ends on two-way links
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = not(isOneWay) && Pi->lca_in==1 && Pi->lca_out==1
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pi
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = max
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_dead_end_auto
+# Text Description: description of configurable attribute (tr,subst)
+Description = dead ends on two-way links
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = not(isOneWay) && Pi->lca_in_auto==1 && Pi->lca_out_auto==1
+# Filter Filter: filter used to compute attribute values (tr,link,string,max. 2 values)
+Filter = [road network] isAuto
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pi
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = max
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_dead_end_out
+# Text Description: description of configurable attribute (tr,subst)
+Description = dead ends at the end of incoming one-way link
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = isOneWay && Pi->lca_in==0 && Pi->lca_out==1
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pi
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = max
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = lca_dead_end_in
+# Text Description: description of configurable attribute (tr,subst)
+Description = dead ends at the end of incoming one-way link
+# String ExpressionType: domain of expression
+ExpressionType = links
+# Expression Expression: expression for computing attribute values (tr,link,string)
+Expression = isOneWay && Pj->lca_in==1 && Pj->lca_out==0
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pj
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = max
+
+[nodes]
+# String Name: table name that appears in the table header (tr,subst)
+Name : $ListLoaded/
+Name = Boarding+Alighting
+# Text Description: user definable table description (tr,subst)
+Description = Displays the standard node attributes (centroids highlighted \
+ in Bold, intersections in red). Can send and receive marking signals.
+# Flags Flags: bit pattern containing table flags
+Flags = 0xa00a0
+# String SaveListConfiguration: file name to save current table configuration (subst,nosave)
+SaveListConfiguration : /$SaveListConfiguration
+# Click PrintCurrentListNoSetup: when clicked, current table will be printed without entering setup dialog (nosave)
+PrintCurrentListNoSetup : /$PrintCurrentListNoSetup/$PrintCurrentListNoSetup
+# String ExportCurrentTableToFile: when set to a file name, the current table is exported to it (nosave)
+ExportCurrentTableToFile : /$PunchCurrentListToFile
+# Click CloseList: when clicked, table will be closed (nosave)
+CloseList : /$CloseList/$CloseList
+# String Caption: caption text on table window bar (tr,subst)
+Caption = %<Name>%
+# Filter Filter: expression for node filtering [,node iterator] (tr,node,string,max. 2 values)
+Filter[] = @bkrnode==1
+Filter[] = [all nodes, centroids first] 1,-isZone
+Filter[] = [unused regular nodes] not(isZone) && lca_in==0 && lca_out == 0
+Filter[] = [unused centroids] isZone && lca_in==0 && lca_out == 0
+Filter[] = [asymmetric incoming outgoing] not(isZone) && lca_in != lca_out
+Filter[] = [dead ends on two-way links] not(isZone) && lca_dead_end==1
+Filter[] = [dead ends on two-way links with auto mode] not(isZone) && lca_dead_end_auto==1
+Filter[] = [dead ends at the end of one-way link] not(isZone) && lca_dead_end_in==1
+Filter[] = [dead ends at the begining of one-way link] not(isZone) && lca_dead_end_out==1
+Filter[] = [incoming links only] lca_in > 0 && lca_out == 0
+Filter[] = [outgoing links only] lca_in == 0 && lca_out > 0
+# String ElementFilterLabel: label for table element filter field (tr,subst)
+ElementFilterLabel = Node filter:
+# Expression StyleIndex: expression for table style index (tr,node)
+StyleIndex = if(column==1,which(1,isZone,isIntersection),0)
+# Style Style: style used to generate table entries
+Style : (0x200) /Tables!/$ListLoaded
+Style[] = 0x20000000 0x01ffffff 0x00000000 0x00000000
+Style[] = 0x20000000 0x01ffffff 0x08000000 0x00000000
+Style[] = 0x20000000 0x01ffffff 0x08ff0000 0x00000000
+Style[] = 0x01000000 0x01ffffff 0x00000000 0x00000000
+# String ColumnDef: list column definitions (tr)
+ColumnDef[] = index;node index;6;0;index;0;;0;0
+ColumnDef[] = Node;node number;7;0;i;0;;0;58
+ColumnDef[] = X-coord;x-coordinate;8;7;xi;0;;0;65
+ColumnDef[] = Y-coord;y-coordinate;8;7;yi;0;;0;65
+ColumnDef[] = Data2;node user data 2;6;5;ui2;0;;0;54
+ColumnDef[] = Data3;node user data 3;6;5;ui3;0;;0;54
+ColumnDef[] = ca_board_i;Total boardings at node;16;0;ca_board_i;0;-;0;0
+ColumnDef[] = ca_alight_i;Total alightings at node;16;0;ca_alight_i;0;-;0;0
+

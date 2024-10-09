@@ -1,0 +1,43 @@
+50C48697-E940-4ED3-AABD-FEDD2EA3A512 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 1 2 0
+# Emme user parameter file generated on Thu Jul 27 18:42:01 2017
+# File: D:/BKRCast_Calibration/BKRCast_v1-2_Calibration/BKRCast_Run21-S42-neg_coef6/projects/1530to1830/Worksheets/general.emu
+#
+# String Name: name of user parameter object (tr)
+Name = User Parameters
+# Text Description: description of user parameter object (tr,subst)
+Description = 
+# Flags Flags: bit pattern containing object flags
+Flags = 0x22
+# Click EditValues: when clicked, opens dialog to edit parameter values (nosave)
+EditValues : (0x80)
+# Click Modified: clicked by the system when some parameters have been modified (nosave)
+Modified : (0x80) $WorksheetLoaded/
+# String ParameterDefinitions: definition of user parameters
+ParameterDefinitions[] = String;IncludeBack;layers file to be included in the background;1;0;2;stringcombo;Background layer(s):
+ParameterDefinitions[] = String;IncludeFront;layers file to be included in the foreground;2;0;2;stringcombo;Foreground layer(s):
+ParameterDefinitions[] = String;IncludeOther;layers file to be included for other purposes (print legend, transform...);3;0;2;stringcombo;Other inclusion:
+ParameterDefinitions[] = Float;TrMat;transformation matrix value;4;0;2;multifloat;Transformation matrix:
+
+# String IncludeBack: layers file to be included in the background
+IncludeBack : $UserBack!/
+IncludeBack = 
+# String IncludeFront: layers file to be included in the foreground
+IncludeFront : $UserFront!/
+IncludeFront = 
+# String IncludeOther: layers file to be included for other purposes (print legend, transform...)
+IncludeOther : $UserConf!/
+IncludeOther[] = 
+IncludeOther[] = 
+IncludeOther[] = %<$ProjectPath>%/Worksheets/prnlegend.eml
+IncludeOther[] = %<$EmmePath>%/common/transform.eml
+# Float TrMat: transformation matrix value
+TrMat : $TransformationMatrix!/
+TrMat[] = 0
+TrMat[] = 0
+TrMat[] = 1
+TrMat[] = 1
+TrMat[] = 0
+TrMat[] = 0
+TrMat[] = 0
+TrMat[] = 0
+
