@@ -522,6 +522,8 @@ class EmmeProject:
             bus_vehs = float(60/tseg.line.headway * emme_config.hwy_tod[emme_config.sound_cast_net_dict[self.tod]])            
             if tseg.j_node is None:
                 transit_segment_data.append({'line_id': int(tseg.line.id), 
+                                      'description':tseg.line.description,
+                                      'route':  tseg.line.description[:4],
                                       'segment_boarding': float(tseg.transit_boardings), 
                                       'segment_initial_boarding': float(tseg['@iboard']), 
                                       'segment_transfer_boarding': float(tseg['@trsboard']), 
@@ -535,9 +537,15 @@ class EmmeProject:
                                       'bus_vehicles': bus_vehs,   
                                       'isHidden': True,                                                                             
                                       'i_node': int(tseg.i_node.number),
-                                      'j_node': np.nan})
+                                      'j_node': np.nan,
+                                      '@bkrnode_I': int(tseg.i_node['@bkrnode']),
+                                      'stop': int(tseg.allow_alightings or tseg.allow_boardings),
+                                      'boarding_ok': int(tseg.allow_boardings),
+                                      'alighting_ok': int(tseg.allow_alightings)})
             else:
                 transit_segment_data.append({'line_id': int(tseg.line.id), 
+                                      'description':tseg.line.description,
+                                      'route':  tseg.line.description[:4],
                                       'segment_boarding': float(tseg.transit_boardings), 
                                       'segment_initial_boarding': float(tseg['@iboard']), 
                                       'segment_transfer_boarding': float(tseg['@trsboard']), 
@@ -551,7 +559,11 @@ class EmmeProject:
                                       'bus_vehicles': bus_vehs,                                                                            
                                       'isHidden': False,                                                                            
                                       'i_node': int(tseg.i_node.number),
-                                      'j_node': int(tseg.j_node.number)})
+                                      'j_node': int(tseg.j_node.number),
+                                      '@bkrnode_I': int(tseg.i_node['@bkrnode']),
+                                      'stop': int(tseg.allow_alightings or tseg.allow_boardings),
+                                      'boarding_ok': int(tseg.allow_boardings),
+                                      'alighting_ok': int(tseg.allow_alightings)})
     
         _df_transit_segment = pd.DataFrame(transit_segment_data)
         _df_transit_stops = _df_transit_segment[['i_node', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_final_alighting', 'segment_transfer_alighting']].groupby('i_node').sum()

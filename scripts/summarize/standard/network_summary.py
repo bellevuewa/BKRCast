@@ -444,7 +444,7 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     df_transit_segment = pd.read_csv(input_config.transit_segment_path)
     df_transit_stops_daily = df_transit_segment.groupby('i_node').sum().reset_index()
     df_transit_stops_daily = node_df.merge(df_transit_stops_daily, left_on = 'node_id', right_on = 'i_node', how = 'right')        
-    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea'], inplace = True)  
+    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok'], inplace = True)  
 
     with pd.ExcelWriter(input_config.boardings_by_stop_path,  engine='xlsxwriter') as writer:    
         wksheet = writer.book.add_worksheet('readme')
@@ -460,7 +460,7 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
         for tod in emme_config.load_transit_tod:
             df_transit_stops_tod = df_transit_segment.loc[df_transit_segment['tod'] == tod].groupby('i_node').sum().reset_index()
             df_transit_stops_tod = node_df.merge(df_transit_stops_tod, left_on = 'node_id', right_on = 'i_node', how = 'right')                   
-            df_transit_stops_tod.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea'], inplace = True)     
+            df_transit_stops_tod.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok'], inplace = True)     
             df_transit_stops_tod.to_excel(writer, sheet_name = tod, index = False, startrow = 1) 
             tod_sheet = writer.sheets[tod]
             tod_sheet.write(0, 0, f'Boarding/Alighting in {tod}', bold_format)                                                   
