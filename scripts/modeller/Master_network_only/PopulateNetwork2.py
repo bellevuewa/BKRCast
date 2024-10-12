@@ -23,6 +23,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
     1.3.3 export vehicle file. 
     1.3.4 export zone partition
     1.3.5 copy @tstart, @tend from master network to the network for horizon year.
+    1.3.6 allow update transit headways from master headway file.
     '''
     version = "1.3.5" # this is the version
     default_path = ""
@@ -33,6 +34,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
     new_scen_title = _modeller.Attribute(str)
     current_scen = _modeller.Attribute(object)
     overwrite_scen = _modeller.Attribute(bool)
+    master_headway_file = _modeller.Attribute(object)
 
     def __init__(self):
         '''
@@ -52,6 +54,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
         pb.add_checkbox('overwrite_scen', title = 'Overwrite existing scenario?')
         pb.add_text_box("new_scen_title", 60, title = 'New scenario title', note = 'Maximum 60 characters.')
         pb.add_text_box("horizon_year", 4, title = "Enter the horizon year", note = "4-digit integer only")
+        pb.add_select_file('master_headway_file', 'file', '', self.default_path, title = 'Select the headway master file')
         self.horizon_year = ''
         self.new_scen_title = str(self.horizon_year) + ' network built from scen ' + self.current_scen.id
         if self.tool_run_message != "":
@@ -102,6 +105,39 @@ class BKRCastExportNetwork(_modeller.Tool()):
         notes = 'Create network for horizon year ' + str(self.horizon_year)
         print(notes)
         with _modeller.logbook_trace(name = notes, value = ""):
+            # get network from the current master scenario network
+            network = self.current_scen.get_network()
+            master_headway_df = pd.read_csv(self.master_headway_file)
+            headway_list = []
+            if self.horizon_year >= 2023:
+                headway_list = [f'hdwy_{tod}_{self.horizon_year}' for tod in ['am', 'md', 'pm', 'ni']]
+            else:
+                headway_list = [f'hdwy_{tod}' for tod in ['am', 'md', 'pm', 'ni']]
+
+            # make sure all tods are included in the master headway file.
+            if not all(elem in master_headway_df.columns for elem in headway_list):
+                self.tool_run_message += _modeller.PageBuilder.format_info(f"Some TOD are missing in the master headway file")
+                exit(1)
+
+            # make sure all transit lines in current scen are included in the master transit headway file
+            for line in network.transit_lines():
+                if int(line.id) not in master_headway_df['line'].values:
+                    print(f'transit line {line.id} is not in the master headway file')
+                    print(master_headway_df['line'].values)
+                    self.tool_run_message += _modeller.PageBuilder.format_info(f"transit line {line.id} is not in the master headway file")
+                    exit(1)
+
+            for index, line in master_headway_df.iterrows():
+                transit_line = network.transit_line(int(line['line']))
+                if transit_line != None:
+                    transit_line.data1 = line[headway_list[0]]    #am
+                    transit_line.data2 = line[headway_list[1]]    #md
+                    transit_line.data3 = line[headway_list[2]]    #pm
+                    transit_line['@nihdwy'] = line[headway_list[3]]  #ni
+
+            self.current_scen.publish_network(network)
+            _modeller.logbook_write('Headways', f'headways for {self.horizon_year} are updated in scen {self.current_scen.id}')
+
             # copy master scenario to horizon year and set the new network as primary
             horizon_scen = self.copyScenario(self.current_scen, self.new_scen_id, self.new_scen_title, True, True, self.overwrite_scen, True)
 
@@ -162,6 +198,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
             # import active transit lines
             self.deleteTransitLines(horizon_scen, "all")
             self.loadTransitLines(horizon_scen, temptransitname, True)
+
             # copy extra transit line attributes from current_scen
             transit_attr_list = ['@nihdwy', '@tstart', '@tend']
             for attr in transit_attr_list:
