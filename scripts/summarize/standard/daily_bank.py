@@ -1,7 +1,7 @@
 import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as app
 import os, sys
-from pathlib2 import Path
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import json
@@ -10,8 +10,6 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from input_configuration import *
 import emme_configuration as emme_config
-
-from distutils import dir_util
 from EmmeProject import *
 from data_wrangling import *
 
@@ -77,7 +75,7 @@ def copy_emmebank(from_dir, to_dir):
     if os.path.exists(to_dir):
         shutil.rmtree(to_dir)
     os.makedirs(to_dir)
-    dir_util.copy_tree(from_dir, to_dir)
+    shutil.copytree(from_dir, to_dir, dirs_exist_ok = True)
 
 def merge_networks(master_network, merge_network):
     for node in merge_network.nodes():
@@ -112,7 +110,7 @@ def export_link_values(my_project):
                           network.get_attribute_values(link_type, [attr])[1].values()]).T
         df_attr.columns = ['nodes', 'value']
         df_attr['measure'] = str(attr)
-        df = df.append(df_attr)
+        df = pd.concat([df, df_attr], ignore_index = True)
         
     df = df.pivot(index='nodes',columns='measure',values='value').reset_index()
     df.to_csv(daily_network_fname)

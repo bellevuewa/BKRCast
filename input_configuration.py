@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU\DT_rebalance_btw_job_category'
 base_year = '2019'  # BKRCast base year
 model_year = '2044'
@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True 
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
@@ -61,7 +61,7 @@ include_tnc = False
 include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
 
 ## Recreational bike
-include_rec_bike = True # inplemented as part of supplemental
+include_rec_bike = False # inplemented as part of supplemental
 
 include_delivery = False
 

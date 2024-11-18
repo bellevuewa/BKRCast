@@ -896,7 +896,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                         myOtaz = dictZoneLookup[otaz[x]]
                         myDtaz = dictZoneLookup[dtaz[x]]
                         print(myOtaz, myDtaz) 
-                        trips = np.asscalar(np.float32(trexpfac[x]))
+                        trips = np.float32(trexpfac[x]).item()
                         trips = round(trips, 2)
                         print(trips)
 
@@ -921,7 +921,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))
+                    trips = np.float32(trexpfac[x]).item()
                     trips = round(trips, 2)
                     demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
             if mode[x] == 9:
@@ -931,7 +931,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))*tnc_frac_assign.get(mat_name_tnc)
+                    trips = np.float32(trexpfac[x]).item()*tnc_frac_assign.get(mat_name_tnc)
                     trips = round(trips, 2)
                     text = 'TOD: {}, Mode Name: {}, Trips: {}'.format(my_project.tod, mat_name_tnc, trips)
                     print(text) #Debugging statement by aditya.gore@rsginc.com

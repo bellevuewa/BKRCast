@@ -15,7 +15,7 @@
 import numpy as np
 import pandas as pd
 import h5py
-import xlrd
+import openpyxl
 import time
 import json
 import sys, os
@@ -58,43 +58,69 @@ def zero_out_negative_expansion_factors(data, name):
 
 #Imports the variable guide Excel file
 def get_guide(guide_file):
-    guide = xlrd.open_workbook(guide_file, on_demand = True)
+    guide = openpyxl.load_workbook(guide_file, read_only = True)
     fileguides = {}
     j = 0
-    for i in guide.sheet_names():
-        if guide.sheet_names()[j][len(guide.sheet_names()[j]) - 1] == ' ':
+    for i in guide.sheetnames:
+        if guide.sheetnames[j][len(guide.sheetnames[j]) - 1] == ' ':
             #fileguides.update({guide.sheet_names()[j][0:len(guide.sheet_names()[j]) - 1].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
-            fileguides.update({guide.sheet_names()[j][0:len(guide.sheet_names()[j]) - 1] : guide.sheet_by_name(guide.sheet_names()[j])})
+            fileguides.update({guide.sheetnames[j][0:len(guide.sheetnames[j]) - 1] : guide.get_sheet_by_name(guide.sheetnames[j])})
             j = j + 1
         else:
             #fileguides.update({guide.sheet_names()[j][0:].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
-            fileguides.update({guide.sheet_names()[j][0:] : guide.sheet_by_name(guide.sheet_names()[j])})
+            fileguides.update({guide.sheetnames[j][0:] : guide.get_sheet_by_name(guide.sheetnames[j])})
             j = j + 1
     print('Guide import complete')
     return(fileguides)
 
-#Converts the guide into a dictionary of "subdictionaries" (I don't know if that's a word) to convert integers to categorical variables
-def guide_to_dict(guide):    
+# this is implementation for openpyxl
+def guide_to_dict(guide):
     time_start = time.time()
     catdict = {} #Main dictionary
-    for file in guide:
-        vnames = guide[file].row(0)
-        for var in range(int((len((guide[file].row(0))) + 1) / 2)):
+    for file, sheet in guide.items():
+        vnames = [cell.value for cell in next(sheet.iter_rows(min_row=1, max_row=1))]
+
+        for var in range((len(vnames) + 1) // 2):
             vardict = {} #Subdictionary for specific variable
-            for cell_value in range(1, len(guide[file]. col(2 * var))):
-                if guide[file].cell(cell_value, 2 * var).value == '':
-                    pass
+            for cell_value in range(2, sheet.max_row + 1):
+                key_cell = sheet.cell(row = cell_value, column = 2 * var + 1)
+                value_cell = sheet.cell(row = cell_value, column = 2 * var + 2)
+
+                if key_cell.value is None:
+                    continue
                 else:
-                    #If a cell has an entry, this updates the subdictionary with the cell (an integer), and the cell next to it (the meaning of the integer)
-                    vardict.update({int(guide[file].cell(cell_value, 2 * var).value): guide[file].cell(cell_value, 2 * var + 1).value})                  
-            if 0 in vardict:
-                pass
-            else:
-                vardict.update({0: 'N\A'}) #If 0 is not a possible entry for the variable and 0 is an actual entry, this converts the entry to 'Error'
-            vardict.update({-1: 'N\A'}) #Some entries for categorical variables are -1, so this converts those to 'Error'
-            catdict.update({vnames[2 * var].value: vardict})
+                    vardict[int(key_cell.value)] = value_cell.value
+
+            vardict.update({0: 'N\A'})
+            vardict.update({-1: 'N\A'})
+            catdict[vnames[2 * var]] = vardict
     print('Guide converted to dictionary in ' + str(round(time.time() - time_start, 1)) + ' seconds')
     return(catdict)
+
+
+#Converts the guide into a dictionary of "subdictionaries" (I don't know if that's a word) to convert integers to categorical variables
+# this is the implementation for xlrd which is deprecated.
+# def guide_to_dict(guide):    
+#     time_start = time.time()
+#     catdict = {} #Main dictionary
+#     for file in guide:
+#         vnames = guide[file].rows(0)
+#         for var in range(int((len((guide[file].rows(0))) + 1) / 2)):
+#             vardict = {} #Subdictionary for specific variable
+#             for cell_value in range(1, len(guide[file].cols(2 * var))):
+#                 if guide[file].cell(cell_value, 2 * var).value == '':
+#                     pass
+#                 else:
+#                     #If a cell has an entry, this updates the subdictionary with the cell (an integer), and the cell next to it (the meaning of the integer)
+#                     vardict.update({int(guide[file].cell(cell_value, 2 * var).value): guide[file].cell(cell_value, 2 * var + 1).value})                  
+#             if 0 in vardict:
+#                 pass
+#             else:
+#                 vardict.update({0: 'N\A'}) #If 0 is not a possible entry for the variable and 0 is an actual entry, this converts the entry to 'Error'
+#             vardict.update({-1: 'N\A'}) #Some entries for categorical variables are -1, so this converts those to 'Error'
+#             catdict.update({vnames[2 * var].value: vardict})
+#     print('Guide converted to dictionary in ' + str(round(time.time() - time_start, 1)) + ' seconds')
+#     return(catdict)
 
 def convert(filename, guidefile, name):
     has_negative_expansion_factors = False

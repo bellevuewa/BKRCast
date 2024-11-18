@@ -50,7 +50,7 @@ def reproject_to_wgs84(longitude, latitude, ESPG = "+init=EPSG:2926", conversion
 
 def process_dist_attribute(parcels, network, name, x, y):
     network.set_pois(name, x, y)
-    res = network.nearest_pois(access_config.max_dist, name, num_pois=1, max_distance=999)
+    res = network.nearest_pois(access_config.max_dist, name, num_pois=1, max_distance=999.0)
     res[res != 999] = (res[res != 999]/5280.).astype(res.dtypes) # convert to miles
     res_name = "dist_%s" % name
     parcels[res_name] = res.loc[parcels.node_ids].values
@@ -103,7 +103,7 @@ def process_parcels(parcels, transit_df, net, intersections_df):
         if transit_type_df[attr].sum() > 0:
             parcels=process_dist_attribute(parcels, net, new_name, transit_type_df["x"], transit_type_df["y"])
         else:
-            parcels['dist_%s' % new_name] = 999 # use max dist if no stops exist for this submode
+            parcels['dist_%s' % new_name] = 999.0 # use max dist if no stops exist for this submode
         # some parcels share the same network node and therefore have 0 distance. Recode this to 0.01
         field_name = 'dist_%s' % new_name
         parcels.loc[parcels[field_name] == 0, field_name] = 0.01
@@ -178,13 +178,10 @@ def main():
 
     # intersections:
     # combine from and to columns
-    all_nodes = pd.DataFrame(net.edges_df['from'].append(net.edges_df.to), columns = ['node_id'])
-
+    all_nodes = pd.DataFrame(pd.concat([net.edges_df['from'], net.edges_df['to']], axis = 0), columns = ['node_ids'])
     # get the frequency of each node, which is the number of intersecting ways
-    intersections_df = pd.DataFrame(all_nodes.node_id.value_counts())
-    intersections_df = intersections_df.rename(columns = {'node_id' : 'edge_count'})
-    intersections_df.reset_index(0, inplace = True)
-    intersections_df = intersections_df.rename(columns = {'index' : 'node_ids'})
+    intersections_df = all_nodes['node_ids'].value_counts().reset_index()
+    intersections_df = intersections_df.rename(columns = {'count' : 'edge_count'})
 
     # add a column for each way count
     intersections_df['nodes1'] = np.where(intersections_df['edge_count']==1, 1, 0)

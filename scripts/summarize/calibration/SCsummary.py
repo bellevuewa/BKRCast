@@ -98,7 +98,6 @@ def DistrictSummary(data1, data2, name1, name2, location, districtfile):
 
 def WorkFAZSummary(data1, data2, name1, name2, location, districtfile):
     print('---Begin Work District to District Summary compilation---')
-    start = time.time()
 
     merge_per_hh_1 = pd.merge(data1['Person'][['pwtaz', 'psexpfac', 'hhno', 'pwtyp']],
                               data1['Household'][['hhtaz', 'hhno']],
@@ -109,7 +108,7 @@ def WorkFAZSummary(data1, data2, name1, name2, location, districtfile):
 
     worker_1_h_FAZ = pd.merge(worker_1, FAZ_TAZ_lookup, left_on = 'hhtaz', right_on = 'zone_id')
     worker_1_h_w_FAZ = pd.merge(worker_1_h_FAZ, FAZ_TAZ_lookup, left_on = 'pwtaz', right_on = 'zone_id')
-    worker_1_h_w_agg = worker_1_h_w_FAZ.groupby(['large_area_name_x', 'large_area_name_y']).sum()['psexpfac']
+    worker_1_h_w_agg = worker_1_h_w_FAZ[['large_area_name_x', 'large_area_name_y', 'psexpfac']].groupby(['large_area_name_x', 'large_area_name_y']).sum()['psexpfac']
     worker_1_h_w_agg = worker_1_h_w_agg.reset_index()
     worker_1_h_w_agg.columns = ['HomeFAZ', 'WorkFAZ', 'NumWorkers']
 
@@ -332,7 +331,7 @@ def DayPattern(data1, data2, name1, name2, location):
 
     end = time.time()
 
-    print('---Day Pattern Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
+    print('---Day Pattern Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
 def DaysimReport(data1, data2, name1, name2, location, districtfile):
     print('---Begin DaySim Report Compilation---')
@@ -448,7 +447,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
      #Auto Ownership
 
     # read in ACS dataset
-    autos= pd.read_excel(acs_data,sheet_name = 'AutosTotal')
+    autos= pd.read_excel(acs_data,sheet_name = 'AutosTotal', engine = 'openpyxl')
     acs_auto_share = pd.DataFrame(autos['Total'] * 100)
 
     ao['Percent of Households (' + name1 + ')'] = ao1
@@ -539,7 +538,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
 
     end = time.time()
 
-    print('---DaySim Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
+    print('---DaySim Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
 def DestChoice(data1, data2, name1, name2, location, districtfile):
     print('---Begin Destination Choice Report compilation---')
@@ -566,10 +565,10 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Merge tour and trip files
     tourtrip1 = pd.merge(tour_ok_1[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp']],
                        trip_ok_1[['hhno', 'pno', 'tour', 'day', 'trexpfac']],
-                       on = ['hhno', 'pno', 'tour', 'day']).copy()
+                       on = ['hhno', 'pno', 'tour', 'day'])
     tourtrip2 = pd.merge(tour_ok_2[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp']],
                        trip_ok_2[['hhno', 'pno', 'tour', 'day', 'trexpfac']],
-                       on = ['hhno', 'pno', 'tour', 'day']).copy()
+                       on = ['hhno', 'pno', 'tour', 'day'])
 
     #Compute weighted average of trip length grouped by purpose
     triptotal1 = weighted_average(tourtrip1[['tautodist', 'toexpfac', 'pdpurp']], 'tautodist', 'toexpfac', 'pdpurp')
@@ -597,9 +596,9 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     notrips1 = notrips1.rename(columns = {'trexpfac':'notrips'})
     notrips2 = notrips2.rename(columns = {'trexpfac':'notrips'})
 
-    #Merge number of trips with the tour file
-    toursnotrips1 = pd.merge(tour_ok_1[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips1, on = ['hhno', 'pno', 'tour']).copy()
-    toursnotrips2 = pd.merge(tour_ok_2[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips2, on = ['hhno', 'pno', 'tour']).copy()
+    #Merge number of trips with the tour file 
+    toursnotrips1 = pd.merge(tour_ok_1[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips1, on = ['hhno', 'pno', 'tour'])
+    toursnotrips2 = pd.merge(tour_ok_2[['toexpfac', 'pdpurp', 'hhno', 'pno', 'tour', 'tmodetp']], notrips2, on = ['hhno', 'pno', 'tour'])
 
     #Get the average number of trips per tour
     tourtotal1 = weighted_average(toursnotrips1, 'notrips', 'toexpfac', 'pdpurp')
@@ -673,8 +672,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     toursdest2 = pd.merge(tour_ok_2[['tdtaz', 'toexpfac']], districtfile, 'outer', left_on = 'tdtaz', right_on = 'TAZ')
 
     #Get the share of tours for each district
-    dist1 = toursdest1.groupby('New DistrictName').sum()['toexpfac']
-    dist2 = toursdest2.groupby('New DistrictName').sum()['toexpfac']
+    dist1 = toursdest1.groupby('New DistrictName')[toursdest1.select_dtypes(include = 'number').columns].sum()['toexpfac']
+    dist2 = toursdest2.groupby('New DistrictName')[toursdest2.select_dtypes(include = 'number').columns].sum()['toexpfac']
     tourdestshare1 = dist1 / Tour_1_total * 100
     tourdestshare2 = dist2 / Tour_2_total * 100
 
@@ -694,8 +693,8 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     tripsdest2 = pd.merge(trip_ok_2[['dtaz', 'trexpfac']], districtfile, left_on = 'dtaz', right_on = 'TAZ')
 
     #Get the share of trips for each district
-    tdist1 = tripsdest1.groupby('New DistrictName').sum()['trexpfac']
-    tdist2 = tripsdest2.groupby('New DistrictName').sum()['trexpfac']
+    tdist1 = tripsdest1.groupby('New DistrictName')[tripsdest1.select_dtypes(include = 'number').columns].sum()['trexpfac']
+    tdist2 = tripsdest2.groupby('New DistrictName')[tripsdest2.select_dtypes(include = 'number').columns].sum()['trexpfac']
     tripdestshare1 = tdist1 / Trip_1_total * 100
     tripdestshare2 = tdist2 / Trip_2_total * 100
 
@@ -878,10 +877,18 @@ def ModeChoice(data1, data2, name1, name2, location):
     #Mode share by purpose
     tourpurpmode1 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_1['pdpurp']), ('Mode', tour_ok_1['tmodetp']), ('Expansion Factor', tour_ok_1['toexpfac']))))
     tourpurpmode2 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_2['pdpurp']), ('Mode', tour_ok_2['tmodetp']), ('Expansion Factor', tour_ok_2['toexpfac']))))
-    tourpurp1 = tourpurpmode1.groupby('Purpose').sum()['Expansion Factor']
-    tourpurp2 = tourpurpmode2.groupby('Purpose').sum()['Expansion Factor']
-    tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
-    tpm2 = pd.DataFrame({name2 + ' Share (%)': tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp2 * 100}, dtype='float').reset_index()
+    tourpurp1 = tourpurpmode1[['Purpose', 'Expansion Factor']].groupby('Purpose').sum()
+    tourpurp2 = tourpurpmode2[['Purpose', 'Expansion Factor']].groupby('Purpose').sum()
+    tpm1 = tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'].reset_index()
+    tpm1 = tpm1.merge(tourpurp1, left_on = 'Purpose', right_index = True, how = 'left')
+    tpm1[name1 + ' Share (%)'] = tpm1['Expansion Factor_x'] / tpm1['Expansion Factor_y'] * 100
+
+    tpm2 = tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'].reset_index()
+    tpm2 = tpm2.merge(tourpurp2, left_on = 'Purpose', right_index = True, how = 'left')
+    tpm2[name2 + ' Share (%)'] = tpm2['Expansion Factor_x'] / tpm2['Expansion Factor_y'] * 100
+
+    # tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
+    # tpm2 = pd.DataFrame({name2 + ' Share (%)': tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp2 * 100}, dtype='float').reset_index()
     tpm = pd.merge(tpm1, tpm2, 'outer')
     tpm = tpm.sort_values(name2 + ' Share (%)')
 
@@ -907,8 +914,8 @@ def ModeChoice(data1, data2, name1, name2, location):
 
     #Puts the values in the correct place
     for i in range(len(tpm['Mode'])):
-        mbpcdf[tpm['Purpose'][i] + ' (' + name1 + ')'][tpm['Mode'][i]] = round(tpm[name1 + ' Share (%)'][i], 1)
-        mbpcdf[tpm['Purpose'][i] + ' (' + name2 + ')'][tpm['Mode'][i]] = round(tpm[name2 + ' Share (%)'][i], 1)
+        mbpcdf.loc[tpm['Mode'][i], tpm['Purpose'][i] + ' (' + name1 + ')'] = round(tpm[name1 + ' Share (%)'][i], 1)
+        mbpcdf.loc[tpm['Mode'][i], tpm['Purpose'][i] + ' (' + name2 + ')'] = round(tpm[name2 + ' Share (%)'][i], 1)
 
     cp3 = time.time()
     print('Tour Mode Share by Purpose data frame created in '+str(round(cp3 - cp2, 1))+' seconds')
@@ -965,18 +972,20 @@ def ModeChoice(data1, data2, name1, name2, location):
     toursbymode2 = counts2pivot.sum()
     for tour_mode in tour_modes:
         for trip_mode in trip_modes:
-            try:
+            if toursbymode1[tour_mode] != 0 and not np.isnan(toursbymode1[tour_mode]):
                 percent1pivot.loc[trip_mode, tour_mode] = counts1pivot[tour_mode][trip_mode] / toursbymode1[tour_mode] * 100
-            except ZeroDivisionError:
+            else:
                 percent1pivot.loc[trip_mode, tour_mode] = float('nan')
-            try:
+            
+            if toursbymode2[tour_mode] != 0 and not np.isnan(toursbymode2[tour_mode]):
                 percent2pivot.loc[trip_mode, tour_mode] = counts2pivot[tour_mode][trip_mode] / toursbymode2[tour_mode] * 100
-            except ZeroDivisionError:
+            else:
                 percent2pivot.loc[trip_mode, tour_mode] = float('nan')
             share_difference.loc[trip_mode, tour_mode] = percent1pivot[tour_mode][trip_mode] - percent2pivot[tour_mode][trip_mode]
-            try:
+
+            if percent2pivot[tour_mode][trip_mode] != 0 and not np.isnan(percent2pivot[tour_mode][trip_mode]):
                 share_pd.loc[trip_mode, tour_mode] = share_difference[tour_mode][trip_mode] / percent2pivot[tour_mode][trip_mode] * 100
-            except ZeroDivisionError:
+            else:
                 share_pd.loc[trip_mode, tour_mode] = float('nan')
         roundto = 2
         percent1pivot[tour_mode] = percent1pivot[tour_mode].astype('float').round(roundto)
@@ -1439,19 +1448,27 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         if aoc1.index[i][0] not in counties:
             counties.append(aoc1.index[i][0])
     aoc = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + 'ACS' + ') (%)', '1 Car (' + name1 + ') (%)', '1 Car (' + 'ACS' + ') (%)', '2 Cars (' + name1 + ') (%)', '2 Cars (' + 'ACS'+ ') (%)', '3 Cars (' + name1 + ') (%)', '3 Cars (' + 'ACS' + ') (%)', '4+ Cars (' + name1 + ') (%)', '4+ Cars (' +'ACS' + ') (%)'], index = counties)
+    aoc = aoc.infer_objects()
     aoc = aoc.fillna(float(0))
     for i in range(len(aoc1.index)):
-        aoc1[i] = aoc1[i] * 100 / hh_taz1[['County', 'hhexpfac']].groupby('County').sum().query('County == "' + aoc1.index[i][0] + '"')['hhexpfac']
-        if aoc1.index[i][1] == 0:
-            aoc['0 Cars (' + name1 + ') (%)'][aoc1.index[i][0]] = round(aoc1[i], 2)
-        elif aoc1.index[i][1] == 1:
-            aoc['1 Car (' + name1 + ') (%)'][aoc1.index[i][0]] = round(aoc1[i], 2)
-        elif aoc1.index[i][1] == 2:
-            aoc['2 Cars (' + name1 + ') (%)'][aoc1.index[i][0]] = round(aoc1[i], 2)
-        elif aoc1.index[i][1] == 3:
-            aoc['3 Cars (' + name1 + ') (%)'][aoc1.index[i][0]] = round(aoc1[i], 2)
+        county_group = hh_taz1[['County', 'hhexpfac']].groupby('County').sum()
+        denominator = county_group.query('County == "' + aoc1.index[i][0] + '"')['hhexpfac']
+
+        if denominator.empty:
+            continue
+
+        aoc1.iloc[i] = aoc1.iloc[i] * 100 / denominator
+        cars = aoc1.index[i][1]
+        if cars == 0:
+            aoc.loc[aoc1.index[i][0], '0 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
+        elif cars == 1:
+            aoc.loc[aoc1.index[i][0], '1 Car (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
+        elif cars == 2:
+            aoc.loc[aoc1.index[i][0], '2 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
+        elif cars == 3:
+            aoc.loc[aoc1.index[i][0], '3 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
         else:
-            aoc['4+ Cars (' + name1 + ') (%)'][aoc1.index[i][0]] = aoc['4+ Cars (' + name1 + ') (%)'][aoc1.index[i][0]] + round(aoc1[i], 2)
+            aoc.loc[aoc1.index[i][0], '4+ Cars (' + name1 + ') (%)'] += round(aoc1.iloc[i], 2)
 
     acs0cars = (acs_auto_share['0 Cars']*100).round(2).tolist()
     acs1cars = (acs_auto_share['1 Car']*100).round(2).tolist()
@@ -1487,31 +1504,46 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     aoi2 = data2['Household'][['recinc', 'hhvehs', 'hhexpfac']].groupby(['recinc','hhvehs']).sum()['hhexpfac']
     aoi = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + name2 + ') (%)', '1 Car (' + name1 + ') (%)', '1 Car (' + name2 + ') (%)', '2 Cars (' + name1 + ') (%)', '2 Cars (' + name2 + ') (%)', '3 Cars (' + name1 + ') (%)', '3 Cars (' + name2 + ') (%)', '4+ Cars (' + name1 + ') (%)', '4+ Cars (' + name2 + ') (%)'],
                        index = ['Less than $20,000', '$20,000-$39,999', '$40,000-$59,999', '$60,000-$74,999', 'More than $75,000'])
+    aoi = aoi.infer_objects()
     aoi = aoi.fillna(float(0))
+
     for i in range(len(aoi1.index)):
-        aoi1[i] = aoi1[i] * 100 / data1['Household'][['recinc', 'hhexpfac']].groupby('recinc').sum().query('recinc == "' + aoi1.index[i][0] + '"')['hhexpfac']
-        if aoi1.index[i][1] == 0:
-            aoi['0 Cars (' + name1 + ') (%)'][aoi1.index[i][0]] = round(aoi1[i], 2)
-        elif aoi1.index[i][1] == 1:
-            aoi['1 Car (' + name1 + ') (%)'][aoi1.index[i][0]] = round(aoi1[i], 2)
-        elif aoi1.index[i][1] == 2:
-            aoi['2 Cars (' + name1 + ') (%)'][aoi1.index[i][0]] = round(aoi1[i], 2)
-        elif aoi1.index[i][1] == 3:
-            aoi['3 Cars (' + name1 + ') (%)'][aoi1.index[i][0]] = round(aoi1[i], 2)
+        recinc_group = data1['Household'][['recinc', 'hhexpfac']].groupby('recinc').sum()
+        demonimator = recinc_group.query(f'recinc == "{aoi1.index[i][0]}"')['hhexpfac']
+        if demonimator.empty:
+            continue
+
+        aoi1.iloc[i] = aoi1.iloc[i] * 100 / demonimator.iloc[0]
+        cars = aoi1.index[i][1]
+        if cars == 0:
+            aoi.loc[aoi1.index[i][0], '0 Cars (' + name1 + ') (%)'] = round(aoi1.iloc[i], 2)
+        elif cars == 1:
+            aoi.loc[aoi1.index[i][0], '1 Car (' + name1 + ') (%)'] = round(aoi1.iloc[i], 2)
+        elif cars == 2:
+            aoi.loc[aoi1.index[i][0], '2 Cars (' + name1 + ') (%)'] = round(aoi1.iloc[i], 2)
+        elif cars == 3:
+            aoi.loc[aoi1.index[i][0], '3 Cars (' + name1 + ') (%)'] = round(aoi1.iloc[i], 2)
         else:
-            aoi['4+ Cars (' + name1 + ') (%)'][aoi1.index[i][0]] = aoi['4+ Cars (' + name1 + ') (%)'][aoi1.index[i][0]] + round(aoi1[i], 2)
+            aoi.loc[aoi1.index[i][0], '4+ Cars (' + name1 + ') (%)'] += round(aoi1.iloc[i], 2)
+
     for i in range(len(aoi2.index)):
-        aoi2[i] = aoi2[i] * 100 / data2['Household'][['recinc', 'hhexpfac']].groupby('recinc').sum().query('recinc == "' + aoi2.index[i][0] + '"')['hhexpfac']
-        if aoi2.index[i][1] == 0:
-            aoi['0 Cars (' + name2 + ') (%)'][aoi2.index[i][0]] = round(aoi2[i], 1)
-        elif aoi2.index[i][1] == 1:
-            aoi['1 Car (' + name2 + ') (%)'][aoi2.index[i][0]] = round(aoi2[i], 1)
-        elif aoi2.index[i][1] == 2:
-            aoi['2 Cars (' + name2 + ') (%)'][aoi2.index[i][0]] = round(aoi2[i], 1)
-        elif aoi2.index[i][1] == 3:
-            aoi['3 Cars (' + name2 + ') (%)'][aoi2.index[i][0]] = round(aoi2[i], 1)
+        recinc_group2 = data2['Household'][['recinc', 'hhexpfac']].groupby('recinc').sum()
+        demoninator2 = recinc_group2.query(f'recinc == "{aoi2.index[i][0]}"')['hhexpfac']
+        if demoninator2.empty:
+            continue
+
+        aoi2.iloc[i] = aoi2.iloc[i] * 100 / demoninator2.iloc[0]
+        cars2 = aoi2.index[i][1]
+        if cars2 == 0:
+            aoi.loc[aoi2.index[i][0], '0 Cars (' + name2 + ') (%)'] = round(aoi2.iloc[i], 1)
+        elif cars2 == 1:
+            aoi.loc[aoi2.index[i][0], '1 Car (' + name2 + ') (%)'] = round(aoi2.iloc[i], 1)
+        elif cars2 == 2:
+            aoi.loc[aoi2.index[i][0], '2 Cars (' + name2 + ') (%)'] = round(aoi2.iloc[i], 1)
+        elif cars2 == 3:
+            aoi.loc[aoi2.index[i][0], '3 Cars (' + name2 + ') (%)'] = round(aoi2.iloc[i], 1)
         else:
-            aoi['4+ Cars (' + name2 + ') (%)'][aoi2.index[i][0]] = aoi['4+ Cars (' + name2 + ') (%)'][aoi2.index[i][0]] + round(aoi2[i], 1)
+            aoi.loc[aoi2.index[i][0], '4+ Cars (' + name2 + ') (%)'] += round(aoi2.iloc[i], 1)
 
     cp9 = time.time()
     print('Households by Income Group by Auto Ownership data frame created in ' + str(round(cp9 - cp8, 1)) + ' seconds')

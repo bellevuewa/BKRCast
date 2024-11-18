@@ -39,13 +39,12 @@ def bike_facility_weight(my_project, link_df):
     # and replace geodb typology with the 2-tier definition
     df = get_link_attribute('@bkfac', network)
     df = pd.merge(df, link_df, on = 'link_id', how = 'inner')
-    #df = df.merge(link_df)
     df = df.replace(input_config.bike_facility_crosswalk)
 
     # Replace the facility ID with the estimated  marginal rate of substituion
     # value from Broach et al., 2012 (e.g., replace 'standard' with -0.108)
     df['facility_wt'] = df['@bkfac']
-    df = df.replace(input_config.facility_dict)
+    df['facility_wt'] = df['facility_wt'].map(input_config.facility_dict['facility_wt']).astype(float)
 
     return df
 
@@ -136,8 +135,8 @@ def calc_bike_weight(my_project, link_df):
     # Calculate total weights
     # add inverse of premium bike coeffient to set baseline as a premium bike facility with no slope (removes all negative weights)
     # add 1 so this weight can be multiplied by original link travel time to produced "perceived travel time"
-    df.loc[df['@bkfac'] == 'premium', 'total_wt'] = 1 - np.float(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt']
-    df.loc[df['@bkfac'] != 'premium', 'total_wt'] = 1 - np.float(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
+    df.loc[df['@bkfac'] == 'premium', 'total_wt'] = 1 - np.float64(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt'].astype(float)
+    df.loc[df['@bkfac'] != 'premium', 'total_wt'] = 1 - np.float64(input_config.facility_dict['facility_wt']['premium']) + df['facility_wt'].astype(float) + df['slope_wt'].astype(float) + df['volume_wt'].astype(float)
     #df['total_wt'] = 1 - np.float(facility_dict['facility_wt']['premium']) + df['facility_wt'] + df['slope_wt'] + df['volume_wt']
 
     # Write link data for analysis
@@ -219,15 +218,7 @@ def export_skims(my_project, matrix_name, tod):
 
     my_store = h5py.File(r'inputs/' + tod + '.h5', "r+")
 
-    matrix_value = my_project.bank.matrix(matrix_name).get_numpy_data()
-
-    # scale to store as integer
-    matrix_value = matrix_value * input_config.bike_skim_mult
-    matrix_value = matrix_value.astype('uint16')
-
-    # Remove unreasonably high values, replace with max allowed by numpy
-    max_value = np.iinfo('uint16').max
-    matrix_value = np.where(matrix_value > max_value, max_value, matrix_value)
+    matrix_value = my_project.emmeMatrix_to_numpyMatrix(matrix_name, 'uint16', 100)
 
     if matrix_name in my_store['Skims'].keys():
         my_store["Skims"][matrix_name][:] = matrix_value
@@ -283,7 +274,7 @@ def get_aadt(my_project):
     
     grouped = df.groupby(['link_id'])
     
-    df = grouped.agg({'@tveh':sum, 'length':min})
+    df = grouped.agg({'@tveh':'sum', 'length':'min'})
     
     df.reset_index(level=0, inplace=True)
     

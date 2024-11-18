@@ -161,7 +161,7 @@ def main():
     dictZoneLookup = dict((value, index) for index, value in enumerate(my_project.current_scenario.zone_numbers))        
     
     # BKRCastTAZ field in trip_table is not consecutive number. Must reformat it to be compatible with EMME matrix
-    zones_df = pd.DataFrame(my_project.current_scenario.zone_numbers, columns = {'BKRCastTAZ'})         
+    zones_df = pd.DataFrame(my_project.current_scenario.zone_numbers, columns = ['BKRCastTAZ'])         
     trip_table = pd.merge(zones_df, trip_table, on = 'BKRCastTAZ', how = 'left') 
     trip_table.fillna(0, inplace = True)
     

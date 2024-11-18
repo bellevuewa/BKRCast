@@ -36,7 +36,7 @@ def weighted_average(df_in, col, weights, grouper = None): #Computes the weighte
         if grouper == 'pptyp':
             df.loc[df['pptyp'] == 'N\\A', 'pptyp'] = 'Non-Working Adult Age <65' 
         df[col + '_sp'] = df[col].multiply(df[weights])
-        df_out = df.groupby(grouper).sum()
+        df_out = df.groupby(grouper)[df.select_dtypes(include = 'number').columns].sum()
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
         return(df_out[col + '_wa'])
 
@@ -44,11 +44,14 @@ def get_differences(df_in, colname1, colname2, roundto): #Computes the differenc
     df = df_in.copy()
     df['Difference'] = df[colname1] - df[colname2]
     df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
-    if type(roundto) == list:
+    if isinstance(roundto, list):
         for i in range(len(df['Difference'])):
-            df[colname1][i] = round(df[colname1][i], roundto[i])
-            df[colname2][i] = round(df[colname2][i], roundto[i])
-            df['Difference'][i] = round(df['Difference'][i], roundto[i])
+            col1_index = df.columns.get_loc(colname1)
+            df.iloc[i, col1_index] = round(df.iloc[i, col1_index], roundto[i])
+            col2_index = df.columns.get_loc(colname1)
+            df.iloc[i, col2_index] = round(df.iloc[i, col2_index], roundto[i])
+            col3_index = df.columns.get_loc('Difference')
+            df.iloc[i, col3_index] = round(df.iloc[i, col3_index], roundto[i])
     else:
         df[colname1] = df[colname1].round(roundto)
         df[colname2] = df[colname2].round(roundto)

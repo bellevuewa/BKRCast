@@ -134,42 +134,11 @@ def update_headways(emmeProject, headways_df):
     network = emmeProject.current_scenario.get_network()
     for transit_line in network.transit_lines():
         row = headways_df.loc[(headways_df.id == int(transit_line.id))]
-        if int(row['hdw_' + emmeProject.tod]) > 0:
-            transit_line.headway = int(row['hdw_' + emmeProject.tod])
+        if int(row['hdw_' + emmeProject.tod].iloc[0]) > 0:
+            transit_line.headway = int(row['hdw_' + emmeProject.tod].iloc[0])
         else:
             network.delete_transit_line(transit_line.id)
     emmeProject.current_scenario.publish_network(network)
-
-#def distance_pricing(distance_rate, hot_rate, emmeProject):
-#   toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]
-#   network = emmeProject.current_scenario.get_network()
-#   for link in network.links():
-#        if add_distance_pricing:
-#            for att in toll_atts:
-#                link[att] = link[att] + (link.length * distance_rate)
-#        if add_hot_lane_tolls:
-#            # is the link a managed lane: 1 for I405 HOT north part; 3 is for the south part
-#            if (link['@tolllane'] == 1) or (link['@tolllane'] == 3):     ## toll lane option 1 (I405): free for 3+
-#                # get the modes allowed
-#                test = [i[1].id for i in enumerate(link.modes)]
-#                # if sov modes are allowed, they should be tolled
-#                if 's' in test or 'e' in test:
-#                    print hot_rate
-#                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
-#                    link['@toll2'] = link['@toll2'] + (link.length * hot_rate)
-#                if 'v' in test:
-#                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
-#            elif link['@tolllane'] == 2:    ## toll lane option 2 (SR167): free for 2+
-#                # get the modes allowed
-#                test = [i[1].id for i in enumerate(link.modes)]
-#                # if sov modes are allowed, they should be tolled
-#                if 's' in test or 'e' in test:
-#                    print hot_rate
-#                    link['@toll1'] = link['@toll1'] + (link.length * hot_rate)
-#                if 'v' in test:
-#                    link['@trkc1'] = link['@trkc1'] + (link.length * hot_rate)
-    
-#   emmeProject.current_scenario.publish_network(network)
 
 def distance_pricing(distance_rate, hot_rate, emmeProject):
     toll_atts = ["@toll1", "@toll2", "@toll3", "@trkc1", "@trkc2", "@trkc3"]

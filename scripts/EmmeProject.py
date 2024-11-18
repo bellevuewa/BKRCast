@@ -604,6 +604,25 @@ class EmmeProject:
 
         partition.set_data(partition_val)  
 
+    def emmeMatrix_to_numpyMatrix(self, matrix_name, np_data_type, multiplier, max_value = None):
+        matrix_id = self.bank.matrix(matrix_name).id
+        emme_matrix = self.bank.matrix(matrix_id)
+        matrix_data = emme_matrix.get_data()
+        np_matrix = np.matrix(matrix_data.raw_data)
+        np_matrix = np_matrix * multiplier
+
+        if np_data_type == "uint16":
+            max_value = np.iinfo(np_data_type).max
+            np_matrix = np.where(np_matrix > max_value, max_value, np_matrix)
+
+        if np_data_type != "float32":
+            np_matrix = np.where(
+                np_matrix > np.iinfo(np_data_type).max,
+                np.iinfo(np_data_type).max,
+                np_matrix,
+            )
+        return np_matrix
+
     def matrix_to_emme(self, numpy_matrix, mfname, description, matrix_type):
         matrix_name_list = [matrix.name for matrix in self.bank.matrices()]
         if mfname not in matrix_name_list:
