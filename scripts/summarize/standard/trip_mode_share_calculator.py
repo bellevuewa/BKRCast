@@ -108,9 +108,9 @@ def get_time_period_by_minutes(period):
 def calculateModeSharebyTripPurpose(purpose, trip_df):
     if purpose == -1:
         # all purpose
-        model_df = trip_df[['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
+        model_df = trip_df[['mode', 'trexpfac', 'travdist']].groupby('mode', observed = True).sum()
     elif purpose >=0 and purpose <= 10:
-        model_df = trip_df.loc[((trip_df['dpurp'] == purpose))][['mode', 'trexpfac', 'travdist']].groupby('mode').sum()
+        model_df = trip_df.loc[((trip_df['dpurp'] == purpose))][['mode', 'trexpfac', 'travdist']].groupby('mode', observed = True).sum()
     else:
         print('Purpose ' + str(purpose) + 'is invalid')
         return None
@@ -128,7 +128,7 @@ def calculateModeSharebyTripPurpose(purpose, trip_df):
     sum_df = pd.DataFrame([sum_values], columns = columns_to_sum)
     sum_df['avgdist'] = sum_df['total_dist'] / sum_df['trips']
 
-    model_df = model_df.append(sum_df, ignore_index = True)    
+    model_df = pd.concat([model_df, sum_df], ignore_index = True)    
     model_df['total_dist'] = model_df['total_dist'].map('{:.1f}'.format)
     model_df['avgdist'] = model_df['avgdist'].map('{:.1f}'.format)
     model_df['share'] = model_df['share'].map('{:.1%}'.format)
@@ -162,7 +162,7 @@ def help():
 
 def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     subtotal_trips = trips_df['trexpfac'].count()
-    trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp').sum()
+    trips_by_purpose = trips_df[['dpurp', 'travdist', 'trexpfac']].groupby('dpurp', observed = True).sum()
     trips_by_purpose['share'] = trips_by_purpose['trexpfac'] / subtotal_trips
     trips_by_purpose['avgdist'] = trips_by_purpose['travdist'] / trips_by_purpose['trexpfac']
     trips_by_purpose.reset_index(inplace = True)
@@ -174,7 +174,7 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     trips_by_purpose['trips'] = trips_by_purpose['trips'].astype(int)
 
     trips_df['trip_dist_bin'] = pd.cut(trips_df['travdist'], include_lowest = True,  bins = prj.trip_distance_bin)
-    trips_by_dist = trips_df[['trip_dist_bin', 'trexpfac', 'travdist']].groupby('trip_dist_bin').sum()
+    trips_by_dist = trips_df[['trip_dist_bin', 'trexpfac', 'travdist']].groupby('trip_dist_bin', observed = True).sum()
     trips_by_dist['share'] = trips_by_dist['trexpfac'] / subtotal_trips 
     trips_by_dist['avgdist'] = trips_by_dist['travdist'] / trips_by_dist['trexpfac']
     trips_by_dist['avgdist'] = trips_by_dist['avgdist'].map('{:.1f}'.format)
@@ -186,7 +186,7 @@ def cal_trip_distance(trips_df, output_file, overwritten = False, comments=''):
     # we could use origin purpose and destination purpose as filters to pull commute trips. But for some reason, it will generate
     # different number of trips from the address type (oadtyp and dadtyp) method. Not sure why but for consistency purpose, we use this address type
     # method.
-    commute_trips = trips_df.loc[((trips_df['oadtyp'] == 1) & (trips_df['dadtyp'] == 2)) | ((trips_df['oadtyp'] == 2) & (trips_df['dadtyp'] == 1))][['trexpfac', 'travdist', 'trip_dist_bin']].groupby('trip_dist_bin').sum()
+    commute_trips = trips_df.loc[((trips_df['oadtyp'] == 1) & (trips_df['dadtyp'] == 2)) | ((trips_df['oadtyp'] == 2) & (trips_df['dadtyp'] == 1))][['trexpfac', 'travdist', 'trip_dist_bin']].groupby('trip_dist_bin', observed = True).sum()
     commute_trips['share'] = commute_trips['trexpfac'] / commute_trips['trexpfac'].sum()
     commute_trips['avgdist'] = commute_trips['travdist'] / commute_trips['trexpfac']
     commute_trips['avgdist'] = commute_trips['avgdist'].map('{:.1f}'.format)

@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b2f98d5e-11b5-44d7-b163-3a3b317678d3}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\summarize\calibration\SCsummary.py</StartupFile>
+    <StartupFile>scripts\summarize\calibration\equity.py</StartupFile>
     <SearchPath>scripts;scripts\trucks;..\BKRCast;scripts\accessibility</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,8 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|VisualStudio|BKRCast</InterpreterId>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>-n</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <InterpreterArguments>
     </InterpreterArguments>
     <TestFramework>Pytest</TestFramework>
@@ -506,7 +507,6 @@
     <Compile Include="scripts\archive\revive.py" />
     <Compile Include="scripts\bikes\bike_model.py" />
     <Compile Include="scripts\summarize\standard\analyze_landuse_by_selected_TAZ.py" />
-    <Compile Include="scripts\summarize\standard\summarize_land_use_inputs.py" />
     <Compile Include="scripts\supplemental\recreational_bike.py" />
     <Compile Include="scripts\data_wrangling.py" />
     <Compile Include="scripts\EmmeProject.py" />

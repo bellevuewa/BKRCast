@@ -1,5 +1,6 @@
 import os
 import sys
+from xml.etree.ElementInclude import include
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))
 import numpy as np
@@ -13,12 +14,32 @@ from summary_functions import *
 def aggregate_by_attribute(df, select_attr_name, group_attr_name, aggregate_attr_name, show_percent = True):
     select_attr_name_values = np.sort(df[select_attr_name].unique())
     output_list = []
+    counter = 0
+    selected_cols = []
+    if isinstance(group_attr_name, list):
+        selected_cols.extend(group_attr_name)
+    else: 
+        selected_cols.append(group_attr_name)
+
+    if isinstance(aggregate_attr_name, list):
+        selected_cols.extend(aggregate_attr_name)
+    else:
+        selected_cols.append(aggregate_attr_name)
+ 
+    progress = False
     for attr in select_attr_name_values:
-        agg_by_select_attr = df.loc[df[select_attr_name] == attr].groupby(group_attr_name).sum()[[aggregate_attr_name]]
+        agg_by_select_attr = df.loc[df[select_attr_name] == attr, selected_cols].groupby(group_attr_name, observed = True).sum()[[aggregate_attr_name]]
         if show_percent == True:
             agg_by_select_attr[str(attr) + '_%'] = agg_by_select_attr[aggregate_attr_name] / agg_by_select_attr[aggregate_attr_name].sum()
         agg_by_select_attr.rename(columns = {aggregate_attr_name : attr}, inplace = True)
         output_list.append(agg_by_select_attr)
+        counter += 1
+        if counter % 200 == 0:
+            print(counter, end = ' ', flush = True)
+            progress = True
+
+    if progress:
+        print()
 
     final_df = output_list[0]
     for item in output_list[1:]:
@@ -137,13 +158,13 @@ def write_to_sheet(writer, name_of_sheet, dict_dfs, write_index = True, horizont
     return srow, scol
 
 def aggregate_trips_by_all_subareas(df, group_attr_name_list, aggregate_dict, column_rename_dict):
-    output_df = df.groupby(group_attr_name_list).agg(aggregate_dict).fillna(0)
+    output_df = df.groupby(group_attr_name_list, observed = True).agg(aggregate_dict).fillna(float(0))
     output_df.rename(columns = column_rename_dict, inplace = True)
     output_df.columns = output_df.columns.droplevel(1)
     output_df['avg_trip_length'] = (output_df['travdist'] / output_df['total_person_trips'])
     output_df['avg_trip_travel_time'] = (output_df['travtime'] / output_df['total_person_trips'])
     output_df['trips_per_person'] = (output_df['total_person_trips'] / output_df['total_persons'])
-    output_df['person_trip_share'] = 0
+    output_df['person_trip_share'] = float(0)
     lvl1 = output_df.index.levels[0]
     for l1 in lvl1:
         subtotal = output_df.loc[l1, 'total_person_trips'].sum()
@@ -153,20 +174,22 @@ def aggregate_trips_by_all_subareas(df, group_attr_name_list, aggregate_dict, co
     return output_df
 
 def trip_mode_share_residents(df, group_attr_list, aggregate_dict, column_rename_dict):
-    mode_share_df = df.groupby(group_attr_list).agg(aggregate_dict).fillna(0)
+    mode_share_df = df.groupby(group_attr_list, observed  = True).agg(aggregate_dict).fillna(float(0))
     mode_share_df.columns = mode_share_df.columns.droplevel(1)
     mode_share_df['avg_trip_length'] = mode_share_df['travdist'] / mode_share_df['trexpfac']
     mode_share_df['avg_trip_travel_time'] = mode_share_df['travtime'] / mode_share_df['trexpfac']
-    mode_share_df['trip_mode_share'] = 0
+    mode_share_df['trip_mode_share'] = float(0)
 
     lv1 = mode_share_df.index.levels[0]
     lv2 = mode_share_df.index.levels[1]
 
     for l1 in lv1:
         for l2 in lv2:
-            subtotal = mode_share_df.loc[(l1, l2), 'trexpfac'].sum()
-            mode_share_df.loc[(l1, l2), 'trip_mode_share'] = mode_share_df['trexpfac'] / subtotal
+            if (l1, l2) in mode_share_df.index:
+                subtotal = mode_share_df.loc[(l1, l2), 'trexpfac'].sum()
+                mode_share_df.loc[(l1, l2), 'trip_mode_share'] = mode_share_df['trexpfac'] / subtotal
         
+
     mode_share_df = mode_share_df.round({'travdist':0, 'travtime':0, 'avg_trip_length':2, 'avg_trip_travel_time':2, 'trip_mode_share':3})
     mode_share_df.rename(columns = column_rename_dict, inplace = True)
 
@@ -234,97 +257,95 @@ def main():
     guides = get_guide(prj.guidefile)
     categorical_dict = guide_to_dict(guides)
 
-    demographic_writer = pd.ExcelWriter(os.path.join(prj.report_summary_output_location, "demographic_report.xlsx"), engine = 'xlsxwriter')
-    wksheet = demographic_writer.book.add_worksheet('readme')
-    wksheet.write(0, 0, str(datetime.datetime.now()))
-    wksheet.write(1, 0, 'model folder')
-    wksheet.write(1, 1, prj.project_folder)
+    with pd.ExcelWriter(os.path.join(prj.report_summary_output_location, "demographic_report.xlsx"), engine = 'xlsxwriter') as demographic_writer:
+        wksheet = demographic_writer.book.add_worksheet('readme')
+        wksheet.write(0, 0, str(datetime.datetime.now()))
+        wksheet.write(1, 0, 'model folder')
+        wksheet.write(1, 1, prj.project_folder)
 
-    create_demographic_hhs_report(hhs_df, demographic_writer)
-    create_demographic_person_report(persons_df, demographic_writer)
-    demographic_writer.save()
+        create_demographic_hhs_report(hhs_df, demographic_writer)
+        create_demographic_person_report(persons_df, demographic_writer)
     print('demographic report is generated.')
 
-    equity_writer = pd.ExcelWriter(os.path.join(prj.report_summary_output_location, 'equity_report.xlsx'), engine = 'xlsxwriter')
-    equity_sheet = equity_writer.book.add_worksheet('readme')
-    equity_sheet.write(0, 0, str(datetime.datetime.now()))
-    equity_sheet.write(1, 0, 'model folder')
-    equity_sheet.write(1, 1, prj.project_folder)
+    with pd.ExcelWriter(os.path.join(prj.report_summary_output_location, 'equity_report.xlsx'), engine = 'xlsxwriter') as equity_writer:
+        equity_sheet = equity_writer.book.add_worksheet('readme')
+        equity_sheet.write(0, 0, str(datetime.datetime.now()))
+        equity_sheet.write(1, 0, 'model folder')
+        equity_sheet.write(1, 1, prj.project_folder)
         
-    # create hhs_by_income sheet
-    print('  households by income level')
-    hhs_by_jurisdiction = aggregate_by_attribute(hhs_df, 'Jurisdiction', 'income_bins', 'hhexpfac')
-    hhs_by_subarea = aggregate_by_attribute(hhs_df, 'Subarea', 'income_bins', 'hhexpfac')
-    dict_dfs = {'Households by Income and Jurisdiction':hhs_by_jurisdiction, 'Households by Income and Subarea':hhs_by_subarea}
-    srow, scol = write_to_sheet(equity_writer, dict_dfs = dict_dfs, name_of_sheet = 'hhs_by_income', write_index = True, horizontal = True)
-    hhs_by_income_sheet = equity_writer.sheets['hhs_by_income']
-    hhs_by_income_sheet.write(srow, scol, 'notes')
-    hhs_by_income_sheet.write(srow+1, scol, '1. federal poverty line for one person household is $' + str(prj.fed_poverty_1st_person)) 
-    hhs_by_income_sheet.write(srow+2, scol, '   add $' + str(prj.fed_poverty_extra_person) + ' for each additional person in the same household.') 
+        # create hhs_by_income sheet
+        print('  households by income level')
+        hhs_by_jurisdiction = aggregate_by_attribute(hhs_df, 'Jurisdiction', 'income_bins', 'hhexpfac')
+        hhs_by_subarea = aggregate_by_attribute(hhs_df, 'Subarea', 'income_bins', 'hhexpfac')
+        dict_dfs = {'Households by Income and Jurisdiction':hhs_by_jurisdiction, 'Households by Income and Subarea':hhs_by_subarea}
+        srow, scol = write_to_sheet(equity_writer, dict_dfs = dict_dfs, name_of_sheet = 'hhs_by_income', write_index = True, horizontal = True)
+        hhs_by_income_sheet = equity_writer.sheets['hhs_by_income']
+        hhs_by_income_sheet.write(srow, scol, 'notes')
+        hhs_by_income_sheet.write(srow+1, scol, '1. federal poverty line for one person household is $' + str(prj.fed_poverty_1st_person)) 
+        hhs_by_income_sheet.write(srow+2, scol, '   add $' + str(prj.fed_poverty_extra_person) + ' for each additional person in the same household.') 
 
-    #create hhs by income and hhsize sheet
-    print('  households by income level and household size')
-    juris_income_hhsize_df = hhs_df.groupby(['Jurisdiction', 'income_bins', 'size_bins']).agg({'hhexpfac':['sum'], 'hhsize':'sum'}).fillna(0)
-    subarea_income_hhsize_df = hhs_df.groupby(['Subarea', 'income_bins', 'size_bins']).agg({'hhexpfac':['sum'], 'hhsize':'sum'}).fillna(0)
-    dict_dfs = {'Household Distribution by Jurisdiction, Income Level and Household Size' : juris_income_hhsize_df, 'Households Distribution by Subarea, Income Level and Household Size': subarea_income_hhsize_df}
-    write_to_sheet(equity_writer, name_of_sheet = 'hh_income_hhsize', dict_dfs = dict_dfs, write_index = True, horizontal = False)
+        #create hhs by income and hhsize sheet
+        print('  households by income level and household size')
+        juris_income_hhsize_df = hhs_df.groupby(['Jurisdiction', 'income_bins', 'size_bins'], observed = True).agg({'hhexpfac':['sum'], 'hhsize':'sum'}).fillna(0)
+        subarea_income_hhsize_df = hhs_df.groupby(['Subarea', 'income_bins', 'size_bins'], observed = True).agg({'hhexpfac':['sum'], 'hhsize':'sum'}).fillna(0)
+        dict_dfs = {'Household Distribution by Jurisdiction, Income Level and Household Size' : juris_income_hhsize_df, 'Households Distribution by Subarea, Income Level and Household Size': subarea_income_hhsize_df}
+        write_to_sheet(equity_writer, name_of_sheet = 'hh_income_hhsize', dict_dfs = dict_dfs, write_index = True, horizontal = False)
 
-    # create hhs by income and veh
-    print('  households by income level and vehicle ownership')
-    juris_income_veh_df = hhs_df.groupby(['Jurisdiction', 'income_bins', 'veh_bins']).sum()[['hhexpfac']].fillna(0)
-    juris_income_veh_df.rename(columns = {'hhexpfac':'total_hhs'}, inplace = True)
-    subarea_income_veh_df = hhs_df.groupby(['Subarea', 'income_bins', 'veh_bins']).sum()[['hhexpfac']].fillna(0)
-    subarea_income_veh_df.rename(columns = {'hhexpfac':'total_hhs'}, inplace = True)
-    dict_dfs = {'Household Distribution by Jurisdiction, Income Level and Vehicle Ownership' : juris_income_veh_df, 'Households Distribution by Subarea, Income Level and Vehicle Ownership': subarea_income_veh_df}
-    write_to_sheet(equity_writer, name_of_sheet = 'hh_income_veh', dict_dfs = dict_dfs, write_index = True, horizontal = False)
+        # create hhs by income and veh
+        print('  households by income level and vehicle ownership')
+        juris_income_veh_df = hhs_df.groupby(['Jurisdiction', 'income_bins', 'veh_bins'], observed = True)[hhs_df.select_dtypes(include = 'number').columns].sum()[['hhexpfac']].fillna(0)
+        juris_income_veh_df.rename(columns = {'hhexpfac':'total_hhs'}, inplace = True)
+        subarea_income_veh_df = hhs_df.groupby(['Subarea', 'income_bins', 'veh_bins'], observed = True)[hhs_df.select_dtypes(include = 'number').columns].sum()[['hhexpfac']].fillna(0)
+        subarea_income_veh_df.rename(columns = {'hhexpfac':'total_hhs'}, inplace = True)
+        dict_dfs = {'Household Distribution by Jurisdiction, Income Level and Vehicle Ownership' : juris_income_veh_df, 'Households Distribution by Subarea, Income Level and Vehicle Ownership': subarea_income_veh_df}
+        write_to_sheet(equity_writer, name_of_sheet = 'hh_income_veh', dict_dfs = dict_dfs, write_index = True, horizontal = False)
 
-    # create trips made by residents living in subarea
-    print('  trips made by residents and subarea')
-    persons_df['pid'] = persons_df['hhno'].astype(str) + '-' + persons_df['pno'].astype(str)
-    persons_df = persons_df.merge(trips_df, on = ['hhno', 'pno'])
-    group_list = ['Subarea', 'income_bins']
-    agg_dict = {'pid':'nunique', 'trexpfac':['sum'], 'travdist':'sum', 'travtime':'sum'}
-    rename_dict = {'trexpfac': 'total_person_trips', 'pid':'total_persons'}
-    trips_by_res_subarea_df = aggregate_trips_by_all_subareas(persons_df, group_attr_name_list=group_list, aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    write_to_sheet(equity_writer, 'trips_by_residents', {'Trips by Subarea Residents': trips_by_res_subarea_df})
+        # create trips made by residents living in the subarea
+        print('  trips made by residents and subarea')
+        persons_df['pid'] = persons_df['hhno'].astype(str) + '-' + persons_df['pno'].astype(str)
+        persons_df = persons_df[['pid', 'hhno', 'pno', 'Subarea', 'Jurisdiction', 'income_bins', 'income_bins2']].merge(trips_df[['hhno', 'pno', 'mode', 'travdist', 'travtime', 'trexpfac']], on = ['hhno', 'pno'])
+        group_list = ['Subarea', 'income_bins']
+        agg_dict = {'pid':'nunique', 'trexpfac':['sum'], 'travdist':'sum', 'travtime':'sum'}
+        rename_dict = {'trexpfac': 'total_person_trips', 'pid':'total_persons'}
+        trips_by_res_subarea_df = aggregate_trips_by_all_subareas(persons_df, group_attr_name_list=group_list, aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+        write_to_sheet(equity_writer, 'trips_by_residents', {'Trips by Subarea Residents': trips_by_res_subarea_df})
 
-    print('  trips originated from subarea')
-    group_list = ['osubarea', 'income_bins']
-    trips_origin_from_subarea_df = aggregate_trips_by_all_subareas(persons_df, group_attr_name_list=group_list, aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    write_to_sheet(equity_writer, 'trips_from_subarea', {'Trips Originated from Subarea': trips_origin_from_subarea_df})
+        print('  trips originated from subarea')
+        group_list = ['Subarea', 'income_bins']
+        trips_origin_from_subarea_df = aggregate_trips_by_all_subareas(persons_df, group_attr_name_list=group_list, aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+        write_to_sheet(equity_writer, 'trips_from_subarea', {'Trips Originated from Subarea': trips_origin_from_subarea_df})
 
-    # create trip mode share by residents and jurisdiction
-    print('  trip mode share by residents, jurisdiction and income level')
-    group_list = ['Jurisdiction', 'income_bins', 'mode']
-    agg_dict = {'trexpfac':['sum'], 'travdist':'sum', 'travtime':'sum'}
-    rename_dict = {'trexpfac': 'total_person_trips'}
-    juris_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    juris_res_mode_share_df.rename(index = categorical_dict['mode'], inplace = True)
-    write_to_sheet(equity_writer, 'residents_mode_share_juris', {'Trip Mode Share by Residents': juris_res_mode_share_df})
+        # create trip mode share by residents and jurisdiction
+        print('  trip mode share by residents, jurisdiction and income level')
+        group_list = ['Jurisdiction', 'income_bins', 'mode']
+        agg_dict = {'trexpfac':['sum'], 'travdist':'sum', 'travtime':'sum'}
+        rename_dict = {'trexpfac': 'total_person_trips'}
+        juris_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+        juris_res_mode_share_df.rename(index = categorical_dict['mode'], inplace = True)
+        write_to_sheet(equity_writer, 'residents_mode_share_juris', {'Trip Mode Share by Residents': juris_res_mode_share_df})
 
-    # create resident trip mode share by jurisdiction and poverty line income_bins2
-    group_list2 = ['Jurisdiction', 'income_bins2', 'mode']
-    juris_res_mode_share_IL2_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list2,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    juris_res_mode_share_IL2_df.rename(index = categorical_dict['mode'], inplace = True)
-    write_to_sheet(equity_writer, 'res_mode_share_by_poverty', {'Trip Mode Share by Residents': juris_res_mode_share_IL2_df})
-    jurisdiction = juris_res_mode_share_IL2_df.reset_index()['Jurisdiction'].unique()
-    srow = 1
-    scol = 0
-    for city in jurisdiction:
-        for col in avg_head_names:
-            juris = juris_res_mode_share_IL2_df.xs(city, level = 'Jurisdiction')[[col]].unstack(level='mode')
-            juris.to_excel(equity_writer, sheet_name = 'summary_by_poverty', index = True, startrow = srow, startcol = scol)
-            sheet = equity_writer.sheets['summary_by_poverty']
-            sheet.write(srow -1, scol, col + ' in ' + city)
-            srow = srow + juris.shape[0] + 5
+        # create resident trip mode share by jurisdiction and poverty line income_bins2
+        group_list2 = ['Jurisdiction', 'income_bins2', 'mode']
+        juris_res_mode_share_IL2_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list2,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+        juris_res_mode_share_IL2_df.rename(index = categorical_dict['mode'], inplace = True)
+        write_to_sheet(equity_writer, 'res_mode_share_by_poverty', {'Trip Mode Share by Residents': juris_res_mode_share_IL2_df})
+        jurisdiction = juris_res_mode_share_IL2_df.reset_index()['Jurisdiction'].unique()
+        srow = 1
+        scol = 0
+        for city in jurisdiction:
+            for col in avg_head_names:
+                juris = juris_res_mode_share_IL2_df.xs(city, level = 'Jurisdiction')[[col]].unstack(level='mode')
+                juris.to_excel(equity_writer, sheet_name = 'summary_by_poverty', index = True, startrow = srow, startcol = scol)
+                sheet = equity_writer.sheets['summary_by_poverty']
+                sheet.write(srow -1, scol, col + ' in ' + city)
+                srow = srow + juris.shape[0] + 5
             
-    # create trip mode share made by residents
-    print('  trip mode share by residents, subarea and income level')
-    group_list = ['Subarea', 'income_bins', 'mode']
-    subarea_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
-    write_to_sheet(equity_writer, 'residents_mode_share_subarea', {'Trip Mode Share by Residents':subarea_res_mode_share_df})
+        # create trip mode share made by residents
+        print('  trip mode share by residents, subarea and income level')
+        group_list = ['Subarea', 'income_bins', 'mode']
+        subarea_res_mode_share_df, avg_head_names = trip_mode_share_residents(persons_df, group_attr_list=group_list,aggregate_dict=agg_dict, column_rename_dict=rename_dict)
+        write_to_sheet(equity_writer, 'residents_mode_share_subarea', {'Trip Mode Share by Residents':subarea_res_mode_share_df})
 
-    equity_writer.save()
     print('equity report is generated.')
 
 if __name__ == '__main__':

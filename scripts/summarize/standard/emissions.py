@@ -67,7 +67,7 @@ def calculate_interzonal_vmt():
     # Take total across columns where distinct emission rate are available
     # This calculates total VMT, by vehicle type (e.g., HOV3 VMT for hour 8, freeway, King County, 55-59 mph)
     join_cols = ['avgspeedbinId','roadtypeId','hourId','Jurisdiction', 'county']
-    df = df.groupby(join_cols).sum()
+    df = df.groupby(join_cols, observed = True).sum()
     df = df[['sov_vmt','hov2_vmt','hov3_vmt','bus_vmt','medium_truck_vmt','heavy_truck_vmt']]
     df = df.reset_index()
 
@@ -82,16 +82,15 @@ def finalize_emissions(df, col_suffix=""):
     For total columns add col_suffix (e.g., col_suffix='intrazonal_tons')
     """
 
-    pm10 = df[df['pollutantID'].isin([100,106,107])].groupby('veh_type').sum().reset_index()
+    pm10 = df[df['pollutantID'].isin([100,106,107])].groupby('veh_type', observed = True).sum().reset_index()
     pm10['pollutantID'] = 200
     pm10['county'] = 'King'
     pm10['Jurisdiction'] = 'All'
-    pm25 = df[df['pollutantID'].isin([110,116,117])].groupby('veh_type').sum().reset_index()
+    pm25 = df[df['pollutantID'].isin([110,116,117])].groupby('veh_type', observed = True).sum().reset_index()
     pm25['pollutantID'] = 201
     pm25['county'] = 'King'
     pm25['Jurisdiction'] = 'All'
-    df = df.append(pm10)
-    df = df.append(pm25)
+    df = pd.concat([df, pm10, pm25], ignore_index = True)
 
     return df
 
@@ -155,7 +154,7 @@ def calculate_intrazonal_vmt():
         df_iz['heavytruck_' + tod +'_vmt'] = df_iz['heavytruck_' + tod + '_vol'] * df_iz['izdist']
 	
     # Group totals by vehicle type, time-of-day, and county
-    df = df_iz.groupby(['County', 'Jurisdiction']).sum().T
+    df = df_iz.groupby(['County', 'Jurisdiction'],  observed = True).sum().T
     df.reset_index(inplace=True)
     df = df[df['index'].apply(lambda row: 'vmt' in row)]
 
@@ -188,7 +187,7 @@ def calculate_intrazonal_emissions(df_running_rates, df_intra_vmt):
     df_intra_vmt.drop('tod', axis=1, inplace=True)
 
     df_intra_light = df_intra_vmt[df_intra_vmt['veh_type'].isin(['sov','hov2','hov3'])]
-    df_intra_light = df_intra_light.groupby(['county', 'Jurisdiction', 'hourID']).sum()[['vmt']].reset_index()
+    df_intra_light = df_intra_light.groupby(['county', 'Jurisdiction', 'hourID'], observed = True).sum()[['vmt']].reset_index()
     df_intra_light.loc[:,'veh_type'] = 'light'
 
     df_intra_vmt.loc[df_intra_vmt['veh_type'] == 'mediumtruck', 'veh_type'] = 'medium'
@@ -248,7 +247,7 @@ def calculate_start_emissions(start_rates_df):
     df = pd.merge(df_veh, start_rates_df, left_on=['type','county'],right_on=['veh_type','county'])
     df['start_grams'] = df['vehicles']*df['ratePerVehicle'] 
     df['start_tons'] = grams_to_tons(df['start_grams'])
-    df = df.groupby(['pollutantID','veh_type','county', 'Jurisdiction']).sum().reset_index()
+    df = df.groupby(['pollutantID','veh_type','county', 'Jurisdiction'], observed = True).sum().reset_index()
     df.drop(columns = ['year', 'vehicles'], axis = 1, inplace = True)    
 
     # Calculate bus start emissions
@@ -262,10 +261,10 @@ def calculate_start_emissions(start_rates_df):
     df_bus = df_bus.merge(df_bus_veh[['county','Jurisdiction','bus_vehicles_in_service']], on = 'county')     
     df_bus['start_grams'] = df_bus['ratePerVehicle'] * df_bus['bus_vehicles_in_service']
     df_bus['start_tons'] = grams_to_tons(df_bus['start_grams'])
-    df_bus = df_bus.groupby(['pollutantID', 'veh_type', 'county', 'Jurisdiction']).sum().reset_index()
+    df_bus = df_bus.groupby(['pollutantID', 'veh_type', 'county', 'Jurisdiction'], observed = True).sum().reset_index()
     df_bus.drop(columns = ['bus_vehicles_in_service'], axis = 1, inplace = True)    
 
-    df = df.append(df_bus)
+    df = pd.concat([df, df_bus], ignore_index = True)
 
     return df
 
@@ -290,7 +289,7 @@ def assemble_emission_rates(df_rates, summer_month_id, winter_month_id):
     df_summer = df_summer[df_summer['monthID'] == summer_month_id]
     df_winter = df_rates[~df_rates['pollutantID'].isin(input_config.summer_list)]
     df_winter = df_winter[df_winter['monthID'] == winter_month_id]
-    df_rates = df_winter.append(df_summer)
+    df_rates = pd.concat([df_winter, df_summer], ignore_index = True)
 
     return df_rates    
 
@@ -348,7 +347,7 @@ def main():
     start_rates_df = assemble_emission_rates(start_rates_df, 7, 1)    
 
     # Sum total emissions across all times of day, by county, for each pollutant
-    start_rates_df = start_rates_df.groupby(['pollutantID','county','veh_type']).sum()[['ratePerVehicle']].reset_index()
+    start_rates_df = start_rates_df.groupby(['pollutantID','county','veh_type'], observed = True).sum()[['ratePerVehicle']].reset_index()
 
 
     # Group interzonal trips and calculate interzonal emissions
@@ -364,11 +363,11 @@ def main():
     start_emissions_df = calculate_start_emissions(start_rates_df)
 
     # Combine all rates and export as CSV
-    df_inter_group = df_interzonal.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type']).sum()[['tons_tot']].reset_index()
+    df_inter_group = df_interzonal.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type'], observed = True).sum()[['tons_tot']].reset_index()
     df_inter_group.rename(columns={'tons_tot': 'interzonal_tons'}, inplace=True)
-    df_intra_group = df_intrazonal.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type']).sum()[['tons_tot']].reset_index()
+    df_intra_group = df_intrazonal.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type'],  observed = True).sum()[['tons_tot']].reset_index()
     df_intra_group.rename(columns={'tons_tot': 'intrazonal_tons'}, inplace=True)
-    df_start_group = start_emissions_df.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type']).sum()[['start_tons']].reset_index()
+    df_start_group = start_emissions_df.groupby(['county', 'Jurisdiction', 'pollutantID', 'veh_type'],  observed = True).sum()[['start_tons']].reset_index()
 
     new_summary_df = pd.merge(df_inter_group, df_intra_group,  on = ['county', 'Jurisdiction', 'pollutantID', 'veh_type'], how='left')
     new_summary_df = pd.merge(new_summary_df, df_start_group, on = ['county', 'Jurisdiction', 'pollutantID', 'veh_type'], how='left').fillna(0).reset_index()

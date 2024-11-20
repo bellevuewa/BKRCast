@@ -16,19 +16,23 @@ def help():
     print('')
     print('analyze_landuse_by_selected_TAZ.py -h -i <input file name with absolute path> -o <output file name with relative path>')
     print(' -h: help')
-    print(' -i: input file (absolute filepath) for defined TAZ list. Only one column inside this file with the attribute "TAZ". Default file name is customized.csv in the project root folder. ')
+    print(' -i: input file (absolute filepath) for defined TAZ list. Only one column inside this file with the attribute "TAZ". ')
     print(' -o: output file name (relative path). The file is output to outputs/landuse folder. The default name is land_use_analysis_by_selected_taz.xlsx')
 
 def main():
-    customized_file = r'customized.csv'
-    output_file = os.path.join(prj.report_lu_output_location, 'land_use_analysis_by_selected_taz.xlsx' )
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hi:o:')
+        if not opts:
+            help()
+            exit(2)
+
     except getopt.GetoptError:
         help()
         sys.exit(2)
-    
+ 
+    output_file = os.path.join(prj.report_lu_output_location, 'land_use_analysis_by_selected_taz.xlsx' )
+   
     for opt, arg in opts:
         if opt == '-h':
             help()
@@ -42,9 +46,10 @@ def main():
             help()
             exit(0)
 
+
+
     print('loading...')
-    customized_file = os.path.join(prj.project_folder, customized_file)
-    tazlist_df = pd.read_csv(os.path.join(prj.project_folder, customized_file))
+    tazlist_df = pd.read_csv(customized_file)
 
     parcels_df = pd.read_csv(os.path.join(prj.parcels_file_folder, 'parcels_urbansim.txt'), sep = ' ', low_memory = False )
     selected_parcels_df = parcels_df.loc[parcels_df['TAZ_P'].isin(tazlist_df['TAZ'])]
@@ -88,7 +93,7 @@ def main():
         hhs_work_in_selected_taz_df.to_excel(writer, sheet_name = 'workers_Hhs', index = False)
         workers_by_hhtaz_df.to_excel(writer, sheet_name = 'workers_by_hhtaz', index = False)
           
-    print(f'Output file: {customized_file}')
+    print(f'Output file: {output_file}')
     print('Done')
 
 

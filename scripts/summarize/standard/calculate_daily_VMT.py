@@ -34,7 +34,7 @@ def calculate_for_GHG(links_df, tod, attr):
     links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
     links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
     links_df[tod+'_VHD'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
-    ret = links_df[['speed_bins', attr, tod+'_VMT',tod+'_VHT', tod+'_VHD']].groupby([attr, 'speed_bins']).sum()
+    ret = links_df[['speed_bins', attr, tod+'_VMT',tod+'_VHT', tod+'_VHD']].groupby([attr, 'speed_bins'], observed= True).sum()
     return ret
     
 
