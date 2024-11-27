@@ -1,0 +1,16 @@
+[
+  {
+    "type": "LINK",
+    "name": "@bkrlink",
+    "description": "BKR flag for link",
+    "overwrite": "True",
+    "file_name": "@bkrlink.txt"
+  },
+  {
+    "type": "LINK",
+    "name": "@facility_moves",
+    "description": "faility flag for MOVES",
+    "overwrite": "True",
+    "file_name": "@facility_moves.txt"
+  }
+]

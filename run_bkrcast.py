@@ -315,7 +315,7 @@ def run_all_summaries():
       subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'])
 
    if run_landuse_summary:
-      subprocess.call([sys.executable, 'scripts/summarize/standard/summarize_land_use_inputs.py'])
+      subprocess.call([sys.executable, 'scripts/summarize/standard/landuse_summary.py'])
       
    if run_truck_summary:
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])

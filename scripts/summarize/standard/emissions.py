@@ -162,7 +162,7 @@ def calculate_intrazonal_vmt():
     # Ugly dataframe reformatting to unstack data
     df['tod'] = df['index'].apply(lambda row: row.split('_')[1])
     df['vehicle_type'] = df['index'].apply(lambda row: row.split('_')[0])
-    df.drop('index', axis=1,inplace=True)
+    df.drop('index', axis=1, level = 0, inplace=True)
     df.index = df[['tod','vehicle_type']]
     df.drop(['tod','vehicle_type'],axis=1,inplace=True)
     df = pd.DataFrame(df.unstack()).reset_index()

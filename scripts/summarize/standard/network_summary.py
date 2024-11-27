@@ -14,6 +14,7 @@
 
 import os, sys, shutil
 from tkinter.font import BOLD
+from tokenize import Ignore
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 sys.path.append(os.getcwd())
@@ -201,7 +202,7 @@ def sort_df(df, sort_list, sort_column_list):
     """ Sort a dataframe based on user-defined list of indices """
     for col in sort_column_list:
         df[col] = df[col].astype('category')
-        df[col].cat.set_categories(sort_list, inplace=True)
+        df[col] = df[col].cat.set_categories(sort_list)
     df = df.sort_values(sort_column_list)
 
     return df
@@ -265,7 +266,7 @@ def summarize_network(df, node_attr_study_area):
     tod_df.columns = ['tod','period']
     kc_df = pd.merge(kc_df,tod_df,on='tod',how='left')
 
-    with pd.ExcelWriter(r'outputs/network/network_summary.xlsx', engine='xlsxwriter') as writer:
+    with pd.ExcelWriter(input_config.bkr_network_summary_path, engine='xlsxwriter') as writer:
         wksheet = writer.book.add_worksheet('readme')
         wksheet.write(0, 0, str(datetime.datetime.now()))
         wksheet.write(1, 0, 'model folder')
@@ -277,6 +278,7 @@ def summarize_network(df, node_attr_study_area):
         wksheet.write(6, 0, 'BKR area is defined by @bkrlink. Links outside of King County are not included in the calculation.')    
 
         df.to_excel(writer, sheet_name = 'daily_links', startrow = 1, index = False)
+        df.to_csv(input_config.network_results_path)
         lane_miles = kc_df[kc_df['tod']=='6to9'].copy()
         lane_miles = pd.pivot_table(lane_miles, values='lane_miles', index='@bkrlink',columns='facility_type', aggfunc='sum').reset_index()
         lane_miles.rename(columns = {col:col+'_lane_miles' for col in lane_miles.columns if col in ['freeway', 'arterial', 'connector', 'local']}, inplace = True)
@@ -342,7 +344,7 @@ def summarize_network(df, node_attr_study_area):
             
     
         kc_df['city_name'] = kc_df['@bkrlink'].map(input_config.bkrlink_dict)
-        _df = kc_df.groupby('city_name').sum()[['VMT','VHT','VHD']].reset_index()
+        _df = kc_df.groupby('city_name')[['VMT','VHT','VHD']].sum().reset_index()
         wksheet.write(startrow, 0, 'VMT/VHT/VHD by City') 
         startrow += 1        
         _df.to_excel(excel_writer=writer, sheet_name = sheet_name, startrow = startrow)
@@ -468,8 +470,13 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
 def count_and_sum_landuse_data(node, tree, radius, attributes_df):
     captured_pts = tree.query_ball_point((node.geometry.x, node.geometry.y), radius)
     captured_attributes = attributes_df.iloc[captured_pts]
+    sum_landuse = {}
+    for column in captured_attributes.columns:
+        if captured_attributes[column].dtype in ['int64', 'float61']:
+            sum_landuse[column] = captured_attributes[column].sum()
+        else:
+            sum_landuse[column] = captured_attributes[column].iloc[0] if not captured_attributes[column].empty else None
 
-    sum_landuse = captured_attributes.sum().to_dict()
     sum_landuse['Num_Parcels'] = len(captured_pts)
     sum_landuse['inode'] = node.node   
     sum_landuse['parcels'] = captured_attributes['PARCELID'].to_list()   
@@ -529,23 +536,25 @@ def calculate_landuse_service_by_transitstops(emme_node_df):
         print('@bkrnode attribute is missing.') 
     else:                   
         print(f'export {buffer_dist}_feet buffer to shape file')    
-        bufferred_stops_gdf = gpd.GeoDataFrame()    
+        bufferred_stops_gdf = gpd.GeoDataFrame()   
         for juris in bus_stop_gdf['@bkrnode'].unique():
             bus_stop_juris_gdf = bus_stop_gdf.loc[bus_stop_gdf['@bkrnode'] == juris].copy()
             bus_stop_juris_gdf['buffer_geometry'] = bus_stop_juris_gdf['geometry'].buffer(buffer_dist)
-            bufferred_stops_gdf = bufferred_stops_gdf.append(bus_stop_juris_gdf, ignore_index = True)
+            bufferred_stops_gdf = pd.concat([bufferred_stops_gdf, bus_stop_juris_gdf], ignore_index = True)
         bufferred_stops_gdf.drop(columns = ['geometry', 'id'], inplace = True)
         bufferred_stops_gdf.rename(columns = {'buffer_geometry':'geometry'}, inplace = True) 
+        bufferred_stops_gdf = bufferred_stops_gdf.set_crs(crs, allow_override = True) 
         # attribute names longer than 10 chars will be truncated per ESRI shapefile standard.        
-        bufferred_stops_gdf.to_file(f'outputs/transit/transit_stop_buffer_{buffer_dist}_ft', driver = 'ESRI Shapefile', crs = crs) 
+        bufferred_stops_gdf.to_file(f'outputs/transit/transit_stop_buffer_{buffer_dist}_ft.shp', driver = 'ESRI Shapefile') 
 
         from shapely.ops import unary_union    
         merged_buffer_shape = bufferred_stops_gdf.groupby('@bkrnode')['geometry'].apply(unary_union)
         merged_buffer_gdf = gpd.GeoDataFrame(geometry = merged_buffer_shape, crs = crs).reset_index()
-        merged_buffer_gdf.to_file(f'outputs/transit/merged_buffer_{buffer_dist}_ft', driver = 'ESRI Shapefile', crs = crs)    
+        merged_buffer_gdf = merged_buffer_gdf.set_crs(crs, allow_override = True)
+        merged_buffer_gdf.to_file(f'outputs/transit/merged_buffer_{buffer_dist}_ft.shp', driver = 'ESRI Shapefile')    
         from geopandas.tools import sjoin
         spatial_joined_gdf = sjoin(parcels_gdf, merged_buffer_gdf, how = 'inner', predicate = 'within')
-        lu_sum_by_bkrnode = spatial_joined_gdf.groupby('@bkrnode').sum()
+        lu_sum_by_bkrnode = spatial_joined_gdf.groupby('@bkrnode')[spatial_joined_gdf.select_dtypes(include = 'number').columns].sum()
         lu_sum_by_bkrnode.drop(columns = ['PARCELID', 'hhparcel'], inplace = True)    
         lu_sum_by_bkrnode.to_csv(f'outputs/transit/land_use_summary_by_{buffer_dist}_ft_buffer_of_stops_by_jurisdiction.csv', index = True)        
  
@@ -654,7 +663,7 @@ def main():
         print('  analyze line to line transfer.')            
         if tod_hour in emme_config.transit_tod.keys():
             _df_transit_transfers = line_to_line_transfers(my_project, tod_hour)
-            df_transit_transfers = df_transit_transfers.append(_df_transit_transfers)
+            df_transit_transfers = pd.concat([df_transit_transfers, _df_transit_transfers], ignore_index = True)
         
         print('  summarize transit network')
         # Calculate transit results for time periods with transit assignment:
@@ -665,9 +674,9 @@ def main():
                 
             my_project.calculate_transit_alighting_by_segment()                                   
             _df_transit_line, _df_transit_node, _df_transit_segment = my_project.transit_summary(node_attr_study_area)
-            df_transit_line = df_transit_line.append(_df_transit_line)
-            df_transit_node = df_transit_node.append(_df_transit_node)
-            df_transit_segment = df_transit_segment.append(_df_transit_segment)
+            df_transit_line = pd.concat([df_transit_line, _df_transit_line], ignore_index = True)
+            df_transit_node = pd.concat([df_transit_node, _df_transit_node], ignore_index = True)
+            df_transit_segment = pd.concat([df_transit_segment, _df_transit_segment], ignore_index = True)
         
             # we may need to create BKR's own transit line OD table for selected lines.
 
@@ -715,7 +724,7 @@ def main():
         network = my_project.current_scenario.get_network()
         _network_df = export_network_attributes(network, node_attr_study_area)
         _network_df['tod'] = my_project.tod
-        network_df = network_df.append(_network_df)
+        network_df = pd.concat([network_df, _network_df], ignore_index = True)
 
     my_project.change_active_database('1530to1830')
     emme_nodes_df = my_project.emme_nodes_to_df()
