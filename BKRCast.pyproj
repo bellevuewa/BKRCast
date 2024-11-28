@@ -307,6 +307,7 @@
     <Content Include="inputs\model\parcel_TAZ_2014_lookup.csv" />
     <Content Include="inputs\model\survey\.gitignore" />
     <Content Include="inputs\model\survey\ACS_2014.xlsx" />
+    <Content Include="inputs\model\survey\survey.h5" />
     <Content Include="inputs\model\survey\SurveyWorkFlow.csv" />
     <Content Include="inputs\model\TAZIndex.txt" />
     <Content Include="inputs\model\TAZ_District_CrossWalk.csv" />
