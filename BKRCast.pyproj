@@ -507,6 +507,7 @@
     <Compile Include="scripts\archive\archive.py" />
     <Compile Include="scripts\archive\revive.py" />
     <Compile Include="scripts\bikes\bike_model.py" />
+    <Compile Include="scripts\h5toDF.py" />
     <Compile Include="scripts\summarize\standard\analyze_landuse_by_selected_TAZ.py" />
     <Compile Include="scripts\supplemental\recreational_bike.py" />
     <Compile Include="scripts\data_wrangling.py" />
@@ -539,7 +540,6 @@
     <Compile Include="scripts\summarize\calibration\SCsummary.py" />
     <Compile Include="scripts\summarize\calibration\summary_functions.py" />
     <Compile Include="scripts\summarize\exploratory\bike_summary.py" />
-    <Compile Include="scripts\summarize\h5toDF.py" />
     <Compile Include="scripts\summarize\mapping\dframe_explorer.py" />
     <Compile Include="scripts\summarize\mapping\map_configuration.py" />
     <Compile Include="scripts\summarize\mapping\run_map.py" />
@@ -575,7 +575,6 @@
     <Compile Include="scripts\utils\4kTripTables_to_h5.py" />
     <Compile Include="scripts\utils\create_extra_attributes.py" />
     <Compile Include="scripts\utils\create_node_to_node_index.py" />
-    <Compile Include="scripts\utils\h5toDF.py" />
     <Compile Include="scripts\utils\shadow_pricing_check.py" />
     <Compile Include="scripts\utils\update_parking.py" />
     <Compile Include="scripts\__init__.py" />

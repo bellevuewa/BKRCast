@@ -1,8 +1,7 @@
 import os
 import sys
-from xml.etree.ElementInclude import include
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import numpy as np
 import pandas as pd
 import datetime
