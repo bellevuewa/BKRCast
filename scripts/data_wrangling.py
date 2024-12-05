@@ -18,7 +18,6 @@ import inro.emme.desktop.app as app
 import json
 import re
 from shutil import copy2 as shcopy
-from distutils import dir_util
 import inro.emme.database.emmebank as _eb
 import shutil
 sys.path.append(os.getcwd())
@@ -50,7 +49,7 @@ def copy_daysim_code():
     if not os.path.exists(os.path.join(os.getcwd(), 'daysim')):
        os.makedirs(os.path.join(os.getcwd(), 'daysim'))
     try:
-        dir_util.copy_tree(daysim_code, 'daysim')
+        shutil.copytree(daysim_code, 'daysim', dirs_exist_ok=True)
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
@@ -178,32 +177,32 @@ def copyfiles(sourceFolder, destFolder):
 def copy_large_inputs():
     print('Copying large inputs...')
     print('  network files..')
-    dir_util.copy_tree(base_inputs+'/networks','inputs/networks')
+    shutil.copytree(base_inputs+'/networks','inputs/networks', dirs_exist_ok=True)
     print('  counts..')
-    dir_util.copy_tree(base_inputs+'/observed','inputs/observed')
+    shutil.copytree(base_inputs+'/observed','inputs/observed', dirs_exist_ok=True)
     print('  extra attributes..')
-    dir_util.copy_tree(base_inputs+'/extra_attributes','inputs/extra_attributes')
+    shutil.copytree(base_inputs+'/extra_attributes','inputs/extra_attributes', dirs_exist_ok=True)
     print('  tolls..')
-    dir_util.copy_tree(base_inputs+'/tolls','inputs/tolls')
+    shutil.copytree(base_inputs+'/tolls','inputs/tolls', dirs_exist_ok=True)
     print('  vdfs..')
-    dir_util.copy_tree(base_inputs+'/vdfs','inputs/vdfs')
+    shutil.copytree(base_inputs+'/vdfs','inputs/vdfs', dirs_exist_ok=True)
     print('  intraZonals..')
-    dir_util.copy_tree(base_inputs+'/IntraZonals','inputs/IntraZonals')
+    shutil.copytree(base_inputs+'/IntraZonals','inputs/IntraZonals', dirs_exist_ok=True)
     print('  fare..')
-    dir_util.copy_tree(base_inputs+'/Fares','inputs/Fares')
+    shutil.copytree(base_inputs+'/Fares','inputs/Fares', dirs_exist_ok=True)
     print('  trucks..')
-    dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
+    shutil.copytree(base_inputs+'/trucks','inputs/trucks', dirs_exist_ok=True)
     print('  accessibility..')
-    dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
+    shutil.copytree(base_inputs+'/accessibility','inputs/accessibility', dirs_exist_ok=True)  
     print('  bikes..')
-    dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
+    shutil.copytree(base_inputs+'/bikes','inputs/bikes', dirs_exist_ok=True)
     #print('  supplemental..')
-    #dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
+    #dir_util.copytree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
-    dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
-    dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
+    shutil.copytree(base_inputs+'/landuse','inputs/landuse', dirs_exist_ok=True)
+    shutil.copytree(base_inputs+'/popsim','inputs/popsim', dirs_exist_ok=True)
     print('  park and ride capacity..')
-    dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
+    shutil.copytree(base_inputs+'/pnr','inputs/pnr', dirs_exist_ok=True)
 
 @timed          
 def clean_up():
