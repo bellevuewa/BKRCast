@@ -417,24 +417,30 @@ def line_to_line_transfers(emme_project, tod):
 
 def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segment):
     """Sumarize various transit measures."""
-    
     df_transit_line['route_code'] = df_transit_line['route_code'].astype('int')
-    
+
     # Daily trip totals by submode
     try:    
-        bank = _eb.Emmebank(os.path.join(os.getcwd(), r'Banks/daily/emmebank'))
-
-        ## This is total transit trips in the region. 
-        ## we also need to have transit trips from BKR, to BKR, and within BKR.    
+        import inro.emme.database.emmebank as _emmebank
         df = pd.DataFrame()
-        for mode in ['commuter_rail','litrat','ferry', 'passenger_ferry', 'trnst']:
-            df.loc[mode,'total_trips'] = bank.matrix(mode).get_numpy_data().sum()
-        bank.dispose()
+        colname = []
+        for tod_hour, tod_segment in emme_config.sound_cast_net_dict.items():
+            path = os.path.join('Banks', tod_hour, 'emmebank')
+            bank = _emmebank.Emmebank(path)
+                   
+            ## This is total transit trips in the region. 
+            ## we also need to have transit trips from BKR, to BKR, and within BKR.    
+            for mode in ['commuter_rail','litrat','ferry', 'passenger_ferry', 'trnst']:
+                df.loc[mode,f'{tod_segment}_total_trips'] = bank.matrix(mode).get_numpy_data().sum()
+            colname.append(f'{tod_segment}_total_trips')
+            bank.dispose()
+
+        df['total_trips'] = df[colname].sum(axis = 1)
+        df.to_csv(r'outputs\transit\total_transit_trips.csv')
     except:
         print('cannot open daily bank. summrize_transit_detail() is terminated.') 
         return           
     
-    df.to_csv(r'outputs\transit\total_transit_trips.csv')
     # Boardings for special routes
     df_special = df_transit_line[df_transit_line['route_code'].isin({int(k) for k in emme_config.special_route_lookup.keys()})].groupby('route_code').sum()[['boardings']].sort_values('boardings', ascending=False)
     df_special = df_special.reset_index()
@@ -442,11 +448,11 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     df_special[['route_code','description','boardings']].to_csv(input_config.special_routes_path, index=False)
 
     # Daily Boardings by Stop
-    node_df = df_transit_node.loc[df_transit_node['tod'] == '1530to1830', ['node_id', 'node_subarea']]  
+    node_df = df_transit_node[['node_id', 'node_subarea']].drop_duplicates(subset = 'node_id')
     df_transit_segment = pd.read_csv(input_config.transit_segment_path)
     df_transit_stops_daily = df_transit_segment.groupby('i_node').sum().reset_index()
     df_transit_stops_daily = node_df.merge(df_transit_stops_daily, left_on = 'node_id', right_on = 'i_node', how = 'right')        
-    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok'], inplace = True)  
+    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok', 'tod'], inplace = True)  
 
     with pd.ExcelWriter(input_config.boardings_by_stop_path,  engine='xlsxwriter') as writer:    
         wksheet = writer.book.add_worksheet('readme')
@@ -461,6 +467,7 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
 
         for tod in emme_config.load_transit_tod:
             df_transit_stops_tod = df_transit_segment.loc[df_transit_segment['tod'] == tod].groupby('i_node').sum().reset_index()
+
             df_transit_stops_tod = node_df.merge(df_transit_stops_tod, left_on = 'node_id', right_on = 'i_node', how = 'right')                   
             df_transit_stops_tod.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok'], inplace = True)     
             df_transit_stops_tod.to_excel(writer, sheet_name = tod, index = False, startrow = 1) 
@@ -760,7 +767,7 @@ def main():
 
     # create detailed transit summaries
     init(autoreset = True)    
-    print(f'summarize transit network. {Fore.GREEN}Make sure daily bank is also up-to-date.')    
+    print(f'summarize transit network. ')    
     summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segment)
     print('Done')    
 

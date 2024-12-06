@@ -52,7 +52,7 @@ class EmmeProject:
         for database in self.data_explorer.databases():
             #print database.title()
             if database.title() == database_name:
-                # self.bank.dispose()                
+                self.bank.dispose()                
                 database.open()
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
@@ -567,7 +567,7 @@ class EmmeProject:
     
         _df_transit_segment = pd.DataFrame(transit_segment_data)
         _df_transit_stops = _df_transit_segment[['i_node', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_final_alighting', 'segment_transfer_alighting']].groupby('i_node').sum()
-        _df_transit_node = _df_transit_node.merge(_df_transit_stops, left_on = 'node_id', right_index = True, how = 'left').fillna(0)
+        _df_transit_node = _df_transit_node.merge(_df_transit_stops, left_on = 'node_id', right_index = True, how = 'right').fillna(0)
         _df_transit_node = _df_transit_node.rename(columns = {'segment_boarding':'total_boarding', 'segment_initial_boarding':'initial_boarding', 'segment_transfer_boarding': 'transfer_boarding', 
                                  'segment_alighting':'total_alighting', 'segment_final_alighting':'final_alighting', 'segment_transfer_alighting':'transfer_alighting'})                
         _df_transit_node['tod'] = tod 
