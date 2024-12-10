@@ -275,14 +275,34 @@ def main():
         ## copy boarding alighting at transit stop in each tod to daily bank.
         # calculate daily boarding/alighting at each stop.
         # to be done.
-        attr = daily_scenario.create_extra_attribute('NODE', '@board_' + tod)
-        attr.description = 'boardings at transit stop ' + tod
-        values = scenario.get_attribute_values('NODE', ['initial_boardings'])
+        attr = daily_scenario.create_extra_attribute('NODE', '@tboard_' + time_period)
+        attr.description = 'total boardings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@tboard_nde'])
         daily_scenario.set_attribute_values('NODE', [attr], values)
 
-        attr = daily_scenario.create_extra_attribute('NODE', '@alight_'+tod)
-        attr.description = 'alightings at transit stop ' + tod
-        values = scenario.get_attribute_values('NODE', ['final_alightings'])
+        attr = daily_scenario.create_extra_attribute('NODE', '@tiboard_' + time_period)
+        attr.description = 'total init boardings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@tiboard_nde'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@trsboard_' + time_period)
+        attr.description = 'tot trsfer boardings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@trsboard_nde'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@talight_'+time_period)
+        attr.description = 'total alightings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@talight_nde'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@falight_'+time_period)
+        attr.description = 'total final alightings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@finalight_nde'])
+        daily_scenario.set_attribute_values('NODE', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('NODE', '@trsalight_'+time_period)
+        attr.description = 'tot trsfer alightings at stop ' + time_period
+        values = scenario.get_attribute_values('NODE', ['@trsalight_nde'])
         daily_scenario.set_attribute_values('NODE', [attr], values)
 
     # assemble transit segment dataframe by TOD in one dataframe
@@ -305,10 +325,22 @@ def main():
 
     attr = daily_scenario.create_extra_attribute('LINK', '@voltransit_daily')
     attr.description = 'daily transit volume'
+
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_boarding')
-    attr.description = 'daily boarding at transit stop'
+    attr.description = 'daily total boarding at stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_iboarding')
+    attr.description = 'daily initial boarding at stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_trsboarding')
+    attr.description = 'daily transfer boarding at stop'
+
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_alighting')
-    attr.description = 'daily alighting at transit stop'
+    attr.description = 'daily total alighting at stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_falighting')
+    attr.description = 'daily final alighting at stop'
+    attr = daily_scenario.create_extra_attribute('NODE', '@daily_trsalighting')
+    attr.description = 'daily transfer alighting at stop'
+
+
 
     daily_network = daily_scenario.get_network()
 
@@ -333,9 +365,13 @@ def main():
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
-        for tod in tods:
-            node['@daily_boarding'] += node['@board_' + tod]
-            node['@daily_alighting'] += node['@alight_' + tod]
+        for tod in sound_cast_net_dict.values():
+            node['@daily_boarding'] += node['@tboard_' + tod]
+            node['@daily_iboarding'] += node['@tiboard_' + tod]
+            node['@daily_trsboarding'] += node['@trsboard_' + tod]
+            node['@daily_alighting'] += node['@talight_' + tod]
+            node['@daily_falighting'] += node['@falight_' + tod]
+            node['@daily_trsalighting'] += node['@trsalight_' + tod]
 
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 

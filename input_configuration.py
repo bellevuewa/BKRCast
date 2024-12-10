@@ -194,6 +194,8 @@ transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'trans
 transit_segment_extra_attributes_dict = {'@talight':'total segment alighting', '@finalight': 'final alighting', '@transalight':'transfer alighting', 
                                          '@tboard': 'total segment boarding', 
                                          '@iboard':'initial boarding', '@trsboard': 'transfer boarding'}
+node_transit_extra_attributes_dict = {'@tboard_nde': 'total boarding at node', '@tiboard_nde': 'total initial boarding at node', '@trsboard_nde':'total transfer boarding at node',
+                              '@talight_nde': 'total alighting at node', '@finalight_nde': 'total final alighting at node', '@trsalight_nde': 'total transfer alighting at node'}
 
 ### Equity analysis
 # 2016 federal poverty line   

@@ -12,6 +12,7 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+from email.policy import default
 import inro.emme.desktop.app as app
 import inro.modeller as _m
 import os, sys
@@ -457,7 +458,7 @@ class EmmeProject:
             spec['on_segments']['initial_boardings'] = '@temp5'
             spec['on_segments']['transfer_boardings'] = '@temp6'
          
-        network = self.current_scenario.get_partial_network(["TRANSIT_LINE", "TRANSIT_SEGMENT"], include_attributes=True) 
+        network = self.current_scenario.get_network() 
             
         for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
             network_results(spec, class_name = class_name)  
@@ -478,7 +479,28 @@ class EmmeProject:
 
         kind, attrs = "TRANSIT_SEGMENT", ["@talight", "@transalight", "@finalight", "@tboard", "@iboard", "@trsboard"]
         values = network.get_attribute_values(kind, attrs)
-        self.current_scenario.set_attribute_values(kind, attrs, values)        
+        self.current_scenario.set_attribute_values(kind, attrs, values) 
+
+        # calculate transit boarding/alighting at node level
+        for name, desc in input_config.node_transit_extra_attributes_dict.items():
+            self.create_extra_attribute('NODE', name, desc, True)    
+
+        # need to reload the network because new node attributes have been created.
+        network = self.current_scenario.get_network() 
+        for node in network.nodes():
+            segments = node.outgoing_segments(True)
+            if segments != None:
+                for segment in segments:
+                    node['@tboard_nde'] += segment['@tboard']
+                    node['@tiboard_nde'] += segment['@iboard']
+                    node['@trsboard_nde'] += segment['@trsboard']
+                    node['@talight_nde'] += segment['@talight']
+                    node['@finalight_nde'] += segment['@finalight']
+                    node['@trsalight_nde'] += segment['@transalight']
+
+        kind, attrs = "NODE", input_config.node_transit_extra_attributes_dict.keys()
+        values = network.get_attribute_values(kind, attrs)
+        self.current_scenario.set_attribute_values(kind, attrs, values)
 
     def transit_summary(self, node_attr_study_area = '@ndmma'):
         """Export transit line, segment, and mode attributes"""
