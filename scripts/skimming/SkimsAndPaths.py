@@ -1047,20 +1047,16 @@ def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration, f
     print('inside pool: ' + str(max_num_iterations))
     print(hdf5_file_path)
     #Doing some testing on best approaches to con-currency
-    pool = Pool(processes=parallel_instances)
-    # wfh_adj_trips_df does not change during parallel processing.
-    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration, free_flow_skims = free_flow_skims)
-    pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
-    pool.close()
-    pool.join()
+    with Pool(processes=parallel_instances) as pool:
+        # wfh_adj_trips_df does not change during parallel processing.
+        run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration, free_flow_skims = free_flow_skims)
+        pool.map(run_assignments_parallel_x, project_list)
 
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
     #instance of modeler issue. Will change code to be more generalized later.
-    pool = Pool(processes=parallel_instances)
-    pool.map(run_transit, project_list[0:parallel_instances])
-    pool.close()
-    pool.join()    
+    with Pool(processes=parallel_instances) as pool:
+        pool.map(run_transit, project_list)
 
 def run_transit(project_name):
     start_of_run = time.time()
@@ -1420,6 +1416,7 @@ def transit_assignment_skims(my_project):
         mod_calc['result'] = transfer_wait_matrix
         mod_calc['expression'] = total_wait_matrix + '-' + initial_wait_matrix
         matrix_calc(mod_calc)
+
     print(f"finished run_transit {my_project.tod}")
 
 def help():
