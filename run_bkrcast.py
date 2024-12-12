@@ -312,6 +312,7 @@ def run_all_summaries():
 
    #Create a daily network with volumes. Will add counts and summary emme project. 
    if run_create_daily_bank:
+      subprocess.call([sys.executable, 'scripts/summarize/standard/network_summary.py'])
       subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'])
 
    if run_landuse_summary:

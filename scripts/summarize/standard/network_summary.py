@@ -628,7 +628,8 @@ def main():
         elif opt == '-s':
             scenario_id = int(arg)                        
    
-    # Delete any existing files    
+    # Delete any existing files   
+    print('Run network summary...') 
     print('Delete existing output files.')    
     for _path in [input_config.transit_line_path, input_config.transit_node_path, input_config.transit_segment_path, input_config.network_results_path]:
         if os.path.exists(_path ):
