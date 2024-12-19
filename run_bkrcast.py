@@ -29,7 +29,6 @@ import datetime
 import subprocess
 import json
 from shutil import copy2 as shcopy
-from numpy import isin
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
