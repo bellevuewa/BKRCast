@@ -702,7 +702,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, tours_df, normal_biz_
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
             selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
-            selected = selected.append(selected_workers)
+            selected = pd.concat([selected, selected_workers], ignore_index = True)
 
     text = f'WFH workers wouldnt make errand tours during core biz hours: {selected.shape[0]}'
     print(text)
