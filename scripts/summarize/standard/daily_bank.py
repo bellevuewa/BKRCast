@@ -202,7 +202,7 @@ def main():
             daily_scenario.delete_extra_attribute(extra_attribute)
             
     daily_volume_attr = daily_scenario.create_extra_attribute('LINK', '@tveh')
-    daily_volume_attr.description = 'daily auto volume'
+    daily_volume_attr.description = 'daily vehicle volume'
     daily_bike_vol_attr = daily_scenario.create_extra_attribute('LINK', '@bvoldaily')
     daily_bike_vol_attr.description = 'daily bike volume'
     if input_config.include_rec_bike:    
@@ -229,7 +229,7 @@ def main():
 
         # copy auto volume in each tod to daily bank
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod)
-        attr.description = 'auto volume ' + tod
+        attr.description = 'vehicle volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@tveh'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 

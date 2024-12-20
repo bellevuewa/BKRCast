@@ -57,7 +57,7 @@ purp_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 
 time_periods = ['daily', 'am', 'md', 'pm', 'ni']
 
 
-def select_trips_by_time(total_trips_df, start_time= None, end_time = None):
+def select_trips_by_time(total_trips_df, start_time= 0, end_time = 0):
     if (start_time == 0 and end_time == 0):
         selected_trips_df = total_trips_df
     elif start_time <= end_time:
@@ -357,8 +357,9 @@ def main():
         output.write('\n')
 
     with pd.ExcelWriter(Output_file, engine = 'xlsxwriter') as writer:
-        # write readme tab        
-        wksheet = writer.book.add_worksheet('readme')
+        # write readme tab  
+        workbook = writer.book 
+        wksheet = workbook.add_worksheet('readme')
         wksheet.write(0, 0, str(datetime.datetime.now())) 
         wksheet.write(1, 0, 'model folder')
         wksheet.write(1, 1, prj.project_folder)
