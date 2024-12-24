@@ -226,11 +226,36 @@ def main():
             daily_scenario.delete_extra_attribute('@tv' + tod)
         if daily_scenario.extra_attribute('@recbvol' + tod):
             daily_scenario.delete_extra_attribute('@recbvol' + tod)
+        if daily_scenario.extra_attribute('@bveh' + tod):
+            daily_scenario.delete_extra_attribute('@bveh' + tod)
+        if daily_scenario.extra_attribute('@mveh' + tod):
+            daily_scenario.delete_extra_attribute('@mveh' + tod)
+        if daily_scenario.extra_attribute('@hveh' + tod):
+            daily_scenario.delete_extra_attribute('@hveh' + tod)
+
 
         # copy auto volume in each tod to daily bank
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod)
         attr.description = 'vehicle volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@tveh'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        # copy bus vehicle volume in each tod to daily bank
+        attr = daily_scenario.create_extra_attribute('LINK', '@bveh' + tod)
+        attr.description = 'bus vehicle volume ' + tod
+        values = scenario.get_attribute_values('LINK', ['@bveh'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        # copy medium truck vehicle volume in each tod to daily bank
+        attr = daily_scenario.create_extra_attribute('LINK', '@mveh' + tod)
+        attr.description = 'medium truck vehicle volume ' + tod
+        values = scenario.get_attribute_values('LINK', ['@mveh'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        # copy heavy truck vehicle volume in each tod to daily bank
+        attr = daily_scenario.create_extra_attribute('LINK', '@hveh' + tod)
+        attr.description = 'heavy vehicle volume ' + tod
+        values = scenario.get_attribute_values('LINK', ['@hveh'])
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # copy transit volume (on link) in each tod to daily bank
@@ -326,6 +351,15 @@ def main():
     attr = daily_scenario.create_extra_attribute('LINK', '@voltransit_daily')
     attr.description = 'daily transit volume'
 
+    attr = daily_scenario.create_extra_attribute('LINK', '@bveh_daily')
+    attr.description = 'daily bus vehicle volume'
+
+    attr = daily_scenario.create_extra_attribute('LINK', '@mveh_daily')
+    attr.description = 'daily medium truck vehicle volume'
+
+    attr = daily_scenario.create_extra_attribute('LINK', '@hveh_daily')
+    attr.description = 'daily heavy truck vehicle volume'
+
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_boarding')
     attr.description = 'daily total boarding at stop'
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_iboarding')
@@ -340,13 +374,15 @@ def main():
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_trsalighting')
     attr.description = 'daily transfer alighting at stop'
 
-
-
     daily_network = daily_scenario.get_network()
 
     attr_list = ['@v' + x for x in tods]
     attr_list.extend(['@bvol' + x for x in tods])
     attr_list.extend(['@tv' + x for x in tods])
+    attr_list.extend(['@bveh' + x for x in tods])
+    attr_list.extend(['@mveh' + x for x in tods])
+    attr_list.extend(['@hveh' + x for x in tods])
+
     if input_config.include_rec_bike:    
         attr_list.extend(['@recbvol' + x for x in tods])
         # calculate daily volumes: auto, bike, and transit
@@ -356,12 +392,18 @@ def main():
                 link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
                 link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
                 link['@recbvoldaily']  = link['@recbvoldaily'] + link['@recbvol' + item]
+                link['@bveh_daily'] = link['@bveh_daily'] + link['@bveh' + item]
+                link['@mveh_daily'] = link['@mveh_daily'] + link['@mveh' + item]
+                link['@hveh_daily'] = link['@hveh_daily'] + link['@hveh' + item]
     else: 
         for link in daily_network.links():
             for item in tods:
                 link['@tveh'] = link['@tveh'] + link['@v' + item]
                 link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
                 link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
+                link['@bveh_daily'] = link['@bveh_daily'] + link['@bveh' + item]
+                link['@mveh_daily'] = link['@mveh_daily'] + link['@mveh' + item]
+                link['@hveh_daily'] = link['@hveh_daily'] + link['@hveh' + item]
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
