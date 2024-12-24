@@ -14,6 +14,7 @@
         "daysim*": true,
         "outputs": true,
         "release": true,
+        "working": true,
         "inputs/2019":true,
         "inputs/2023":true,
         "inputs/accessibility":true,
@@ -32,7 +33,9 @@
         "inputs/6to9.h5":true,
         "inputs/9to1530.h5": true,
         "inputs/1530to1830.h5": true,
-        "inputs/1830to6.h5": true
+        "inputs/1830to6.h5": true,
+        "**/*.pyc": true,
+        "**/*.mtbx": true
 
     }
 }

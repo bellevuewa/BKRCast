@@ -2,7 +2,7 @@ Banks/
 working/
 projects/
 Daysim/last-run.log
-*.pyc
+**/*.pyc
 *.tsv
 *.tex
 *.alo
@@ -17,9 +17,9 @@ Daysim/last-run.log
 /UpgradeLog.htm
 /scripts/summarize/standard/export_files_for_validation.py
 /daysim_summaries/.Rproj.user
-*.mtbx
-*.mtbx-wal
-*.mtbx-shm
+**/*.mtbx
+**/*.mtbx-wal
+**/*.mtbx-shm
 /scripts/trucks/truck_model_old.py
 /scripts/trucks/truck_configuration_old.py
 /scripts/supplemental/mode_choice_supplemental.py

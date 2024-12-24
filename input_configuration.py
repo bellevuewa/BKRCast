@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True 
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
