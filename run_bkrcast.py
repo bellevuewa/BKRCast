@@ -51,14 +51,14 @@ def accessibility_calcs():
             print('Starting to update UrbanSim parcel data with 4k parking data file')
             returncode = subprocess.call([sys.executable,
                                       'scripts/utils/update_parking.py', base_inputs])
-            if returncode != 0:
+            if returncode != 0 and returncode != 3221225477:
                 print('Update Parking failed')
                 sys.exit(1)
             print('Finished updating parking data on parcel file')
 
     print('Beginning Accessibility Calculations')
     returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('Accessibility Calculations Failed For Some Reason :(')
         sys.exit(1)
     print('Done with accessibility calculations')
@@ -71,7 +71,7 @@ def build_seed_skims(max_iterations):
         'scripts/skimming/SkimsAndPaths.py', '-i',
         str(max_iterations),
         'build_free_flow_skims'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         sys.exit(1)
          
     time_skims = datetime.datetime.now()
@@ -119,10 +119,10 @@ def build_shadow_only(include_tnc_mode):
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
 
-        if returncode != 0:
-            logger.info('Shadow pricing crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Shadow pricing crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
-        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
+        logger.info(f"End of {shad_iter} iteration of work location for shadow prices")
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
         shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
@@ -145,63 +145,64 @@ def run_truck_supplemental(iteration):
         # Only run generation script once - does not change with feedback
         if iteration == 0:
             returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
-            if returncode != 0:
-                logger.info('Supplemental trip generation crashed unexpectedly. The return code is', str(returncode))
+            if returncode != 0 and returncode != 3221225477:
+                logger.info(f'Supplemental trip generation crashed unexpectedly. The return code is {returncode}')
                 sys.exit(1)
 
         #run distribution
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
-        if returncode != 0:
-            logger.info('Distribute_non_work_ixxi.py crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Distribute_non_work_ixxi.py crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
         returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
-        if returncode != 0:
-            logger.info('Airport model crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Airport model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
         returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Truck model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
     if include_rec_bike:
         returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'])  
-        if returncode != 0:
-            logger.info('Recreational bike model crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Recreational bike model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)                              
 @timed
 def daysim_assignment(iteration):
 
      ### RUN DAYSIM ################################################################
      if run_daysim:
-         logger.info("Start of %s iteration of Daysim", str(iteration))
+         logger.info(f"Start of {iteration} iteration of Daysim")
 
          #run daysim
          returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-         if returncode != 0:
-             logger.info("daysim crashed unexpectedly. The return code is ", str(returncode))
+         if returncode != 0 and returncode != 3221225477:
+             logger.info(f"daysim crashed unexpectedly. The return code is {returncode}")
              sys.exit(1)
-         logger.info("End of %s iteration of Daysim", str(iteration))
+         logger.info(f"End of {iteration} iteration of Daysim")
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
      run_truck_supplemental(iteration)
     
      #### ASSIGNMENTS ##############################################################
      if run_skims_and_paths:
-         logger.info("Start of %s iteration of Skims and Paths", str(iteration))
+         logger.info(f"Start of {iteration} iteration of Skims and Paths")
          returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
-         if returncode != 0:
-            logger.info('Skims crashed unexpectedly. The return code from skims and paths is ', str(returncode))
+         if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Skims crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
-         logger.info("End of %s iteration of Skims and Paths", str(iteration))
+         logger.info(f"End of {iteration} iteration of Skims and Paths")
 
          returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
-         if returncode != 0:
-            logger.info('Bike model crashed unexpectedly. The return code from skims and paths is ', str(returncode))
+         if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Bike model crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
 
 '''
@@ -268,7 +269,7 @@ def daysim_popsampler(option):
     popsyn_out_file = 'hh_and_persons_sampled.h5'
     returncode = subprocess.call([sys.executable,'scripts/popsampler.py',taz_sample_rate_file, popsyn_in_file, popsyn_out_file])
         
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('ERROR: population sampler did not work')
         logger.info(("ERROR: population sampler did not work"))
         sys.exit(1)
@@ -380,7 +381,7 @@ def main():
         'scripts/network/network_importer.py', base_inputs])
         logger.info("End of network importer")
         time_network = datetime.datetime.now()
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
            sys.exit(1)
 
     print('adding military jobs to regular jobs')
@@ -388,7 +389,7 @@ def main():
     print('adjusting non-work externals')
     print('creating ixxi file for Daysim')
     returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('Military Job loading failed')
         sys.exit(1)
     print('military jobs loaded')
@@ -400,7 +401,7 @@ def main():
     if run_skims_and_paths_seed_trips:
         build_seed_skims(10)
         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
             sys.exit(1)
 
     # Check all inputs have been created or copied

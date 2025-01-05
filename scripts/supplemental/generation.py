@@ -560,7 +560,7 @@ def main():
     balanced_df = balance_trips(df_taz, balance_to_productions, 'pro')
     balanced_df = balance_trips(df_taz, balance_to_attractions, 'att')
     balanced_df.to_csv(supplemental_loc+'/7_balance_trip_ends.csv',index=True)
-
+    print('Finished generating supplemental trips.')
 
 if __name__ == "__main__":
     main()
