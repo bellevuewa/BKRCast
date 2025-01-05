@@ -32,8 +32,16 @@ import emme_configuration as emme_config
 
 class EmmeProject:
     def __init__(self, filepath):
-        self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
-        self.m = _m.Modeller(self.desktop)
+        try: # modeller can only open one instance
+            self.m = _m.Modeller()
+            # will connect to whichever desktop session modeller was already using
+            self.desktop = self.m.desktop
+            if not os.path.samefile(self.desktop.path, filepath):
+                raise Exception("Desktop started on different project")
+        except AssertionError:
+            self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
+            self.m = _m.Modeller(self.desktop)
+
         pathlist = filepath.split("/")
         self.fullpath = filepath
         self.filename = pathlist.pop()
@@ -53,7 +61,7 @@ class EmmeProject:
         for database in self.data_explorer.databases():
             #print database.title()
             if database.title() == database_name:
-                self.bank.dispose()                
+                # self.bank.dispose()                
                 database.open()
                 self.bank = self.m.emmebank
                 self.tod = self.bank.title
