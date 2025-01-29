@@ -87,7 +87,28 @@ def merge_networks(master_network, merge_network):
       
     for link in merge_network.links():
         if not master_network.link(link.i_node, link.j_node):
-            master_network.create_link(link.i_node, link.j_node, link.modes)
+            new_link = master_network.create_link(link.i_node, link.j_node, link.modes)
+            new_link.vertices = link.vertices
+            new_link.shape = link.shape
+            new_link.num_lanes = link.num_lanes
+            new_link.length = link.length
+            new_link.shape_length = link.shape_length
+            new_link.type = link.type
+            new_link.volume_delay_func = link.volume_delay_func
+            new_link.data1 = link.data1
+            new_link.data2 = link.data2
+            new_link.data3 = link.data3
+
+    for line in merge_network.transit_lines():
+        if not master_network.transit_line(line.id):
+            newline = master_network.create_transit_line(line.id, line.vehicle.id, line.itinerary())
+            newline.description = line.description
+            newline.headway = line.headway
+            newline.speed = line.speed
+            newline.layover_time = line.layover_time
+            newline.data1 = line.data1
+            newline.data2 = line.data2
+            newline.data3 = line.data3
 
     return master_network
 
@@ -180,15 +201,10 @@ def main():
                 hourly_arr = matrix.get_numpy_data()
                 daily_matrix_dict[matrix.name] = daily_matrix_dict[matrix.name] + hourly_arr
       
+        # Network stuff:    
+        if time_period != 'pm':
+             daily_network = merge_networks(daily_network, network)           
 
-        # Network stuff:
-        if len(time_period_list) == 0:
-            daily_network = network
-            time_period_list.append(time_period)
-        elif time_period not in time_period_list:
-            time_period_list.append(time_period) #this line was repeated below
-            daily_network = merge_networks(daily_network, network)
-            time_period_list.append(time_period) #this line was repeated above
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 
     # Write daily trip tables:
