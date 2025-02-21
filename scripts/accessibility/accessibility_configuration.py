@@ -20,7 +20,7 @@ nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
 daily_parking_cost = "inputs\\accessibility\\daily_parking_costs.csv"
 hourly_parking_cost = "inputs\\accessibility\\hourly_parking_costs.csv"
-park_file = "inputs\\accessibility\\KC_parks.csv"
+park_file = "inputs\\accessibility\\King_Sno_County_Parks.csv"
 
 
 

@@ -35,8 +35,9 @@ class EmmeProject:
         try: # modeller can only open one instance
             self.m = _m.Modeller()
             # will connect to whichever desktop session modeller was already using
-            self.desktop = self.m.desktop
-            if not os.path.samefile(self.desktop.path, filepath):
+            self.desktop = _m.desktop
+            # self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
+            if not os.path.samefile(self.desktop.project_file_name(), filepath):
                 raise Exception("Desktop started on different project")
         except AssertionError:
             self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)

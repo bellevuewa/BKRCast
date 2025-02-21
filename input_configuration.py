@@ -61,7 +61,7 @@ include_tnc = False
 include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
 
 ## Recreational bike
-include_rec_bike = False # inplemented as part of supplemental
+include_rec_bike = True # inplemented as part of supplemental
 
 include_delivery = False
 
@@ -103,6 +103,10 @@ transit_modes = {"lbus": "bus", "ebus": "express", "fry": "ferry", "crt": "commu
 input_ensemble = r"inputs/landuse/parking_gz.csv"
 
 input_folder_for_supplemental = 'inputs/supplemental'
+
+# GIS Projection
+# Assign NAD83(HARN) / Washington North (ftUS) CRS
+gis_projection = 'EPSG:2926'
 
 # daysim mode definition
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}

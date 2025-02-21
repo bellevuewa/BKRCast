@@ -455,8 +455,9 @@ def update_taz_accessibility_file(horizon_year):
     
     df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')      
 
-def balance_trips(df, trip_purposes, balanced_to):
+def balance_trips(df, home_based, trip_purposes, balanced_to):
     """ Balance trips to productions or attractions."""
+    # home_based = 'hb' or 'nhb'
     if balanced_to == 'pro':
         to_balance = 'att'
         
@@ -464,10 +465,10 @@ def balance_trips(df, trip_purposes, balanced_to):
         to_balance = 'pro'
         
     for purposes in trip_purposes:
-        total_to_match = sum(df[purposes+balanced_to])
-        total_to_balance = sum(df[purposes+to_balance])
+        total_to_match = sum(df[home_based + purposes + balanced_to])
+        total_to_balance = sum(df[home_based+ purposes + to_balance])
         ratio = total_to_match / total_to_balance
-        df[purposes+to_balance] = df[purposes+to_balance] * ratio
+        df[home_based + purposes + to_balance] = df[home_based + purposes + to_balance] * ratio
     
     return df
 
