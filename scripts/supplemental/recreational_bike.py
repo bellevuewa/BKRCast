@@ -231,10 +231,16 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
 
     recbike_df = pd.DataFrame({'BKRCastTAZ': emme_taz_list})
 
+    county_lookup_df = pd.read_csv(os.path.join(bkr_config.project_folder, bkr_config.districtfile))
+    pierce_kitsap_county_df = county_lookup_df.loc[(county_lookup_df['County'] == 'Pierce') | (county_lookup_df['County'] == 'Kitsap')]
+
     if rec_bike_type == 'home_based':
         home_based_flag = 'hb'
         # calculate factored recreational bike production for home based (daily)
         daily_rec_bike_prod = daily_outbound_bike * rec_bike_rate * 0.5
+        daily_rec_bike_prod_df = pd.DataFrame(daily_rec_bike_prod, columns = [f'{home_based_flag}recbpro'])
+        daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['BKRCastTAZ']), f'{home_based_flag}recbpro'] = 0
+        daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro']
         total_daily_rec_bike_prod = daily_rec_bike_prod.sum()
 
         # calculate rec bike attraction for home based
@@ -267,7 +273,7 @@ def main():
     print('Calculating recreational bike trips...')    
     balance_to_production = ['recb'] 
     rec_rates = toml.load(os.path.join(bkr_config.input_folder_for_supplemental, 'rec_bike_rates.toml'))
-    annual_nhb_rec_bike_growth_rate = rec_rates['annual_nhb_rec_bike_growth_rate']
+
     # rates from NHTS 2017
     home_based_rec_bike_rate = rec_rates['home_based_rec_bike']
     non_home_based_rec_bike_rate = rec_rates['non_home_based_rec_bike']

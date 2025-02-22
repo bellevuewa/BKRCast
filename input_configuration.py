@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044'
+project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU\DT_rebalance_btw_job_category'
 base_year = '2019'  # BKRCast base year
 model_year = '2044'
