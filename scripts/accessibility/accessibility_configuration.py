@@ -60,6 +60,11 @@ intersections = ["nodes1", "nodes3", "nodes4"]
 recbike_accessibility = ['biketype']
 
 # @biketype:width_in_feet
-# @biketype == 1: bike lane @biketype == 10: trail
-bike_lane_width = {1: 4, 10: 10}
+# @biketype == 1: separated bike lane @biketype == 10: trail, @biketype == 2: stripped bike lane
+bike_lane_width = {1: 4, 2: 4, 10: 10}
+bike_lane_weight = {1: 2, 2: 1, 10: 5}
 
+## park file for recreational bike accessibility
+park_file_for_recbike = "inputs/accessibility/King_Sno_County_Parks.csv"
+excluded_park_list_for_recbike = r'inputs/supplemental/parks_excluded_from_rec_bike_generation.csv'
+additional_attractions_for_recbike = r'inputs/supplemental/additional_attractions_for_rec_bike.csv'

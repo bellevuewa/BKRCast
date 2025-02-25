@@ -73,7 +73,7 @@ def calculate_park_accessibility_to_bike(parcels, disaggregated_bike_lanes_df, s
         parcels_node_gdf[f'bt_{biketype}_cnt'] = parcels_node_gdf['biketype_sums'].apply(lambda x: x.get(biketype, 0))
         parcels_node_gdf[f'bt_{biketype}_sqft'] = parcels_node_gdf[f'bt_{biketype}_cnt'] * spacing * access_config.bike_lane_width.get(biketype, 0)
         # attr_list.extend([f'bt_{biketype}_cnt', f'bt_{biketype}_sqft'])  
-        parcels_node_gdf['accessibility'] += parcels_node_gdf[f'bt_{biketype}_sqft'] / 43560 # convert sqft to acre
+        parcels_node_gdf['accessibility'] += parcels_node_gdf[f'bt_{biketype}_sqft'] * access_config.bike_lane_weight.get(biketype, 0)/ 43560 # convert sqft to acre
 
     parcels_node_gdf['accessibility'] += parcels_node_gdf['SHAPE_Area'] / 43560 # parcel size in acre
 
@@ -164,7 +164,7 @@ def main():
     parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)       
     parcels = data_wrangling.load_parcel_data(parcel_path)
     pm_model_path = f'projects/1530to1830/1530to1830.emp'
-    non_directional_bike_link_df = create_non_directional_bike_links_df(pm_model_path, [1, 10])
+    non_directional_bike_link_df = create_non_directional_bike_links_df(pm_model_path, [1, 2, 10])
     net, all_street_links, all_street_nodes = data_wrangling.build_pandana_network()
     geolink_gdf, geonode_gdf = convert_bike_links_to_nodes(non_directional_bike_link_df, spacing = 20)   
 
@@ -172,7 +172,10 @@ def main():
     data_wrangling.assign_nodes_to_dataset(parcels, net, 'node_id', 'XCOORD_P', 'YCOORD_P')
     # find accessibility for parks 
     parks_df = pd.read_csv(access_config.park_file)  
-    parks_df = parks_df[parks_df['no4bike'] == 0]     
+    excluded_parks_df = pd.read_csv(access_config.excluded_park_list_for_recbike)
+    parks_df = parks_df[~parks_df['PSRC_ID'].isin(excluded_parks_df['PSRC_ID'])]
+    additional_attractions_df = pd.read_csv(access_config.additional_attractions_for_recbike)
+    parks_df = pd.concat([parks_df, additional_attractions_df], ignore_index = True)  
     parcels = parcels[['PARCELID', 'node_id']].merge(all_street_nodes.reset_index(), left_on = 'node_id', right_on = 'node_id')  
     parks_df = parks_df.merge(parcels, left_on = 'PSRC_ID', right_on = 'PARCELID', how = 'left')      
     # calculate how many points within 1 mile radius of each parcel centroid. 
@@ -187,7 +190,7 @@ def main():
     parK_access_by_TAZ['share'] = parK_access_by_TAZ['accessibility'] / total_accessibility   
     parK_access_by_TAZ.to_csv('outputs/bikes/park_accessibility_by_TAZ.csv', index = True)     
            
-    print('Recreational ike accessibility is finished')
+    print('Recreational bike accessibility is finished')
 
 if __name__ == '__main__':
     main()    
