@@ -145,7 +145,7 @@ def calc_bike_weight(my_project, link_df):
     # export total link weight as an Emme attribute file ('@bkwt.in')
     write_generalized_time(df=df)
 
-def bike_assignment(my_project, tod, increment_volume_flag):
+def bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike = False):
     ''' Assign bike trips using links weights based on slope, traffic, and facility type, for a given TOD.'''
 
     my_project.change_active_database(tod)
@@ -186,7 +186,7 @@ def bike_assignment(my_project, tod, increment_volume_flag):
     bike_network_spec = json.load(open(r'inputs\skim_params\bike_network_setup.json'))
     bike_network_vol(bike_network_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
 
-    if input_config.include_rec_bike:
+    if run_rec_bike:
         print('Assign rec bike trips...')
         recbike_name = 'recbike'
         # load rec bike trip table into emme, if recbike trips is not in the matrix list.
@@ -282,7 +282,7 @@ def get_aadt(my_project):
     
         
    
-def write_link_counts(my_project, tod):
+def write_link_counts(my_project, tod, run_rec_bike):
     ''' Write bike link volumes to file for comparisons to counts
         We need to think about how to better export link volumes. If we want to generate a pre-selected of link list with bike volumes (and rec bike),
         we need to find a better way to generate the selected list that will be always consistent with current network.
@@ -316,11 +316,11 @@ def write_link_counts(my_project, tod):
         #x['gdbJNode'] = df.iloc[row]['JNode']
         if link != None:
             x['bvol' + tod] = link['@bvol']
-            if input_config.include_rec_bike:            
+            if run_rec_bike:            
                 x['recbvol' + tod] = link['@recbvol']            
         else:
             x['bvol' + tod] = None
-            if input_config.include_rec_bike:            
+            if run_rec_bike:            
                 x['recbvol' + tod] = None            
         list_model_vols.append(x)
 
@@ -344,14 +344,16 @@ def help():
     print('then run bike_model.py without -n option.')    
     print('By default, the bike assignment is an increment of existing aux transit volume.')       
     print('')
-    print('    python bike_model.py -h -n')   
+    print('    python bike_model.py -h -n -r')   
     print('       where: ')             
     print('            -h: help')
-    print('            -n: new volume to replace the existing aux transit volume')        
+    print('            -n: new volume to replace the existing aux transit volume') 
+    print('            -r: include rec bike assignment')       
     
 def main():
 
     increment_volume_flag = True
+    run_rec_bike = False
     
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hn') 
@@ -365,6 +367,8 @@ def main():
             sys.exit(0)
         elif opt == '-n':
             increment_volume_flag = False
+        elif opt == '-r':
+            run_rec_bike = True
         else:
             print('Invalid option: ' + opt)
             print('Use -h to display help.')
@@ -391,10 +395,10 @@ def main():
     # Assign all AM trips (unable to assign trips without transit networks)
     for tod in input_config.bike_assignment_tod:
         print('assigning bike trips for: ' + str(tod))
-        bike_assignment(my_project, tod, increment_volume_flag)
+        bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike)
 
         # Write link volumes
-        write_link_counts(my_project, tod)
+        write_link_counts(my_project, tod, run_rec_bike)
 
     my_project.closeDesktop()
     
