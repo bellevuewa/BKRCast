@@ -356,7 +356,7 @@ def main():
     run_rec_bike = False
     
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hn') 
+        opts, args = getopt.getopt(sys.argv[1:], 'hnr') 
     except getopt.GetoptError:
         help()
         sys.exit(2)
