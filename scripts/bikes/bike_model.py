@@ -295,60 +295,28 @@ def get_aadt(my_project):
     
     return df
     
-        
-   
 def write_link_counts(my_project, tod, run_rec_bike):
-    ''' Write bike link volumes to file for comparisons to counts
-        We need to think about how to better export link volumes. If we want to generate a pre-selected of link list with bike volumes (and rec bike),
-        we need to find a better way to generate the selected list that will be always consistent with current network.
-        Probably code bike volumes in master network, then generate the list of links with bike counts.                     
-    '''        
-        
-
+    ''' write bike volume to external file, including recreational bike volume if flag is set'''
     my_project.change_active_database(tod)
-
     network = my_project.current_scenario.get_network()
+    bike_modes = {network.mode('k'), network.mode('l'), network.mode('q')}
 
-    # Load bike count data from file
-    bike_counts = pd.read_csv(input_config.bike_count_data)
+    link_data = {'id': [], 'bvol' + tod: []}
+    if run_rec_bike:
+        link_data['recbvol' + tod] = []
 
-    # Load edges file to join proper node IDs - don't need for BKR - nagendra.dhakar@rsginc.com
-    #edges_df = pd.read_csv(edges_file)
+    for link in network.links():
+        if link.modes.intersection(bike_modes):  # link is a bike link
+            link_data['id'].append(link.id)
+            link_data['bvol' + tod].append(link['@bvol'])
+            if run_rec_bike:
+                link_data['recbvol' + tod].append(link['@recbvol'])  
 
-    #df = bike_counts.merge(edges_df, on=['INode','JNode'])
-    df = bike_counts # in place of the above line that is commented out - nagendra.dhakar@rsginc.com
+    df = pd.DataFrame(link_data)
+    df.set_index('id', inplace = True)
+    return df
 
-    list_model_vols = []
-
-    for row in df.index:
-        i = df.iloc[row]['INode'] #modified NewINode to INode - nagendra.dhakar@rsginc.com
-        j = df.loc[row]['JNode'] #modified NewJNode to JNode - nagendra.dhakar@rsginc.com
-        link = network.link(i, j)
-        x = {}
-        x['EmmeINode'] = i
-        x['EmmeJNode'] = j
-        #x['gdbINode'] = df.iloc[row]['INode'] #commented out two lines - nagendra.dhakar@rsginc.com
-        #x['gdbJNode'] = df.iloc[row]['JNode']
-        if link != None:
-            x['bvol' + tod] = link['@bvol']
-            if run_rec_bike:            
-                x['recbvol' + tod] = link['@recbvol']            
-        else:
-            x['bvol' + tod] = None
-            if run_rec_bike:            
-                x['recbvol' + tod] = None            
-        list_model_vols.append(x)
-
-    df_count =  pd.DataFrame(list_model_vols)
-
-    if os.path.exists(input_config.bike_link_vol):
-        '''append column to existing TOD results'''
-        df = pd.read_csv(input_config.bike_link_vol)
-        df['bvol'+tod] = df_count['bvol'+tod]
-        df.to_csv(input_config.bike_link_vol,index=False) 
-    else:
-        df_count.to_csv(input_config.bike_link_vol,index=False) 
-
+  
 def help():
     init(autoreset = True)    
     print('Assign general bike trip tables (generated from the daysim model) and recreational bike trip tables (from supplemental module).')
@@ -407,13 +375,18 @@ def main():
     # Calculate generalized biking travel time for each link
     calc_bike_weight(my_project, link_df)
 
+    tod_df =[]
     # Assign all AM trips (unable to assign trips without transit networks)
     for tod in input_config.bike_assignment_tod:
         print('assigning bike trips for: ' + str(tod))
         bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike)
 
         # Write link volumes
-        write_link_counts(my_project, tod, run_rec_bike)
+        _df = write_link_counts(my_project, tod, run_rec_bike)
+        tod_df.append(_df)
+
+    final_df = pd.concat(tod_df, axis = 1, join = 'outer')
+    final_df.to_csv(input_config.bike_link_vol, index=True)
 
     my_project.closeDesktop()
     
