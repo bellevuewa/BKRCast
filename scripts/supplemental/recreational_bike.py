@@ -239,7 +239,7 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
         # calculate factored recreational bike production for home based (daily)
         daily_rec_bike_prod = daily_outbound_bike * rec_bike_rate * 0.5
         daily_rec_bike_prod_df = pd.DataFrame(daily_rec_bike_prod, columns = [f'{home_based_flag}recbpro'])
-        daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['BKRCastTAZ']), f'{home_based_flag}recbpro'] = 0
+        daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['TAZ']), f'{home_based_flag}recbpro'] = 0
         daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro']
         total_daily_rec_bike_prod = daily_rec_bike_prod.sum()
 

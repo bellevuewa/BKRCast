@@ -186,28 +186,43 @@ def bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike = False
     bike_network_spec = json.load(open(r'inputs\skim_params\bike_network_setup.json'))
     bike_network_vol(bike_network_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
 
+    bike_skims_matrices = ["mfbkpt", "mfbkat"]
     if run_rec_bike:
         print('Assign rec bike trips...')
         recbike_name = 'recbike'
         # load rec bike trip table into emme, if recbike trips is not in the matrix list.
         if recbike_name not in matrix_name_list:
             my_project.create_matrix('recbike', 'rec bike trip table', 'FULL') 
+
         recbike_trips = my_project.load_supplemental_trips('recb')
-        my_project.matrix_to_emme(recbike_trips, 'recbike', 'rec bike trip table', 'FULL')                         
+        my_project.matrix_to_emme(recbike_trips, 'recbike', 'rec bike trip table', 'FULL') 
+        
+        # create skim matrices for recbike
+        if 'recbkpt' not in matrix_name_list:
+            my_project.create_matrix('recbkpt', 'rec bike perceived travel time', 'FULL')
+
+        if 'recbkat' not in matrix_name_list:
+            my_project.create_matrix('recbkat', 'rec bike actual travel time', 'FULL')
+
+        if 'recbdist' not in matrix_name_list:
+            my_project.create_matrix('recbdist', 'rec bike distance', 'FULL')
 
         # create @recbike overwrite if it exists
         my_project.create_extra_attribute('LINK', '@recbvol', 'rec bike volume', overwrite = True)
         
         recbike_spec = json.load(open(r'inputs\skim_params\rec_bike_assignment.json'))
         extended_assign_transit(recbike_spec, save_strategies = True, add_volumes = True, class_name = emme_config.bike_mode_class_lookup['recb'])
-
+        recbike_skim_spec = json.load(open(r'inputs\skim_params\rec_bike_skim_setup.json'))
+        skim_bike(recbike_skim_spec, class_name = emme_config.bike_mode_class_lookup['recb'])
         # no need to calculate skims for recbike. Use skims for bike mode instead.
                 
         recbike_network_spec = json.load(open(r'inputs\skim_params\rec_bike_network_setup.json'))
         bike_network_vol(recbike_network_spec, class_name = emme_config.bike_mode_class_lookup['recb'])
         
+        bike_skims_matrices.extend(["mfrecbkpt", "mfrecbkat", "mfrecbdist"])
+
     # Export skims to h5
-    for matrix in ["mfbkpt", "mfbkat"]:
+    for matrix in bike_skims_matrices:
         print('exporting skim: ' + str(matrix))
         export_skims(my_project, matrix_name=matrix, tod=tod)
 
