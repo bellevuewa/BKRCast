@@ -166,18 +166,18 @@ def calculate_tod_rec_bike_trips(hb_rec_bike_prod_attr_df, nhb_rec_bike_prod_att
     # skims
     am_bkat_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)
     pm_bkat_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)
-    am_bkpt_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbkpt', divide_by_100 = True)
-    pm_bkpt_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbkpt', divide_by_100 = True)
+    am_bdist_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True)
+    pm_bdist_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True)
 
     bkat_skim = (am_bkat_skim + pm_bkat_skim) * 0.5
-    bkpt_skim = (am_bkpt_skim + pm_bkpt_skim) * 0.5
+    bdist_skim = (am_bdist_skim + pm_bdist_skim) * 0.5
 
     # TAZs where home based rec bike trips will destine to
     hbattr_tazs = hb_rec_bike_prod_attr_df.loc[hb_rec_bike_prod_attr_df['hbrecbatt'] > 0, 'BKRCastTAZ'].to_list()
     complement_hbattr_tazs =  hb_rec_bike_prod_attr_df.loc[hb_rec_bike_prod_attr_df['hbrecbatt'] == 0, 'BKRCastTAZ'].to_list()
     hbprod_tazs = hb_rec_bike_prod_attr_df.loc[hb_rec_bike_prod_attr_df['hbrecbpro'] > 0, 'BKRCastTAZ'].to_list()
     # Compute friction factors by trip purpose
-    fric_facs = calc_fric_fac(bkat_skim, bkpt_skim, coeff_df.loc[coeff_df['purpose'] == 'recb'], hb_rec_bike_prod_attr_df['BKRCastTAZ'].to_numpy())
+    fric_facs = calc_fric_fac(bkat_skim, bdist_skim, coeff_df.loc[coeff_df['purpose'] == 'recb'], hb_rec_bike_prod_attr_df['BKRCastTAZ'].to_numpy())
 
     print('Split daily rec bike to different TOD')
     tod_fac = pd.read_csv(os.path.join(input_config.input_folder_for_supplemental, 'rec_bike_tod_factors.csv'))
@@ -195,7 +195,7 @@ def calculate_tod_rec_bike_trips(hb_rec_bike_prod_attr_df, nhb_rec_bike_prod_att
 
     load_matrices_to_emme(hb_rec_bike_prod_attr_df, 'hb', trip_purpose_list, fric_facs, my_project)
     my_project.matrix_to_emme(bkat_skim, "bkat", 'bike actual time (avg of am and pm)', 'FULL')
-    my_project.matrix_to_emme(bkpt_skim, "bkpt", 'bike perceived time (avg of am and pm)', 'FULL')
+    my_project.matrix_to_emme(bdist_skim, "bdist", 'bike travel distance (avg of am and pm)', 'FULL')
             
     balance_matrices(trip_purpose_list, 'hb', my_project, 'gd')
     calculate_daily_rec_bike_trips(trip_purpose_list, 'hb', my_project)    

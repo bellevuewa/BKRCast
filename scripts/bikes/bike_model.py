@@ -160,6 +160,8 @@ def bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike = False
         my_project.create_matrix('bkpt', 'bike percepted travel time', 'FULL')
     if 'bkat' not in matrix_name_list:
         my_project.create_matrix('bkat', 'bike actual travel time', 'FULL')
+    if 'bdist' not in matrix_name_list:
+        my_project.create_matrix('bdist', 'bike distance', 'FULL')
 
     # Load in bike weight link attributes
     import_attributes = my_project.m.tool("inro.emme.data.network.import_attribute_values")
@@ -186,7 +188,7 @@ def bike_assignment(my_project, tod, increment_volume_flag, run_rec_bike = False
     bike_network_spec = json.load(open(r'inputs\skim_params\bike_network_setup.json'))
     bike_network_vol(bike_network_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
 
-    bike_skims_matrices = ["mfbkpt", "mfbkat"]
+    bike_skims_matrices = ['mfbkpt', 'mfbkat', 'mfbdist']
     if run_rec_bike:
         print('Assign rec bike trips...')
         recbike_name = 'recbike'
