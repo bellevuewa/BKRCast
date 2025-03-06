@@ -164,9 +164,9 @@ def calculate_tod_rec_bike_trips(hb_rec_bike_prod_attr_df, nhb_rec_bike_prod_att
     trip_purpose_list = ['recb']
 
     # skims
-    am_bkat_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)
-    pm_bkat_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)
-    am_bdist_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True)
+    am_bkat_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)# regular bike actual time
+    pm_bkat_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True) 
+    am_bdist_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True # regular bike distance)
     pm_bdist_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True)
 
     bkat_skim = (am_bkat_skim + pm_bkat_skim) * 0.5
@@ -223,7 +223,7 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
     ''' Calculate recreational bike productions and attractions for home based and non-home based trips 
     daily_outbound_bike: daily outbound bike trips from TAZ
     rec_bike_type: 'home_based' or 'non_home_based'
-    rec_bike_rate: rate of recreational bike trips per daily bike trip 
+    rec_bike_rate: ratio of rec bike trips over regular bike trips
     emme_taz_list: list of TAZs in Emme
     '''
     # load accessibility by TAZ file
@@ -276,7 +276,9 @@ def main():
 
     # rates from NHTS 2017
     home_based_rec_bike_rate = rec_rates['home_based_rec_bike']
+    hbrecb_ratio_to_regular_bike = home_based_rec_bike_rate / (1 - home_based_rec_bike_rate)
     non_home_based_rec_bike_rate = rec_rates['non_home_based_rec_bike']
+    nhbrecb_ratio_to_regular_bike = non_home_based_rec_bike_rate / (1 - non_home_based_rec_bike_rate)
     
     daily_bike_array, zones = calculate_daily_bike_trips()
     taz_to_index_lookup = dict((value,index) for index,value in enumerate(zones))
@@ -288,8 +290,8 @@ def main():
     daily_outbound_bike.index = daily_outbound_bike.index.map(index_to_taz_lookup)
 
     print('Calculating recreational bike productions and attractions...')
-    hbrecbike_df = calculate_rec_bike_prod_attr(daily_outbound_bike, 'home_based', home_based_rec_bike_rate, zones)
-    nhbrecbike_df = calculate_rec_bike_prod_attr(daily_outbound_bike, 'non_home_based', non_home_based_rec_bike_rate, zones)
+    hbrecbike_df = calculate_rec_bike_prod_attr(daily_outbound_bike, 'home_based', hbrecb_ratio_to_regular_bike, zones)
+    nhbrecbike_df = calculate_rec_bike_prod_attr(daily_outbound_bike, 'non_home_based', nhbrecb_ratio_to_regular_bike, zones)
  
     print('Balancing recreational bike trips...')
     # balance recreational bike attractions to productions.
