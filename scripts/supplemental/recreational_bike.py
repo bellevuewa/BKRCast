@@ -166,7 +166,7 @@ def calculate_tod_rec_bike_trips(hb_rec_bike_prod_attr_df, nhb_rec_bike_prod_att
     # skims
     am_bkat_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True)# regular bike actual time
     pm_bkat_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbkat', divide_by_100 = True) 
-    am_bdist_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True # regular bike distance)
+    am_bdist_skim = data_wrangling.load_skims(emme_config.am_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True) # regular bike distance
     pm_bdist_skim = data_wrangling.load_skims(emme_config.pm_skim_file_loc, mode_name = 'mfbdist', divide_by_100 = True)
 
     bkat_skim = (am_bkat_skim + pm_bkat_skim) * 0.5
