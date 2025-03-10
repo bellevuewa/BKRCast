@@ -345,7 +345,7 @@ def run_recreational_bike():
         sys.exit(1) 
 
     print('Assignment recreational bike trips')
-    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-n', '-r'])
+    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-r'])
     if returncode != 0 and returncode != 3221225477:
         print('recreational bike assignment is crashed.')
         sys.exit(1)
