@@ -237,31 +237,38 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
     if rec_bike_type == 'home_based':
         home_based_flag = 'hb'
         # calculate factored recreational bike production for home based (daily)
-        daily_rec_bike_prod = daily_outbound_bike * rec_bike_rate * 0.5
-        daily_rec_bike_prod_df = pd.DataFrame(daily_rec_bike_prod, columns = [f'{home_based_flag}recbpro'])
+        daily_rec_bike_prod_sries = daily_outbound_bike * rec_bike_rate * 0.5
+        daily_rec_bike_prod_df = pd.DataFrame(daily_rec_bike_prod_sries, columns = [f'{home_based_flag}recbpro'])
         daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['TAZ']), f'{home_based_flag}recbpro'] = 0
-        daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro']
-        total_daily_rec_bike_prod = daily_rec_bike_prod.sum()
+        total_daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro'].sum()
+
+        # calculate hhs by TAZ,
+        parcels_df = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
+        daily_rec_bike_prod = parcels_df[['TAZ_P', 'HH_P']].groupby('TAZ_P').sum()
+        # remove TAZ for Pierce and Kitsap counties
+        daily_rec_bike_prod.loc[daily_rec_bike_prod.index.isin(pierce_kitsap_county_df['TAZ']), 'HH_P'] = 0
+        daily_rec_bike_prod['share'] = daily_rec_bike_prod['HH_P'] / daily_rec_bike_prod['HH_P'].sum()
+        daily_rec_bike_prod[f'{home_based_flag}recbpro'] = total_daily_rec_bike_prod * daily_rec_bike_prod['share']
 
         # calculate rec bike attraction for home based
-        daily_rec_bike_attr = total_daily_rec_bike_prod * accessibility_df.set_index('BKRCastTAZ')['share']
-        daily_rec_bike_attr= pd.Series(daily_rec_bike_attr, index = accessibility_df['BKRCastTAZ'])
-        daily_rec_bike_attr = daily_rec_bike_attr.reindex(daily_outbound_bike.index, fill_value=0)
+        daily_rec_bike_attr = accessibility_df[['BKRCastTAZ', 'share']].copy()
+        daily_rec_bike_attr[f'{home_based_flag}recbatt'] = total_daily_rec_bike_prod * daily_rec_bike_attr['share']
+        daily_rec_bike_attr.fillna(0, inplace = True)
     else:
         home_based_flag = 'nhb'
         # calculate factored recreational bike production for non-home based (daily)
         total_daily_rec_bike_prod = (daily_outbound_bike * rec_bike_rate * 0.5).sum()
-        daily_rec_bike_prod = total_daily_rec_bike_prod * accessibility_df.set_index('BKRCastTAZ')['share']
-        daily_rec_bike_prod = pd.Series(daily_rec_bike_prod, index = accessibility_df['BKRCastTAZ'])
-        daily_rec_bike_prod = daily_rec_bike_prod.reindex(daily_outbound_bike.index, fill_value=0)
-
+        daily_rec_bike_prod = accessibility_df[['BKRCastTAZ', 'share']].copy().set_index('BKRCastTAZ')
+        daily_rec_bike_prod[f'{home_based_flag}recbpro'] = total_daily_rec_bike_prod * daily_rec_bike_prod['share']
+        daily_rec_bike_prod.fillna(0, inplace = True)
         # rec bike attractions are the same as productions, all from park to park based on their share of accessibility
-        # we could imrpove the accessibility calculation later
-        daily_rec_bike_attr = daily_rec_bike_prod.copy() 
+        # we could imrpove the accessibility calculation later        
+        daily_rec_bike_attr = accessibility_df[['BKRCastTAZ', 'share']].copy()
+        daily_rec_bike_attr[f'{home_based_flag}recbatt'] = total_daily_rec_bike_prod * daily_rec_bike_attr['share']
+        daily_rec_bike_attr.fillna(0, inplace = True)
 
-
-    recbike_df = recbike_df.merge(daily_rec_bike_prod.to_frame(name = f'{home_based_flag}recbpro'), left_on = 'BKRCastTAZ', right_index = True, how = 'left')
-    recbike_df = recbike_df.merge(daily_rec_bike_attr.to_frame(name = f'{home_based_flag}recbatt'), left_on = 'BKRCastTAZ', right_index = True, how = 'left')
+    recbike_df = recbike_df.merge(daily_rec_bike_prod, left_on = 'BKRCastTAZ', right_index = True, how = 'left')
+    recbike_df = recbike_df.merge(daily_rec_bike_attr, left_on = 'BKRCastTAZ', right_on = 'BKRCastTAZ', how = 'left')
     recbike_df.fillna(0, inplace = True)
     print(f'total daily {rec_bike_type} rec bike production: {total_daily_rec_bike_prod}')
     recbike_df.to_csv(os.path.join(emme_config.supplemental_loc, f'{rec_bike_type}_daily_rec_bike_prod_attr.csv'), index = False)
@@ -298,7 +305,7 @@ def main():
     data_wrangling.balance_trips(hbrecbike_df, 'hb', balance_to_production, 'pro')
     data_wrangling.balance_trips(nhbrecbike_df, 'nhb', balance_to_production, 'pro')
 
-    print('Calculating recreational bike trips by time of day...')
+    print('Calculating recreational bike daily trips and by time of day...')
     calculate_tod_rec_bike_trips_in_parallel(1, hbrecbike_df, nhbrecbike_df)
 
 
