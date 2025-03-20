@@ -172,7 +172,10 @@ def bike_assignment(my_project, tod, increment_volume_flag):
     skim_bike = my_project.m.tool("inro.emme.transit_assignment.extended.matrix_results")
     bike_skim_spec = json.load(open(r'inputs\skim_params\bike_skim_setup.json'))
     skim_bike(bike_skim_spec, class_name = emme_config.bike_mode_class_lookup['bike'])
-
+    inzone_terminal_time = my_project.bank.matrix('btermti').id
+    # add terminal time to bike skims
+    my_project.matrix_calculator(result = 'mfbkpt', expression = 'mfbkpt' + "+" + inzone_terminal_time)
+    my_project.matrix_calculator(result = 'mfbkat', expression = 'mfbkat' + "+" + inzone_terminal_time)
     # Add bike volumes to bvol network attribute
     bike_network_vol = my_project.m.tool("inro.emme.transit_assignment.extended.network_results")
 

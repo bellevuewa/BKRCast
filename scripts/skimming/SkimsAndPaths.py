@@ -177,14 +177,16 @@ def define_matrices(my_project):
     my_project.create_matrix('tazacr', 'taz area', "ORIGIN")
     
     #origin terminal time:
-    my_project.create_matrix('prodtt', 'origin terminal times', "ORIGIN")
-   
+    my_project.create_matrix('prodtt', 'origin terminal times for auto', "ORIGIN")
+    my_project.create_matrix('bprodtt', 'origin terminal times for bike', "ORIGIN")  
     #Destination terminal time:
-    my_project.create_matrix('attrtt', 'destination terminal times', "DESTINATION")
-   
+    my_project.create_matrix('attrtt', 'destination terminal times for auto', "DESTINATION")
+    my_project.create_matrix('battrtt', 'destination terminal times for bike', "DESTINATION")
+
     #Combined O/D terminal times:
-    my_project.create_matrix('termti', 'combined terminal times', "FULL")
-  
+    my_project.create_matrix('termti', 'combined terminal times for auto', "FULL")
+    my_project.create_matrix('btermti', 'combined terminal times for bike', "FULL") 
+
     end_define_matrices = time.time()
 
     text = 'It took ' + str(round((end_define_matrices-start_define_matrices)/60,2)) + ' minutes to define all matrices in Emme.'
@@ -205,19 +207,20 @@ def populate_intrazonals(my_project):
     my_project.matrix_transaction(taz_area_file)
     
     #origin terminal times
-    print(origin_tt_file)
+    print('importing origin terminal time for auto and bike')
     my_project.matrix_transaction(origin_tt_file)
+    my_project.matrix_transaction(origin_tt_file_bike)
     
     #destination terminal times
-    print(destination_tt_file)
+    print('importing destination terminal time for auto and bike')
     my_project.matrix_transaction(destination_tt_file)
+    my_project.matrix_transaction(destination_tt_file_bike)
     
     taz_area_matrix = my_project.bank.matrix('tazacr').id
     distance_matrix = my_project.bank.matrix(intrazonal_dict['distance']).id
 
     #Hard coded for now, generalize later
-    for key, value in intrazonal_dict.items():
-        
+    for key, value in intrazonal_dict.items():        
         if key == 'distance':
             my_project.matrix_calculator(result = value, expression = "sqrt(" +taz_area_matrix + "/640) * 45/60*(p.eq.q)")
          
@@ -232,6 +235,7 @@ def populate_intrazonals(my_project):
             
     #calculate full matrix terminal times
     my_project.matrix_calculator(result = 'termti', expression = 'prodtt + attrtt' )
+    my_project.matrix_calculator(result = 'btermti', expression = 'bprodtt + battrtt' )
     
     logging.debug('finished populating intrazonals')
 
@@ -1101,8 +1105,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
     assign_transit = my_project.m.tool("inro.emme.transit_assignment.standard_transit_assignment")
 
     #Load in the necessary Dictionaries
-
-
     assignment_specification = json_to_dictionary("bike_walk_assignment")
     #get demand matrix name from here:
     user_classes = json_to_dictionary("user_classes")
@@ -1112,7 +1114,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
     #Also fill in intrazonals
     
     #intrazonal_dict
-
     if my_project.tod in bike_walk_skim_tod:
         for key in bike_walk_matrix_dict.keys():
             #modify spec
@@ -1124,7 +1125,10 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
             #intrazonal
             matrix_name= bike_walk_matrix_dict[key]['intrazonal_time']
             matrix_id = my_bank.matrix(matrix_name).id
-            my_project.matrix_calculator(result = 'mf' + bike_walk_matrix_dict[key]['time'], expression = 'mf' + bike_walk_matrix_dict[key]['time'] + "+" + matrix_id)
+            inzone_terminal_time = my_project.bank.matrix('btermti').id
+            # add terminal time and intrazonal time to the skim
+            my_project.matrix_calculator(result = 'mf' + bike_walk_matrix_dict[key]['time'], expression = 'mf' + bike_walk_matrix_dict[key]['time'] + "+" + inzone_terminal_time + "+" + matrix_id)
+
             
     elif assign_for_all_tods == 'true':
         #Dont Skim
@@ -1132,62 +1136,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
             mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
             mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
             assign_transit(mod_assign)
-
-
-    end_transit_assignment = time.time()
-    text = 'It took ' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + ' minutes to run the bike/walk assignment.'
-    print(text)
-    logging.debug(text)
-
-def bike_walk_assignment_NonConcurrent(project_name):
-    #One bank
-    #this runs the assignment and produces a time skim as well, which we need is all we need- converted
-    #to distance in Daysim.
-    #Assignment is run for all time periods (at least it should be for the final iteration). Only need to
-    #skim for one TOD. Skim is an optional output of the assignment.
-    tod_dict = text_to_dictionary('time_of_day')
-    uniqueTOD = set(tod_dict.values())
-    uniqueTOD = list(uniqueTOD)
-    bike_walk_matrix_dict = json_to_dictionary("bike_walk_matrix_dict")
-    #populate a dictionary of with key=bank name, value = emmebank object
-    data_explorer = project_name.desktop.data_explorer()
-    all_emmebanks = {}
-    for database in data_explorer.databases():
-        emmebank = database.core_emmebank
-        all_emmebanks.update({emmebank.title: emmebank})
-    start_transit_assignment = time.time()
-
-    #Define the Emme Tools used in this function
-
-    for tod in uniqueTOD:
-        my_bank = all_emmebanks[tod]
-        #need a scenario, get the first one
-        current_scenario = list(my_bank.scenarios())[0]
-        #Determine the Path and Scenario File
-
-        zones=current_scenario.zone_numbers
-        bank_name = my_bank.title
-
-        assign_transit = project_name.tool("inro.emme.transit_assignment.standard_transit_assignment")
-
-        #Load in the necessary Dictionaries
-        assignment_specification = json_to_dictionary("bike_walk_assignment")
-        #get demand matrix name from here:
-        user_classes = json_to_dictionary("user_classes")
-        mod_assign = assignment_specification
-        #only skim for time for certain tod
-        if tod in bike_walk_skim_tod:
-            for key in bike_walk_matrix_dict.keys():
-                mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
-                mod_assign['od_results']['transit_times'] = bike_walk_matrix_dict[key]['time']
-                mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
-                assign_transit(mod_assign)
-        else:
-            #Dont Skim
-            for key in bike_walk_matrix_dict.keys():
-                mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
-                mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
-                assign_transit(mod_assign)
 
 
     end_transit_assignment = time.time()

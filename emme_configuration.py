@@ -169,6 +169,8 @@ intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 
 taz_area_file = 'inputs/intrazonals/taz_acres.in'
 origin_tt_file = 'inputs/intrazonals/origin_tt.in'
 destination_tt_file = 'inputs/intrazonals/destination_tt.in'
+origin_tt_file_bike = 'inputs/intrazonals/origin_tt_bike.in'
+destination_tt_file_bike = 'inputs/intrazonals/destination_tt_bike.in'
 
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
