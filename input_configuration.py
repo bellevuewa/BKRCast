@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast_2044_TNC_Recbike'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\Complan\Complan2044\2044LU\DT_rebalance_btw_job_category'
-base_year = '2019'  # BKRCast base year
-model_year = '2044'
+project_folder = r'F:\projects\2024baseyear\BKR3-24-v1'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2023baseyear_backup_b4redmond_landuse_update'
+base_year = '2024'  # BKRCast base year
+model_year = '2024'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2044' #name of the folder with scenario data
+scenario_name = '2024' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2019' 
@@ -30,12 +30,13 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False 
+run_accessibility_calcs = True 
 run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
 run_import_networks = False
+run_cumulative_slopes = False # run cumulative slopes for bike model. This is a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
@@ -177,6 +178,12 @@ slope_bins = [-1,0.02,0.04,0.06,1]
 slope_labels = [0,1,2,3]                
 
 avg_bike_speed = 10 # miles per hour
+avg_walk_speed = 3 # miles per hour
+
+# the current elevation raster is from UW Geology. It is 30ft resolution.
+# The raster is in GeoMapNWFeb2010 geodatabase. The raster is named usgs_dem_30ft
+# The raster is in NAD83(HARN) / Washington North (ftUS) CRS
+elevation_raster_database = r'inputs/model/GeoMapNWFeb2010/usgs_dem_30ft'
 
 # Outputs directory
 bike_link_vol = 'outputs/bikes/bike_volumes.csv'

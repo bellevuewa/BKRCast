@@ -416,6 +416,12 @@ def main():
     if run_accessibility_calcs:
         accessibility_calcs()
 
+    if run_cumulative_slopes:
+        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']) 
+        if returncode != 0 and returncode != 3221225477:
+            print('Cumulative slope calculation failed')
+            sys.exit(1)
+            
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
         # run_truck_supplemental(0)

@@ -687,6 +687,11 @@ class EmmeProject:
         demand_matrix[0:len(sub_demand_array), 0:len(sub_demand_array)] = sub_demand_array
 
         return demand_matrix
+    
+    def export_current_scenario_to_shapefile(self, output_folder):
+        ns = "inro.emme.data.network.export_network_as_shapefile"
+        export_network = self.m.tool(ns)
+        export_network(scenario = self.current_scenario, transit_shapes = 'LINES_AND_SEGMENTS', export_path = output_folder)
                       
     def calc_bus_pce(self):
      total_hours = emme_config.transit_tod[self.tod]['num_of_hours']

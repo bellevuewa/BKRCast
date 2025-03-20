@@ -1,10 +1,16 @@
 import pandas as pd
 import geopandas as gpd
 import rasterio
-import os
+import os, sys
 import numpy as np
-from shapely.geometry import Point
+import getopt
 from rasterstats import point_query
+sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+import input_configuration as bkr_config
+import emme_configuration as emme_config
+
+from EmmeProject import *
 
 # this script is to replace old cumulative slope calculation scripts bkr_slope.py and bkr_slope_step2.py.
 # 3/18/2025
@@ -18,74 +24,109 @@ def split_line_to_points(row, spacing):
     points.extend([{'ID': row.ID, 'geometry': line.interpolate(d)} for d in distance])
     return points
 
-
-# Define input locations
-geodb = r'V:\TransDeptGIS\GeoDB\Planning\Modeling\BKRCast_Bikenetwork_Slopes.gdb'
-in_raster = r'V:\ExternalData\UWGeology\xDelete\GeoMapNWFeb2010\usgs_dem_30ft'
-output_dir = r'D:\bike_cumulative_slopes'
-
-# Load shapefile as GeoDataFrame
-emme_links = gpd.read_file(geodb, layer = 'base_year_2023_emmelinks_from_S8056')
-
-# Convert to pandas DataFrame
-df = pd.DataFrame(emme_links)
-df.to_csv(os.path.join(output_dir, 'emme_link_outputs.csv'))
-
-# Split network lines into points
-segment_len = 30
-points = []
-
-print('Line to points...')
-all_points = emme_links.apply(lambda row: split_line_to_points(row, segment_len), axis = 1)
-points_list = [point for sublist in all_points for point in sublist]  # Flatten list of lists
-points_gdf = gpd.GeoDataFrame(points_list, crs=emme_links.crs)
-points_gdf.to_file(os.path.join(output_dir, 'link_components.geojson'), driver='GeoJSON')
-
-# Extract elevation values from raster
-print('Calculate elevations of each point in 30-ft apart...')
-with rasterio.open(in_raster) as src:
-    points_gdf['elevation'] = point_query(points_gdf.geometry, src.read(1), affine = src.transform, nodata = src.nodata )
-
-points_gdf.to_file(os.path.join(output_dir, 'link_components_elevation.geojson'), driver='GeoJSON')
-
-# Calculate slopes
-upslope_ij = {}
-upslope_ji = {}
-
 # Group points by link ID and calculate elevation gains
 def calculate_elevation_gains(group):
     elevations = group['elevation'].dropna().values
     if len(elevations) < 2:
         return pd.Series({'elev_gain_ij': 0})
     diff = np.diff(elevations)  # Calculate differences between consecutive points
-    elev_gain_ij = np.sum(np.maximum(diff, 0))  # Sum positive differences (upslope_ij)
+    elev_gain_ij = np.sum(np.maximum(diff, 0)) 
     return pd.Series({'elev_gain_ij': elev_gain_ij})
 
-print('Calculate cumulative slopes for each link...')
-# Apply the function to each group
-elev_gains = points_gdf.groupby('ID').apply(calculate_elevation_gains, include_groups = False).reset_index()
-elev_gains.to_csv(os.path.join(output_dir, 'link_elev_gains.csv'))
-# Merge elevation gains with the original DataFrame
-df = pd.merge(df, elev_gains, on='ID', how='left')
+def help():
+    print('Usage: python calculate_cumulative_slopes_for_bike.py')
+    print('This script calculates the cumulative slopes for each link.') 
+    print('The output is saved in the report_bikes_output_location folder.')
+    print('The output includes the following files:')
+    print('  - emme_attr.in: Emme attribute file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the inputs/bikes folder.')
+    print('  - emme_attr.csv: CSV file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the inputs/bikes folder.')
+    print('  - link_components_elevation.geojson: GeoJSON file with the following columns: ID, geometry, elevation, if the -a option is used')
+    print('  - link_elev_gains.csv: CSV file with the following columns: ID, elev_gain_ij, if the -a option is used')
+    print('  - emme_link_with_elevation_gain.csv: CSV file with the following columns: ID, INODE, JNODE, F_biketype, LENGTH, elev_gain_ij, elev_gain, avg_upslope, if the -a option is used')
+    print('  - shapefile folder: Shapefile folder with the following files: emme_links.shp, emme_links.shx, emme_links.dbf, emme_links.prj')
+    print('Options:')
+    print('  -a: Print all intermediate files. Files will be saved in the report_bikes_output_location folder.')
+    print('  -h: Display help')
 
-# Calculate elevation gain for both directions
-df['elev_gain'] = df['elev_gain_ij'].fillna(0)
 
-# Convert elevation gain to feet
-df['elev_gain'] *= 3.28084
+def main():
+    print_all_files = False
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'ha') 
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
 
-# Calculate average upslope
-df['avg_upslope'] = df['elev_gain'] / (df['LENGTH'] * 5280)
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit(0)
+        elif opt == '-a':
+             print_all_files = True
+        else:
+            print('Invalid option: ' + opt)
+            print('Use -h to display help.')
+            exit(2)
 
-df.to_csv(os.path.join(output_dir, 'emme_link_with_elevation_gain.csv'))
-# Prepare final output
-to_export = df[['INODE', 'JNODE', 'F_biketype', 'avg_upslope']].copy()
-to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', 'F_biketype': '@bkfac', 'avg_upslope': '@upslp'}, inplace=True)
-to_export.fillna(0, inplace=True)
+    # use PM network to export shape file
+    my_project = EmmeProject(emme_config.pm_project)
+    my_project.set_primary_scenario('1002')
+    export_shapefile_loc = os.path.join(bkr_config.report_bikes_output_location, 'shapefile')
+    my_project.export_current_scenario_to_shapefile(export_shapefile_loc)
 
-# Export results
-to_export.to_csv(os.path.join(output_dir, 'emme_attr.in'), sep=' ', index=False)
-to_export['id'] = to_export['inode'].astype(str) + '-' + to_export['jnode'].astype(str)
-to_export.to_csv(os.path.join(output_dir, 'emme_attr.csv'), sep=' ', index=False)
+    # Load shapefile as GeoDataFrame, and convert to the correct projection
+    emme_links = gpd.read_file(os.path.join(export_shapefile_loc, 'emme_links.shp'))
+    if emme_links.crs == None:
+        emme_links = emme_links.set_crs(bkr_config.gis_projection)
+    elif emme_links.crs != bkr_config.gis_projection:
+        emme_links = emme_links.to_crs(bkr_config.gis_projection)
 
-print('Processing complete.')
+    df = pd.DataFrame(emme_links)
+    # Split network lines into points
+    point_spacing = 30
+
+    print('Line to points...')
+    all_points = emme_links.apply(lambda row: split_line_to_points(row, point_spacing), axis = 1)
+    points_list = [point for sublist in all_points for point in sublist]  # Flatten list of lists
+    points_gdf = gpd.GeoDataFrame(points_list, crs=emme_links.crs)
+
+    # Extract elevation values from raster
+    print('Calculate elevations of each point in 30-ft apart...')
+    with rasterio.open(bkr_config.elevation_raster_database) as src:
+        points_gdf['elevation'] = point_query(points_gdf.geometry, src.read(1), affine = src.transform, nodata = src.nodata )
+
+    # Calculate slopes
+    print('Calculate cumulative slopes for each link...')
+    # Apply the function to each group
+    elev_gains = points_gdf.groupby('ID').apply(calculate_elevation_gains).reset_index()
+    # Merge elevation gains with the original DataFrame
+    df = pd.merge(df, elev_gains, on='ID', how='left')
+
+    # Calculate elevation gain for both directions
+    df['elev_gain'] = df['elev_gain_ij'].fillna(0)
+
+    # Convert elevation gain to feet
+    df['elev_gain'] *= 3.28084
+
+    # Calculate average upslope
+    df['avg_upslope'] = df['elev_gain'] / (df['LENGTH'] * 5280)
+
+    if print_all_files:
+        points_gdf.to_file(os.path.join(bkr_config.report_bikes_output_location, 'link_components_elevation.geojson'), driver='GeoJSON')
+        elev_gains.to_csv(os.path.join(bkr_config.report_bikes_output_location, 'link_elev_gains.csv'))      
+        df.to_csv(os.path.join(bkr_config.report_bikes_output_location, 'emme_link_with_elevation_gain.csv'))
+
+    # Prepare final output
+    to_export = df[['INODE', 'JNODE', '@biketype', 'avg_upslope']].copy()
+    to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', '@biketype': '@bkfac', 'avg_upslope': '@upslp'}, inplace=True)
+    to_export.fillna(0, inplace=True)
+
+    # Export results
+    to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.in'), sep=' ', index=False)
+    to_export['id'] = to_export['inode'].astype(str) + '-' + to_export['jnode'].astype(str)
+    to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.csv'), sep=' ', index=False)
+
+    print('Processing complete.')
+
+if __name__ == '__main__':
+    main()
