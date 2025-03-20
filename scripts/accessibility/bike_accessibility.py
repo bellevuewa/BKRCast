@@ -75,7 +75,7 @@ def calculate_park_accessibility_to_bike(parcels, disaggregated_bike_lanes_df, s
         # attr_list.extend([f'bt_{biketype}_cnt', f'bt_{biketype}_sqft'])  
         parcels_node_gdf['accessibility'] += parcels_node_gdf[f'bt_{biketype}_sqft'] * access_config.bike_lane_weight.get(biketype, 0)/ 43560 # convert sqft to acre
 
-    parcels_node_gdf['accessibility'] += parcels_node_gdf['SHAPE_Area'] / 43560 # parcel size in acre
+    parcels_node_gdf['accessibility'] += access_config.park_size_weight * parcels_node_gdf['SHAPE_Area'] / 43560 # parcel size in acre
 
     print('Exporting files...') 
 
