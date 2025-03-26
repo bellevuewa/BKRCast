@@ -377,13 +377,14 @@ class EmmeProject:
         auto_mode = set([m for m in network.modes() if m.type == 'AUTO'])
         transit_mode = set([m for m in network.modes() if m.type == 'TRANSIT'])
 
-        link_data = {'i_node':[], 'j_node': []}
+        link_data = {'i_node':[], 'j_node': [], 'shape':[]}
         link_data.update({k: [] for k in network.attributes('LINK')})
         for link in network.links():
             link.isAuto = bool(link.modes.intersection(auto_mode))
             link.isTransit = bool(link.modes.intersection(transit_mode))
             link.isConnector = (link.i_node.is_centroid or link.j_node.is_centroid)
             link.isOneWay = network.link(link.j_node, link.i_node) is None
+            link_data['shape'].append(link.shape)
 
             for k in network.attributes('LINK'):
                 link_data[k].append(link[k])
