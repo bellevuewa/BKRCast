@@ -227,7 +227,7 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
     emme_taz_list: list of TAZs in Emme
     '''
     # load accessibility by TAZ file
-    accessibility_df = pd.read_csv(os.path.join(access_config.report_bikes_output_location, 'park_accessibility_by_TAZ.csv'))
+    accessibility_df = pd.read_csv(os.path.join(access_config.report_bikes_output_location, 'TAZ_bike_accessibility.csv'))
 
     recbike_df = pd.DataFrame({'BKRCastTAZ': emme_taz_list})
 
