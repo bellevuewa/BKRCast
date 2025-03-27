@@ -61,7 +61,8 @@ recbike_accessibility = ['biketype']
 
 # @biketype:width_in_feet
 # @biketype == 1: separated bike lane @biketype == 10: trail, @biketype == 2: stripped bike lane
-bike_lane_width = {1: 4, 2: 4, 10: 10}
+# for trail, bike width is half of the trail width, because the trail is shared by both directions. The total width is 10 feet.
+bike_lane_width = {1: 4, 2: 4, 10: 5}
 # @biketype:bike_lane_weight_in_accessibility
 # @biketype == 1: separated bike lane @biketype == 10: trail, @biketype == 2: stripped bike lane
 bike_lane_weight = {1: 2, 2: 1, 10: 5}
