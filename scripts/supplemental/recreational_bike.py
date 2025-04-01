@@ -73,6 +73,11 @@ def balance_matrices(trip_purps, home_based_flag, my_project, partition):
                                     destination_totals = 'md' + home_based_flag + purpose + 'att', 
                                     constraint_by_zone_destinations = f'{partition}1', 
                                     constraint_by_zone_origins = 'all')
+        # replace NaN with o in the matrix
+        nparray = my_project.bank.matrix(f'mf{home_based_flag}{purpose}dis').get_numpy_data()
+        nparray[np.isnan(nparray)] = 0
+        my_project.bank.matrix(f'mf{home_based_flag}{purpose}dis').set_numpy_data(nparray)
+        
 
 def initialize_matrix(home_based, trip_purps, my_project):
     matrix_name_list = [matrix.name for matrix in my_project.bank.matrices()]
@@ -247,8 +252,9 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
         daily_rec_bike_prod = parcels_df[['TAZ_P', 'HH_P']].groupby('TAZ_P').sum()
         # remove TAZ for Pierce and Kitsap counties
         daily_rec_bike_prod.loc[daily_rec_bike_prod.index.isin(pierce_kitsap_county_df['TAZ']), 'HH_P'] = 0
-        daily_rec_bike_prod['share'] = daily_rec_bike_prod['HH_P'] / daily_rec_bike_prod['HH_P'].sum()
-        daily_rec_bike_prod[f'{home_based_flag}recbpro'] = total_daily_rec_bike_prod * daily_rec_bike_prod['share']
+        daily_rec_bike_prod['hhshare'] = daily_rec_bike_prod['HH_P'] / daily_rec_bike_prod['HH_P'].sum()
+        daily_rec_bike_prod[f'{home_based_flag}recbpro'] = total_daily_rec_bike_prod * daily_rec_bike_prod['hhshare']
+        daily_rec_bike_prod.fillna(0, inplace = True)
 
         # calculate rec bike attraction for home based
         daily_rec_bike_attr = accessibility_df[['BKRCastTAZ', 'share']].copy()
@@ -302,8 +308,8 @@ def main():
  
     print('Balancing recreational bike trips...')
     # balance recreational bike attractions to productions.
-    data_wrangling.balance_trips(hbrecbike_df, 'hb', balance_to_production, 'pro')
-    data_wrangling.balance_trips(nhbrecbike_df, 'nhb', balance_to_production, 'pro')
+    hbrecbike_df = data_wrangling.balance_trips(hbrecbike_df, 'hb', balance_to_production, 'pro')
+    nhbrecbike_df = data_wrangling.balance_trips(nhbrecbike_df, 'nhb', balance_to_production, 'pro')
 
     print('Calculating recreational bike daily trips and by time of day...')
     calculate_tod_rec_bike_trips_in_parallel(1, hbrecbike_df, nhbrecbike_df)
