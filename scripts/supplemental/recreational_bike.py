@@ -233,25 +233,26 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
     '''
     # load accessibility by TAZ file
     accessibility_df = pd.read_csv(os.path.join(access_config.report_bikes_output_location, 'TAZ_bike_accessibility.csv'))
+    
 
     recbike_df = pd.DataFrame({'BKRCastTAZ': emme_taz_list})
 
-    county_lookup_df = pd.read_csv(os.path.join(bkr_config.project_folder, bkr_config.districtfile))
-    pierce_kitsap_county_df = county_lookup_df.loc[(county_lookup_df['County'] == 'Pierce') | (county_lookup_df['County'] == 'Kitsap')]
+    # county_lookup_df = pd.read_csv(os.path.join(bkr_config.project_folder, bkr_config.districtfile))
+    # pierce_kitsap_county_df = county_lookup_df.loc[(county_lookup_df['County'] == 'Pierce') | (county_lookup_df['County'] == 'Kitsap')]
 
     if rec_bike_type == 'home_based':
         home_based_flag = 'hb'
         # calculate factored recreational bike production for home based (daily)
         daily_rec_bike_prod_sries = daily_outbound_bike * rec_bike_rate * 0.5
         daily_rec_bike_prod_df = pd.DataFrame(daily_rec_bike_prod_sries, columns = [f'{home_based_flag}recbpro'])
-        daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['TAZ']), f'{home_based_flag}recbpro'] = 0
+        # daily_rec_bike_prod_df.loc[daily_rec_bike_prod_df.index.isin(pierce_kitsap_county_df['TAZ']), f'{home_based_flag}recbpro'] = 0
         total_daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro'].sum()
 
         # calculate hhs by TAZ,
         parcels_df = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
         daily_rec_bike_prod = parcels_df[['TAZ_P', 'HH_P']].groupby('TAZ_P').sum()
         # remove TAZ for Pierce and Kitsap counties
-        daily_rec_bike_prod.loc[daily_rec_bike_prod.index.isin(pierce_kitsap_county_df['TAZ']), 'HH_P'] = 0
+        # daily_rec_bike_prod.loc[daily_rec_bike_prod.index.isin(pierce_kitsap_county_df['TAZ']), 'HH_P'] = 0
         daily_rec_bike_prod['hhshare'] = daily_rec_bike_prod['HH_P'] / daily_rec_bike_prod['HH_P'].sum()
         daily_rec_bike_prod[f'{home_based_flag}recbpro'] = total_daily_rec_bike_prod * daily_rec_bike_prod['hhshare']
         daily_rec_bike_prod.fillna(0, inplace = True)

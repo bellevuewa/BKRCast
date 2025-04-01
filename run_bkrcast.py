@@ -333,7 +333,7 @@ def run_recreational_bike():
     logger.info('Running the recreational bike model')
     print('Running the recreational bike as part of the supplemental module')
     print('Calculating accessibility for recreational bike')
-    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility.py'])
+    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'])
     if returncode != 0 and returncode != 3221225477:    
         print('bike_accessibility is was crashed.')
         sys.exit(1)
