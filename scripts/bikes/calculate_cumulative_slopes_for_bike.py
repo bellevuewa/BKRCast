@@ -117,10 +117,12 @@ def main():
         df.to_csv(os.path.join(bkr_config.report_bikes_output_location, 'emme_link_with_elevation_gain.csv'))
 
     # Prepare final output
-    to_export = df[['INODE', 'JNODE', '@biketype', 'avg_upslope']].copy()
-    to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', '@biketype': '@bkfac', 'avg_upslope': '@upslp'}, inplace=True)
+    to_export = df[['INODE', 'JNODE', '@biketype', 'elev_gain', 'avg_upslope']].copy()
+    to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', '@biketype': '@bkfac', 'elev_gain': '@elegain', 'avg_upslope': '@upslp'}, inplace=True)
     to_export.fillna(0, inplace=True)
 
+    to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join(os.path.join('inputs/bikes'), '@upslp.in'), sep=' ', index=False)
+    to_export[['inode', 'jnode', '@elegain']].to_csv(os.path.join(os.path.join('inputs/bikes'), '@elegain.in'), sep=' ', index=False)
     # Export results
     to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.in'), sep=' ', index=False)
     to_export['id'] = to_export['inode'].astype(str) + '-' + to_export['jnode'].astype(str)

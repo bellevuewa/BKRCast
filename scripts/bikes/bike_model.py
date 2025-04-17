@@ -64,7 +64,7 @@ def process_attributes(my_project):
     '''Import bike facilities and slope attributes for an Emme network'''
     network = my_project.current_scenario.get_network()
 
-    for attr in ['@bkfac', '@upslp']:
+    for attr in ['@bkfac', '@upslp', '@elegain']:
         if attr not in my_project.current_scenario.attributes('LINK'):
             my_project.current_scenario.create_extra_attribute('LINK',attr)
 
