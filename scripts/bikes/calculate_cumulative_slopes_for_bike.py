@@ -5,6 +5,7 @@ import os, sys
 import numpy as np
 import getopt
 from rasterstats import point_query
+from multiprocessing import Pool, cpu_count
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import input_configuration as bkr_config
@@ -92,8 +93,19 @@ def main():
 
     # Extract elevation values from raster
     print('Calculate elevations of each point in 30-ft apart...')
-    with rasterio.open(bkr_config.elevation_raster_database) as src:
-        points_gdf['elevation'] = point_query(points_gdf.geometry, src.read(1), affine = src.transform, nodata = src.nodata )
+
+    # split points into chunks by numbver of cpus for multiprocessing
+    geometry_with_index = list(zip(points_gdf.index, points_gdf.geometry))
+    chunks = [geometry_with_index[i::cpu_count()] for i in range(cpu_count())]
+    with Pool(cpu_count()) as pool:
+        results = pool.map(query_chunk, chunks)
+    # Combine results into a single GeoDataFrame
+    flat_results_pair = [item for sublist in results for item in sublist]
+    points_gdf['elevation'] = points_gdf.index.map(dict(flat_results_pair))
+
+    # below is the old code to calculate elevation from raster, but it is too slow
+    # with rasterio.open(bkr_config.elevation_raster_database) as src:
+    #     points_gdf['elevation'] = point_query(points_gdf.geometry, src.read(1), affine = src.transform, nodata = src.nodata )
 
     # Calculate slopes
     print('Calculate cumulative slopes for each link...')
@@ -129,6 +141,13 @@ def main():
     to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.csv'), sep=' ', index=False)
 
     print('Processing complete.')
+
+
+def query_chunk(indexed_geoms):
+    idxs, geoms = zip(*indexed_geoms)
+    with rasterio.open(bkr_config.elevation_raster_database) as src:
+        elevations = point_query(geoms, src.read(1), affine=src.transform, nodata=src.nodata)
+        return list(zip(idxs, elevations))
 
 if __name__ == '__main__':
     main()
