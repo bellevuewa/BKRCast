@@ -320,10 +320,16 @@ def run_all_summaries():
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
 def clean_output_folder():
-    folders_kept = ['landuse'] # subfolders inside outputs
+    folders_kept = ['landuse', 'bike'] # subfolders inside outputs
+    output_folder = os.path.join(project_folder, 'outputs')
+
+    if not os.path.exists(output_folder):
+        print(f"Output folder does not exist: {output_folder}")
+        return
+
     list_directory = os.listdir('outputs')
     for item in list_directory:
-        full_path = os.path.join(project_folder, 'outputs', item)
+        full_path = os.path.join(output_folder, item)
         if os.path.isfile(full_path):
             os.remove(full_path)
         elif os.path.isdir(full_path) and (not(item in folders_kept)):

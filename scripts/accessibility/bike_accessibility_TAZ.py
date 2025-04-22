@@ -299,9 +299,9 @@ def main():
     my_project = EmmeProject(emme_config.pm_project)
     # import @upslp and @elegain from input_config.project_folder
     my_project.create_extra_attribute('LINK', '@upslp', 'cumulative slope for uphill only', True)
-    my_project.import_attribute_values(os.path.join(input_config.project_folder, 'inputs/bikes/@upslp.in'), False)
+    my_project.import_attribute_values(os.path.join(input_config.project_folder, 'outputs/bikes/@upslp.in'), False)
     my_project.create_extra_attribute('LINK', '@elegain', 'cumulative elevation gain uphill only', True)
-    my_project.import_attribute_values(os.path.join(input_config.project_folder, 'inputs/bikes/@elegain.in'), False)
+    my_project.import_attribute_values(os.path.join(input_config.project_folder, 'outputs/bikes/@elegain.in'), False)
 
     # get emme_link and emme_node to df
     emme_link_df = my_project.emme_links_to_df()

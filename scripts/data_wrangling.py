@@ -194,8 +194,6 @@ def copy_large_inputs():
     shutil.copytree(base_inputs+'/trucks','inputs/trucks', dirs_exist_ok=True)
     print('  accessibility..')
     shutil.copytree(base_inputs+'/accessibility','inputs/accessibility', dirs_exist_ok=True)  
-    print('  bikes..')
-    shutil.copytree(base_inputs+'/bikes','inputs/bikes', dirs_exist_ok=True)
     #print('  supplemental..')
     #dir_util.copytree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')

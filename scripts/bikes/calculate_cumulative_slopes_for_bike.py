@@ -39,8 +39,8 @@ def help():
     print('This script calculates the cumulative slopes for each link.') 
     print('The output is saved in the report_bikes_output_location folder.')
     print('The output includes the following files:')
-    print('  - emme_attr.in: Emme attribute file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the inputs/bikes folder.')
-    print('  - emme_attr.csv: CSV file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the inputs/bikes folder.')
+    print('  - emme_attr.in: Emme attribute file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the outputs/bikes folder.')
+    print('  - emme_attr.csv: CSV file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the outputs/bikes folder.')
     print('  - link_components_elevation.geojson: GeoJSON file with the following columns: ID, geometry, elevation, if the -a option is used')
     print('  - link_elev_gains.csv: CSV file with the following columns: ID, elev_gain_ij, if the -a option is used')
     print('  - emme_link_with_elevation_gain.csv: CSV file with the following columns: ID, INODE, JNODE, F_biketype, LENGTH, elev_gain_ij, elev_gain, avg_upslope, if the -a option is used')
@@ -133,12 +133,12 @@ def main():
     to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', '@biketype': '@bkfac', 'elev_gain': '@elegain', 'avg_upslope': '@upslp'}, inplace=True)
     to_export.fillna(0, inplace=True)
 
-    to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join(os.path.join('inputs/bikes'), '@upslp.in'), sep=' ', index=False)
-    to_export[['inode', 'jnode', '@elegain']].to_csv(os.path.join(os.path.join('inputs/bikes'), '@elegain.in'), sep=' ', index=False)
+    to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join(os.path.join('outputs/bikes'), '@upslp.in'), sep=' ', index=False)
+    to_export[['inode', 'jnode', '@elegain']].to_csv(os.path.join(os.path.join('outputs/bikes'), '@elegain.in'), sep=' ', index=False)
     # Export results
-    to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.in'), sep=' ', index=False)
+    to_export.to_csv(os.path.join(os.path.join('outputs/bikes'), 'emme_attr.in'), sep=' ', index=False)
     to_export['id'] = to_export['inode'].astype(str) + '-' + to_export['jnode'].astype(str)
-    to_export.to_csv(os.path.join(os.path.join('inputs/bikes'), 'emme_attr.csv'), sep=' ', index=False)
+    to_export.to_csv(os.path.join(os.path.join('outputs/bikes'), 'emme_attr.csv'), sep=' ', index=False)
 
     print('Processing complete.')
 

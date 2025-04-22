@@ -69,7 +69,7 @@ def process_attributes(my_project):
             my_project.current_scenario.create_extra_attribute('LINK',attr)
 
     import_attributes = my_project.m.tool("inro.emme.data.network.import_attribute_values")
-    filename = r'inputs/bikes/emme_attr.in'
+    filename = r'outputs/bikes/emme_attr.in'
     import_attributes(filename, 
                       scenario = my_project.current_scenario,
                       revert_on_error=False)
@@ -111,10 +111,10 @@ def write_generalized_time(df):
     df['inode'] = df['link_id'].str.split('-').str[0]
     df['jnode'] = df['link_id'].str.split('-').str[1]
 
-    filename = r'inputs/bikes/bkwt.in'
+    filename = r'outputs/bikes/bkwt.in'
     df[['inode','jnode', '@bkwt']].to_csv(filename, sep=' ', index=False)
 
-    print("results written to inputs/bikes/bkwt.in")
+    print("results written to outputs/bikes/bkwt.in")
 
 def calc_bike_weight(my_project, link_df):
     ''' Calculate perceived travel time weight for bikes
@@ -400,7 +400,7 @@ def main():
             if attr not in my_project.current_scenario.attributes('LINK'):
                 my_project.current_scenario.create_extra_attribute('LINK',attr)   
         import_attributes = my_project.m.tool("inro.emme.data.network.import_attribute_values")
-        filename = r'inputs\bikes\bkwt.in'
+        filename = r'outputs\bikes\bkwt.in'
         import_attributes(filename,
                             scenario = my_project.current_scenario,
                             revert_on_error=False)
