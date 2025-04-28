@@ -137,7 +137,7 @@ def export_link_values(my_project):
     df.to_csv(daily_network_fname)
 
     # Export shapefile
-    shapefile_dir = r'outputs/network/shapefile'
+    shapefile_dir = r'outputs/network/daily_shapefile'
     if not os.path.exists(shapefile_dir):
         os.makedirs(shapefile_dir)
     network_to_shapefile = my_project.m.tool('inro.emme.data.network.export_network_as_shapefile')

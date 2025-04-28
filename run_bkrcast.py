@@ -168,11 +168,7 @@ def run_truck_supplemental(iteration):
             logger.info(f'Truck model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
-    if include_rec_bike:
-        returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'])  
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Recreational bike model crashed unexpectedly. The return code is {returncode}')
-            sys.exit(1)                              
+                           
 @timed
 def daysim_assignment(iteration):
 
@@ -192,18 +188,20 @@ def daysim_assignment(iteration):
     
      #### ASSIGNMENTS ##############################################################
      if run_skims_and_paths:
-         logger.info(f"Start of {iteration} iteration of Skims and Paths")
-         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
+        logger.info(f"Start of {iteration} iteration of Skims and Paths")
+        returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
-         if returncode != 0 and returncode != 3221225477:
+        if returncode != 0 and returncode != 3221225477:
             logger.info(f'Skims crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
-         logger.info(f"End of {iteration} iteration of Skims and Paths")
 
-         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
-         if returncode != 0 and returncode != 3221225477:
+        # no need to run recreational bike here. It is run after the last iteration of skims and paths
+        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
+        if returncode != 0 and returncode != 3221225477:
             logger.info(f'Bike model crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
+
+        logger.info(f"End of {iteration} iteration of Skims and Paths")        
 
 '''
 
@@ -322,16 +320,43 @@ def run_all_summaries():
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
 def clean_output_folder():
-    folders_kept = ['landuse'] # subfolders inside outputs
+    folders_kept = ['landuse', 'bike'] # subfolders inside outputs
+    output_folder = os.path.join(project_folder, 'outputs')
+
+    if not os.path.exists(output_folder):
+        print(f"Output folder does not exist: {output_folder}")
+        return
+
     list_directory = os.listdir('outputs')
     for item in list_directory:
-        full_path = os.path.join(project_folder, 'outputs', item)
+        full_path = os.path.join(output_folder, item)
         if os.path.isfile(full_path):
             os.remove(full_path)
         elif os.path.isdir(full_path) and (not(item in folders_kept)):
             shutil.rmtree(full_path)
                 
-                                
+def run_recreational_bike():
+    logger.info('Running the recreational bike model')
+    print('Running the recreational bike as part of the supplemental module')
+    print('Calculating accessibility for recreational bike')
+    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'])
+    if returncode != 0 and returncode != 3221225477:    
+        print('bike_accessibility is was crashed.')
+        sys.exit(1)
+
+    print('Generating recreational bike trips')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'])
+    if returncode != 0 and returncode != 3221225477:
+        print('recreational bike generation is crashed.')
+        sys.exit(1) 
+
+    print('Assignment recreational bike trips')
+    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-b'])
+    if returncode != 0 and returncode != 3221225477:
+        print('recreational bike assignment is crashed.')
+        sys.exit(1)
+
+    logger.info('Finished running the recreational bike model')                               
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
@@ -397,9 +422,19 @@ def main():
     if run_accessibility_calcs:
         accessibility_calcs()
 
+    if run_cumulative_slopes:
+        logger.info('Running culmulative slope calculation')
+        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']) 
+        if returncode != 0 and returncode != 3221225477:
+            print('Cumulative slope calculation failed')
+            sys.exit(1)
+            
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
+        logger.info('Running skim seed trips')
+        # run_truck_supplemental(0)
         build_seed_skims(10)
+        # no need to run rec bike assignment in seeding trips
         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
         if returncode != 0 and returncode != 3221225477:
             sys.exit(1)
@@ -475,6 +510,9 @@ def main():
 
             print('The system is not yet converged. Daysim and Assignment will be re-run.')
 
+    if include_rec_bike:
+        run_recreational_bike()
+                    
 ### SUMMARIZE
 ### ##################################################################
     run_all_summaries()

@@ -35,8 +35,9 @@ class EmmeProject:
         try: # modeller can only open one instance
             self.m = _m.Modeller()
             # will connect to whichever desktop session modeller was already using
-            self.desktop = self.m.desktop
-            if not os.path.samefile(self.desktop.path, filepath):
+            self.desktop = _m.desktop
+            # self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
+            if not os.path.samefile(self.desktop.project_file_name(), filepath):
                 raise Exception("Desktop started on different project")
         except AssertionError:
             self.desktop = app.start_dedicated(True, input_config.modeller_initial, filepath)
@@ -376,13 +377,14 @@ class EmmeProject:
         auto_mode = set([m for m in network.modes() if m.type == 'AUTO'])
         transit_mode = set([m for m in network.modes() if m.type == 'TRANSIT'])
 
-        link_data = {'i_node':[], 'j_node': []}
+        link_data = {'i_node':[], 'j_node': [], 'shape':[]}
         link_data.update({k: [] for k in network.attributes('LINK')})
         for link in network.links():
             link.isAuto = bool(link.modes.intersection(auto_mode))
             link.isTransit = bool(link.modes.intersection(transit_mode))
             link.isConnector = (link.i_node.is_centroid or link.j_node.is_centroid)
             link.isOneWay = network.link(link.j_node, link.i_node) is None
+            link_data['shape'].append(link.shape)
 
             for k in network.attributes('LINK'):
                 link_data[k].append(link[k])
@@ -686,6 +688,11 @@ class EmmeProject:
         demand_matrix[0:len(sub_demand_array), 0:len(sub_demand_array)] = sub_demand_array
 
         return demand_matrix
+    
+    def export_current_scenario_to_shapefile(self, output_folder):
+        ns = "inro.emme.data.network.export_network_as_shapefile"
+        export_network = self.m.tool(ns)
+        export_network(scenario = self.current_scenario, transit_shapes = 'LINES_AND_SEGMENTS', export_path = output_folder)
                       
     def calc_bus_pce(self):
      total_hours = emme_config.transit_tod[self.tod]['num_of_hours']

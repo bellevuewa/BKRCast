@@ -43,7 +43,7 @@
     "connector_to_connector_path_prohibition": null,
     "save_strategies": true,
     "od_results": {
-        "total_impedance": "bkpt"
+        "total_impedance": "recbkpt"
     },
     "type": "EXTENDED_TRANSIT_ASSIGNMENT"
 }

@@ -169,6 +169,8 @@ intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 
 taz_area_file = 'inputs/intrazonals/taz_acres.in'
 origin_tt_file = 'inputs/intrazonals/origin_tt.in'
 destination_tt_file = 'inputs/intrazonals/destination_tt.in'
+origin_tt_file_bike = 'inputs/intrazonals/origin_tt_bike.in'
+destination_tt_file_bike = 'inputs/intrazonals/destination_tt_bike.in'
 
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
@@ -181,6 +183,8 @@ trip_table_loc = 'outputs/supplemental/7_balance_trip_ends.csv'
 supplemental_output_dir = 'outputs/supplemental/'
 supplemental_non_work_file = 'outputs/supplemental/external_non_work.h5'
 supplemental_project = 'projects/supplementals/supplementals.emp'
+pm_project = 'projects/1530to1830/1530to1830.emp'
+
 # Iterations for fratar process in trip distribution
 bal_iters = 5
 # Define gravity model coefficients
