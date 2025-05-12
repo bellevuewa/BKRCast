@@ -27,17 +27,19 @@ class CSVAnalyzer(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("CSV GroupBy Aggregator")
-        self.df = pd.DataFrame()
+        self.df = pd.DataFrame() # original DataFrame
+        self.filted_df = pd.DataFrame() # filtered DataFrame
 
         layout = QVBoxLayout()
 
+        self.file_path = ""
         # File label
         self.file_label = QLabel("No file selected.")
         self.file_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         layout.addWidget(self.file_label)
 
         open_button = QPushButton("Open CSV/TXT File")
-        open_button.clicked.connect(self.open_file)
+        open_button.clicked.connect(self.select_file)
         layout.addWidget(open_button)
 
         # Separator checkboxes
@@ -54,7 +56,6 @@ class CSVAnalyzer(QWidget):
         self.space_checkbox = QCheckBox("Space")
         self.tab_checkbox = QCheckBox("Tab")
 
-        self.comma_checkbox.setChecked(True) # default to comma
         for checkbox in [self.comma_checkbox, self.semicolon_checkbox, self.space_checkbox, self.tab_checkbox]:
             self.sep_btngroup.addButton(checkbox)
             checkbox.stateChanged.connect(self.update_separator)
@@ -69,9 +70,17 @@ class CSVAnalyzer(QWidget):
         filter_label = QLabel("Filter (e.g., City == 'Seattle'):")
         filter_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.filter_input = QLineEdit()
+        self.filter_input.setToolTip("use pandas query syntax")
         self.filter_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+
+        apply_filter_button = QPushButton("▶")
+        apply_filter_button.setToolTip("Apply Filter")
+        apply_filter_button.setFixedSize(30, self.filter_input.sizeHint().height())
+        apply_filter_button.clicked.connect(self.apply_filter)
+
         filter_layout.addWidget(filter_label)
         filter_layout.addWidget(self.filter_input)
+        filter_layout.addWidget(apply_filter_button)
         layout.addLayout(filter_layout)
 
         # Splitter for groupby and output
@@ -136,6 +145,27 @@ class CSVAnalyzer(QWidget):
         menu.addAction(copy_action)
         menu.exec(self.result_table.viewport().mapToGlobal(pos))
 
+    def apply_filter(self):
+        filter_str = self.filter_input.text().strip()
+
+        try:
+            if filter_str:
+                self.filtered_df = self.df.query(filter_str)
+            else:
+                self.filtered_df = self.df
+            self.raw_table.setRowCount(min(100, self.filtered_df.shape[0]))
+            self.raw_table.setColumnCount(self.filtered_df.shape[1])
+            self.raw_table.setHorizontalHeaderLabels(self.filtered_df.columns)
+
+            for row in range(min(100, self.filtered_df.shape[0])):
+                for col in range(self.filtered_df.shape[1]):
+                    val = self.filtered_df.iat[row, col]
+                    item = NumericTableWidgetItem(str(val))
+                    self.raw_table.setItem(row, col, item)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Filter Error", str(e))
+
     def copy_result_to_clipboard(self):
         rows = self.result_table.rowCount()
         cols = self.result_table.columnCount()
@@ -165,20 +195,32 @@ class CSVAnalyzer(QWidget):
         elif self.tab_checkbox.isChecked():
             self.separator = "\t"
         self.sep_input.setText(self.separator)
+        self.open_file()  # Reopen the file with the new separator
+
+    def select_file(self):
+        self.file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Data Files (*.csv *.txt *.*)")
+        if self.file_path:
+            try:
+                self.file_label.setText(self.file_path)
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
 
     def open_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Data Files (*.csv *.txt *.*)")
-        if file_path:
+        if self.file_path:
             try:
-                df = pd.read_csv(file_path, sep=self.separator)
+                df = pd.read_csv(self.file_path, sep=self.separator)
+                self.df = df                
                 filter_str = self.filter_input.text().strip()
                 if filter_str:
-                    df = df.query(filter_str)
-                self.df = df
-                self.file_label.setText(file_path)
+                    self.filtered_df = df.query(filter_str)
+                else:
+                    self.filtered_df = df
+                self.file_label.setText(self.file_path)
                 self.update_column_selection()
                 self.populate_raw_table()
             except Exception as e:
+                self.groupby_list.clear()
+                self.agg_combos.clear()
                 QMessageBox.critical(self, "Error", str(e))
 
     def update_column_selection(self):
@@ -188,33 +230,34 @@ class CSVAnalyzer(QWidget):
         while self.agg_form.rowCount() > 0:
             self.agg_form.removeRow(0)
 
-        if self.df.empty:
+        if self.filtered_df.empty:
             return
 
-        for col in self.df.columns:
+        for col in self.filtered_df.columns:
             item = QListWidgetItem(col)
             item.setCheckState(Qt.CheckState.Unchecked)
             self.groupby_list.addItem(item)
 
-            if pd.api.types.is_numeric_dtype(self.df[col]):
+            if pd.api.types.is_numeric_dtype(self.filtered_df[col]):
                 combo = QComboBox()
                 combo.addItems(["", "sum", "average", "count", "min", "max"])  # Default is blank
                 self.agg_form.addRow(QLabel(col), combo)
                 self.agg_combos[col] = combo
 
     def populate_raw_table(self):
-        self.raw_table.setRowCount(min(100, self.df.shape[0]))
-        self.raw_table.setColumnCount(self.df.shape[1])
-        self.raw_table.setHorizontalHeaderLabels(self.df.columns)
+        self.raw_table.setRowCount(min(100, self.filtered_df.shape[0]))
+        self.raw_table.setColumnCount(self.filtered_df.shape[1])
+        self.raw_table.setHorizontalHeaderLabels(self.filtered_df.columns)
 
-        for row in range(min(100, self.df.shape[0])):
-            for col in range(self.df.shape[1]):
-                val = self.df.iat[row, col]
+        for row in range(min(100, self.filtered_df.shape[0])):
+            for col in range(self.filtered_df.shape[1]):
+                val = self.filtered_df.iat[row, col]
                 item = NumericTableWidgetItem(str(val))
                 self.raw_table.setItem(row, col, item)
 
     def apply_groupby(self):
-        if self.df.empty:
+        if self.filtered_df.empty:
+            QMessageBox.warning(self, "GroupBy", "No data is selected.")
             return
 
         groupby_cols = [self.groupby_list.item(i).text()
@@ -239,7 +282,7 @@ class CSVAnalyzer(QWidget):
             return
 
         try:
-            grouped_df = self.df.groupby(groupby_cols).agg(agg_dict).reset_index()
+            grouped_df = self.filtered_df.groupby(groupby_cols).agg(agg_dict).reset_index()
         except Exception as e:
             QMessageBox.critical(self, "Aggregation Error", str(e))
             return
