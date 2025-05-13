@@ -81,10 +81,9 @@ def build_seed_skims(max_iterations):
 def modify_config(config_vals):
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0] #<-- absolute dir the script is in
-    config_template_path = "daysim_configuration_template.properties"
     config_path = "daysim/daysim_configuration.properties"
 
-    abs_config_path_template = os.path.join(script_dir, config_template_path)
+    abs_config_path_template = os.path.join(script_dir, daysim_configuration_template_file)
     abs_config_path_out =os.path.join(script_dir, config_path)
     
     config_template = open(abs_config_path_template,'r')
@@ -106,6 +105,21 @@ def modify_config(config_vals):
      print(' Error creating configuration template file')
      sys.exit(1)
     
+def read_attribute_from_daysim_config_template(attr_name, default=""):
+    """Extract RawParkAndRideNodePath from config file or fallback to default"""
+    try:
+        with open(daysim_configuration_template_file, 'r') as f:
+            for line in f:
+                if line.strip().startswith(attr_name):
+                    match = re.search(r"=\s*(.*)", line)
+                    if match:
+                        return match.group(1).strip().replace('\\', os.sep)
+    except Exception as e:
+        print(f"Warning: Could not read config file ({e}). Using default path.")
+    print(f"RawParkAndRideNodePath not found. Using default: {default}")
+    return default
+
+
 @timed
 def build_shadow_only(include_tnc_mode):
      for shad_iter in range(0, len(shadow_work)):
@@ -246,7 +260,7 @@ def daysim_popsampler(option):
     zone_district[['zone_id','sample_rate']].to_csv(os.path.join(main_inputs_folder, taz_sample_rate_file), index = False, sep = '\t')
 
     #find sythetic population filename
-    config_template_path = "daysim_configuration_template.properties"
+    config_template_path = daysim_configuration_template_file
     
     #read daysim properties
     abs_config_template_path = os.path.join(os.getcwd(), config_template_path)
@@ -389,6 +403,10 @@ def main():
     if run_copy_input_files:
         copy_large_inputs()
     
+    # generate the master park and ride file
+    pnr_name = read_attribute_from_daysim_config_template('RawParkAndRideNodePath', 'inputs/pnr/p_r_nodes.csv')
+    generate_pr_node_file(master_PnR_file, pnr_name, int(model_year))
+
     if run_copy_daysim_code:
         copy_daysim_code()
 

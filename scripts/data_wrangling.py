@@ -199,8 +199,7 @@ def copy_large_inputs():
     print('  land use..')
     shutil.copytree(base_inputs+'/landuse','inputs/landuse', dirs_exist_ok=True)
     shutil.copytree(base_inputs+'/popsim','inputs/popsim', dirs_exist_ok=True)
-    print('  park and ride capacity..')
-    shutil.copytree(base_inputs+'/pnr','inputs/pnr', dirs_exist_ok=True)
+
 
 @timed          
 def clean_up():
@@ -248,6 +247,7 @@ def check_inputs():
             logger.info('- ' + file)
             print(file)
 
+@timed
 def update_skim_parameters():
     """
     Generate skim parameter spec files from templates.
@@ -303,7 +303,7 @@ def update_skim_parameters():
     # So we decide to run the TNC assignment combined with regular auto mode. 
     # therefore, origional json files for skimming still work for this purpose.
 
-
+@timed
 def update_daysim_modes():
     """
     Apply settings in input_configuration to daysim_configuration and roster files:
@@ -533,3 +533,37 @@ def build_pandana_network():
         net.precompute(dist)
 
     return net, all_street_links, all_street_nodes        
+
+@timed
+def generate_pr_node_file(input_csv, output_csv, year):
+    # Load input CSV
+    df = pd.read_csv(input_csv)
+
+    # Check required columns exist
+    required_columns = ['Project_Year', 'Imp_Capacity', '2023_Capacity']
+    for col in required_columns:
+        if col not in df.columns:
+            raise ValueError(f"Missing expected column from the master pnr file: {col}")
+
+    # Apply the capacity rule
+    df['Capacity'] = df.apply(
+        lambda row: row['Imp_Capacity'] if year >= row['Project_Year'] else row['2023_Capacity'],
+        axis=1
+    )
+    df['Cost'] = 0
+
+    # Drop unwanted columns
+    columns_to_drop = ['2023_Capacity', 'Project_Year', 'New_Spaces', 'Imp_Capacity', 'Source']
+    df.drop(columns=[col for col in columns_to_drop if col in df.columns], inplace=True)
+
+    """Ensure that the output path is inside a 'pnr' folder"""
+    output_csv = output_csv.lstrip(".\\/")
+    output_path = os.path.dirname(output_csv)
+    if output_path:
+        os.makedirs(output_path, exist_ok=True)
+
+    # Save output CSV
+    # the column order is important for daysim. Last two columns are not used in daysim
+    # the order is: NodeID, ZoneID, XCoord, YCoord, Capacity, Cost, Description, EMME_Description
+    df[['NodeID', 'ZoneID', 'XCoord', 'YCoord', 'Capacity', 'Cost', 'Description', 'EMME_Description']].to_csv(output_csv, index=False)
+    print(f"PnR file for {year} is {output_csv}")
