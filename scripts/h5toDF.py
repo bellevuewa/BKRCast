@@ -91,7 +91,7 @@ def guide_to_dict(guide):
                 else:
                     vardict[int(key_cell.value)] = value_cell.value
 
-            vardict.update({0: 'N\A'})
+            # vardict.update({0: 'N\A'})  # TODO: why this is N/A instead of home?
             vardict.update({-1: 'N\A'})
             catdict[vnames[2 * var]] = vardict
     print('Guide converted to dictionary in ' + str(round(time.time() - time_start, 1)) + ' seconds')

@@ -73,8 +73,8 @@ run_mode_choice_report = True
 run_dest_choice_report = True
 run_long_term_report = True
 run_time_choice_report = True
-run_district_summary_report = True
-run_landuse_summary = True
+run_district_summary_report = False  # only True for 2013/2014 survey
+# run_landuse_summary = True
     
 #delete parcel files from the project directory
 delete_parcel_data = False
@@ -260,17 +260,32 @@ pollutant_map = {
 
 #################################### CALIBRATION/VALIDATION ####################################
 
+#####
 # Calibration Summary Configuration
+#####
+# Daysim outputs
 h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
-h5_comparison_file = 'inputs/model/survey/survey.h5'
-h5_comparison_name = 'Survey'
-guidefile = 'inputs/model/CatVarDict.xlsx'
-districtfile = 'inputs/model/TAZ_TAD_County.csv'
-FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
-LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
 
-acs_data = 'inputs/model/survey/ACS_2014.xlsx'
+validation_year_of_survey = 2023  # the year of survey to use for validating our model
+if validation_year_of_survey == 2013 or validation_year_of_survey == 2014:
+    # survey in hdf5 format
+    h5_comparison_file = 'inputs/model/survey/2013/survey.h5'  # 2014 setting
+    h5_comparison_name = 'Survey'  # 2014 setting
+    guidefile = 'inputs/model/CatVarDict.xlsx'  # 2014 setting
+    districtfile = 'inputs/model/TAZ_TAD_County.csv'
+    FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'  # only for 2014-survey comparison
+    LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'  # only for 2014-survey files
+    acs_data = 'inputs/model/survey/ACS_2014.xlsx'  # 2014 setting
+elif validation_year_of_survey == 2023:
+    # survey in hdf5 format
+    h5_comparison_file = 'Z:/Modeling Group/PSRC Survey/analysis/processed/survey_2023/survey_2023.h5'
+    h5_comparison_name = '2023Survey'
+    guidefile = 'inputs/model/CatVarDict_2023.xlsx'
+    districtfile = 'inputs/model/TAZ_TAD_County.csv'
+    FAZ_TAZ = ''  # only for 2014-survey comparison
+    LEHD_work_flows = ''  # only for 2014-survey comparison
+    acs_data = 'inputs/model/survey/2023/ACS_2024.xlsx'
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
