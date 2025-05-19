@@ -8,7 +8,9 @@ Daysim/last-run.log
 *.tex
 *.alo
 *.Rhistory
-*.xlsx
+COB_Transit_ridership.xlsx
+2023_Bike_vol_on_regional_trails.xlsx
+2023_transit_ridership.xlsx
 /daysim
 /outputs
 /.vs
