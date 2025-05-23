@@ -73,7 +73,6 @@ extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', '
                     {'type':'LINK', 'name': '@revlane', 'description': 'reversible lane tag', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane.txt'},
                     {'type':'LINK', 'name': '@revlane_cap', 'description': 'full capacity for reversible lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane_cap.txt'},
                     {'type':'LINK', 'name': '@slid', 'description': 'Screen line ID', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slid.txt'},
-                    {'type':'LINK', 'name': '@slope', 'description': 'splope (calculated in GIS from KC 5ft)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slope.txt'},
                     {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
                     {'type':'LINK', 'name': '@kirkland_slid', 'description': 'Screenlines for Kirkland only', 'overwrite': True, 'file_name':'inputs/extra_attributes/@kirkland_slid.txt'},
                     {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'},
