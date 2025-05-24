@@ -4,7 +4,8 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog,
     QLabel, QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem,
     QLineEdit, QHBoxLayout, QComboBox, QSplitter, QSizePolicy,
-    QTabWidget, QMessageBox, QCheckBox, QGroupBox, QButtonGroup, QFormLayout, QMenu
+    QTabWidget, QMessageBox, QCheckBox, QGroupBox, QButtonGroup, QFormLayout, QMenu,
+    QScrollArea
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
@@ -33,6 +34,7 @@ class CSVAnalyzer(QWidget):
         layout = QVBoxLayout()
 
         self.file_path = ""
+        self.join_file_path = ""
         # File label
         self.file_label = QLabel("No file selected.")
         self.file_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
@@ -42,6 +44,7 @@ class CSVAnalyzer(QWidget):
         open_button.clicked.connect(self.select_file)
         layout.addWidget(open_button)
 
+        #   
         # Separator checkboxes
         sep_layout = QVBoxLayout()
         self.sep_groupbox = QGroupBox("Select Separator")
@@ -120,9 +123,14 @@ class CSVAnalyzer(QWidget):
         self.agg_form = QFormLayout()
         self.agg_combos = {}  # Mapping from column to its combo box
 
-        self.agg_widget = QWidget()
-        self.agg_widget.setLayout(self.agg_form)
-        layout.addWidget(self.agg_widget)
+        self.form_container = QWidget()
+        self.form_container.setLayout(self.agg_form)
+
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.form_container)
+        self.scroll_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        layout.addWidget(self.scroll_area)
 
         apply_button = QPushButton("Apply GroupBy and Aggregation")
         apply_button.clicked.connect(self.apply_groupby)
@@ -264,10 +272,6 @@ class CSVAnalyzer(QWidget):
                         for i in range(self.groupby_list.count())
                         if self.groupby_list.item(i).checkState() == Qt.CheckState.Checked]
 
-        if not groupby_cols:
-            QMessageBox.warning(self, "GroupBy", "Please select at least one groupby column.")
-            return
-
         agg_dict = {}
         for col, combo in self.agg_combos.items():
             method = combo.currentText()
@@ -282,7 +286,10 @@ class CSVAnalyzer(QWidget):
             return
 
         try:
-            grouped_df = self.filtered_df.groupby(groupby_cols).agg(agg_dict).reset_index()
+            if not groupby_cols: # if no groupby columns are selected. aggregate all
+                grouped_df = self.filtered_df.agg(agg_dict).to_frame().T
+            else:
+                grouped_df = self.filtered_df.groupby(groupby_cols).agg(agg_dict).reset_index()
         except Exception as e:
             QMessageBox.critical(self, "Aggregation Error", str(e))
             return
