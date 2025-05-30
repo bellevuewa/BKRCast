@@ -284,7 +284,7 @@ else:
     districtfile = 'inputs/model/TAZ_TAD_County.csv'
     FAZ_TAZ = ''  # only for 2014-survey comparison
     LEHD_work_flows = ''  # only for 2014-survey comparison
-    acs_data = 'inputs/model/survey/2023/ACS_2024.xlsx'
+    acs_data = 'inputs/model/survey/ACS_2023.xlsx'
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
