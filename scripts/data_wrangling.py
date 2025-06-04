@@ -513,6 +513,28 @@ def load_parcel_data(parcel_path):
     # parcels['NPARKS'] = 0
     return parcels    
 
+def load_parcel_data_without_JBLM_jobs(parcel_path):
+    """
+    return a parcel file without JBLM jobs, in data frame.
+    """
+    parcels_df = pd.read_csv(parcel_path, sep = " ", index_col = None )
+    parcels_df.columns = [i.upper() for i in parcels_df.columns]
+    #check for missing data!
+    for col_name in parcels_df.columns:
+        # daysim does not use EMPRSC_P
+        if col_name != 'EMPRSC_P':
+            if parcels_df[col_name].sum() == 0:
+                print(col_name + ' column sum is zero! Exiting program.')
+                sys.exit(1)   
+
+    df_psrc = pd.read_csv(os.path.join(input_folder_for_supplemental, 'BKR_zones.csv'))
+    jblm_tazs = df_psrc.loc[df_psrc['jblm'] == 1, 'BKRCastTAZ'].unique().tolist()
+
+    # remove JBLM parcels
+    job_columns = [col for col in parcels_df.columns if col.startswith('EMP')]
+    parcels_df.loc[parcels_df['TAZ_P'].isin(jblm_tazs), job_columns] = 0
+    return parcels_df
+
 def build_pandana_network():
     import pandana as pdna    
     # nodes must be indexed by node_id column, which is the first column
@@ -567,3 +589,4 @@ def generate_pr_node_file(input_csv, output_csv, year):
     # the order is: NodeID, ZoneID, XCoord, YCoord, Capacity, Cost, Description, EMME_Description
     df[['NodeID', 'ZoneID', 'XCoord', 'YCoord', 'Capacity', 'Cost', 'Description', 'EMME_Description']].to_csv(output_csv, index=False)
     print(f"PnR file for {year} is {output_csv}")
+

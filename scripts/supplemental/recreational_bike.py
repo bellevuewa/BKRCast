@@ -249,7 +249,7 @@ def calculate_rec_bike_prod_attr(daily_outbound_bike, rec_bike_type, rec_bike_ra
         total_daily_rec_bike_prod = daily_rec_bike_prod_df[f'{home_based_flag}recbpro'].sum()
 
         # calculate hhs by TAZ,
-        parcels_df = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = ' ')
+        parcels_df = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name))
         daily_rec_bike_prod = parcels_df[['TAZ_P', 'HH_P']].groupby('TAZ_P').sum()
         # remove TAZ for Pierce and Kitsap counties
         # daily_rec_bike_prod.loc[daily_rec_bike_prod.index.isin(pierce_kitsap_county_df['TAZ']), 'HH_P'] = 0

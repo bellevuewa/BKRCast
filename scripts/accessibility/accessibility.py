@@ -154,8 +154,7 @@ def main():
         parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
     else: 
         # read in data
-        parcels = pd.read_csv(os.path.join(parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
-
+        parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name))
     #capitalize field names to avoid errors
     parcels.columns = [i.upper() for i in parcels.columns]
     #check for missing data!

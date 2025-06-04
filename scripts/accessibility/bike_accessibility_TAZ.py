@@ -179,59 +179,6 @@ def convert_bike_links_to_nodes(non_directional_bike_link_df, spacing = 20):
     return geolink_gdf, geonode_gdf    
 
 # original method to calculate bike accessibility
-# use weighted bike surface area within buffer to as bike accessibility
-def calculate_TAZ_accessibility_to_bike(taz_gdf, emme_link_gdf, biketype = [10, 1, 2], buffer_dist = 5280):
-    '''
-        taz_gdf: geodataframe with TAZs
-        emme_link_gdf: geodataframe with bike links
-    '''
-    # create buffer for each TAZ
-    taz_gdf.rename(columns = {'TAZNUM':'BKRCastTAZ'}, inplace = True)
-    taz_gdf['buffer'] = taz_gdf.geometry.buffer(buffer_dist)
-    buffer = gpd.GeoDataFrame(taz_gdf, geometry = taz_gdf['buffer'], crs = input_config.gis_projection)
-
-    # gis calculation to find out the bike links within buffer, and calculate the surface area of bike links within buffer
-    bike_links_gdf = emme_link_gdf[emme_link_gdf['@biketype'].isin(biketype)].copy()
-    links_in_buffer = gpd.overlay(bike_links_gdf, buffer, how = 'intersection')
-    links_in_buffer['length'] = links_in_buffer.geometry.length
-    links_in_buffer['area'] = links_in_buffer['length'] * links_in_buffer['@biketype'].map(access_config.bike_lane_width) 
-    links_in_buffer[['BKRCastTAZ', 'i_node', 'j_node', '@biketype', 'length', 'area', '@upslp']].to_csv('outputs/bikes/bike_links_in_buffer.csv', index = False)
-
-    # summarize the area of bike links within buffer for each TAZ, by @biketype
-    area_summary = links_in_buffer.groupby(['BKRCastTAZ', '@biketype'])[['area', 'length']].sum().reset_index()
-    area_summary.to_csv('outputs/bikes/TAZ_bike_access_by_biketype.csv', index = False)
-    area_summary_pivot = area_summary.pivot(index = 'BKRCastTAZ', columns = '@biketype', values = 'area').fillna(0)
-    area_summary_pivot.columns = [f'bt_{int(b)}_sqft' for b in area_summary_pivot.columns]  
-
-    slope_summary = links_in_buffer.groupby(['BKRCastTAZ'])[['@upslp']].sum().reset_index()
-    slope_summary['slope_accessibility'] = 1 / (slope_summary['@upslp'] / slope_summary['@upslp'].sum())
-    
-    taz_gdf = taz_gdf[['BKRCastTAZ', 'Shape_Area', 'geometry']].merge(area_summary_pivot, left_on = 'BKRCastTAZ', right_index = True, how = 'left').fillna(0)
-    taz_gdf = taz_gdf.merge(slope_summary, left_on = 'BKRCastTAZ', right_on = 'BKRCastTAZ', how = 'left').fillna(0)
-    taz_gdf['Shape_Area'] = taz_gdf['Shape_Area'].round(0).astype(int)
-
-    # calculate the accessibility for each TAZ
-    taz_gdf['wsa'] = 0 # wighted surface area
-    for type in biketype:
-        taz_gdf['wsa'] += taz_gdf[f'bt_{type}_sqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre   
-    
-    taz_gdf['accessibility'] = taz_gdf['wsa']
-    # taz_gdf['norm_wsa'] = taz_gdf['wsa'] / taz_gdf['wsa'].quantile(0.25) # normalized weighted surface area
-    # taz_gdf['accessibility'] = np.exp(taz_gdf['norm_wsa']) # use exp to calculate accessibility, not just weighted surface area
-    # taz_gdf.loc[taz_gdf['norm_wsa'] < 0.0001, 'accessibility'] = 0
-    # calculate share of accessibility for each TAZ
-    taz_gdf['share'] = taz_gdf['accessibility'] / taz_gdf['accessibility'].sum()
-    
-    path_folder = 'outputs/bikes/TAZ_bike_access'
-    if os.path.exists(path_folder):
-        shutil.rmtree(path_folder) 
-    taz_gdf.to_file(path_folder, driver = 'ESRI Shapefile')
-    taz_df = taz_gdf.drop(columns = ['geometry'])      
-    taz_df.to_csv('outputs/bikes/TAZ_bike_accessibility.csv', index = False)   
-
-    return taz_df
-
-# original method to calculate bike accessibility
 # use weighted bike surface area and elevation gain within buffer as bike accessibility
 def calculate_TAZ_accessibility_to_bike2 (taz_gdf, emme_link_gdf, biketype = [10, 1, 2], buffer_dist = 5280):
     '''
@@ -288,8 +235,6 @@ def calculate_TAZ_accessibility_to_bike2 (taz_gdf, emme_link_gdf, biketype = [10
 
 def main():  
     print('Start recreational bike accessibility...')
-    parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)       
-    parcels = data_wrangling.load_parcel_data(parcel_path)
 
     project_dir = os.path.dirname(emme_config.pm_project)  
     taz_gdf = gpd.read_file(os.path.join(project_dir, 'Media', 'BKRCast_TAZ.shp'))

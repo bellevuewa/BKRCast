@@ -352,7 +352,7 @@ def main():
     person_df = h5_to_df(hh_people, 'Person')
     person_df = person_df[person_variables]
 
-    parcels = pd.read_csv(parcel_file, sep = ' ')
+    parcels = load_parcel_data_without_JBLM_jobs(parcel_file)
     parcels.columns = parcels.columns.str.lower()
     parcels = parcels.loc[:,original_parcel_columns]
     parcels.columns = updated_parcel_columns

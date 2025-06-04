@@ -10,8 +10,8 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2024baseyear\BKR3-24-v3'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2023baseyear_backup_b4redmond_landuse_update'
+project_folder = r'F:\projects\2024baseyear\BKR3-24-v5'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
@@ -284,7 +284,7 @@ else:
     districtfile = 'inputs/model/TAZ_TAD_County.csv'
     FAZ_TAZ = ''  # only for 2014-survey comparison
     LEHD_work_flows = ''  # only for 2014-survey comparison
-    acs_data = 'inputs/model/survey/2023/ACS_2024.xlsx'
+    acs_data = 'inputs/model/survey/ACS_2023.xlsx'
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
