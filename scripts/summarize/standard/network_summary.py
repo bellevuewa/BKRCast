@@ -507,7 +507,7 @@ def calculate_landuse_service_by_transitstops(emme_node_df):
         return
                       
     parcel_path = os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name)  
-    parcels_df = data_wrangling.load_parcel_data(parcel_path)
+    parcels_df = data_wrangling.load_parcel_data_without_JBLM_jobs(parcel_path)
     # Assign NAD83(HARN) / Washington North (ftUS) CRS
     crs = 'EPSG:2926'
 

@@ -14,6 +14,7 @@ import input_configuration as bkr_config
 import EmmeProject as emmeproj
 import truck_configuration as trk_config
 import accessibility_configuration as access_config
+import data_wrangling as dw
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -68,7 +69,7 @@ def main():
 
     parcels_military = pd.read_csv(os.path.join(bkr_config.input_folder_for_supplemental, 'enlisted_personnel_bkr.csv'))
     parcels_military = parcels_military.loc[parcels_military['year'] == int(bkr_config.model_year)]
-    parcels_urbansim = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), sep = " ", index_col = None )
+    parcels_urbansim = dw.load_parcel_data_without_JBLM_jobs(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name))
     parcels_urbansim.index = parcels_urbansim['PARCELID']
 
     # FIXME: uniform upper/lower
@@ -224,7 +225,6 @@ def main():
     final_df = final_df.round(3)
 
     final_df.to_csv(os.path.join(access_config.land_use_output_folder, 'bkr_worker_ixxifractions.dat'), sep = '\t', index = False, header = False)
-    #parcels_urbansim.to_csv(r'inputs/scenario/landuse/parcels_urbansim.txt',  sep = ' ', index = False)
 
     my_project.closeDesktop()
 
