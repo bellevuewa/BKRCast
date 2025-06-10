@@ -2,11 +2,11 @@
 dsVersion                                 = "C#"
 
 #BKRCast
-dshhfile                                  = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_household.tsv"
-dsperfile                                 = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_person.tsv"
-dspdayfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_person_day.tsv"
-dstourfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_tour.tsv"
-dstripfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_trip.tsv"
+dshhfile                                  = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_household.tsv"
+dsperfile                                 = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_person.tsv"
+dspdayfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_person_day.tsv"
+dstourfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_tour.tsv"
+dstripfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_trip.tsv"
 
 #BKRCast-ESD
 #dshhfile                                  = "./data/bkrcast_esd/_household.tsv"
@@ -60,7 +60,7 @@ triptodmodelout                           = "TripTOD.xlsm"
 outputsDir                                = "./output"
 validationDir                             = ""
 
-prepSurvey                                = TRUE
+prepSurvey                                = FALSE
 prepDaySim                                = TRUE
 
 runWrkSchLocationChoice                   = TRUE

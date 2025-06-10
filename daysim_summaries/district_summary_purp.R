@@ -9,14 +9,14 @@ library(data.table)
 
 #suff <- c("survey", "bkrcast_esd")
 #suff <- c("survey","bkrcast_lodes","bkrcast_esd","soundcast")
-suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out","bkrcast_esd")
-#suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out", "bkrcast_esd", "bkrcast_esd_in", "bkrcast_esd_out")
-outfile_district <- paste("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all/","district_summary.csv", sep = "")
-outfile_mode <- paste("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/","TL_mode.csv", sep = "")
-outfile_ptype <- paste("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/","summary_ptype.csv", sep = "")
+#suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out","bkrcast_esd")
+suff <- c("survey", "survey_in", "survey_out", "soundcast", "bkrcast_lodes", "bkrcast_lodes_in", "bkrcast_lodes_out", "bkrcast_esd", "bkrcast_esd_in", "bkrcast_esd_out")
+outfile_district <- paste("F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/","district_summary.csv", sep = "")
+outfile_mode <- paste("F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/","TL_mode.csv", sep = "")
+outfile_ptype <- paste("F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/","summary_ptype.csv", sep = "")
 
-file.correspondence <- paste("D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/data/",'zone_districts.csv', sep = "")
-file.parcel = 'D:/P3Test/2020baseyear-BKR/BKR1-20/inputs/buffered_parcels.dat'
+file.correspondence <- paste("F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/data/",'zone_districts.csv', sep = "")
+file.parcel = 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/landuse/buffered_parcels.txt'
 
 for (dataset in suff) {
   print(dataset)
@@ -24,7 +24,7 @@ for (dataset in suff) {
   #for survey, soundcast, and bkrcast dataset
   if(grepl("survey", dataset)){
     #survey
-    wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all/data/'
+    wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/bkrcast_all/data/'
     file.trips <- 'Trip_bkr_new_skim.dat'
     file.hhs <- 'Household_bkr_new.dat'
     file.persons <- 'Person_bkr_new_skim.dat'
@@ -35,7 +35,7 @@ for (dataset in suff) {
     
   } else if (dataset == "soundcast") {
     #soundcast
-    wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/'
+    wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim'
     file.trips <- '_trip.tsv'
     file.hhs <- '_household.tsv'
     file.persons <- '_person.tsv'
@@ -45,7 +45,7 @@ for (dataset in suff) {
     
   } else if (grepl("lodes", dataset)){
     #bkrcast - lodes
-    wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/'
+    wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim'
     #wd <- 'E:/Projects/Clients/bkr/tasks/calibration/outputs'
     file.trips <- '_trip.tsv'
     file.hhs <- '_household.tsv'
@@ -56,7 +56,7 @@ for (dataset in suff) {
     file.ext_outbkr = '_outbkr.tsv' 
   } else {
     #bkrcast - esd
-    wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/'
+    wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim'
     file.trips <- '_trip.tsv'
     file.hhs <- '_household.tsv'
     file.tours <- '_tour.tsv'

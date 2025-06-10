@@ -10,7 +10,7 @@ filter_type = "hh" #hh or trip. if hh - households in/outside bkr will filtered.
 
 if(Survey){
   #survey
-  wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/bkrcast_all/data'
+  wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/bkrcast_all/data'
   file.hhs <- 'Household_bkr_new.dat'
   file.persons <- 'Person_bkr_new_skim.dat'
   file.person_day <- 'PersonDay_bkr.dat'
@@ -37,7 +37,7 @@ if(Survey){
   
 } else if (ESD) {
   #daysim - esd data
-  wd <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/outputs'
+  wd <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim'
   file.hhs <- '_household.tsv'
   file.persons <- '_person.tsv' 
   file.person_day <- '_person_day.tsv'
@@ -48,7 +48,7 @@ if(Survey){
   file.ext_outbkr = '_outbkr.tsv'
 }
 
-file.correspondence <- 'D:/P3Test/2020baseyear-BKR/BKR1-20/daysim_summaries/data/TAZ_District_CrossWalk.csv'
+file.correspondence <- 'F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries/data/TAZ_District_CrossWalk.csv'
 
 setwd(wd)
 print("reading inputs ...")

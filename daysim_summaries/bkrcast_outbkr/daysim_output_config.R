@@ -2,11 +2,11 @@
 dsVersion                                 = "C#"
 
 #BKRCast
-dshhfile                                  = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_household_outbkr.tsv"
-dsperfile                                 = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_person_outbkr.tsv"
-dspdayfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_person_day_outbkr.tsv"
-dstourfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_tour_outbkr.tsv"
-dstripfile                                = "D:/P3Test/2020baseyear-BKR/BKR1-20/outputs/_trip_outbkr.tsv"
+dshhfile                                  = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_household_outbkr.tsv"
+dsperfile                                 = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_person_outbkr.tsv"
+dspdayfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_person_day_outbkr.tsv"
+dstourfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_tour_outbkr.tsv"
+dstripfile                                = "F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/outputs/daysim/_trip_outbkr.tsv"
 
 #calibration
 #dshhfile                                  = "E:/Projects/Clients/bkr/tasks/calibration/outputs/_household_outbkr.tsv"
@@ -53,7 +53,7 @@ triptodmodelout                           = "TripTOD.xlsm"
 outputsDir                                = "./output"
 validationDir                             = ""
 
-prepSurvey                                = TRUE
+prepSurvey                                = FALSE
 prepDaySim                                = TRUE
 
 runWrkSchLocationChoice                   = TRUE

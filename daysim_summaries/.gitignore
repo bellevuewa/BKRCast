@@ -1,0 +1,6 @@
+*.Rdata
+output
+compare
+*.xlsx
+*.txt
+*.csv
