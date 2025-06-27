@@ -246,8 +246,8 @@ def DayPattern(data1, data2, name1, name2, location):
     #Total trips per person
     atp1 = get_total(data1['Trip']['trexpfac']) / Person_1_total
     atp2 = get_total(data2['Trip_cloned']['trexpfac']) / Person_2_total
-
-    travdist_data1 = data1['Trip'].query('travdist > 0 and travdist < 200').copy(deep=True)
+    travdist_data1 = data1['Trip'][(data1['Trip']['travdist']>0)]
+    travdist_data1 = travdist_data1[(travdist_data1['travdist']<200)].copy(deep=True)
     travdist_data2 = data2['Trip_cloned'].query('travdist > 0 and travdist < 200').copy(deep=True)
     atl1 = weighted_average(travdist_data1, 'travdist', 'trexpfac')
     atl2 = weighted_average(travdist_data2, 'travdist', 'trexpfac')
@@ -351,45 +351,58 @@ def DayPattern(data1, data2, name1, name2, location):
 
     print('---Day Pattern Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
-def DaysimReport(data1, data2, name1, name2, location, districtfile):
+def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfile):
     """Generate a summary that compares Daysim output and the survey data
 
     Args:
         data1 (dict): usually a dictionary that stores the Daysim output, which read from a hdf5 file
-        data2 (dict): usually a dictionary that stores the survey data, which read from a hdf5 file
+        data2 (dict): usually a dictionary that stores the survey data in daysim format, which read from a hdf5 file
+        data3 (dict): usually a dictionary that stores the full survey data, which read from a hdf5 file
         name1 (str): the name that represents data1, e.g., 'DaysimOutputs'
-        name2 (str): the name that represents data2, e.g., '2023Survey'
+        name2 (str): the name that represents data2, e.g., '2023SurveyDaysimFormat'
+        name3 (str): the name that represents data3, e.g., '2023SurveyFull'
         location (str): the path pointing to the Daysim outputs
         districtfile (pandas.core.frame.DataFrame): a pandas dataframe that stores dictrict data 
     """
     print('---Begin DaySim Report Compilation---')
     start = time.time()
+
     merge_per_hh_1 = pd.merge(data1['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno']],
                               data1['Household'][['hhtaz', 'hhparcel', 'hhno']],
                               on = 'hhno')
     merge_per_hh_2 = pd.merge(data2['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno']],
                               data2['Household'][['hhtaz', 'hhparcel', 'hhno']],
                               on = 'hhno')
+    merge_per_hh_3 = pd.merge(data3['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno']],
+                              data3['Household'][['hhtaz', 'hhparcel', 'hhno']],
+                              on = 'hhno')
     label = []
     value1 = []
     value2 = []
+    value3 = []
     Person_1_total = get_total(merge_per_hh_1['psexpfac'])
     Person_2_total = get_total(merge_per_hh_2['psexpfac'])
+    Person_3_total = get_total(merge_per_hh_3['psexpfac'])
     label.append('Number of People')
     value1.append(int(round(Person_1_total, 0)))
     value2.append(int(round(Person_2_total, 0)))
+    value3.append(int(round(Person_3_total, 0)))
     Trip_1_total = get_total(data1['Trip']['trexpfac'])
     Trip_2_total = get_total(data2['Trip']['trexpfac'])
+    Trip_3_total = get_total(data3['Trip']['trexpfac'])  # 16,125,819
     label.append('Number of Trips')
     value1.append(int(round(Trip_1_total, 0)))
     value2.append(int(round(Trip_2_total, 0)))
+    value3.append(int(round(Trip_3_total, 0)))
     Tour_1_total = get_total(data1['Tour']['toexpfac'])
     Tour_2_total = get_total(data2['Tour']['toexpfac'])
     label.append('Number of Tours')
     value1.append(int(round(Tour_1_total, 0)))
     value2.append(int(round(Tour_2_total, 0)))
+    value3.append(np.nan)
     trip_ok_1 = data1['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
     trip_ok_2 = data2['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
+    trip_ok_3 = data3['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
 
     cp1 = time.time()
     print('Preliminary data frames and variables created in ' + str(round(cp1 - start, 1)) + ' seconds')
@@ -398,56 +411,80 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     #Total Households, Persons, and Trips
     tp1 = data1['Person']['psexpfac'].sum()  # total persons
     tp2 = data2['Person']['psexpfac'].sum()
+    tp3 = data3['Person']['psexpfac'].sum()
     th1 = data1['Household']['hhexpfac'].sum()  # total households
     th2 = data2['Household']['hhexpfac'].sum()
+    th3 = data3['Household']['hhexpfac'].sum()
     ttr1 = trip_ok_1['trexpfac'].sum()  # total trips
     ttr2 = trip_ok_2['trexpfac'].sum()
+    ttr3 = trip_ok_3['trexpfac'].sum()
     ahhs1 = tp1 / th1  # average household size
     ahhs2 = tp2 / th2
+    ahhs3 = tp3 / th3
     ntr1 = ttr1 / tp1  # average number of trips per person
     ntr2 = ttr2 / tp2
+    ntr3 = ttr3 / tp3
     atl1 = weighted_average(trip_ok_1, 'travdist', 'trexpfac', grouper=None)  # average trip length
     atl2 = weighted_average(trip_ok_2, 'travdist', 'trexpfac', grouper=None)
+    atl3 = weighted_average(trip_ok_3, 'travdist', 'trexpfac', grouper=None)
     driver_trips1 = trip_ok_1[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')  # vehicle miles (unweighted)
     driver_trips2 = trip_ok_2[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')
+    driver_trips3 = trip_ok_3[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')
     vmpp1sp = (driver_trips1['travdist'].multiply(driver_trips1['trexpfac'])).sum()  # weighted vehicle miles
     vmpp2sp = (driver_trips2['travdist'].multiply(driver_trips2['trexpfac'])).sum()
+    vmpp3sp = (driver_trips3['travdist'].multiply(driver_trips3['trexpfac'])).sum()
     vmpp1 = vmpp1sp / Person_1_total  # vehicle miles per person
     vmpp2 = vmpp2sp / Person_2_total
+    vmpp3 = vmpp3sp / Person_3_total
 
     #Work Location
     wrkrs1 = merge_per_hh_1[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
         query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
     wrkrs2 = merge_per_hh_2[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
         query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
+    wrkrs3 = merge_per_hh_3[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
+        query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
     wrkr_1_hzone = pd.merge(wrkrs1, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
     wrkr_2_hzone = pd.merge(wrkrs2, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
+    wrkr_3_hzone = pd.merge(wrkrs3, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
     total_workers_1 = wrkrs1['psexpfac'].sum()
     total_workers_2 = wrkrs2['psexpfac'].sum()
+    total_workers_3 = wrkrs3['psexpfac'].sum()
     # only take those in-person workers: usual work location parcel != home location parcel
     workers_1 = wrkr_1_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
     workers_2 = wrkr_2_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
+    workers_3 = wrkr_3_hzone.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
     workers_1['Share (%)'] = workers_1['psexpfac'] / workers_1['psexpfac'].sum()
     workers_2['Share (%)'] = workers_2['psexpfac'] / workers_2['psexpfac'].sum()
+    workers_3['Share (%)'] = workers_3['psexpfac'] / workers_3['psexpfac'].sum()
     workers1_avg_dist = weighted_average(workers_1, 'pwaudist', 'psexpfac')
     workers2_avg_dist = weighted_average(workers_2, 'pwaudist', 'psexpfac')
+    workers3_avg_dist = weighted_average(workers_3, 'pwaudist', 'psexpfac')
 
     #School Location
     st1 = merge_per_hh_1[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
         query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
     st2 = merge_per_hh_2[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
         query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
+    st3 = merge_per_hh_3[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
+        query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
     st_1_hzone = pd.merge(st1, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
     st_2_hzone = pd.merge(st2, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
+    st_3_hzone = pd.merge(st3, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
     total_students_1 = st1['psexpfac'].sum()
     total_students_2 = st2['psexpfac'].sum()
+    total_students_3 = st3['psexpfac'].sum()
     # only take those in-person students: usual school/university location parcel != home location parcel
     students_1 = st_1_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
     students_2 = st_2_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
+    students_3 = st_3_hzone.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
+
     students_1['Share (%)'] = students_1['psexpfac'] / students_1['psexpfac'].sum()
     students_2['Share (%)'] = students_2['psexpfac'] / students_2['psexpfac'].sum()
+    students_3['Share (%)'] = students_3['psexpfac'] / students_3['psexpfac'].sum()
     students1_avg_dist = weighted_average(students_1, 'psaudist', 'psexpfac')
     students2_avg_dist = weighted_average(students_2, 'psaudist', 'psexpfac')
+    students3_avg_dist = weighted_average(students_3, 'psaudist', 'psexpfac')
 
     #Glue DataFrame Together
     thp = pd.DataFrame(index = ['Total Persons', 'Total Households', 'Average Household Size', 'Average Trips Per Person', 
@@ -455,7 +492,8 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
                                 'Average Distance to Work (Non-Home)', 'Average Distance to School (Non-Home)'])
     thp[name1] = [tp1, th1, ahhs1, ntr1, atl1, vmpp1, workers1_avg_dist, students1_avg_dist]
     thp[name2] = [tp2, th2, ahhs2, ntr2, atl2, vmpp2, workers2_avg_dist, students2_avg_dist]
-    thp = get_differences(thp, name1, name2, [0, 0, 1, 1, 1, 1, 1, 1])
+    thp[name3] = [tp3, th3, ahhs3, ntr3, atl3, vmpp3, workers3_avg_dist, students3_avg_dist]
+    thp = get_differences_wt_fullsurvey(thp, name1, name2, name3, [0, 0, 1, 1, 1, 1, 1, 1], need_diff_percent=True)
 
     cp2 = time.time()
     print('Basic Summaries data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
@@ -463,21 +501,32 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     #Transit Pass Ownership
     ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
     ttp2 = data2['Person'].loc[data2['Person']['ptpass'] > 0, 'psexpfac'].sum()
+    ttp3 = data3['Person'].loc[data3['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ppp1 = ttp1 / Person_1_total
     ppp2 = ttp2 / Person_2_total
+    ppp3 = ttp3 / Person_3_total
     tpass = pd.DataFrame(index = ['Total Passes', 'Passes per Person'])
     tpass[name1] = [ttp1, ppp1]
     tpass[name2] = [ttp2, ppp2]
-    tpass = get_differences(tpass, name1, name2, [0, 3])
+    tpass[name3] = [ttp3, ppp3]
+    tpass = get_differences_wt_fullsurvey(tpass, name1, name2, name3, [0, 3], need_diff_percent=True)
 
     cp3 = time.time()
     print('Transit Pass Ownership data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
 
-
     ao1 = 100 * data1['Household'][['hhvehs','hhexpfac']].groupby('hhvehs').sum()['hhexpfac'] / data1['Household']['hhexpfac'].sum()
+    veh3_ok = data3['Household'].query('hhvehs >= 0')
+    ao3 = 100 * veh3_ok[['hhvehs','hhexpfac']].groupby('hhvehs').sum()['hhexpfac'] / data3['Household']['hhexpfac'].sum()
+    ao3 = ao3.reset_index()
+    ao3.loc[(ao3['hhvehs']==4), 'hhexpfac'] = ao3.loc[(ao3['hhvehs']>=4), 'hhexpfac'].sum()
+    ao3 = ao3[ao3['hhvehs'].isin([0, 1, 2, 3, 4])]
+    ao3.set_index('hhvehs', inplace=True)
     for i in range(5, len(ao1)):
         ao1[4] = ao1[4] + ao1[i]
         ao1 = ao1.drop([i])
+    for i in range(5, len(ao3)):
+        ao3[4] = ao3[4] + ao3[i]
+        ao3 = ao3.drop([i])
 
     ao = pd.DataFrame()
      #Auto Ownership
@@ -487,8 +536,11 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     acs_auto_share = pd.DataFrame(autos['Share'] * 100).dropna(inplace=False)
 
     ao['Percent of Households (' + name1 + ')'] = ao1
+    ao['Percent of Households (' + name3 + ')'] = ao3
     ao['Percent of Households (ACS)'] = acs_auto_share 
-    ao = get_differences(ao, 'Percent of Households (' + name1 + ')','Percent of Households (ACS)', 1)
+    ao = get_differences_wt_fullsurvey(ao, 'Percent of Households (' + name1 + ')', 
+                                           'Percent of Households (' + name3 + ')', 
+                                           'Percent of Households (ACS)', 1, need_diff_percent=False)
     aonewcol = ['0', '1', '2', '3', '4+']
     ao['Number of Vehicles in Household'] = aonewcol
     ao = ao.reset_index()
@@ -502,7 +554,9 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
     board = pd.DataFrame(index=['Boardings'])
     board['Implied Transit Boardings (Assuming 1.3 Boardings/Trip)'] = 1.3 * data1['Trip'].query('mode == "Transit"')['trexpfac'].sum()
     board['Total Observed Transit Boardings (2011)'] = 647127
-    board = get_differences(board, 'Implied Transit Boardings (Assuming 1.3 Boardings/Trip)' , 'Total Observed Transit Boardings (2011)', 0)
+    # TODO: put the transit boardings data here, the boundary is puget sound?
+    board = get_differences(board, 'Implied Transit Boardings (Assuming 1.3 Boardings/Trip)',
+                                   'Total Observed Transit Boardings (2011)', 0)
 
     cp5 = time.time()
     print('Transit Boardings data frame created in ' + str(round(cp5 - cp4, 1)) + ' seconds')
@@ -515,8 +569,8 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
         board.to_excel(excel_writer = writer, sheet_name = 'Transit Boardings', na_rep = 'NA')
 
     colwidths = getmaxwidths(location + '/DaysimReport_2023.xlsx')
-    colors = ['#004488', '#00C0C0']
-
+    colors = ['#004488', '#00C0C0', '#749BC2']
+    n_len = 4
     with pd.ExcelWriter(location + '/DaysimReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         thp.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA')
         tpass.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership', na_rep = 'NA')
@@ -529,11 +583,11 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
             worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
         worksheet.freeze_panes(0, 1)
         chart = workbook.add_chart({'type':'column'})
-        for col_num in range(1, 3):
+        for col_num in range(1, n_len):
             chart.add_series({'name': [sheet, 0, col_num],
-                                'categories': [sheet, 3, 0, worksheet.dim_rowmax, 0],
-                                'values': [sheet, 3, col_num, worksheet.dim_rowmax, col_num],
-                                'fill': {'color': colors[col_num - 1]}})
+                              'categories': [sheet, n_len, 0, worksheet.dim_rowmax, 0],
+                              'values': [sheet, n_len, col_num, worksheet.dim_rowmax, col_num],
+                              'fill': {'color': colors[col_num - 1]}})
         chart.set_legend({'position': 'top'})
         chart.set_size({'x_scale': 2, 'y_scale': 1.75})
         worksheet.insert_chart('B11', chart)
@@ -543,7 +597,7 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
             worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
         worksheet.freeze_panes(0, 1)
         chart = workbook.add_chart({'type': 'column'})
-        for col_num in range(1, 3):
+        for col_num in range(1, n_len):
             chart.add_series({'name': [sheet, 0, col_num],
                                 'categories': [sheet, 1, 0, 1, 0],
                                 'values': [sheet, 1, col_num, 1, col_num],
@@ -557,11 +611,11 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
             worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
         worksheet.freeze_panes(0, 1)
         chart = workbook.add_chart({'type': 'column'})
-        for col_num in range(1, 3):
+        for col_num in range(1, n_len):
             chart.add_series({'name':[sheet, 0, col_num],
-                                'categories': [sheet, 2, 0, worksheet.dim_rowmax, 0],
-                                'values': [sheet, 2, col_num, worksheet.dim_rowmax, col_num],
-                                'fill': {'color': colors[col_num - 1]}})
+                              'categories': [sheet, 2, 0, worksheet.dim_rowmax, 0],
+                              'values': [sheet, 2, col_num, worksheet.dim_rowmax, col_num],
+                              'fill': {'color': colors[col_num - 1]}})
         chart.set_title({'name': 'Percentage of Households with Number of Automobiles'})
         chart.set_legend({'position': 'top'})
         chart.set_size({'x_scale': 2, 'y_scale': 2})
@@ -576,14 +630,16 @@ def DaysimReport(data1, data2, name1, name2, location, districtfile):
 
     print('---DaySim Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
-def DestChoice(data1, data2, name1, name2, location, districtfile):
+def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile):
     """Generate a destination choice summary that compares Daysim output and the survey data
 
     Args:
         data1 (dict): usually a dictionary that stores the Daysim output, which read from a hdf5 file
-        data2 (dict): usually a dictionary that stores the survey data, which read from a hdf5 file
+        data2 (dict): usually a dictionary that stores the daysim-formated survey data, which read from a hdf5 file
+        data3 (dict): usually a dictionary that stores the full survey data, which read from a hdf5 file
         name1 (str): the name that represents data1, e.g., 'DaysimOutputs'
-        name2 (str): the name that represents data2, e.g., '2023Survey'
+        name2 (str): the name that represents data2, e.g., '2023DaysimFormatSurvey'
+        name3 (str): the name that represents data3, e.g., '2023FullSurvey'
         location (str): the path pointing to the Daysim outputs
         districtfile (pandas.core.frame.DataFrame): a pandas dataframe that stores dictrict data 
     """
@@ -600,10 +656,13 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']].copy(deep=True)
     trip_ok_2 = data2['Trip'].\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
+    trip_ok_3 = data3['Trip'].\
+        query('travdist>0 and travdist<200')[['hhno', 'pno', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
 
     #Get total trips and tours
     Trip_1_total = get_total(trip_ok_1['trexpfac'])
     Trip_2_total = get_total(trip_ok_2['trexpfac'])
+    Trip_3_total = get_total(trip_ok_3['trexpfac'])
     Tour_1_total = get_total(tour_ok_1['toexpfac'])
     Tour_2_total = get_total(tour_ok_2['toexpfac'])
 
@@ -667,10 +726,14 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Average Distance by Trip Purpose
     atripdist1 = weighted_average(trip_ok_1, 'travdist', 'trexpfac', 'dpurp')
     atripdist2 = weighted_average(trip_ok_2, 'travdist', 'trexpfac', 'dpurp')
+    atripdist3 = weighted_average(trip_ok_3, 'travdist', 'trexpfac', 'dpurp')
     atripdist = pd.DataFrame()
     atripdist['Average Distance (' + name1 + ')'] = atripdist1.round(2)
     atripdist['Average Distance (' + name2 + ')'] = atripdist2.round(2)
-    atripdist = get_differences(atripdist, 'Average Distance (' + name1 + ')', 'Average Distance (' + name2 + ')', 2)
+    atripdist['Average Distance (' + name3 + ')'] = atripdist3.round(2)
+    atripdist = get_differences_wt_fullsurvey(atripdist, 'Average Distance (' + name1 + ')', 
+                                                         'Average Distance (' + name2 + ')',
+                                                         'Average Distance (' + name3 + ')', 2)
     atripdist = recode_index(atripdist, 'dpurp', 'Trip Purpose')
 
     cp4 = time.time()
@@ -705,11 +768,16 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Average Distance by Trip Mode
     atripdist1m = weighted_average(trip_ok_1, 'travdist', 'trexpfac', 'mode')
     atripdist2m = weighted_average(trip_ok_2, 'travdist', 'trexpfac', 'mode')
+    atripdist3m = weighted_average(trip_ok_3, 'travdist', 'trexpfac', 'mode')
     atripdistm = pd.concat([atripdist1m.rename('Average Distance (' + name1 + ')'), 
-                            atripdist2m.rename('Average Distance (' + name2 + ')')],
+                            atripdist2m.rename('Average Distance (' + name2 + ')'),
+                            atripdist3m.rename('Average Distance (' + name3 + ')')],
                             axis=1, sort = True,
                             join='outer')
-    atripdistm = get_differences(atripdistm, 'Average Distance (' + name1 + ')', 'Average Distance (' + name2 + ')', 1)
+    atripdistm = get_differences_wt_fullsurvey(atripdistm, 'Average Distance (' + name1 + ')', 
+                                                           'Average Distance (' + name2 + ')',
+                                                           'Average Distance (' + name3 + ')', 
+                                                           1, need_diff_percent=True)
     atripdistm.dropna(inplace=True)
     atripdistm.index.name = 'Trip Mode'
     cp7 = time.time()
@@ -742,18 +810,24 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #Merge the trip file with the district file
     tripsdest1 = pd.merge(trip_ok_1[['dtaz', 'trexpfac']], districtfile, left_on = 'dtaz', right_on = 'TAZ')
     tripsdest2 = pd.merge(trip_ok_2[['dtaz', 'trexpfac']], districtfile, left_on = 'dtaz', right_on = 'TAZ')
+    tripsdest3 = pd.merge(trip_ok_3[['dtaz', 'trexpfac']], districtfile, left_on = 'dtaz', right_on = 'TAZ')
 
     #Get the share of trips for each district
     tdist1 = tripsdest1.groupby('New DistrictName')[tripsdest1.select_dtypes(include = 'number').columns].sum()['trexpfac']
     tdist2 = tripsdest2.groupby('New DistrictName')[tripsdest2.select_dtypes(include = 'number').columns].sum()['trexpfac']
+    tdist3 = tripsdest3.groupby('New DistrictName')[tripsdest3.select_dtypes(include = 'number').columns].sum()['trexpfac']
     tripdestshare1 = tdist1 / Trip_1_total * 100
     tripdestshare2 = tdist2 / Trip_2_total * 100
+    tripdestshare3 = tdist3 / Trip_3_total * 100
 
     #Create data frame
     tripdest = pd.DataFrame()
     tripdest['% of Trips (' + name1 + ')'] = tripdestshare1
     tripdest['% of Trips (' + name2 + ')'] = tripdestshare2
-    tripdest = get_differences(tripdest, '% of Trips (' + name1 + ')', '% of Trips (' + name2 + ')', 2)
+    tripdest['% of Trips (' + name3 + ')'] = tripdestshare3
+    tripdest = get_differences_wt_fullsurvey(tripdest, '% of Trips (' + name1 + ')', 
+                                                       '% of Trips (' + name2 + ')',
+                                                       '% of Trips (' + name3 + ')', 2, need_diff_percent=False)
 
     cp9 = time.time()
     print('Percent of Trips by Destination District data frame created in ' + str(round(cp9 - cp8, 1)) + ' seconds')
@@ -761,35 +835,55 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
     #People, workers, and students by District
     HHPer1 = pd.merge(data1['Person'][['hhno', 'psexpfac']], data1['Household'][['hhno', 'hhtaz']], 'outer', on = 'hhno')
     HHPer2 = pd.merge(data2['Person'][['hhno', 'psexpfac']], data2['Household'][['hhno', 'hhtaz']], 'outer', on = 'hhno')
+    HHPer3 = pd.merge(data3['Person'][['hhno', 'psexpfac']], data3['Household'][['hhno', 'hhtaz']], 'outer', on = 'hhno')
     people_per_taz_1 = HHPer1.groupby('hhtaz').sum()['psexpfac']
     people_per_taz_2 = HHPer2.groupby('hhtaz').sum()['psexpfac']
-    people_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of People (' + name1 + ')', people_per_taz_1), ('Number of People (' + name2 + ')', people_per_taz_2))))
+    people_per_taz_3 = HHPer3.groupby('hhtaz').sum()['psexpfac']
+    people_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of People (' + name1 + ')', people_per_taz_1), 
+                                                         ('Number of People (' + name2 + ')', people_per_taz_2),
+                                                         ('Number of People (' + name3 + ')', people_per_taz_3))))
     people_per_taz_district = pd.merge(people_per_taz, districtfile, left_index = True, right_on = 'TAZ')
-    people_per_district = people_per_taz_district[['Number of People (' + name1 + ')', 'Number of People (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
-    people_per_district = get_differences(people_per_district, 'Number of People (' + name1 + ')', 'Number of People (' + name2 + ')', 0)
-    people_per_district['Difference (People)'] = people_per_district['Difference']
-    people_per_district['% Difference (People)'] = people_per_district['% Difference']
-    people_per_district = people_per_district.drop(columns = ['Difference', '% Difference'])    
+    people_per_district = people_per_taz_district[['Number of People (' + name1 + ')', 
+                                                   'Number of People (' + name2 + ')', 
+                                                   'Number of People (' + name3 + ')', 
+                                                   'New DistrictName']].groupby('New DistrictName').sum()
+    people_per_district = get_differences_wt_fullsurvey(people_per_district, 'Number of People (' + name1 + ')', 
+                                                                             'Number of People (' + name2 + ')',
+                                                                             'Number of People (' + name3 + ')', 
+                                                                             0,
+                                                                             need_diff_percent=True) 
 
     workers_per_taz_1 = data1['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
     workers_per_taz_2 = data2['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
-    workers_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Workers (' + name1 + ')', workers_per_taz_1), ('Number of Workers (' + name2 + ')', workers_per_taz_2))))
+    workers_per_taz_3 = data3['Person'][['pwtaz', 'psexpfac']].groupby('pwtaz').sum()['psexpfac']
+    workers_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Workers (' + name1 + ')', workers_per_taz_1), 
+                                                          ('Number of Workers (' + name2 + ')', workers_per_taz_2),
+                                                          ('Number of Workers (' + name3 + ')', workers_per_taz_3))))
     workers_per_taz_district = pd.merge(workers_per_taz, districtfile, left_index = True, right_on = 'TAZ')
-    workers_per_district = workers_per_taz_district[['Number of Workers (' + name1 + ')', 'Number of Workers (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
-    workers_per_district = get_differences(workers_per_district, 'Number of Workers (' + name1 + ')', 'Number of Workers (' + name2 + ')', 0)
-    workers_per_district['Difference (Workers)'] = workers_per_district['Difference']
-    workers_per_district['% Difference (Workers)'] = workers_per_district['% Difference']
-    workers_per_district = workers_per_district.drop(columns = ['Difference', '% Difference'])    
+    workers_per_district = workers_per_taz_district[['Number of Workers (' + name1 + ')', 
+                                                     'Number of Workers (' + name2 + ')',
+                                                     'Number of Workers (' + name3 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
+    workers_per_district = get_differences_wt_fullsurvey(workers_per_district, 'Number of Workers (' + name1 + ')', 
+                                                                               'Number of Workers (' + name2 + ')',
+                                                                               'Number of Workers (' + name3 + ')', 
+                                                                               0,
+                                                                               need_diff_percent=True) 
 
     students_per_taz_1 = data1['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
     students_per_taz_2 = data2['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
-    students_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Students (' + name1 + ')', students_per_taz_1), ('Number of Students (' + name2 + ')', students_per_taz_2))))
+    students_per_taz_3 = data3['Person'][['pstaz', 'psexpfac']].groupby('pstaz').sum()['psexpfac']
+    students_per_taz = pd.DataFrame.from_dict(OrderedDict((('Number of Students (' + name1 + ')', students_per_taz_1), 
+                                                           ('Number of Students (' + name2 + ')', students_per_taz_2),
+                                                           ('Number of Students (' + name3 + ')', students_per_taz_3))))
     students_per_taz_district = pd.merge(students_per_taz, districtfile, left_index = True, right_on = 'TAZ')
-    students_per_district = students_per_taz_district[['Number of Students (' + name1 + ')', 'Number of Students (' + name2 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
-    students_per_district = get_differences(students_per_district, 'Number of Students (' + name1 + ')', 'Number of Students (' + name2 + ')', 0)
-    students_per_district['Difference (Students)'] = students_per_district['Difference']
-    students_per_district['% Difference (Students)'] = students_per_district['% Difference']
-    students_per_district = students_per_district.drop(columns = ['Difference', '% Difference'])    
+    students_per_district = students_per_taz_district[['Number of Students (' + name1 + ')', 
+                                                       'Number of Students (' + name2 + ')',
+                                                       'Number of Students (' + name3 + ')', 'New DistrictName']].groupby('New DistrictName').sum()
+    students_per_district = get_differences_wt_fullsurvey(students_per_district, 'Number of Students (' + name1 + ')', 
+                                                                   'Number of Students (' + name2 + ')',
+                                                                   'Number of Students (' + name3 + ')', 
+                                                                   0,
+                                                                   need_diff_percent=True)
 
     people_workers_district = pd.merge(people_per_district, workers_per_district, left_index = True, right_index = True)
     people_workers_students_district = pd.merge(people_workers_district, students_per_district, left_index = True, right_index = True)
@@ -810,7 +904,7 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
         people_workers_students_district.to_excel(excel_writer=writer,sheet_name='#People by District',na_rep='NA')
 
     colwidths = getmaxwidths(location + '/DaysimDestChoiceReport_2023.xlsx')
-    colors = ['#004488', '#00C0C0']
+    colors =  ['#004488', '#00C0C0', '#749BC2']
 
     with pd.ExcelWriter(location + '/DaysimDestChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         atl.to_excel(excel_writer = writer, sheet_name = 'Average Dist by Tour Purpose', na_rep = 'NA')
@@ -829,11 +923,19 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
                 worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
             worksheet.freeze_panes(0, 1)
             chart = workbook.add_chart({'type': 'column'})
-            for col_num in range(1, 3):
-                chart.add_series({'name': [sheet, 0, col_num],
-                                    'categories': [sheet, 2, 0, worksheet.dim_rowmax, 0],
-                                    'values': [sheet, 2, col_num, worksheet.dim_rowmax, col_num],
-                                    'fill': {'color': colors[col_num - 1]}})
+            if sheet in ['Average Dist by Trip Purpose', 'Average Dist by Trip Mode', 
+                           '% Trips by Destination District', '#People by District']:
+                for col_num in range(1, 4):
+                    chart.add_series({'name': [sheet, 0, col_num],
+                                        'categories': [sheet, 2, 0, worksheet.dim_rowmax, 0],
+                                        'values': [sheet, 2, col_num, worksheet.dim_rowmax, col_num],
+                                        'fill': {'color': colors[col_num - 1]}})
+            else:
+                for col_num in range(1, 3):
+                    chart.add_series({'name': [sheet, 0, col_num],
+                                        'categories': [sheet, 2, 0, worksheet.dim_rowmax, 0],
+                                        'values': [sheet, 2, col_num, worksheet.dim_rowmax, col_num],
+                                        'fill': {'color': colors[col_num - 1]}})
             chart.set_legend({'position': 'top'})
             chart.set_size({'x_scale': 2, 'y_scale': 1.5})
             worksheet.insert_chart('B15', chart)
@@ -861,11 +963,10 @@ def DestChoice(data1, data2, name1, name2, location, districtfile):
         num_students.set_legend({'position': 'top'})
         num_students.set_size({'x_scale':2,'y_scale':1.5})
         worksheet.insert_chart('J15', num_students)
-        # worksheet.write('A20', 'Transit Lengths are wrong! Ignore')  # TODO: why we need this line? comment it for now
 
     print('---Destination Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def ModeChoice(data1, data2, name1, name2, location):
+def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     start = time.time()
     print('---Begin Mode Choice Report compilation---')
     
@@ -878,32 +979,41 @@ def ModeChoice(data1, data2, name1, name2, location):
         query('travtime>0 and travtime<200')
     trip_ok_2 = data2['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'tour', 'day', 'trexpfac', 'dpurp']].\
         query('travtime>0 and travtime<200')
+    trip_ok_3 = data3['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'trexpfac', 'dpurp']].\
+        query('travtime>0 and travtime<200')
     Trip_1_total = get_total(trip_ok_1['trexpfac'])
     Trip_2_total = get_total(trip_ok_2['trexpfac'])
+    Trip_3_total = get_total(trip_ok_3['trexpfac'])
     Tour_1_total = get_total(tour_ok_1['toexpfac'])
     Tour_2_total = get_total(tour_ok_2['toexpfac'])
     merge_per_hh_1 = pd.merge(data1['Person'][['hhno','psexpfac']], data1['Household'][['hhno']], 'outer', on = 'hhno')
     merge_per_hh_2 = pd.merge(data2['Person'][['hhno','psexpfac']], data2['Household'][['hhno']], 'outer', on = 'hhno')
+    merge_per_hh_3 = pd.merge(data3['Person'][['hhno','psexpfac']], data3['Household'][['hhno']], 'outer', on = 'hhno')
     label = []
     value1 = []
     value2 = []
+    value3 = []
     Person_1_total = get_total(merge_per_hh_1['psexpfac'])
     Person_2_total = get_total(merge_per_hh_2['psexpfac'])
+    Person_3_total = get_total(merge_per_hh_3['psexpfac'])
     label.append('Number of People')
-    value1.append(int(round(Person_1_total, 0)))
+    value1.append(int(round(Person_1_total, 0)))  # number of people
     value2.append(int(round(Person_2_total, 0)))
+    value3.append(int(round(Person_3_total, 0)))
 
     label.append('Number of Trips')
-    value1.append(int(round(Trip_1_total, 0)))
+    value1.append(int(round(Trip_1_total, 0)))  # number of trips
     value2.append(int(round(Trip_2_total, 0)))
+    value3.append(int(round(Trip_3_total, 0)))
 
     label.append('Number of Tours')
-    value1.append(int(round(Tour_1_total, 0)))
+    value1.append(int(round(Tour_1_total, 0)))  # number of tours, full survey doesn't have tour data
     value2.append(int(round(Tour_2_total, 0)))
+    value3.append(np.nan)
 
 
-    vmpp = pd.DataFrame.from_dict(OrderedDict((('', label), (name1, value1), (name2, value2))))
-    vmpp = get_differences(vmpp, name1, name2, 2)
+    vmpp = pd.DataFrame.from_dict(OrderedDict((('', label), (name1, value1), (name2, value2), (name3, value3))))
+    vmpp = get_differences_wt_fullsurvey(vmpp, name1, name2, name3, 2, need_diff_percent=True)
     vmpp = vmpp.set_index('')
 
     cp1 = time.time()
@@ -912,8 +1022,8 @@ def ModeChoice(data1, data2, name1, name2, location):
     ##Subsection Tour Summaries
 
     #Tour Mode Share
-    tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # TODO: remove 'other' mode in the comparison, as the model doesn't have this mode
-    tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # TODO: remove 'other' mode in the comparison, as the model doesn't have this mode
+    tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1 = tour_ok_1[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     mode2 = tour_ok_2[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     modeshare1 = mode1 / Tour_1_total * 100
@@ -945,7 +1055,8 @@ def ModeChoice(data1, data2, name1, name2, location):
 
     # tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
     # tpm2 = pd.DataFrame({name2 + ' Share (%)': tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp2 * 100}, dtype='float').reset_index()
-    tpm = pd.merge(tpm1, tpm2, 'outer')
+    tpm = pd.merge(tpm1[['Purpose', 'Mode', f'{name1} Share (%)']], 
+                   tpm2[['Purpose', 'Mode', f'{name2} Share (%)']], 'outer', on=['Purpose', 'Mode'])
     tpm = tpm.sort_values(name2 + ' Share (%)')
 
     #Re-organize data frame for side-by-side comparison
@@ -1074,33 +1185,41 @@ def ModeChoice(data1, data2, name1, name2, location):
     df1 = tour_ok_1[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']].copy()
     df2 = tour_ok_2[['tautotime', 'tautocost', 'tautodist', 'toexpfac', 'tmodetp']].copy()
     toursmtt = pd.DataFrame()
-    toursmtt['Mean Auto Time (' + name1 + ')'] = weighted_average(df1, 'tautotime', 'toexpfac', 'tmodetp').round(2)
-    toursmtt['Mean Auto Distance (' + name1 + ')'] = weighted_average(df1, 'tautodist', 'toexpfac', 'tmodetp').round(2)
-    toursmtt['Mean Auto Cost (' + name1 + ')'] = weighted_average(df1, 'tautocost', 'toexpfac', 'tmodetp').round(2)
-    toursmtt['Mean Auto Time (' + name2 + ')'] = weighted_average(df2, 'tautotime', 'toexpfac', 'tmodetp').round(2)
-    toursmtt['Mean Auto Distance (' + name2 + ')'] = weighted_average(df2, 'tautodist', 'toexpfac', 'tmodetp').round(2)
-    toursmtt['Mean Auto Cost (' + name2 + ')'] = weighted_average(df2, 'tautocost', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Time (' + name1 + ')'] = weighted_average(df1, 'tautotime', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Distance (' + name1 + ')'] = weighted_average(df1, 'tautodist', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Cost (' + name1 + ')'] = weighted_average(df1, 'tautocost', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Time (' + name2 + ')'] = weighted_average(df2, 'tautotime', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Distance (' + name2 + ')'] = weighted_average(df2, 'tautodist', 'toexpfac', 'tmodetp').round(2)
+    toursmtt['Mean Travel Cost (' + name2 + ')'] = weighted_average(df2, 'tautocost', 'toexpfac', 'tmodetp').round(2)
     toursmtt = recode_index(toursmtt,'tmodetp','Mode')
 
     cp5 = time.time()
     print('Tours by Mode and Travel Time data frame created in ' + str(round(cp5 - cp4, 1)) + ' seconds')
 
     #Trips by Mode and Travel Time
-    trip_ok_1 = trip_ok_1[trip_ok_1['mode']!='Other'].copy(deep=True)  # TODO: remove 'other' mode in the comparison, as the model doesn't have this mode
-    trip_ok_2 = trip_ok_2[trip_ok_2['mode']!='Other'].copy(deep=True)  # TODO: remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_1 = trip_ok_1[trip_ok_1['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_2 = trip_ok_2[trip_ok_2['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_3 = trip_ok_3[trip_ok_3['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     tripdf1 = trip_ok_1[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']].copy()
     tripdf2 = trip_ok_2[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']].copy()
-    tripsmtt1 = pd.DataFrame()
+    tripdf3 = trip_ok_3[['trexpfac', 'travtime', 'travcost', 'travdist', 'mode']].copy()
+    tripsmtt1 = pd.DataFrame()  # trips by mode and travel time
     tripsmtt2 = pd.DataFrame()
+    tripsmtt3 = pd.DataFrame()
     tripm1 = tripdf1.groupby('mode').sum()['trexpfac']
     tripm2 = tripdf2.groupby('mode').sum()['trexpfac']
+    tripm3 = tripdf3.groupby('mode').sum()['trexpfac']
     tms1 = tripm1 / Trip_1_total * 100 #Trip mode share
     tms2 = tripm2 / Trip_2_total * 100
+    tms3 = tripm3 / Trip_3_total * 100
     tripsmtt1['Total Trips (' + name1 + ')'] = tripm1.round(0)
     tripsmtt2['Total Trips (' + name2 + ')'] = tripm2.round(0)
+    tripsmtt3['Total Trips (' + name3 + ')'] = tripm3.round(0)
     tripsmtt = pd.merge(tripsmtt1, tripsmtt2, 'outer', left_index = True, right_index = True)
+    tripsmtt = pd.merge(tripsmtt, tripsmtt3, 'outer', left_index = True, right_index = True)
     tripsmtt['Mode Share (' + name1 + ') (%)'] = tms1.round(2)
     tripsmtt['Mode Share (' + name2 + ') (%)'] = tms2.round(2)
+    tripsmtt['Mode Share (' + name3 + ') (%)'] = tms3.round(2)
 
     #Weighted averages for average travel time, distance, and cost
     tripdf1['atimesp'] = tripdf1['travtime'].multiply(tripdf1['trexpfac'])
@@ -1109,20 +1228,27 @@ def ModeChoice(data1, data2, name1, name2, location):
     tripdf2['atimesp'] = tripdf2['travtime'].multiply(tripdf2['trexpfac'])
     tripdf2['adistsp'] = tripdf2['travdist'].multiply(tripdf2['trexpfac'])
     tripdf2['acostsp'] = tripdf2['travcost'].multiply(tripdf2['trexpfac'])
+    tripdf3['atimesp'] = tripdf3['travtime'].multiply(tripdf3['trexpfac'])
+    tripdf3['adistsp'] = tripdf3['travdist'].multiply(tripdf3['trexpfac'])
+    tripdf3['acostsp'] = tripdf3['travcost'].multiply(tripdf3['trexpfac'])
     tripgrouped1 = tripdf1.groupby('mode').sum()
     tripgrouped2 = tripdf2.groupby('mode').sum()
+    tripgrouped3 = tripdf3.groupby('mode').sum()
     tripgrouped1['matime'] = tripgrouped1['atimesp'] / tripgrouped1['trexpfac']
     tripgrouped1['madist'] = tripgrouped1['adistsp'] / tripgrouped1['trexpfac']
     tripgrouped1['macost'] = tripgrouped1['acostsp'] / tripgrouped1['trexpfac']
     tripgrouped2['matime'] = tripgrouped2['atimesp'] / tripgrouped2['trexpfac']
     tripgrouped2['madist'] = tripgrouped2['adistsp'] / tripgrouped2['trexpfac']
     tripgrouped2['macost'] = tripgrouped2['acostsp'] / tripgrouped2['trexpfac']
-    tripsmtt['Mean Auto Time (' + name1 + ')'] = tripgrouped1['matime'].round(2)
-    tripsmtt['Mean Auto Time (' + name2 + ')'] = tripgrouped2['matime'].round(2)
-    tripsmtt['Mean Auto Distance (' + name1 + ')'] = tripgrouped1['madist'].round(2)
-    tripsmtt['Mean Auto Distance (' + name2 + ')'] = tripgrouped2['madist'].round(2)
-    tripsmtt['Mean Auto Cost (' + name1 + ')'] = tripgrouped1['macost'].round(2)
-    tripsmtt['Mean Auto Cost (' + name2 + ')'] = tripgrouped2['macost'].round(2)
+    tripgrouped3['matime'] = tripgrouped3['atimesp'] / tripgrouped3['trexpfac']
+    tripgrouped3['madist'] = tripgrouped3['adistsp'] / tripgrouped3['trexpfac']
+    tripgrouped3['macost'] = tripgrouped3['acostsp'] / tripgrouped3['trexpfac']
+    tripsmtt['Mean Travel Time (' + name1 + ')'] = tripgrouped1['matime'].round(2)
+    tripsmtt['Mean Travel Time (' + name2 + ')'] = tripgrouped2['matime'].round(2)
+    tripsmtt['Mean Travel Time (' + name3 + ')'] = tripgrouped3['matime'].round(2)
+    tripsmtt['Mean Travel Distance (' + name1 + ')'] = tripgrouped1['madist'].round(2)
+    tripsmtt['Mean Travel Distance (' + name2 + ')'] = tripgrouped2['madist'].round(2)
+    tripsmtt['Mean Travel Distance (' + name3 + ')'] = tripgrouped3['madist'].round(2)
     tripsmtt = recode_index(tripsmtt, 'mode', 'Mode')
 
     cp6 = time.time()
@@ -1131,25 +1257,34 @@ def ModeChoice(data1, data2, name1, name2, location):
     #Trips by purpose and travel time
     ttdf1 = trip_ok_1[['travtime','travdist','trexpfac','mode','dpurp']].copy()
     ttdf2 = trip_ok_2[['travtime','travdist','trexpfac','mode','dpurp']].copy()
+    ttdf3 = trip_ok_3[['travtime','travdist','trexpfac','mode','dpurp']].copy()
 
     #Some weighted averages to get average distance and travel time
     ttdf1['ttsp'] = ttdf1['travtime'].multiply(ttdf1['trexpfac'])
     ttdf2['ttsp'] = ttdf2['travtime'].multiply(ttdf2['trexpfac'])
+    ttdf3['ttsp'] = ttdf3['travtime'].multiply(ttdf3['trexpfac'])
     ttdf1['tdsp'] = ttdf1['travdist'].multiply(ttdf1['trexpfac'])
     ttdf2['tdsp'] = ttdf2['travdist'].multiply(ttdf2['trexpfac'])
+    ttdf3['tdsp'] = ttdf3['travdist'].multiply(ttdf3['trexpfac'])
     ttrips1 = ttdf1.groupby(['mode','dpurp']).sum()
     ttrips2 = ttdf2.groupby(['mode','dpurp']).sum()
+    ttrips3 = ttdf3.groupby(['mode','dpurp']).sum()
     ttrips1['mtt'] = (ttrips1['ttsp'] / ttrips1['trexpfac']).round(2)
     ttrips2['mtt'] = (ttrips2['ttsp'] / ttrips2['trexpfac']).round(2)
+    ttrips3['mtt'] = (ttrips3['ttsp'] / ttrips3['trexpfac']).round(2)
     ttrips1['mtd'] = (ttrips1['tdsp'] / ttrips1['trexpfac']).round(2)
     ttrips2['mtd'] = (ttrips2['tdsp'] / ttrips2['trexpfac']).round(2)
+    ttrips3['mtd'] = (ttrips3['tdsp'] / ttrips3['trexpfac']).round(2)
 
     #Glue data frame together
     full1 = ttrips1.reset_index()
     full2 = ttrips2.reset_index()
+    full3 = ttrips3.reset_index()
     tptt1 = pd.DataFrame.from_dict(OrderedDict((('Mode', full1['mode']), ('Purpose', full1['dpurp']), ('Total Trips (' + name1 + ')', full1['trexpfac']), ('Mean Time (' + name1 + ')', full1['mtt']), ('Mean Distance (' + name1 + ')', full1['mtd']))))
     tptt2 = pd.DataFrame.from_dict(OrderedDict((('Mode', full2['mode']), ('Purpose', full2['dpurp']), ('Total Trips (' + name2 + ')', full2['trexpfac']), ('Mean Time (' + name2 + ')', full2['mtt']), ('Mean Distance (' + name2 + ')', full2['mtd']))))
+    tptt3 = pd.DataFrame.from_dict(OrderedDict((('Mode', full3['mode']), ('Purpose', full3['dpurp']), ('Total Trips (' + name3 + ')', full3['trexpfac']), ('Mean Time (' + name3 + ')', full3['mtt']), ('Mean Distance (' + name3 + ')', full3['mtd']))))
     tptt = pd.merge(tptt1, tptt2, 'outer')
+    tptt = pd.merge(tptt, tptt3, 'outer')
     tptt = tptt.sort_index(axis = 1, ascending = False)
     tptt = tptt.set_index(['Mode', 'Purpose'])
 
@@ -1219,16 +1354,17 @@ def ModeChoice(data1, data2, name1, name2, location):
         worksheet.write(37, 0, 'Tour Mode ->', merge_format)
         worksheet.write(37, 10, 'Tour Mode ->', merge_format)
         worksheet.write(0, 9, ' ')
-        worksheet.conditional_format('L4:S11', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
-        worksheet.conditional_format('L16:S23', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
-        worksheet.conditional_format('B40:I47', {'type': 'cell', 'criteria': '>=', 'value': 100, 'format': pd_format})
-        worksheet.conditional_format('B40:I47', {'type': 'cell', 'criteria': '<=', 'value': -50, 'format': pd_format})
-        worksheet.conditional_format('L40:S47', {'type': 'cell', 'criteria': '>=', 'value': 100, 'format': pd_format})
-        worksheet.conditional_format('L40:S47', {'type': 'cell', 'criteria': '<=', 'value': -50, 'format': pd_format})
+        # worksheet.conditional_format('L4:S11', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
+        # worksheet.conditional_format('L16:S23', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
+        # worksheet.conditional_format('B40:I47', {'type': 'cell', 'criteria': '>=', 'value': 100, 'format': pd_format})
+        # worksheet.conditional_format('B40:I47', {'type': 'cell', 'criteria': '<=', 'value': -50, 'format': pd_format})
+        # worksheet.conditional_format('L40:S47', {'type': 'cell', 'criteria': '>=', 'value': 100, 'format': pd_format})
+        # worksheet.conditional_format('L40:S47', {'type': 'cell', 'criteria': '<=', 'value': -50, 'format': pd_format})
         toursmtt.to_excel(excel_writer = writer, sheet_name = 'Tours by Mode & Travel Time', na_rep = 'NA')
         tripsmtt.to_excel(excel_writer = writer, sheet_name = 'Trips by Mode & Travel Time', na_rep = 'NA')
         tptt.to_excel(excel_writer = writer, sheet_name = 'Trips by Purpose & Travel Time',na_rep = 'NA') 
-        colors=['#0c2c56','#005c5c']
+        colors=['#004488', '#00C0C0', '#749BC2']
+        n_len = 4
         for sheet in writer.sheets:
             worksheet=writer.sheets[sheet]
             # worksheet.write('A20', 'Transit Lengths are wrong! Ignore')
@@ -1238,15 +1374,16 @@ def ModeChoice(data1, data2, name1, name2, location):
                 worksheet.freeze_panes(0,1)
             if sheet in ['# People, Trips, and Tours','Mode Share']:
                 chart=workbook.add_chart({'type':'column'})
-                for col_num in range(1,3):
-                    if sheet=='# People, Trips, and Tours':
+                if sheet=='# People, Trips, and Tours':
+                    for col_num in range(1, n_len):
                         chart.add_series({'name':[sheet, 0, col_num],
                                             'categories':[sheet,1,0,worksheet.dim_rowmax,0],
                                             'values':[sheet,1,col_num,worksheet.dim_rowmax,col_num],
                                             'fill':{'color':colors[col_num-1]}})
                         chart.set_legend({'position':'top'})
                         chart.set_size({'x_scale':2,'y_scale':1.75})
-                    else:
+                else:
+                    for col_num in range(1,3):
                         chart.add_series({'name':[sheet, 0, col_num],
                                             'categories':[sheet,2,0,worksheet.dim_rowmax,0],
                                             'values':[sheet,2,col_num,worksheet.dim_rowmax,col_num],
@@ -1273,15 +1410,17 @@ def ModeChoice(data1, data2, name1, name2, location):
 
     print('---Mode Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def LongTerm(data1, data2, name1, name2, location, districtfile):
+def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
     start = time.time()
     print('---Begin Long Term Report compilation---')
-
     merge_per_hh_1 = pd.merge(data1['Person'][['hhno', 'psexpfac', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'pwaudist']],
                               data1['Household'][['hhno', 'hhtaz', 'hhparcel']],
                               on = 'hhno')
     merge_per_hh_2 = pd.merge(data2['Person'][['hhno', 'psexpfac', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'pwaudist']],
                               data2['Household'][['hhno', 'hhtaz', 'hhparcel']],
+                              on = 'hhno')
+    merge_per_hh_3 = pd.merge(data3['Person'][['hhno', 'psexpfac', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'pwaudist']],
+                              data3['Household'][['hhno', 'hhtaz', 'hhparcel']],
                               on = 'hhno')
 
     cp1 = time.time()
@@ -1290,21 +1429,24 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #Total Households and Persons
     th1 = data1['Household']['hhexpfac'].sum()
     th2 = data2['Household']['hhexpfac'].sum()
+    th3 = data3['Household']['hhexpfac'].sum()
     tp1 = data1['Person']['psexpfac'].sum()
     tp2 = data2['Person']['psexpfac'].sum()
-    ahs1 = tp1 / th1
+    tp3 = data3['Person']['psexpfac'].sum()
+    ahs1 = tp1 / th1  # average household size
     ahs2 = tp2 / th2
+    ahs3 = tp3 / th2
     ph = pd.DataFrame(index = ['Total Persons', 'Total Households', 'Average Household Size'])
     ph[name1] = [tp1, th1, ahs1]
     ph[name2] = [tp2, th2, ahs2]
-    ph = get_differences(ph, name1, name2, [0, 0, 2])
+    ph[name3] = [tp3, th3, ahs3]
+    ph = get_differences_wt_fullsurvey(ph, name1, name2, name3, [0, 0, 0, 2, 2], need_diff_percent=True)
 
     persons_hh_acs= pd.read_excel(acs_data,sheet_name = 'Totals')
     persons_hh_acs_df = pd.DataFrame(persons_hh_acs)
     acs_persons = persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Persons']['Total'].sum()
     acs_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='Households']['Total'].sum()
     acs_per_hh= persons_hh_acs_df.loc[persons_hh_acs_df['DataItem']=='PersonHH']['Total'].sum()
-    ph['ACS'] = [acs_persons, acs_hh, acs_per_hh]
 
     cp2 = time.time()
     print('Total Households and Persons data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
@@ -1313,16 +1455,22 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #Workers at Home
     wrkrs1 = merge_per_hh_1[['pwtyp', 'psexpfac', 'hhtaz', 'pwpcl', 'hhparcel', 'pwaudist', 'pgend', 'pagey']].query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
     wrkrs2 = merge_per_hh_2[['pwtyp', 'psexpfac', 'hhtaz', 'pwpcl', 'hhparcel', 'pwaudist', 'pgend', 'pagey']].query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
+    wrkrs3 = merge_per_hh_3[['pwtyp', 'psexpfac', 'hhtaz', 'pwpcl', 'hhparcel', 'pwaudist', 'pgend', 'pagey']].query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
     wkr_1_hzone = pd.merge(districtfile, wrkrs1, left_on = 'TAZ', right_on = 'hhtaz')
     wkr_2_hzone = pd.merge(districtfile, wrkrs2, left_on = 'TAZ', right_on = 'hhtaz')
+    wkr_3_hzone = pd.merge(districtfile, wrkrs3, left_on = 'TAZ', right_on = 'hhtaz')
     total_workers_1 = wrkrs1['psexpfac'].sum()
     total_workers_2 = wrkrs2['psexpfac'].sum()
+    total_workers_3 = wrkrs3['psexpfac'].sum()
     works_at_home_1 = wkr_1_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
     works_at_home_2 = wkr_2_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
+    works_at_home_3 = wkr_3_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
     work_home_county_1 = works_at_home_1.groupby('County').sum()['psexpfac']
     work_home_county_2 = works_at_home_2[['County', 'psexpfac']].groupby('County').sum()['psexpfac']
+    work_home_county_3 = works_at_home_3[['County', 'psexpfac']].groupby('County').sum()['psexpfac']
     work_home_1 = work_home_county_1.sum()
     work_home_2 = work_home_county_2.sum()
+    work_home_3 = work_home_county_3.sum()
     wh = pd.DataFrame(index = ['Total Workers at Home', 'Total Workers', 'Share at Home (%)'])
     wh[name1] = [work_home_1, total_workers_1, work_home_1 / total_workers_1 * 100]
     work_at_home_acs= pd.read_excel(acs_data,sheet_name = 'WorkAtHome')
@@ -1330,7 +1478,9 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     region_wah_values = [region_wah['ACS'].sum(), region_wah['Total hhs'].sum(), region_wah['percent'].sum()]
     wh['ACS'] = region_wah_values
 
-    wh = get_differences(wh, name1, 'ACS', [0, 0, 1])
+    wh[name3] = [work_home_3, total_workers_3, work_home_3 / total_workers_3 * 100]
+
+    wh = get_differences_wt_fullsurvey(wh, name1, "ACS", name3, [0, 0, 1], need_diff_percent=True)
     #By county\
 
     work_home_county_1 = work_home_county_1[0:]
@@ -1342,11 +1492,14 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     whbc = pd.DataFrame()
     whbc= work_home_county_1
 
-    county_wah = work_at_home_acs.loc[work_at_home_acs['County'] != 'Region']
+    county_wah = work_at_home_acs.loc[work_at_home_acs['County'] != 'Region'].copy(deep=True)
+    county_wah = county_wah[['County', 'ACS', 'Total hhs', 'percent']]
     whbc = pd.merge(whbc, county_wah, on = 'County')
-    whbc = whbc.drop(columns = ['Total hhs', 'percent'])    
+    whbc = pd.merge(whbc, work_home_county_3, on='County')
+    whbc.rename(columns={'psexpfac': 'FullSurvey'}, inplace=True)
+    whbc = whbc.drop(columns = ['Total hhs', 'percent'])
 
-    whbc = get_differences(whbc, 'Model', 'ACS', 0)
+    whbc = get_differences_wt_fullsurvey(whbc, 'Model', 'ACS', 'FullSurvey', 0, need_diff_percent=True)
 
     cp3 = time.time()
     print('Workers at Home data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
@@ -1354,61 +1507,86 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #Average Distance to Work in Miles
     workers_1 = wkr_1_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl').copy()
     workers_2 = wkr_2_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl').copy()
+    workers_3 = wkr_3_hzone[['pwaudist', 'hhparcel', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'psexpfac']].query('pwaudist > 0 and pwaudist < 200 and hhparcel != pwpcl').copy()
     workers_1_ft = workers_1.query('pwtyp == "Paid Full-Time Worker"').copy()
     workers_2_ft = workers_2.query('pwtyp == "Paid Full-Time Worker"').copy()
+    workers_3_ft = workers_3.query('pwtyp == "Paid Full-Time Worker"').copy()
     workers_1_pt = workers_1.query('pwtyp == "Paid Part-Time Worker"').copy()
     workers_2_pt = workers_2.query('pwtyp == "Paid Part-Time Worker"').copy()
+    workers_3_pt = workers_3.query('pwtyp == "Paid Part-Time Worker"').copy()
     workers_1_female = workers_1.query('pgend == "Female"').copy()
     workers_2_female = workers_2.query('pgend == "Female"').copy()
+    workers_3_female = workers_3.query('pgend == "Female"').copy()
     workers_1_male = workers_1.query('pgend == "Male"').copy()
     workers_2_male = workers_2.query('pgend == "Male"').copy()
+    workers_3_male = workers_3.query('pgend == "Male"').copy()
     workers_1_ageund30 = workers_1.query('pagey < 30').copy()
     workers_2_ageund30 = workers_2.query('pagey < 30').copy()
+    workers_3_ageund30 = workers_3.query('pagey < 30').copy()
     workers_1_age30to49 = workers_1.query('pagey >= 30 and pagey < 50').copy()
     workers_2_age30to49 = workers_2.query('pagey >= 30 and pagey < 50').copy()
+    workers_3_age30to49 = workers_3.query('pagey >= 30 and pagey < 50').copy()
     workers_1_age50to64 = workers_1.query('pagey >= 50 and pagey < 65').copy()
     workers_2_age50to64 = workers_2.query('pagey >= 50 and pagey < 65').copy()
+    workers_3_age50to64 = workers_3.query('pagey >= 50 and pagey < 65').copy()
     workers_1_age65up = workers_1.query('pagey >= 65').copy()
     workers_2_age65up = workers_2.query('pagey >= 65').copy()
+    workers_3_age65up = workers_3.query('pagey >= 65').copy()
 
     workers_1['Share (%)'] = workers_1['psexpfac'] / workers_1['psexpfac'].sum()
     workers_2['Share (%)'] = workers_2['psexpfac'] / workers_2['psexpfac'].sum()
+    workers_3['Share (%)'] = workers_3['psexpfac'] / workers_3['psexpfac'].sum()
     workers_1_avg_dist = weighted_average(workers_1, 'pwaudist', 'psexpfac')
     workers_2_avg_dist = weighted_average(workers_2, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist = weighted_average(workers_3, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_ft = weighted_average(workers_1_ft, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_ft = weighted_average(workers_2_ft, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_ft = weighted_average(workers_3_ft, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_pt = weighted_average(workers_1_pt, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_pt = weighted_average(workers_2_pt, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_pt = weighted_average(workers_3_pt, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_f = weighted_average(workers_1_female, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_f = weighted_average(workers_2_female, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_f = weighted_average(workers_3_female, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_m = weighted_average(workers_1_male, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_m = weighted_average(workers_2_male, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_m = weighted_average(workers_3_male, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_ageund30 = weighted_average(workers_1_ageund30, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_ageund30 = weighted_average(workers_2_ageund30, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_ageund30 = weighted_average(workers_3_ageund30, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_age30to49 = weighted_average(workers_1_age30to49, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_age30to49 = weighted_average(workers_2_age30to49, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_age30to49 = weighted_average(workers_3_age30to49, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_age50to64 = weighted_average(workers_1_age50to64, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_age50to64 = weighted_average(workers_2_age50to64, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_age50to64 = weighted_average(workers_3_age50to64, 'pwaudist', 'psexpfac')
     workers_1_avg_dist_age65up = weighted_average(workers_1_age65up, 'pwaudist', 'psexpfac')
     workers_2_avg_dist_age65up = weighted_average(workers_2_age65up, 'pwaudist', 'psexpfac')
+    workers_3_avg_dist_age65up = weighted_average(workers_3_age65up, 'pwaudist', 'psexpfac')
     adw = pd.DataFrame(index = ['Total', 'Full-Time', 'Part-Time', 'Female', 'Male', 'Age Under 30', 'Age 30-49', 'Age 50-64', 'Age Over 65'])
     adw[name1]=[workers_1_avg_dist, workers_1_avg_dist_ft, workers_1_avg_dist_pt, workers_1_avg_dist_f, workers_1_avg_dist_m, workers_1_avg_dist_ageund30, workers_1_avg_dist_age30to49, workers_1_avg_dist_age50to64, workers_1_avg_dist_age65up]
     adw[name2]=[workers_2_avg_dist, workers_2_avg_dist_ft, workers_2_avg_dist_pt, workers_2_avg_dist_f, workers_2_avg_dist_m, workers_2_avg_dist_ageund30, workers_2_avg_dist_age30to49, workers_2_avg_dist_age50to64, workers_2_avg_dist_age65up]
-    adw = get_differences(adw, name1, name2, 2)
+    adw[name3]=[workers_3_avg_dist, workers_3_avg_dist_ft, workers_3_avg_dist_pt, workers_3_avg_dist_f, workers_3_avg_dist_m, workers_3_avg_dist_ageund30, workers_3_avg_dist_age30to49, workers_3_avg_dist_age50to64, workers_3_avg_dist_age65up]
+    adw = get_differences_wt_fullsurvey(adw, name1, name2, name3, 2, need_diff_percent=True)
 
     wrkrslessonemi_1 = workers_1[['pwaudist', 'psexpfac']].query('pwaudist <= 1')
     wrkrslessonemi_2 = workers_2[['pwaudist', 'psexpfac']].query('pwaudist <= 1')
+    wrkrslessonemi_3 = workers_3[['pwaudist', 'psexpfac']].query('pwaudist <= 1')
     workers_1_less_one_mi = 100 * wrkrslessonemi_1['psexpfac'].sum() / workers_1['psexpfac'].sum()
     workers_2_less_one_mi = 100 * wrkrslessonemi_2['psexpfac'].sum() / workers_2['psexpfac'].sum()
+    workers_3_less_one_mi = 100 * wrkrslessonemi_3['psexpfac'].sum() / workers_3['psexpfac'].sum()
     wrkrsgtrtwentymi_1 = workers_1[['pwaudist', 'psexpfac']].query('pwaudist>20')
     wrkrsgtrtwentymi_2 = workers_2[['pwaudist', 'psexpfac']].query('pwaudist>20')
+    wrkrsgtrtwentymi_3 = workers_3[['pwaudist', 'psexpfac']].query('pwaudist>20')
     workers_1_gr_twenty_mi = 100 * wrkrsgtrtwentymi_1['psexpfac'].sum() / workers_1['psexpfac'].sum()
     workers_2_gr_twenty_mi = 100 * wrkrsgtrtwentymi_2['psexpfac'].sum() / workers_2['psexpfac'].sum()
+    workers_3_gr_twenty_mi = 100 * wrkrsgtrtwentymi_3['psexpfac'].sum() / workers_3['psexpfac'].sum()
 
     xcl = pd.DataFrame(index = ['% Workers < 1 Mile to Work', '% Workers > 20 Miles to Work'])
     xcl[name1] = [workers_1_less_one_mi, workers_1_gr_twenty_mi]
     xcl[name2] = [workers_2_less_one_mi, workers_2_gr_twenty_mi]
-    xcl = get_differences(xcl, name1, name2, 1)
+    xcl[name3] = [workers_3_less_one_mi, workers_3_gr_twenty_mi]
+    xcl = get_differences_wt_fullsurvey(xcl, name1, name2, name3, 1, need_diff_percent=True)
 
     cp4 = time.time()
     print('Distance to Work data frames created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
@@ -1416,32 +1594,44 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #Average Distance to School
     students_1 = data1['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200').copy()
     students_2 = data2['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200').copy()
+    students_3 = data3['Person'][['psaudist', 'psexpfac', 'pagey']].query('psaudist > 0.05 and psaudist < 200').copy()
     students_1['share'] = students_1['psexpfac'] / students_1['psexpfac'].sum()
     students_2['share'] = students_2['psexpfac'] / students_2['psexpfac'].sum()
+    students_3['share'] = students_3['psexpfac'] / students_3['psexpfac'].sum()
     students_1_und5 = students_1.query('pagey < 5').copy()
     students_2_und5 = students_2.query('pagey < 5').copy()
+    students_3_und5 = students_3.query('pagey < 5').copy()
     students_1_512 = students_1.query('pagey >= 5 and pagey < 13').copy()
     students_2_512 = students_2.query('pagey >= 5 and pagey < 13').copy()
+    students_3_512 = students_3.query('pagey >= 5 and pagey < 13').copy()
     students_1_1318 = students_1.query('pagey >= 13 and pagey < 19').copy()
     students_2_1318 = students_2.query('pagey >= 13 and pagey < 19').copy()
+    students_3_1318 = students_3.query('pagey >= 13 and pagey < 19').copy()
     students_1_19p = students_1.query('pagey >= 19').copy()
     students_2_19p = students_2.query('pagey >= 19').copy()
+    students_3_19p = students_3.query('pagey >= 19').copy()
 
     students_1_avg_dist = weighted_average(students_1, 'psaudist', 'psexpfac')
     students_2_avg_dist = weighted_average(students_2, 'psaudist', 'psexpfac')
+    students_3_avg_dist = weighted_average(students_3, 'psaudist', 'psexpfac')
     students_1_dist_und5 = weighted_average(students_1_und5, 'psaudist', 'psexpfac')
     students_2_dist_und5 = weighted_average(students_2_und5, 'psaudist', 'psexpfac')
+    students_3_dist_und5 = weighted_average(students_3_und5, 'psaudist', 'psexpfac')
     students_1_dist_512 = weighted_average(students_1_512, 'psaudist', 'psexpfac')
     students_2_dist_512 = weighted_average(students_2_512, 'psaudist', 'psexpfac')
+    students_3_dist_512 = weighted_average(students_3_512, 'psaudist', 'psexpfac')
     students_1_dist_1318 = weighted_average(students_1_1318, 'psaudist', 'psexpfac')
     students_2_dist_1318 = weighted_average(students_2_1318, 'psaudist', 'psexpfac')
+    students_3_dist_1318 = weighted_average(students_3_1318, 'psaudist', 'psexpfac')
     students_1_dist_19p = weighted_average(students_1_19p, 'psaudist', 'psexpfac')
     students_2_dist_19p = weighted_average(students_2_19p, 'psaudist', 'psexpfac')
+    students_3_dist_19p = weighted_average(students_3_19p, 'psaudist', 'psexpfac')
 
     ads = pd.DataFrame(index = ['All', 'Under 5', '5 to 12', '13 to 18', 'Over 19'])
     ads[name1] = [students_1_avg_dist, students_1_dist_und5, students_1_dist_512, students_1_dist_1318, students_1_dist_19p]
     ads[name2] = [students_2_avg_dist, students_2_dist_und5, students_2_dist_512, students_2_dist_1318, students_2_dist_19p]
-    ads = get_differences(ads, name1, name2, 2)
+    ads[name3] = [students_3_avg_dist, students_3_dist_und5, students_3_dist_512, students_3_dist_1318, students_3_dist_19p]
+    ads = get_differences_wt_fullsurvey(ads, name1, name2, name3, 2, need_diff_percent=True)
 
     cp5 = time.time()
     print('Average Distance to School data frame created in ' + str(round(cp5 - cp4, 1)) + ' seconds')
@@ -1455,18 +1645,23 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #so, set -1  and 1-6 to 1 - added by nagendra.dhakar@rsginc.com
     #data2['Person'].ptpass[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6])] = 1
     data2['Person'].loc[data2['Person']['ptpass'].isin([-1,1,2,3,4,5,6]), 'ptpass'] = 1
+    data3['Person'].loc[data3['Person']['ptpass'].isin([-1,1,2,3,4,5,6]), 'ptpass'] = 1
     Person_1_total = data1['Person']['psexpfac'].sum()
     Person_2_total = data2['Person']['psexpfac'].sum()
+    Person_3_total = data3['Person']['psexpfac'].sum()
 
     #ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
     ttp1 = data1['Person'].loc[data1['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ttp2 =  data2['Person'].loc[data2['Person']['ptpass'] > 0, 'psexpfac'].sum()
+    ttp3 =  data3['Person'].loc[data3['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ppp1 = ttp1 / Person_1_total
     ppp2 = ttp2 / Person_2_total
+    ppp3 = ttp3 / Person_3_total
     tpass = pd.DataFrame(index = ['Total Transit Passes', 'Transit Passes per Person'])
     tpass[name1] = [ttp1, ppp1]
     tpass[name2] = [ttp2, ppp2]
-    tpass = get_differences(tpass, name1, name2, [0, 3])
+    tpass[name3] = [ttp3, ppp3]
+    tpass = get_differences_wt_fullsurvey(tpass, name1, name2, name3, [0, 3], need_diff_percent=False)
 
     cp6 = time.time()
     print('Transit Pass Ownership data frame created in ' + str(round(cp6 - cp5, 1)) + ' seconds')
@@ -1483,10 +1678,19 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         if i > 4: 
             ao2[4] = ao2[4] + ao2[i]
             ao2 = ao2.drop([i])
+    ao3 = data3['Household'][['hhvehs', 'hhexpfac']].groupby('hhvehs').sum()['hhexpfac'] / data3['Household']['hhexpfac'].sum() * 100
+    for i in ao3.index.values:
+        if i > 4: 
+            ao3[4] = ao3[4] + ao3[i]
+            ao3 = ao3.drop([i])
     ao = pd.DataFrame()
     ao['% of Households (' + name1 + ')'] = ao1
     ao['% of Households (' + name2 + ')'] = ao2
-    ao = get_differences(ao, '% of Households (' + name1 + ')','% of Households (' + name2 + ')', 1)
+    ao['% of Households (' + name3 + ')'] = ao3
+    ao = get_differences_wt_fullsurvey(ao, '% of Households (' + name1 + ')',
+                                           '% of Households (' + name2 + ')',
+                                           '% of Households (' + name3 + ')', 
+                                           1, need_diff_percent=False)
     aonewcol=['0', '1', '2', '3', '4+']
     ao['Number of Vehicles in Household'] = aonewcol
     ao = ao.reset_index()
@@ -1499,8 +1703,10 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     #Share households by auto ownership
     hh_taz1 = pd.merge(districtfile, data1['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     hh_taz2 = pd.merge(districtfile, data2['Household'], left_on = 'TAZ', right_on = 'hhtaz')
+    hh_taz3 = pd.merge(districtfile, data3['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     aoc1 = hh_taz1[['County', 'hhvehs', 'hhexpfac']].groupby(['County', 'hhvehs']).sum()['hhexpfac']
-    autos_by_county= pd.read_excel(acs_data,sheet_name = 'AutosCounty')
+    aoc3 = hh_taz3[['County', 'hhvehs', 'hhexpfac']].groupby(['County', 'hhvehs']).sum()['hhexpfac']
+    autos_by_county= pd.read_excel(acs_data, sheet_name = 'AutosCounty')
     acs_auto_share = pd.DataFrame(autos_by_county)
 
 
@@ -1509,28 +1715,36 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
     for i in range(len(aoc1.index)):
         if aoc1.index[i][0] not in counties:
             counties.append(aoc1.index[i][0])
-    aoc = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + 'ACS' + ') (%)', '1 Car (' + name1 + ') (%)', '1 Car (' + 'ACS' + ') (%)', '2 Cars (' + name1 + ') (%)', '2 Cars (' + 'ACS'+ ') (%)', '3 Cars (' + name1 + ') (%)', '3 Cars (' + 'ACS' + ') (%)', '4+ Cars (' + name1 + ') (%)', '4+ Cars (' +'ACS' + ') (%)'], index = counties)
+    aoc = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + 'ACS' + ') (%)', '0 Cars (' + name3 + ') (%)',
+                                  '1 Car (' + name1 + ') (%)', '1 Car (' + 'ACS' + ') (%)', '1 Car (' + name3 + ') (%)',
+                                  '2 Cars (' + name1 + ') (%)', '2 Cars (' + 'ACS'+ ') (%)', '2 Cars (' + name3 + ') (%)',
+                                  '3 Cars (' + name1 + ') (%)', '3 Cars (' + 'ACS' + ') (%)', '3 Cars (' + name3 + ') (%)',
+                                  '4+ Cars (' + name1 + ') (%)', '4+ Cars (' +'ACS' + ') (%)', '4+ Cars (' + name3 + ') (%)',], index = counties)
     aoc = aoc.infer_objects()
     aoc = aoc.fillna(float(0))
-    for i in range(len(aoc1.index)):
-        county_group = hh_taz1[['County', 'hhexpfac']].groupby('County').sum()
-        denominator = county_group.query('County == "' + aoc1.index[i][0] + '"')['hhexpfac']
+    aoc3_ = aoc3.copy(deep=True).reset_index()
+    aoc3_.loc[aoc3_['hhvehs']>4, 'hhvehs'] = 4
+    aoc3_ = aoc3_.groupby(['County', 'hhvehs']).sum()['hhexpfac']
+    for aoci, name in zip([aoc1, aoc3_], [name1, name3]):
+        for i in range(len(aoci.index)):
+            county_group = hh_taz1[['County', 'hhexpfac']].groupby('County').sum()
+            denominator = county_group.query('County == "' + aoci.index[i][0] + '"')['hhexpfac']
 
-        if denominator.empty:
-            continue
+            if denominator.empty:
+                continue
 
-        aoc1.iloc[i] = aoc1.iloc[i] * 100 / denominator
-        cars = aoc1.index[i][1]
-        if cars == 0:
-            aoc.loc[aoc1.index[i][0], '0 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
-        elif cars == 1:
-            aoc.loc[aoc1.index[i][0], '1 Car (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
-        elif cars == 2:
-            aoc.loc[aoc1.index[i][0], '2 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
-        elif cars == 3:
-            aoc.loc[aoc1.index[i][0], '3 Cars (' + name1 + ') (%)'] = round(aoc1.iloc[i], 2)
-        else:
-            aoc.loc[aoc1.index[i][0], '4+ Cars (' + name1 + ') (%)'] += round(aoc1.iloc[i], 2)
+            aoci.iloc[i] = aoci.iloc[i] * 100 / denominator
+            cars = aoci.index[i][1]
+            if cars == 0:
+                aoc.loc[aoci.index[i][0], '0 Cars (' + name + ') (%)'] = round(aoci.iloc[i], 2)
+            elif cars == 1:
+                aoc.loc[aoci.index[i][0], '1 Car (' + name + ') (%)'] = round(aoci.iloc[i], 2)
+            elif cars == 2:
+                aoc.loc[aoci.index[i][0], '2 Cars (' + name + ') (%)'] = round(aoci.iloc[i], 2)
+            elif cars == 3:
+                aoc.loc[aoci.index[i][0], '3 Cars (' + name + ') (%)'] = round(aoci.iloc[i], 2)
+            else:
+                aoc.loc[aoci.index[i][0], '4+ Cars (' + name + ') (%)'] += round(aoci.iloc[i], 2)
 
     acs0cars = (acs_auto_share['0 Cars']*100).round(2).tolist()
     acs1cars = (acs_auto_share['1 Car']*100).round(2).tolist()
@@ -1562,9 +1776,15 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         incmap.update({i:'More than $75,000'})
     data1['Household']['recinc'] = data1['Household']['hhincome'].map(incmap)
     data2['Household']['recinc'] = data2['Household']['hhincome'].map(incmap)
+    data3['Household']['recinc'] = data3['Household']['hhincome'].map(incmap)
     aoi1 = data1['Household'][['recinc', 'hhvehs', 'hhexpfac']].groupby(['recinc','hhvehs']).sum()['hhexpfac']
     aoi2 = data2['Household'][['recinc', 'hhvehs', 'hhexpfac']].groupby(['recinc','hhvehs']).sum()['hhexpfac']
-    aoi = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + name2 + ') (%)', '1 Car (' + name1 + ') (%)', '1 Car (' + name2 + ') (%)', '2 Cars (' + name1 + ') (%)', '2 Cars (' + name2 + ') (%)', '3 Cars (' + name1 + ') (%)', '3 Cars (' + name2 + ') (%)', '4+ Cars (' + name1 + ') (%)', '4+ Cars (' + name2 + ') (%)'],
+    aoi3 = data3['Household'][['recinc', 'hhvehs', 'hhexpfac']].groupby(['recinc','hhvehs']).sum()['hhexpfac']
+    aoi = pd.DataFrame(columns = ['0 Cars (' + name1 + ') (%)', '0 Cars (' + name2 + ') (%)', '0 Cars (' + name3 + ') (%)', 
+                                  '1 Car (' + name1 + ') (%)', '1 Car (' + name2 + ') (%)', '1 Car (' + name3 + ') (%)', 
+                                  '2 Cars (' + name1 + ') (%)', '2 Cars (' + name2 + ') (%)', '2 Cars (' + name3 + ') (%)', 
+                                  '3 Cars (' + name1 + ') (%)', '3 Cars (' + name2 + ') (%)', '3 Cars (' + name3 + ') (%)', 
+                                  '4+ Cars (' + name1 + ') (%)', '4+ Cars (' + name2 + ') (%)', '4+ Cars (' + name3 + ') (%)'],
                        index = ['Less than $20,000', '$20,000-$39,999', '$40,000-$59,999', '$60,000-$74,999', 'More than $75,000'])
     aoi = aoi.infer_objects()
     aoi = aoi.fillna(float(0))
@@ -1607,6 +1827,25 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         else:
             aoi.loc[aoi2.index[i][0], '4+ Cars (' + name2 + ') (%)'] += round(aoi2.iloc[i], 1)
 
+    for i in range(len(aoi3.index)):
+        recinc_group3 = data3['Household'][['recinc', 'hhexpfac']].groupby('recinc').sum()
+        demoninator3 = recinc_group3.query(f'recinc == "{aoi3.index[i][0]}"')['hhexpfac']
+        if demoninator3.empty:
+            continue
+
+        aoi3.iloc[i] = aoi3.iloc[i] * 100 / demoninator3.iloc[0]
+        cars3 = aoi3.index[i][1]
+        if cars3 == 0:
+            aoi.loc[aoi3.index[i][0], '0 Cars (' + name3 + ') (%)'] = round(aoi3.iloc[i], 1)
+        elif cars3 == 1:
+            aoi.loc[aoi3.index[i][0], '1 Car (' + name3 + ') (%)'] = round(aoi3.iloc[i], 1)
+        elif cars3 == 3:
+            aoi.loc[aoi3.index[i][0], '3 Cars (' + name3 + ') (%)'] = round(aoi3.iloc[i], 1)
+        elif cars3 == 3:
+            aoi.loc[aoi3.index[i][0], '3 Cars (' + name3 + ') (%)'] = round(aoi3.iloc[i], 1)
+        else:
+            aoi.loc[aoi3.index[i][0], '4+ Cars (' + name3 + ') (%)'] += round(aoi3.iloc[i], 1)
+
     cp9 = time.time()
     print('Households by Income Group by Auto Ownership data frame created in ' + str(round(cp9 - cp8, 1)) + ' seconds')
 
@@ -1633,7 +1872,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         worksheet.write(18, 0, 'Household Income')
 
     colwidths = getmaxwidths(location + '/LongTermReport_2023.xlsx')
-    colors = ['#004488', '#00C0C0']
+    colors =  ['#004488', '#00C0C0', '#749BC2']
 
     with pd.ExcelWriter(location + '/LongTermReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         ph.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA', startrow = 1)
@@ -1647,15 +1886,11 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         whbc.to_excel(excel_writer = writer, sheet_name = 'Workers at Home', na_rep = 'NA', startrow = 6)
         chart = workbook.add_chart({'type': 'column'})
         sheet = 'Workers at Home'
-        for col_num in range(2, 4):
+        for col_num in range(2, 5):
             chart.add_series({'name': [sheet, 6, col_num],
                                 'categories': [sheet, 7, 1, 10, 1],
                                 'values': [sheet, 7, col_num, 10, col_num],
                                 'fill': {'color': colors[col_num - 2]}})
-        chart.add_series({'name': [sheet, 6, 5],
-                            'categories': [sheet, 7, 0, 10, 0],
-                            'values':[sheet, 7, 5, 10, 5],
-                            'fill': {'color': '#000000'}})
         chart.set_legend({'position': 'top'})
         chart.set_x_axis({'name': 'County'})
         chart.set_y_axis({'name':' Number of Home Workers'})
@@ -1669,7 +1904,7 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
         ads.to_excel(excel_writer = writer, sheet_name = 'Avg Dist to Work and School', na_rep = 'NA', startrow = 1, startcol = 6)
         sheet = 'Avg Dist to Work and School'
         chart = workbook.add_chart({'type':'column'})
-        for col_num in range(1, 3):
+        for col_num in range(1, 4):
             chart.add_series({'name': [sheet, 1, col_num],
                                 'categories': [sheet, 2, 0, 10, 0],
                                 'values': [sheet, 2, col_num, 10, col_num],
@@ -1702,14 +1937,17 @@ def LongTerm(data1, data2, name1, name2, location, districtfile):
 
     print('---Long Term Report succesfuly compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def TimeChoice(data1, data2, name1, name2, location, districtfile):
+def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile):
     start = time.time()
     print('---Begin Time Choice Report compilation---')
 
     trip_ok_1 = data1['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
     trip_ok_2 = data2['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
+    trip_ok_3 = data3['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
     trip_ok_1 = trip_ok_1.reset_index()
     trip_ok_2 = trip_ok_2.reset_index()
+    trip_ok_2 = trip_ok_2.reset_index()
+    trip_ok_3 = trip_ok_3.reset_index()
     tour_ok_1 = data1['Tour'][['tardest', 'tlvdest', 'toexpfac', 'tautodist']].query('tautodist > 0 and tautodist < 200')
     tour_ok_2 = data2['Tour'][['tardest', 'tlvdest', 'toexpfac', 'tautodist']].query('tautodist > 0 and tautodist < 200')
     tour_ok_1 = tour_ok_1.reset_index()
@@ -1721,14 +1959,20 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
     #Trip arrival time by hour
     trip_ok_1['hr'] = min_to_hour(trip_ok_1['arrtm'], 0)
     trip_ok_2['hr'] = min_to_hour(trip_ok_2['arrtm'], 0)
+    trip_ok_3['hr'] = min_to_hour(trip_ok_3['arrtm'], 0)
     trip_1_time = trip_ok_1[['hr', 'trexpfac']].groupby('hr').sum()['trexpfac']
     trip_2_time = trip_ok_2[['hr', 'trexpfac']].groupby('hr').sum()['trexpfac']
+    trip_3_time = trip_ok_3[['hr', 'trexpfac']].groupby('hr').sum()['trexpfac']
     trip_1_time_share = 100 * trip_1_time / trip_1_time.sum()
     trip_2_time_share = 100 * trip_2_time / trip_2_time.sum()
+    trip_3_time_share = 100 * trip_3_time / trip_3_time.sum()
     trip_time = pd.DataFrame()
     trip_time[name1 + ' (%)'] = trip_1_time_share
     trip_time[name2 + ' (%)'] = trip_2_time_share
-    trip_time = get_differences(trip_time, name1 + ' (%)', name2 + ' (%)', 2)
+    trip_time[name3 + ' (%)'] = trip_3_time_share
+    trip_time = get_differences_wt_fullsurvey(trip_time, name1 + ' (%)', 
+                                                         name2 + ' (%)',
+                                                         name3 + ' (%)', 2, need_diff_percent=True)
     trip_time = recode_index(trip_time, 'hr', 'Arrival Hour')
 
     cp2 = time.time()
@@ -1773,7 +2017,7 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
         tour_time_lpd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 29)
 
     colwidths = getmaxwidths(location + '/TimeChoiceReport_2023.xlsx')
-    colors = ['#004488', '#00C0C0']
+    colors =  ['#004488', '#00C0C0', '#749BC2']
 
     with pd.ExcelWriter(location + '/TimeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         workbook = writer.book
@@ -1786,7 +2030,7 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
         for colnum in range(worksheet.dim_colmax + 1):
             worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
         chart = workbook.add_chart({'type': 'column'})
-        for colnum in range(1, 3):
+        for colnum in range(1, 4):
             chart.add_series({'name': [sheet, 0, colnum],
                                 'categories': [sheet, 2, 0, 25, 0],
                                 'values': [sheet, 2, colnum, 25, colnum],
@@ -1858,28 +2102,31 @@ def TimeChoice(data1, data2, name1, name2, location, districtfile):
     
 def report_compile(h5_results_file, h5_results_name,
                    h5_comparison_file, h5_comparison_name,
+                   h5_fullsurvey_file, h5_fullsurvey_name,
                    guidefile,districtfile, report_output_location):
     print('+-+-+-+Begin summary report file compilation+-+-+-+')
     timerstart = time.time()
     data1 = convert(h5_results_file, guidefile, h5_results_name)
     data2 = convert(h5_comparison_file, guidefile, h5_comparison_name)
+    data3 = convert(h5_fullsurvey_file, guidefile, h5_fullsurvey_name)
     # Recode 'TNC' mode in survey data to 'Other'
     data2['Trip']['mode'] = data2['Trip']['mode'].replace('TNC','Other')
+    data3['Trip']['mode'] = data3['Trip']['mode'].replace('TNC','Other')
     #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
     #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
-        DaysimReport(data1,data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
+        DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_day_pattern_report == True:
-        DayPattern(data1,data2, h5_results_name, h5_comparison_name, report_output_location)
+        DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
     if run_mode_choice_report == True:
-        ModeChoice(data1,data2, h5_results_name, h5_comparison_name, report_output_location)
+        ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
     if run_dest_choice_report == True:
-        DestChoice(data1, data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
+        DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_long_term_report == True:
-        LongTerm(data1, data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
+        LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_time_choice_report == True:
-        TimeChoice(data1,data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
+        TimeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_district_summary_report == True:
         WorkFAZSummary(data1, data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
     totaltime = round(time.time() - timerstart, 1)
@@ -1894,6 +2141,7 @@ def report_compile(h5_results_file, h5_results_name,
 def main():    
     report_compile(h5_results_file, h5_results_name,
                    h5_comparison_file, h5_comparison_name,
+                   h5_fullsurvey_file, h5_fullsurvey_name,
                    guidefile, districtfile, report_output_location)
 
 if __name__ == '__main__':
