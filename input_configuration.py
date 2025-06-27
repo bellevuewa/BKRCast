@@ -279,7 +279,9 @@ if int(model_year) <= 2023:
 else:
     # survey in hdf5 format
     h5_comparison_file = 'inputs/model/survey/survey_2023.h5'
-    h5_comparison_name = '2023Survey'
+    h5_fullsurvey_file = 'inputs/model/survey/survey_2023_full.h5'
+    h5_comparison_name = '2023DaysimFormatSurvey'  # this is daysim-formatted survey
+    h5_fullsurvey_name = '2023FullSurvey'  # this is full survey data, as the daysim-formatted survey usually dropped records that are not complete
     guidefile = 'inputs/model/CatVarDict_2023.xlsx'
     districtfile = 'inputs/model/TAZ_TAD_County.csv'
     FAZ_TAZ = ''  # only for 2014-survey comparison

@@ -40,6 +40,32 @@ def weighted_average(df_in, col, weights, grouper = None): #Computes the weighte
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
         return(df_out[col + '_wa'])
 
+
+def get_differences_wt_fullsurvey(df_in, colname1, colname2, colname3, roundto, need_diff_percent=False): #Computes the difference and percent difference for two specified columns in a data frame
+    df = df_in.copy()
+    df[f'Difference ({colname1} - {colname2})'] = df[colname1] - df[colname2]
+    df[f'Difference ({colname1} - {colname3})'] = df[colname1] - df[colname3]
+    if need_diff_percent:
+        df[f'% Difference ({colname1} - {colname2})'] = (df[f'Difference ({colname1} - {colname2})'] / df[colname2] * 100).astype('float').round(2)
+        df[f'% Difference ({colname1} - {colname3})'] = (df[f'Difference ({colname1} - {colname3})'] / df[colname3] * 100).astype('float').round(2)
+    if isinstance(roundto, list):
+        for i in range(len(df)):
+            col1_index = df.columns.get_loc(colname1)
+            df.iloc[i, col1_index] = round(df.iloc[i, col1_index], roundto[i])
+            col2_index = df.columns.get_loc(colname1)
+            df.iloc[i, col2_index] = round(df.iloc[i, col2_index], roundto[i])
+            col3_index = df.columns.get_loc(f'Difference ({colname1} - {colname2})')
+            df.iloc[i, col3_index] = round(df.iloc[i, col3_index], roundto[i])
+            col4_index = df.columns.get_loc(f'Difference ({colname1} - {colname3})')
+            df.iloc[i, col4_index] = round(df.iloc[i, col4_index], roundto[i])
+    else:
+        df[colname1] = df[colname1].round(roundto)
+        df[colname2] = df[colname2].round(roundto)
+        df[f'Difference ({colname1} - {colname2})'] = df[f'Difference ({colname1} - {colname2})'].round(roundto)
+        df[f'Difference ({colname1} - {colname3})'] = df[f'Difference ({colname1} - {colname3})'].round(roundto)
+    return(df)
+
+
 def get_differences(df_in, colname1, colname2, roundto): #Computes the difference and percent difference for two specified columns in a data frame
     df = df_in.copy()
     df['Difference'] = df[colname1] - df[colname2]
