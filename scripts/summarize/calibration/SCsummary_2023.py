@@ -1055,7 +1055,8 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
 
     # tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
     # tpm2 = pd.DataFrame({name2 + ' Share (%)': tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp2 * 100}, dtype='float').reset_index()
-    tpm = pd.merge(tpm1, tpm2, 'outer')
+    tpm = pd.merge(tpm1[['Purpose', 'Mode', f'{name1} Share (%)']], 
+                   tpm2[['Purpose', 'Mode', f'{name2} Share (%)']], 'outer', on=['Purpose', 'Mode'])
     tpm = tpm.sort_values(name2 + ' Share (%)')
 
     #Re-organize data frame for side-by-side comparison
