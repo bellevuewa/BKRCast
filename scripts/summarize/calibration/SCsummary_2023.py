@@ -1021,9 +1021,28 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
 
     ##Subsection Tour Summaries
 
+    #Tour Purpose Share
+    purpose1 = tour_ok_1[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    purpose2 = tour_ok_2[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    purposeshare1 = purpose1 / Tour_1_total * 100
+    purposeshare2 = purpose2 / Tour_2_total * 100
+    psdf = pd.DataFrame()
+    difference = purposeshare1 - purposeshare2
+    purposeshare1 = purposeshare1.sort_index()
+    psdf[name1 + ' Share (%)'] = purposeshare1
+    psdf[name1 + ' # of Tours'] = purpose1
+    purposeshare2 = purposeshare2.sort_index()
+    psdf[name2 + ' Share (%)'] = purposeshare2
+    psdf[name2 + ' # of Tours'] = purpose2
+    psdf = get_differences(psdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    psdf = recode_index(psdf, 'pdpurp', 'Purpose')
+
+    cp2 = time.time()
+    print('Tour Purpose Share data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
+    
     #Tour Mode Share
-    tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    # tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    # tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1 = tour_ok_1[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     mode2 = tour_ok_2[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     modeshare1 = mode1 / Tour_1_total * 100
@@ -1331,6 +1350,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     with pd.ExcelWriter(location + '/ModeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
         counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
@@ -1364,6 +1384,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
         pd_format = workbook.add_format({'bold': True, 'font_color': '#880000'})
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
         counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
