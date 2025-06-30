@@ -971,9 +971,9 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     print('---Begin Mode Choice Report compilation---')
     
     #Subsection Vehicle Miles Per Person
-    tour_ok_1 = data1['Tour'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp']].\
+    tour_ok_1 = data1['Tour'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp', 'parent']].\
         query('tautodist>0 and tautodist<200')
-    tour_ok_2 = data2['Tour_cloned'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp']].\
+    tour_ok_2 = data2['Tour_cloned'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp', 'parent']].\
         query('tautodist>0 and tautodist<200')
     trip_ok_1 = data1['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'tour', 'day', 'trexpfac', 'dpurp']].\
         query('travtime>0 and travtime<200')
@@ -1037,8 +1037,26 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     psdf = get_differences(psdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
     psdf = recode_index(psdf, 'pdpurp', 'Purpose')
 
-    cp2 = time.time()
-    print('Tour Purpose Share data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
+    #Subtour Purpose Share
+    subtour_ok_1 = tour_ok_1[tour_ok_1['parent']>0].copy(deep=True)
+    subtour_ok_2 = tour_ok_2[tour_ok_2['parent']>0].copy(deep=True)
+    stpurpose1 = subtour_ok_1[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    stpurpose2 = subtour_ok_2[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    subpurposeshare1 = stpurpose1 / Tour_1_total * 100
+    subpurposeshare2 = stpurpose2 / Tour_2_total * 100
+    spsdf = pd.DataFrame()
+    difference = subpurposeshare1 - subpurposeshare2
+    subpurposeshare1 = subpurposeshare1.sort_index()
+    spsdf[name1 + ' Share (%)'] = subpurposeshare1
+    spsdf[name1 + ' # of Tours'] = stpurpose1
+    subpurposeshare2 = subpurposeshare2.sort_index()
+    spsdf[name2 + ' Share (%)'] = subpurposeshare2
+    spsdf[name2 + ' # of Tours'] = stpurpose2
+    spsdf = get_differences(spsdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    spsdf = recode_index(spsdf, 'pdpurp', 'Purpose')
+
+    cp2_1 = time.time()
+    print('Subtour Purpose Share data frame created in ' + str(round(cp2_1 - cp1, 1)) + ' seconds')
     
     #Tour Mode Share
     # tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
@@ -1350,6 +1368,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     with pd.ExcelWriter(location + '/ModeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
@@ -1384,6 +1403,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
         pd_format = workbook.add_format({'bold': True, 'font_color': '#880000'})
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
