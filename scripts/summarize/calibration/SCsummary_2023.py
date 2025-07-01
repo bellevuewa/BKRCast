@@ -182,7 +182,7 @@ def DayPattern(data1, data2, name1, name2, location):
 
     #Tours per Person by Purpose and Person Type/Number of Stops
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
-    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
+    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     tpd = {}
     stops = {}
     for purpose in data1['Tour']['pdpurp'].value_counts().index:
@@ -208,9 +208,9 @@ def DayPattern(data1, data2, name1, name2, location):
         elif purpose == 'Meal':
             tc = 'mltours'
             sc = 'mlstops'
-        #Add a column to PersonsDay for the current purpose
-        PersonsDay1[tc] = data1['PersonDay'][tc]
-        PersonsDay2[tc] = data2['PersonDay'][tc]
+        #Merge a column to PersonsDay for the current purpose
+        PersonsDay1 = PersonsDay1.merge(data1['PersonDay'][['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
+        PersonsDay2 = PersonsDay2.merge(data2['PersonDay_cloned'][['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
         toursPersPurp1 = weighted_average(PersonsDay1, tc, 'psexpfac', 'pptyp')
         toursPersPurp2 = weighted_average(PersonsDay2, tc, 'psexpfac', 'pptyp')
         #Delete added column to make future iterations faster
@@ -226,7 +226,7 @@ def DayPattern(data1, data2, name1, name2, location):
         dfstart = time.time()
         tpd.update({purpose: toursPersPurp}) #This dictionary is for creating the Excel file
         person_day_hh1 = pd.merge(data1['PersonDay'][['hhno', sc, 'pdexpfac']], data1['Household'][['hhno']], on = ['hhno'])
-        person_day_hh2 = pd.merge(data2['PersonDay'][['hhno', sc, 'pdexpfac']], data2['Household'][['hhno']], on = ['hhno'])
+        person_day_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', sc, 'pdexpfac']], data2['Household'][['hhno']], on = ['hhno'])
         no_stops1 = 100 * person_day_hh1.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh1['pdexpfac'].sum()
         no_stops2 = 100 * person_day_hh2.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh2['pdexpfac'].sum()
         has_stops1 = 100 - no_stops1
