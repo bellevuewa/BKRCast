@@ -330,8 +330,8 @@ def DayPattern(data1, data2, name1, name2, location):
                     chart = workbook.add_chart({'type': 'column'})
                     for col_num in range(6 * i + 1, 6 * i + 3):
                         chart.add_series({'name': [sheet, 1, col_num],
-                                            'categories': [sheet, 3, 6 * i, 10, 6 * i],
-                                            'values': [sheet, 3, col_num, 10, col_num],
+                                            'categories': [sheet, 2, 6 * i, 10, 6 * i],
+                                            'values': [sheet, 2, col_num, 10, col_num],
                                             'fill': {'color': colors[col_num % 6 - 1]}})
                         chart.set_legend({'position': 'top'})
                         chart.set_size({'x_scale': 1.4, 'y_scale': 1.25})
