@@ -180,6 +180,26 @@ def DayPattern(data1, data2, name1, name2, location):
     cp4 = time.time()
     print('Tours per Person by Purpose data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
+    # Number of Stops for all Purposes
+    stop_columns = ['wkstops', 'scstops', 'esstops', 'pbstops', 'shstops', 'mlstops', 'sostops', 'restops', 'mestops']
+    person_day_all_hh1 = pd.merge(data1['PersonDay'][['hhno', 'pdexpfac']+stop_columns], data1['Household'][['hhno']], on = ['hhno'])
+    person_day_all_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', 'pdexpfac']+stop_columns], data2['Household'][['hhno']], on = ['hhno'])
+    # add number of stops
+    person_day_all_hh1['all_stops'] = person_day_all_hh1[stop_columns].sum(axis=1)
+    person_day_all_hh2['all_stops'] = person_day_all_hh2[stop_columns].sum(axis=1)
+    no_stops_all1 = 100 * person_day_all_hh1.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh1['pdexpfac'].sum()
+    no_stops_all2 = 100 * person_day_all_hh2.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh2['pdexpfac'].sum()
+    has_stops_all1 = 100 - no_stops_all1
+    has_stops_all2 = 100 - no_stops_all2
+    s_all = pd.DataFrame() 
+    s_all['% of Tours (' + name1 + ')'] = [no_stops_all1, has_stops_all1]
+    s_all['% of Tours (' + name2 + ')'] = [no_stops_all2, has_stops_all2]
+    s_all['Tours'] = ['0', '1+']
+    s_all = s_all.set_index('Tours')
+    s_all = get_differences(s_all, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
+    cp4_1 = time.time()
+    print('Number of stops for all purpose data frame created in ' + str(round(cp4_1 - cp4, 1)) + ' seconds')
+    
     #Tours per Person by Purpose and Person Type/Number of Stops
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
@@ -288,6 +308,7 @@ def DayPattern(data1, data2, name1, name2, location):
             stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ') #This puts a filler column between each data frame, which is needed when getting the column widths
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
         ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 1)
         worksheet = writer.sheets['Work-Based Subtour Generation']
         trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 6)
@@ -314,6 +335,7 @@ def DayPattern(data1, data2, name1, name2, location):
             stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ')
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
         ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 1)
         worksheet = writer.sheets['Work-Based Subtour Generation']
         worksheet.merge_range(0, 0, 0, 4, 'Total Trips', merge_format)
