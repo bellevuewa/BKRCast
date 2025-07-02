@@ -42,7 +42,7 @@ def DistrictSummary(data1, data2, name1, name2, location, districtfile):
     start = time.time()
 
     trip_ok_1 = data1['Trip'][['travdist', 'otaz', 'dtaz', 'trexpfac']].query('travdist>0 and travdist<200')
-    trip_ok_2 = data2['Trip'][['travdist', 'otaz', 'dtaz', 'trexpfac']].query('travdist>0 and travdist<200')
+    trip_ok_2 = data2['Trip_cloned'][['travdist', 'otaz', 'dtaz', 'trexpfac']].query('travdist>0 and travdist<200')
     DistrictDict = {}
     for i in range(len(districtfile['TAZ'])):
         if districtfile['TAZ'][i] not in DistrictDict and math.isnan(districtfile['TAZ'][i]) is False:
@@ -182,7 +182,7 @@ def DayPattern(data1, data2, name1, name2, location):
 
     #Tours per Person by Purpose and Person Type/Number of Stops
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
-    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
+    PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     tpd = {}
     stops = {}
     for purpose in data1['Tour']['pdpurp'].value_counts().index:
@@ -208,9 +208,9 @@ def DayPattern(data1, data2, name1, name2, location):
         elif purpose == 'Meal':
             tc = 'mltours'
             sc = 'mlstops'
-        #Add a column to PersonsDay for the current purpose
-        PersonsDay1[tc] = data1['PersonDay'][tc]
-        PersonsDay2[tc] = data2['PersonDay'][tc]
+        #Merge a column to PersonsDay for the current purpose
+        PersonsDay1 = PersonsDay1.merge(data1['PersonDay'][['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
+        PersonsDay2 = PersonsDay2.merge(data2['PersonDay_cloned'][['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
         toursPersPurp1 = weighted_average(PersonsDay1, tc, 'psexpfac', 'pptyp')
         toursPersPurp2 = weighted_average(PersonsDay2, tc, 'psexpfac', 'pptyp')
         #Delete added column to make future iterations faster
@@ -226,7 +226,7 @@ def DayPattern(data1, data2, name1, name2, location):
         dfstart = time.time()
         tpd.update({purpose: toursPersPurp}) #This dictionary is for creating the Excel file
         person_day_hh1 = pd.merge(data1['PersonDay'][['hhno', sc, 'pdexpfac']], data1['Household'][['hhno']], on = ['hhno'])
-        person_day_hh2 = pd.merge(data2['PersonDay'][['hhno', sc, 'pdexpfac']], data2['Household'][['hhno']], on = ['hhno'])
+        person_day_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', sc, 'pdexpfac']], data2['Household'][['hhno']], on = ['hhno'])
         no_stops1 = 100 * person_day_hh1.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh1['pdexpfac'].sum()
         no_stops2 = 100 * person_day_hh2.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh2['pdexpfac'].sum()
         has_stops1 = 100 - no_stops1
@@ -281,7 +281,7 @@ def DayPattern(data1, data2, name1, name2, location):
         worksheet = writer.sheets['Daily Activity Pattern']
         ptbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 5)
         tpbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 15)
-        purposes = data2['Tour']['pdpurp'].value_counts().index
+        purposes = data2['Tour_cloned']['pdpurp'].value_counts().index
         for i in range(len(purposes)): #There are two data frames for each tour purpose, so this loops over them
             tpd[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 1, startcol = 6 * i)
             worksheet = writer.sheets['Tours by Purpose']
@@ -330,8 +330,8 @@ def DayPattern(data1, data2, name1, name2, location):
                     chart = workbook.add_chart({'type': 'column'})
                     for col_num in range(6 * i + 1, 6 * i + 3):
                         chart.add_series({'name': [sheet, 1, col_num],
-                                            'categories': [sheet, 3, 6 * i, 10, 6 * i],
-                                            'values': [sheet, 3, col_num, 10, col_num],
+                                            'categories': [sheet, 2, 6 * i, 10, 6 * i],
+                                            'values': [sheet, 2, col_num, 10, col_num],
                                             'fill': {'color': colors[col_num % 6 - 1]}})
                         chart.set_legend({'position': 'top'})
                         chart.set_size({'x_scale': 1.4, 'y_scale': 1.25})
@@ -388,20 +388,20 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     value2.append(int(round(Person_2_total, 0)))
     value3.append(int(round(Person_3_total, 0)))
     Trip_1_total = get_total(data1['Trip']['trexpfac'])
-    Trip_2_total = get_total(data2['Trip']['trexpfac'])
+    Trip_2_total = get_total(data2['Trip_cloned']['trexpfac'])
     Trip_3_total = get_total(data3['Trip']['trexpfac'])  # 16,125,819
     label.append('Number of Trips')
     value1.append(int(round(Trip_1_total, 0)))
     value2.append(int(round(Trip_2_total, 0)))
     value3.append(int(round(Trip_3_total, 0)))
     Tour_1_total = get_total(data1['Tour']['toexpfac'])
-    Tour_2_total = get_total(data2['Tour']['toexpfac'])
+    Tour_2_total = get_total(data2['Tour_cloned']['toexpfac'])
     label.append('Number of Tours')
     value1.append(int(round(Tour_1_total, 0)))
     value2.append(int(round(Tour_2_total, 0)))
     value3.append(np.nan)
     trip_ok_1 = data1['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
-    trip_ok_2 = data2['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
+    trip_ok_2 = data2['Trip_cloned'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
     trip_ok_3 = data3['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
 
     cp1 = time.time()
@@ -650,11 +650,11 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     #survey data does not include drive to transit trips, remove- how can we do this without referencing max internal zone?    
     tour_ok_1 = data1['Tour'].\
         query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy(deep=True)
-    tour_ok_2 = data2['Tour'].\
+    tour_ok_2 = data2['Tour_cloned'].\
         query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy(deep=True) 
     trip_ok_1 = data1['Trip'].\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']].copy(deep=True)
-    trip_ok_2 = data2['Trip'].\
+    trip_ok_2 = data2['Trip_cloned'].\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
     trip_ok_3 = data3['Trip'].\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
@@ -971,13 +971,13 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     print('---Begin Mode Choice Report compilation---')
     
     #Subsection Vehicle Miles Per Person
-    tour_ok_1 = data1['Tour'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp']].\
+    tour_ok_1 = data1['Tour'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp', 'parent']].\
         query('tautodist>0 and tautodist<200')
-    tour_ok_2 = data2['Tour'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp']].\
+    tour_ok_2 = data2['Tour_cloned'][['tautotime', 'tautodist', 'tautocost', 'tmodetp', 'hhno', 'pno', 'tour', 'day', 'toexpfac', 'pdpurp', 'parent']].\
         query('tautodist>0 and tautodist<200')
     trip_ok_1 = data1['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'tour', 'day', 'trexpfac', 'dpurp']].\
         query('travtime>0 and travtime<200')
-    trip_ok_2 = data2['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'tour', 'day', 'trexpfac', 'dpurp']].\
+    trip_ok_2 = data2['Trip_cloned'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'tour', 'day', 'trexpfac', 'dpurp']].\
         query('travtime>0 and travtime<200')
     trip_ok_3 = data3['Trip'][['travtime', 'travdist', 'travcost', 'mode', 'hhno', 'pno', 'trexpfac', 'dpurp']].\
         query('travtime>0 and travtime<200')
@@ -1021,9 +1021,46 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
 
     ##Subsection Tour Summaries
 
+    #Tour Purpose Share
+    purpose1 = tour_ok_1[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    purpose2 = tour_ok_2[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    purposeshare1 = purpose1 / Tour_1_total * 100
+    purposeshare2 = purpose2 / Tour_2_total * 100
+    psdf = pd.DataFrame()
+    difference = purposeshare1 - purposeshare2
+    purposeshare1 = purposeshare1.sort_index()
+    psdf[name1 + ' Share (%)'] = purposeshare1
+    psdf[name1 + ' # of Tours'] = purpose1
+    purposeshare2 = purposeshare2.sort_index()
+    psdf[name2 + ' Share (%)'] = purposeshare2
+    psdf[name2 + ' # of Tours'] = purpose2
+    psdf = get_differences(psdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    psdf = recode_index(psdf, 'pdpurp', 'Purpose')
+
+    #Subtour Purpose Share
+    subtour_ok_1 = tour_ok_1[tour_ok_1['parent']>0].copy(deep=True)
+    subtour_ok_2 = tour_ok_2[tour_ok_2['parent']>0].copy(deep=True)
+    stpurpose1 = subtour_ok_1[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    stpurpose2 = subtour_ok_2[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac']
+    subpurposeshare1 = stpurpose1 / Tour_1_total * 100
+    subpurposeshare2 = stpurpose2 / Tour_2_total * 100
+    spsdf = pd.DataFrame()
+    difference = subpurposeshare1 - subpurposeshare2
+    subpurposeshare1 = subpurposeshare1.sort_index()
+    spsdf[name1 + ' Share (%)'] = subpurposeshare1
+    spsdf[name1 + ' # of Tours'] = stpurpose1
+    subpurposeshare2 = subpurposeshare2.sort_index()
+    spsdf[name2 + ' Share (%)'] = subpurposeshare2
+    spsdf[name2 + ' # of Tours'] = stpurpose2
+    spsdf = get_differences(spsdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    spsdf = recode_index(spsdf, 'pdpurp', 'Purpose')
+
+    cp2_1 = time.time()
+    print('Subtour Purpose Share data frame created in ' + str(round(cp2_1 - cp1, 1)) + ' seconds')
+    
     #Tour Mode Share
-    tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    # tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    # tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1 = tour_ok_1[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     mode2 = tour_ok_2[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     modeshare1 = mode1 / Tour_1_total * 100
@@ -1055,11 +1092,33 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
 
     # tpm1 = pd.DataFrame({name1 + ' Share (%)': tourpurpmode1.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp1 * 100}, dtype='float').reset_index()
     # tpm2 = pd.DataFrame({name2 + ' Share (%)': tourpurpmode2.groupby(['Purpose', 'Mode']).sum()['Expansion Factor'] / tourpurp2 * 100}, dtype='float').reset_index()
+    tpm1_num = tpm1.copy(deep=True)
+    tpm2_num = tpm2.copy(deep=True)
+    tpm1_num.rename(columns={'Expansion Factor_x': f'{name1} # Tour by Purpose'}, inplace=True)
+    tpm2_num.rename(columns={'Expansion Factor_x': f'{name2} # Tour by Purpose'}, inplace=True)
+    tpm_num = pd.merge(tpm1_num[['Purpose', 'Mode', f'{name1} # Tour by Purpose']], 
+                       tpm2_num[['Purpose', 'Mode', f'{name2} # Tour by Purpose']], 'outer', on=['Purpose', 'Mode'])
+    tpm_num = tpm_num.sort_values(f'{name2} # Tour by Purpose')
+
     tpm = pd.merge(tpm1[['Purpose', 'Mode', f'{name1} Share (%)']], 
                    tpm2[['Purpose', 'Mode', f'{name2} Share (%)']], 'outer', on=['Purpose', 'Mode'])
     tpm = tpm.sort_values(name2 + ' Share (%)')
 
-    #Re-organize data frame for side-by-side comparison
+    #Re-organize data frame for side-by-side comparison        
+    # for num
+    nrows_num = tpm_num['Mode'].value_counts()
+    halfcols_num = tpm_num['Purpose'].value_counts()
+    modenames_num = halfcols_num.index
+    ncols_num = [] #Columns for new data frame
+    for i in range(len(modenames_num)):
+        #ncols.append(modenames[i].encode('ascii', 'replace') + (' (' + name1 + ')').encode('ascii', 'replace'))
+        #ncols.append(modenames[i].encode('ascii', 'replace') + (' (' + name2 + ')').encode('ascii', 'replace'))
+        ncols_num.append(modenames_num[i] + (' (' + name1 + ')'))
+        ncols_num.append(modenames_num[i] + (' (' + name2 + ')'))
+    
+    mbpcdf_num = pd.DataFrame()
+
+    # for share
     nrows = tpm['Mode'].value_counts()
     halfcols = tpm['Purpose'].value_counts()
     modenames = halfcols.index
@@ -1073,6 +1132,14 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     mbpcdf = pd.DataFrame()
 
     #Fills in the data frame with NA
+    # for num
+    for column in ncols_num:   
+        filler = pd.Series(dtype='float64')
+        for purpose in nrows_num.index:
+            filler[purpose] = float('Nan')
+        mbpcdf_num[column] = filler
+
+    # for share
     for column in ncols:   
         filler = pd.Series(dtype='float64')
         for purpose in nrows.index:
@@ -1080,12 +1147,18 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
         mbpcdf[column] = filler
 
     #Puts the values in the correct place
+    # for num
+    for i in range(len(tpm_num['Mode'])):
+        mbpcdf_num.loc[tpm_num['Mode'][i], tpm_num['Purpose'][i] + ' (' + name1 + ')'] = round(tpm_num[f'{name1} # Tour by Purpose'][i], 1)
+        mbpcdf_num.loc[tpm_num['Mode'][i], tpm_num['Purpose'][i] + ' (' + name2 + ')'] = round(tpm_num[f'{name2} # Tour by Purpose'][i], 1)
+
+    # for share
     for i in range(len(tpm['Mode'])):
         mbpcdf.loc[tpm['Mode'][i], tpm['Purpose'][i] + ' (' + name1 + ')'] = round(tpm[name1 + ' Share (%)'][i], 1)
         mbpcdf.loc[tpm['Mode'][i], tpm['Purpose'][i] + ' (' + name2 + ')'] = round(tpm[name2 + ' Share (%)'][i], 1)
 
     cp3 = time.time()
-    print('Tour Mode Share by Purpose data frame created in '+str(round(cp3 - cp2, 1))+' seconds')
+    print('Tour Mode Number by Purpose and Tour Mode Share by Purpose data frame created in '+str(round(cp3 - cp2, 1))+' seconds')
 
     #Trip Mode by Tour Mode
 
@@ -1093,8 +1166,8 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     tourtrip1 = pd.merge(data1['Tour'][['hhno', 'pno', 'tour', 'day', 'tmodetp', 'toexpfac']],
                             data1['Trip'][['hhno', 'pno', 'tour', 'day', 'mode', 'trexpfac']],
                             on = ['hhno', 'pno', 'tour'])
-    tourtrip2 = pd.merge(data2['Tour'][['hhno', 'pno', 'tour', 'day', 'tmodetp', 'toexpfac']],
-                            data2['Trip'][['hhno', 'pno', 'tour', 'day', 'mode', 'trexpfac']],
+    tourtrip2 = pd.merge(data2['Tour_cloned'][['hhno', 'pno', 'tour', 'day', 'tmodetp', 'toexpfac']],
+                            data2['Trip_cloned'][['hhno', 'pno', 'tour', 'day', 'mode', 'trexpfac']],
                             on = ['hhno', 'pno', 'tour'])
     tourtrip1['Primary Tour Mode'] = tourtrip1['tmodetp']
     tourtrip2['Primary Tour Mode'] = tourtrip2['tmodetp']
@@ -1295,6 +1368,9 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     with pd.ExcelWriter(location + '/ModeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
+        psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
+        mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
         counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
         percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1, startcol = 10)
@@ -1327,6 +1403,9 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
         pd_format = workbook.add_format({'bold': True, 'font_color': '#880000'})
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
         msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
+        psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
+        mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
         counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
         percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1, startcol = 10)
@@ -1942,14 +2021,14 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     print('---Begin Time Choice Report compilation---')
 
     trip_ok_1 = data1['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
-    trip_ok_2 = data2['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
+    trip_ok_2 = data2['Trip_cloned'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
     trip_ok_3 = data3['Trip'][['arrtm', 'trexpfac', 'travdist']].query('travdist > 0 and travdist < 200')
     trip_ok_1 = trip_ok_1.reset_index()
     trip_ok_2 = trip_ok_2.reset_index()
     trip_ok_2 = trip_ok_2.reset_index()
     trip_ok_3 = trip_ok_3.reset_index()
     tour_ok_1 = data1['Tour'][['tardest', 'tlvdest', 'toexpfac', 'tautodist']].query('tautodist > 0 and tautodist < 200')
-    tour_ok_2 = data2['Tour'][['tardest', 'tlvdest', 'toexpfac', 'tautodist']].query('tautodist > 0 and tautodist < 200')
+    tour_ok_2 = data2['Tour_cloned'][['tardest', 'tlvdest', 'toexpfac', 'tautodist']].query('tautodist > 0 and tautodist < 200')
     tour_ok_1 = tour_ok_1.reset_index()
     tour_ok_2 = tour_ok_2.reset_index()
 
@@ -2110,7 +2189,7 @@ def report_compile(h5_results_file, h5_results_name,
     data2 = convert(h5_comparison_file, guidefile, h5_comparison_name)
     data3 = convert(h5_fullsurvey_file, guidefile, h5_fullsurvey_name)
     # Recode 'TNC' mode in survey data to 'Other'
-    data2['Trip']['mode'] = data2['Trip']['mode'].replace('TNC','Other')
+    data2['Trip_cloned']['mode'] = data2['Trip_cloned']['mode'].replace('TNC','Other')
     data3['Trip']['mode'] = data3['Trip']['mode'].replace('TNC','Other')
     #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
     #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
