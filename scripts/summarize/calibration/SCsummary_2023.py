@@ -180,6 +180,26 @@ def DayPattern(data1, data2, name1, name2, location):
     cp4 = time.time()
     print('Tours per Person by Purpose data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
+    # Number of Stops for all Purposes
+    stop_columns = ['wkstops', 'scstops', 'esstops', 'pbstops', 'shstops', 'mlstops', 'sostops', 'restops', 'mestops']
+    person_day_all_hh1 = pd.merge(data1['PersonDay'][['hhno', 'pdexpfac']+stop_columns], data1['Household'][['hhno']], on = ['hhno'])
+    person_day_all_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', 'pdexpfac']+stop_columns], data2['Household'][['hhno']], on = ['hhno'])
+    # add number of stops
+    person_day_all_hh1['all_stops'] = person_day_all_hh1[stop_columns].sum(axis=1)
+    person_day_all_hh2['all_stops'] = person_day_all_hh2[stop_columns].sum(axis=1)
+    no_stops_all1 = 100 * person_day_all_hh1.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh1['pdexpfac'].sum()
+    no_stops_all2 = 100 * person_day_all_hh2.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh2['pdexpfac'].sum()
+    has_stops_all1 = 100 - no_stops_all1
+    has_stops_all2 = 100 - no_stops_all2
+    s_all = pd.DataFrame() 
+    s_all['% of Tours (' + name1 + ')'] = [no_stops_all1, has_stops_all1]
+    s_all['% of Tours (' + name2 + ')'] = [no_stops_all2, has_stops_all2]
+    s_all['Tours'] = ['0', '1+']
+    s_all = s_all.set_index('Tours')
+    s_all = get_differences(s_all, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
+    cp4_1 = time.time()
+    print('Number of stops for all purpose data frame created in ' + str(round(cp4_1 - cp4, 1)) + ' seconds')
+    # TODO: here
     #Tours per Person by Purpose and Person Type/Number of Stops
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
@@ -288,6 +308,7 @@ def DayPattern(data1, data2, name1, name2, location):
             stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ') #This puts a filler column between each data frame, which is needed when getting the column widths
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
         ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 1)
         worksheet = writer.sheets['Work-Based Subtour Generation']
         trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 6)
@@ -314,6 +335,7 @@ def DayPattern(data1, data2, name1, name2, location):
             stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ')
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
         ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Generation', na_rep = 'NA', startrow = 1)
         worksheet = writer.sheets['Work-Based Subtour Generation']
         worksheet.merge_range(0, 0, 0, 4, 'Total Trips', merge_format)
@@ -1058,7 +1080,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     cp2_1 = time.time()
     print('Subtour Purpose Share data frame created in ' + str(round(cp2_1 - cp1, 1)) + ' seconds')
     
-    #Tour Mode Share
+    #Tour Mode Share (Regional)
     # tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     # tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1 = tour_ok_1[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
@@ -1074,9 +1096,140 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     msdf = get_differences(msdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
     msdf = recode_index(msdf, 'tmodetp', 'Mode')
 
+    #Tour Mode Share (BKR)
+    tour_ok_1_bkr = tour_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    tour_ok_1_bkr = tour_ok_1_bkr[tour_ok_1_bkr['bkr']>0]
+    # tour_ok_1_bkr = tour_ok_1_bkr[tour_ok_1_bkr['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    tour_ok_2_bkr = tour_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    tour_ok_2_bkr = tour_ok_2_bkr[tour_ok_2_bkr['bkr']>0]
+    # tour_ok_2_bkr = tour_ok_2_bkr[tour_ok_2_bkr['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    mode1_bkr = tour_ok_1_bkr[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
+    mode2_bkr = tour_ok_2_bkr[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
+    mode2_bkr_ = tour_ok_2_bkr[['tmodetp','toexpfac']].groupby('tmodetp').count()['toexpfac']
+    Tour_1_total_bkr = get_total(tour_ok_1_bkr['toexpfac'])
+    Tour_2_total_bkr = get_total(tour_ok_2_bkr['toexpfac'])    
+    modeshare1_bkr = mode1_bkr / Tour_1_total_bkr * 100
+    modeshare2_bkr = mode2_bkr / Tour_2_total_bkr * 100
+    msdf_bkr = pd.DataFrame()
+    difference = modeshare1_bkr - modeshare2_bkr
+    modeshare1_bkr = modeshare1_bkr.sort_index()
+    msdf_bkr[name1 + ' Share (%)'] = modeshare1_bkr
+    modeshare2_bkr = modeshare2_bkr.sort_index()
+    msdf_bkr[name2 + ' Share (%)'] = modeshare2_bkr
+    msdf_bkr = get_differences(msdf_bkr, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    msdf_bkr = recode_index(msdf_bkr, 'tmodetp', 'Mode')
+
+    #Tour Mode Share (Bellevue)
+    tour_ok_1_b = tour_ok_1_bkr[tour_ok_1_bkr['bkr']==1]
+    # tour_ok_1_b = tour_ok_1_b[tour_ok_1_b['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    tour_ok_2_b = tour_ok_2_bkr[tour_ok_2_bkr['bkr']==1]
+    # tour_ok_2_b = tour_ok_2_b[tour_ok_2_b['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    mode1_b = tour_ok_1_b[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
+    mode2_b = tour_ok_2_b[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
+    Tour_1_total_b = get_total(tour_ok_1_b['toexpfac'])
+    Tour_2_total_b = get_total(tour_ok_2_b['toexpfac'])    
+    modeshare1_b = mode1_b / Tour_1_total_b * 100
+    modeshare2_b = mode2_b / Tour_2_total_b * 100
+    msdf_b = pd.DataFrame()
+    difference = modeshare1_b - modeshare2_b
+    modeshare1_b = modeshare1_b.sort_index()
+    msdf_b[name1 + ' Share (%)'] = modeshare1_b
+    modeshare2_b = modeshare2_b.sort_index()
+    msdf_b[name2 + ' Share (%)'] = modeshare2_bkr
+    msdf_b = get_differences(msdf_b, name1 + ' Share (%)', name2 + ' Share (%)', 2)
+    msdf_b = recode_index(msdf_b, 'tmodetp', 'Mode')
+
     cp2 = time.time()
     print('Tour Mode Share data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
 
+    #Trip share (Regional)
+    # trip_ok_1 = trip_ok_1[trip_ok_1['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    # trip_ok_2 = trip_ok_2[trip_ok_2['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    mode1_tp = trip_ok_1[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode2_tp = trip_ok_2[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode3_tp = trip_ok_3[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    modeshare1_tp = mode1_tp / Trip_1_total * 100
+    modeshare2_tp = mode2_tp / Trip_2_total * 100
+    modeshare3_tp = mode3_tp / Trip_3_total * 100
+    msdf_tp = pd.DataFrame()
+    difference = modeshare1_tp - modeshare2_tp
+    modeshare1_tp = modeshare1_tp.sort_index()
+    msdf_tp[name1 + ' Share (%)'] = modeshare1_tp
+    modeshare2_tp = modeshare2_tp.sort_index()
+    msdf_tp[name2 + ' Share (%)'] = modeshare2_tp
+    modeshare3_tp = modeshare3_tp.sort_index()
+    msdf_tp[name3 + ' Share (%)'] = modeshare3_tp
+    msdf_tp = get_differences_wt_fullsurvey(msdf_tp, name1 + ' Share (%)', 
+                                                     name2 + ' Share (%)',
+                                                     name3 + ' Share (%)', 2)
+    msdf_tp = recode_index(msdf_tp, 'mode', 'Mode')
+
+    #Trip share (BKR)
+    trip_ok_1_tp_bkr = trip_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_1_tp_bkr = trip_ok_1_tp_bkr[trip_ok_1_tp_bkr['bkr']>0]
+    # trip_ok_1_tp_bkr = trip_ok_1_tp_bkr[trip_ok_1_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_2_tp_bkr = trip_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_2_tp_bkr = trip_ok_2_tp_bkr[trip_ok_2_tp_bkr['bkr']>0]
+    # tour_ok_2_tp_bkr = tour_ok_2_tp_bkr[tour_ok_2_tp_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_3_tp_bkr = trip_ok_3.merge(data3['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_3_tp_bkr = trip_ok_3_tp_bkr[trip_ok_3_tp_bkr['bkr']>0]
+    # tour_ok_3_tp_bkr = tour_ok_3_tp_bkr[tour_ok_3_tp_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    mode1_tp_bkr = trip_ok_1_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode2_tp_bkr = trip_ok_2_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode3_tp_bkr = trip_ok_3_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    Trip_1_total_tp_bkr = get_total(trip_ok_1_tp_bkr['trexpfac'])
+    Trip_2_total_tp_bkr = get_total(trip_ok_2_tp_bkr['trexpfac'])    
+    Trip_3_total_tp_bkr = get_total(trip_ok_3_tp_bkr['trexpfac'])    
+    modeshare1_tp_bkr = mode1_tp_bkr / Trip_1_total_tp_bkr * 100
+    modeshare2_tp_bkr = mode2_tp_bkr / Trip_2_total_tp_bkr * 100
+    modeshare3_tp_bkr = mode3_tp_bkr / Trip_3_total_tp_bkr * 100
+    msdf_tp_bkr = pd.DataFrame()
+    difference = modeshare1_tp_bkr - modeshare2_tp_bkr
+    modeshare1_tp_bkr = modeshare1_tp_bkr.sort_index()
+    msdf_tp_bkr[name1 + ' Share (%)'] = modeshare1_tp_bkr
+    modeshare2_tp_bkr = modeshare2_tp_bkr.sort_index()
+    msdf_tp_bkr[name2 + ' Share (%)'] = modeshare2_tp_bkr
+    modeshare3_tp_bkr = modeshare3_tp_bkr.sort_index()
+    msdf_tp_bkr[name3 + ' Share (%)'] = modeshare3_tp_bkr
+    msdf_tp_bkr = get_differences_wt_fullsurvey(msdf_tp_bkr, 
+                                                name1 + ' Share (%)', 
+                                                name2 + ' Share (%)',
+                                                name3 + ' Share (%)', 2)
+    msdf_tp_bkr = recode_index(msdf_tp_bkr, 'mode', 'Mode')
+
+    #Trip share (Bellevue)
+    trip_ok_1_tp_b = trip_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_1_tp_b = trip_ok_1_tp_b[trip_ok_1_tp_b['bkr']>0]
+    # trip_ok_1_tp_b = trip_ok_1_tp_b[trip_ok_1_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_2_tp_b = trip_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_2_tp_b = trip_ok_2_tp_b[trip_ok_2_tp_b['bkr']>0]
+    # tour_ok_2_tp_b = tour_ok_2_tp_b[tour_ok_2_tp_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_3_tp_b = trip_ok_3.merge(data3['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
+    trip_ok_3_tp_b = trip_ok_3_tp_b[trip_ok_3_tp_b['bkr']>0]
+    # tour_ok_3_tp_b = tour_ok_3_tp_b[tour_ok_3_tp_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    mode1_tp_b = trip_ok_1_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode2_tp_b = trip_ok_2_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    mode3_tp_b = trip_ok_3_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
+    Trip_1_total_tp_b = get_total(trip_ok_1_tp_b['trexpfac'])
+    Trip_2_total_tp_b = get_total(trip_ok_2_tp_b['trexpfac'])    
+    Trip_3_total_tp_b = get_total(trip_ok_3_tp_b['trexpfac'])    
+    modeshare1_tp_b = mode1_tp_b / Trip_1_total_tp_b * 100
+    modeshare2_tp_b = mode2_tp_b / Trip_2_total_tp_b * 100
+    modeshare3_tp_b = mode3_tp_b / Trip_3_total_tp_b * 100
+    msdf_tp_b = pd.DataFrame()
+    difference = modeshare1_tp_b - modeshare2_tp_b
+    modeshare1_tp_b = modeshare1_tp_b.sort_index()
+    msdf_tp_b[name1 + ' Share (%)'] = modeshare1_tp_b
+    modeshare2_tp_b = modeshare2_tp_b.sort_index()
+    msdf_tp_b[name2 + ' Share (%)'] = modeshare2_tp_b
+    modeshare3_tp_b = modeshare3_tp_b.sort_index()
+    msdf_tp_b[name3 + ' Share (%)'] = modeshare3_tp_b
+    msdf_tp_b = get_differences_wt_fullsurvey(msdf_tp_b, 
+                                                name1 + ' Share (%)', 
+                                                name2 + ' Share (%)',
+                                                name3 + ' Share (%)', 2)
+    msdf_tp_b = recode_index(msdf_tp_b, 'mode', 'Mode')
+    
     #Mode share by purpose
     tourpurpmode1 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_1['pdpurp']), ('Mode', tour_ok_1['tmodetp']), ('Expansion Factor', tour_ok_1['toexpfac']))))
     tourpurpmode2 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_2['pdpurp']), ('Mode', tour_ok_2['tmodetp']), ('Expansion Factor', tour_ok_2['toexpfac']))))
@@ -1367,7 +1520,12 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     #Write DataFrames to Excel File
     with pd.ExcelWriter(location + '/ModeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
-        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Regional', na_rep = 'NA')
+        msdf_bkr.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share BKR', na_rep = 'NA')
+        # msdf_b.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Bellevue', na_rep = 'NA')
+        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Regional', na_rep = 'NA')
+        msdf_tp_bkr.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share BKR', na_rep = 'NA')
+        # msdf_tp_b.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Bellevue', na_rep = 'NA')
         spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
@@ -1402,7 +1560,12 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
         value_format = workbook.add_format({'bold': True, 'font_color': '#0000CC'})
         pd_format = workbook.add_format({'bold': True, 'font_color': '#880000'})
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
-        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Regional', na_rep = 'NA')
+        msdf_bkr.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share BKR', na_rep = 'NA')
+        # msdf_b.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Bellevue', na_rep = 'NA')
+        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Regional', na_rep = 'NA')
+        msdf_tp_bkr.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share BKR', na_rep = 'NA')
+        # msdf_tp_b.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Bellevue', na_rep = 'NA')
         spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
@@ -2185,6 +2348,9 @@ def report_compile(h5_results_file, h5_results_name,
                    guidefile,districtfile, report_output_location):
     print('+-+-+-+Begin summary report file compilation+-+-+-+')
     timerstart = time.time()
+    taz_bellevue = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Bellevue_TAZ.txt'))
+    taz_kirkland = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Kirkland_TAZ.txt'))
+    taz_redmond = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Redmond_TAZ.txt'))
     data1 = convert(h5_results_file, guidefile, h5_results_name)
     data2 = convert(h5_comparison_file, guidefile, h5_comparison_name)
     data3 = convert(h5_fullsurvey_file, guidefile, h5_fullsurvey_name)
@@ -2193,6 +2359,21 @@ def report_compile(h5_results_file, h5_results_name,
     data3['Trip']['mode'] = data3['Trip']['mode'].replace('TNC','Other')
     #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
     #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
+    data1['Household']['bkr'] = 0
+    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
+    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
+    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
+
+    data2['Household']['bkr'] = 0
+    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
+    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
+    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
+
+    data3['Household']['bkr'] = 0
+    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
+    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
+    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
+
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
         DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
