@@ -2642,8 +2642,8 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
         chart = workbook.add_chart({'type': 'column'})
         for colnum in range(1, 4):
             chart.add_series({'name': [sheet, 0, colnum],
-                                'categories': [sheet, 2, 0, 25, 0],
-                                'values': [sheet, 2, colnum, 25, colnum],
+                                'categories': [sheet, 1, 0, 25, 0],
+                                'values': [sheet, 1, colnum, 25, colnum],
                                 'fill': {'color': colors[colnum - 1]}})
         chart.set_title({'name': 'Trip Arrival Time by Hour of Day'})
         chart.set_size({'width': 704, 'height': 520})
@@ -2660,8 +2660,8 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
         chart = workbook.add_chart({'type': 'column'})
         for colnum in range(1, 3):
             chart.add_series({'name': [sheet, 1, colnum],
-                                'categories': [sheet, 3, 0, 26, 0],
-                                'values': [sheet, 3, colnum, 26, colnum],
+                                'categories': [sheet, 2, 0, 26, 0],
+                                'values': [sheet, 2, colnum, 26, colnum],
                                 'fill': {'color': colors[colnum - 1]}})
         chart.set_title({'name': [sheet, 0, 0]})
         chart.set_size({'width': 640, 'height': 540})
@@ -2672,8 +2672,8 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
         chart = workbook.add_chart({'type': 'column'})
         for colnum in range(1, 3):
             chart.add_series({'name': [sheet, 29, colnum],
-                                'categories': [sheet, 31, 0, 54, 0],
-                                'values': [sheet, 31, colnum, 54, colnum],
+                                'categories': [sheet, 30, 0, 54, 0],
+                                'values': [sheet, 30, colnum, 54, colnum],
                                 'fill': {'color': colors[colnum - 1]},})
         chart.set_title({'name': [sheet, 28, 0]})
         chart.set_size({'width': 640, 'height': 540})
@@ -2743,16 +2743,16 @@ def report_compile(h5_results_file, h5_results_name,
     data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
 
     zone_district = get_districts(districtfile)
-    if run_daysim_report == True:
-        DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
-    if run_day_pattern_report == True:
-        DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
-    if run_mode_choice_report == True:
-        ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
-    if run_dest_choice_report == True:
-        DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
-    if run_long_term_report == True:
-        LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    # if run_daysim_report == True:
+    #     DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    # if run_day_pattern_report == True:
+    #     DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
+    # if run_mode_choice_report == True:
+    #     ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
+    # if run_dest_choice_report == True:
+    #     DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    # if run_long_term_report == True:
+    #     LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_time_choice_report == True:
         TimeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_district_summary_report == True:
