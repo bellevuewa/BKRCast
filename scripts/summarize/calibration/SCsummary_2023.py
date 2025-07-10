@@ -2743,16 +2743,16 @@ def report_compile(h5_results_file, h5_results_name,
     data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
 
     zone_district = get_districts(districtfile)
-    # if run_daysim_report == True:
-    #     DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
-    # if run_day_pattern_report == True:
-    #     DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
-    # if run_mode_choice_report == True:
-    #     ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
-    # if run_dest_choice_report == True:
-    #     DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
-    # if run_long_term_report == True:
-    #     LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    if run_daysim_report == True:
+        DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    if run_day_pattern_report == True:
+        DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
+    if run_mode_choice_report == True:
+        ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
+    if run_dest_choice_report == True:
+        DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+    if run_long_term_report == True:
+        LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_time_choice_report == True:
         TimeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
     if run_district_summary_report == True:
