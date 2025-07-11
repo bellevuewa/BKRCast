@@ -12,6 +12,7 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+import numpy as np
 import pandas as pd
 import sys
 import os
@@ -30,7 +31,10 @@ def weighted_average(df_in, col, weights, grouper = None): #Computes the weighte
     df = df_in.copy()
     if grouper == None:
         df[col + '_sp'] = df[col].multiply(df[weights])
-        n_out = df[col + '_sp'].sum() / df[weights].sum()
+        if len(df) == 0:
+            n_out = 0
+        else:
+            n_out = df[col + '_sp'].sum() / df[weights].sum()
         return(n_out)
     else:
         if grouper == 'pptyp':
@@ -70,6 +74,7 @@ def get_differences(df_in, colname1, colname2, roundto): #Computes the differenc
     df = df_in.copy()
     df['Difference'] = df[colname1] - df[colname2]
     df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
+    df.loc[df['% Difference']==np.inf, '% Difference'] = np.nan
     if isinstance(roundto, list):
         for i in range(len(df['Difference'])):
             col1_index = df.columns.get_loc(colname1)

@@ -1,2 +1,2 @@
-{"pm":{"@slid": "@cnt_pm_2024", "@kirkland_slid":"@cnt_pm_2024", "type":"@cnt_pm_2024"}, 
- "am":{"@slid": "@cnt_am_2024", "@kirkland_slid":"@cnt_am_2024", "type":"@cnt_am_2024"}}
+{"pm":{"@slid": "@cnt_pm_2024", "@kirkland_slid":"@cnt_pm_2024", "@redmond_slid":"@cnt_pm_2024", "type":"@cnt_pm_2024"}, 
+ "am":{"@slid": "@cnt_am_2024", "@kirkland_slid":"@cnt_am_2024", "@redmond_slid":"@cnt_am_2024", "type":"@cnt_am_2024"}}
