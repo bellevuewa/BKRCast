@@ -72,6 +72,8 @@ def get_differences_wt_fullsurvey(df_in, colname1, colname2, colname3, roundto, 
 
 def get_differences(df_in, colname1, colname2, roundto): #Computes the difference and percent difference for two specified columns in a data frame
     df = df_in.copy()
+    if colname2 not in df:
+        colname2 = df.columns[1]
     df['Difference'] = df[colname1] - df[colname2]
     df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
     df.loc[df['% Difference']==np.inf, '% Difference'] = np.nan

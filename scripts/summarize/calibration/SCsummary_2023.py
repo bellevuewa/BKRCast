@@ -125,7 +125,7 @@ def WorkFAZSummary(data1, location):
     with pd.ExcelWriter(location + '/WorkFAZReport_2023.xlsx', engine = 'xlsxwriter') as writer:
         LEHD_model.to_excel(excel_writer = writer, sheet_name = 'Work Locations by FAZ', na_rep = 0, startrow = 1)
 
-def DayPattern(data1, data2, name1, name2, location):
+def DayPattern(data1, data2, name1, name2, location, fname_tail):
     """Generate a day pattern summary that compares Daysim output and the survey data
 
     Args:
@@ -138,56 +138,26 @@ def DayPattern(data1, data2, name1, name2, location):
     print('---Begin Day Pattern Report Compilation---')
     start = time.time()
 
-    hh_1_bkr = data1['Household'][data1['Household']['bkr']>0].copy(deep=True)
-    hh_2_bkr = data2['Household'][data2['Household']['bkr']>0].copy(deep=True)
-    p_hh_1_bkr = data1['Person'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    p_hh_2_bkr = data2['Person'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    pd_hh_1_bkr = data1['PersonDay'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    pd_hh_2_bkr = data2['PersonDay_cloned'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    p_hh_1_bkr = p_hh_1_bkr[p_hh_1_bkr['bkr']>0]
-    p_hh_2_bkr = p_hh_2_bkr[p_hh_2_bkr['bkr']>0]
-    pd_hh_1_bkr = pd_hh_1_bkr[pd_hh_1_bkr['bkr']>0]
-    pd_hh_2_bkr = pd_hh_2_bkr[pd_hh_2_bkr['bkr']>0]
-    tu_hh_1_bkr = data1['Tour'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    tu_hh_2_bkr = data2['Tour_cloned'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    tu_hh_1_bkr = tu_hh_1_bkr[tu_hh_1_bkr['bkr']>0]
-    tu_hh_2_bkr = tu_hh_2_bkr[tu_hh_2_bkr['bkr']>0]
-
-    # Regional
     Person_1_total = get_total(data1['Person']['psexpfac'])
     Person_2_total = get_total(data2['Person']['psexpfac'])
     Tour_1_total = get_total(data1['Tour']['toexpfac'])
     Tour_2_total = get_total(data2['Tour_cloned']['toexpfac'])
-    # BKR
-    Person_1_total_bkr = get_total(p_hh_1_bkr['psexpfac'])
-    Person_2_total_bkr = get_total(p_hh_2_bkr['psexpfac'])
-    Tour_1_total_bkr = get_total(tu_hh_1_bkr['toexpfac'])
-    Tour_2_total_bkr = get_total(tu_hh_2_bkr['toexpfac'])
 
     cp1 = time.time()
     print('Preliminary data frames created in ' + str(round(cp1 - start, 1)) + ' seconds')
 
     ##Tours per person
-    # Region
     tpp1 = Tour_1_total / Person_1_total
     tpp2 = Tour_2_total / Person_2_total
     tpp  = pd.DataFrame(index = ['Tours'])
     tpp[name1] = tpp1
     tpp[name2] = tpp2
-    tpp = get_differences(tpp, name1, name2, 2)
-    # BKR
-    tpp1_bkr = Tour_1_total_bkr / Person_1_total_bkr
-    tpp2_bkr = Tour_2_total_bkr / Person_2_total_bkr
-    tpp_bkr  = pd.DataFrame(index = ['Tours'])
-    tpp_bkr[name1] = tpp1_bkr
-    tpp_bkr[name2] = tpp2_bkr
-    tpp_bkr = get_differences(tpp_bkr, name1, name2, 2)
+    tpp = get_differences(tpp, name1, name2, 2)    
 
     cp2 = time.time()
     print('Tours per Person data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
 
     ##Percent of Tours by Purpose
-    # Regional
     ptbp1 = 100 * data1['Tour'][['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Tour_1_total
     ptbp2 = 100 * data2['Tour_cloned'][['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Tour_2_total
     ptbp = pd.DataFrame()
@@ -195,21 +165,11 @@ def DayPattern(data1, data2, name1, name2, location):
     ptbp['Percent of Tours (' + name2 + ')'] = ptbp2
     ptbp = get_differences(ptbp,'Percent of Tours (' + name1 + ')','Percent of Tours (' + name2 + ')', 2)
     ptbp = recode_index(ptbp, 'pdpurp', 'Tour Purpose')
-    
-    # BKR
-    ptbp1_bkr = 100 * tu_hh_1_bkr[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Tour_1_total_bkr
-    ptbp2_bkr = 100 * tu_hh_2_bkr[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Tour_2_total_bkr
-    ptbp_bkr = pd.DataFrame()
-    ptbp_bkr['Percent of Tours (' + name1 + ')'] = ptbp1_bkr
-    ptbp_bkr['Percent of Tours (' + name2 + ')'] = ptbp2_bkr
-    ptbp_bkr = get_differences(ptbp_bkr,'Percent of Tours (' + name1 + ')','Percent of Tours (' + name2 + ')', 2)
-    ptbp_bkr = recode_index(ptbp_bkr, 'pdpurp', 'Tour Purpose')
 
     cp3 = time.time()
     print('Percent of Tours by Purpose data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
 
     ##Tours per Person by Purpose
-    # Regional
     tpbp1 = data1['Tour'][['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Person_1_total
     tpbp2 = data2['Tour_cloned'][['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Person_2_total
     tpbp = pd.DataFrame()
@@ -217,21 +177,11 @@ def DayPattern(data1, data2, name1, name2, location):
     tpbp['Tours per Person (' + name2 + ')'] = tpbp2
     tpbp = get_differences(tpbp, 'Tours per Person (' + name1 + ')', 'Tours per Person (' + name2 + ')', 2)
     tpbp = recode_index(tpbp, 'pdpurp', 'Tour Purpose')
-    
-    # BKR
-    tpbp1_bkr = tu_hh_1_bkr[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Person_1_total_bkr
-    tpbp2_bkr = tu_hh_2_bkr[['pdpurp','toexpfac']].groupby('pdpurp').sum()['toexpfac'] / Person_2_total_bkr
-    tpbp_bkr = pd.DataFrame()
-    tpbp_bkr['Tours per Person (' + name1 + ')'] = tpbp1_bkr
-    tpbp_bkr['Tours per Person (' + name2 + ')'] = tpbp2_bkr
-    tpbp_bkr = get_differences(tpbp_bkr, 'Tours per Person (' + name1 + ')', 'Tours per Person (' + name2 + ')', 2)
-    tpbp_bkr = recode_index(tpbp_bkr, 'pdpurp', 'Tour Purpose')
 
     cp4 = time.time()
     print('Tours per Person by Purpose data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
     ## Number of Stops for all Purposes
-    # Regional
     stop_columns = ['wkstops', 'scstops', 'esstops', 'pbstops', 'shstops', 'mlstops', 'sostops', 'restops', 'mestops']
     person_day_all_hh1 = pd.merge(data1['PersonDay'][['hhno', 'pdexpfac']+stop_columns], data1['Household'][['hhno']], on = ['hhno'])
     person_day_all_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', 'pdexpfac']+stop_columns], data2['Household'][['hhno']], on = ['hhno'])
@@ -249,28 +199,10 @@ def DayPattern(data1, data2, name1, name2, location):
     s_all = s_all.set_index('Tours')
     s_all = get_differences(s_all, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
 
-    # BKR
-    person_day_all_hh1_bkr = pd.merge(pd_hh_1_bkr[['hhno', 'pdexpfac']+stop_columns], hh_1_bkr[['hhno']], on = ['hhno'])
-    person_day_all_hh2_bkr = pd.merge(pd_hh_2_bkr[['hhno', 'pdexpfac']+stop_columns], hh_2_bkr[['hhno']], on = ['hhno'])
-    # add number of stops
-    person_day_all_hh1_bkr['all_stops'] = person_day_all_hh1_bkr[stop_columns].sum(axis=1)
-    person_day_all_hh2_bkr['all_stops'] = person_day_all_hh2_bkr[stop_columns].sum(axis=1)
-    no_stops_all1_bkr = 100 * person_day_all_hh1_bkr.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh1_bkr['pdexpfac'].sum()
-    no_stops_all2_bkr = 100 * person_day_all_hh2_bkr.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh2_bkr['pdexpfac'].sum()
-    has_stops_all1_bkr = 100 - no_stops_all1_bkr
-    has_stops_all2_bkr = 100 - no_stops_all2_bkr
-    s_all_bkr = pd.DataFrame() 
-    s_all_bkr['% of Tours (' + name1 + ')'] = [no_stops_all1_bkr, has_stops_all1_bkr]
-    s_all_bkr['% of Tours (' + name2 + ')'] = [no_stops_all2_bkr, has_stops_all2_bkr]
-    s_all_bkr['Tours'] = ['0', '1+']
-    s_all_bkr = s_all_bkr.set_index('Tours')
-    s_all_bkr = get_differences(s_all_bkr, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
-
     cp4_1 = time.time()
     print('Number of stops for all purpose data frame created in ' + str(round(cp4_1 - cp4, 1)) + ' seconds')
 
     ##Tours per Person by Purpose and Person Type/Number of Stops
-    # Regional
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     tpd = {}
@@ -330,69 +262,10 @@ def DayPattern(data1, data2, name1, name2, location):
         stops.update({purpose:ps})
         print('Number of Stops Regionwide for ' + purpose + 'Tours data frame created in ' + str(round(time.time() - dfstart, 1)) + ' seconds')
 
-    # BKR
-    PersonsDay1_bkr = pd.merge(p_hh_1_bkr[['hhno', 'pno', 'pptyp', 'psexpfac']], pd_hh_1_bkr[['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
-    PersonsDay2_bkr = pd.merge(p_hh_2_bkr[['hhno', 'pno', 'pptyp', 'psexpfac']], pd_hh_2_bkr[['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
-    tpd_bkr = {}
-    stops_bkr = {}
-    for purpose in tu_hh_1_bkr['pdpurp'].value_counts().index:
-        dfstart = time.time()
-        if purpose == 'Work':
-            tc = 'wktours'
-            sc = 'wkstops'
-        elif purpose == 'Social':
-            tc = 'sotours'
-            sc = 'sostops'
-        elif purpose == 'School':
-            tc = 'sctours'
-            sc = 'scstops'
-        elif purpose == 'Escort':
-            tc = 'estours'
-            sc = 'esstops'
-        elif purpose == 'Personal Business':
-            tc = 'pbtours'
-            sc = 'pbstops'
-        elif purpose == 'Shop':
-            tc = 'shtours'
-            sc = 'shstops'
-        elif purpose == 'Meal':
-            tc = 'mltours'
-            sc = 'mlstops'
-        #Merge a column to PersonsDay for the current purpose
-        PersonsDay1_bkr = PersonsDay1_bkr.merge(pd_hh_1_bkr[['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
-        PersonsDay2_bkr = PersonsDay2_bkr.merge(pd_hh_2_bkr[['hhno', 'pno', tc]], on= ['hhno', 'pno'], how='left')
-        toursPersPurp1_bkr = weighted_average(PersonsDay1_bkr, tc, 'psexpfac', 'pptyp')
-        toursPersPurp2_bkr = weighted_average(PersonsDay2_bkr, tc, 'psexpfac', 'pptyp')
-        #Delete added column to make future iterations faster
-        PersonsDay1_bkr.drop(columns = [tc], inplace = True)
-        PersonsDay2_bkr.drop(columns = [tc], inplace = True)
-        items_bkr = OrderedDict(((name1, toursPersPurp1_bkr), (name2, toursPersPurp2_bkr)))
-        toursPersPurp_bkr = pd.DataFrame.from_dict(items_bkr)
-        toursPersPurp_bkr = get_differences(toursPersPurp_bkr, name1, name2, 2)
-        toursPersPurp_bkr = recode_index(toursPersPurp_bkr, 'pptyp','Person Type')
-        print(purpose + ' Tours by Person Type data frame created in ' + str(round(time.time() - dfstart, 1)) + ' seconds')
-
-        #Number of stops by purpose
-        tpd_bkr.update({purpose: toursPersPurp_bkr}) #This dictionary is for creating the Excel file
-        person_day_hh1_bkr = pd.merge(pd_hh_1_bkr[['hhno', sc, 'pdexpfac']], hh_1_bkr[['hhno']], on = ['hhno'])
-        person_day_hh2_bkr = pd.merge(pd_hh_2_bkr[['hhno', sc, 'pdexpfac']], hh_2_bkr[['hhno']], on = ['hhno'])
-        no_stops1_bkr = 100 * person_day_hh1_bkr.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh1_bkr['pdexpfac'].sum()
-        no_stops2_bkr = 100 * person_day_hh2_bkr.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh2_bkr['pdexpfac'].sum()
-        has_stops1_bkr = 100 - no_stops1_bkr
-        has_stops2_bkr = 100 - no_stops2_bkr
-        ps_bkr = pd.DataFrame() 
-        ps_bkr['% of Tours (' + name1 + ')'] = [no_stops1_bkr, has_stops1_bkr]
-        ps_bkr['% of Tours (' + name2 + ')'] = [no_stops2_bkr, has_stops2_bkr]
-        ps_bkr[purpose + ' Tours'] = ['0', '1+']
-        ps_bkr = ps_bkr.set_index(purpose + ' Tours')
-        ps_bkr = get_differences(ps_bkr, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
-        stops_bkr.update({purpose:ps_bkr})
-        print('Number of Stops in BKR for ' + purpose + 'Tours data frame created in ' + str(round(time.time() - dfstart, 1)) + ' seconds')
-
     cp5 = time.time()
 
     ##Work-Based Subtour Generation
-    #Total trips per person (Regional)
+    #Total trips per person
     atp1 = get_total(data1['Trip']['trexpfac']) / Person_1_total
     atp2 = get_total(data2['Trip_cloned']['trexpfac']) / Person_2_total
     travdist_data1 = data1['Trip'][(data1['Trip']['travdist']>0)]
@@ -408,30 +281,10 @@ def DayPattern(data1, data2, name1, name2, location):
     ttp = ttp.set_index('')
     ttp = get_differences(ttp, name1, name2, 2)
 
-    #Total trips per person (BKR)
-    tp_hh_1_bkr = data1['Trip'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    tp_hh_2_bkr = data2['Trip_cloned'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    tp_hh_1_bkr = tp_hh_1_bkr[tp_hh_1_bkr['bkr']>0].copy(deep=True)
-    tp_hh_2_bkr = tp_hh_2_bkr[tp_hh_2_bkr['bkr']>0].copy(deep=True)
-    atp1_bkr = get_total(tp_hh_1_bkr['trexpfac']) / Person_1_total_bkr
-    atp2_bkr = get_total(tp_hh_2_bkr['trexpfac']) / Person_2_total_bkr
-    travdist_data1_bkr = tp_hh_1_bkr[(tp_hh_1_bkr['travdist']>0)]
-    travdist_data1_bkr = travdist_data1_bkr[(travdist_data1_bkr['travdist']<200)].copy(deep=True)
-    travdist_data2_bkr = tp_hh_2_bkr.query('travdist > 0 and travdist < 200').copy(deep=True)
-    atl1_bkr = weighted_average(travdist_data1_bkr, 'travdist', 'trexpfac')
-    atl2_bkr = weighted_average(travdist_data2_bkr, 'travdist', 'trexpfac')
-    ttp1_bkr = [atp1_bkr, atl1_bkr]
-    ttp2_bkr = [atp2_bkr, atl2_bkr]
-    label_bkr = ['Average Trips Per Person', 'Average Trip Length']
-    items_bkr = OrderedDict((('', label_bkr), (name1, ttp1_bkr), (name2, ttp2_bkr)))
-    ttp_bkr = pd.DataFrame.from_dict(items_bkr)
-    ttp_bkr = ttp_bkr.set_index('')
-    ttp_bkr = get_differences(ttp_bkr, name1, name2, 2)
-
     cp6 = time.time()
     print('Total Trips Per Person data frame created in ' + str(round(cp6 - cp5, 1)) + ' seconds')
 
-    #Trip Rates by Purpose (Regional)
+    #Trip Rates by Purpose
     trp1 = data1['Trip'][['dpurp', 'trexpfac']].groupby('dpurp').sum()['trexpfac'] / Person_1_total
     trp2 = data2['Trip_cloned'][['dpurp', 'trexpfac']].groupby('dpurp').sum()['trexpfac'] / Person_2_total
     trp = pd.DataFrame()
@@ -440,113 +293,62 @@ def DayPattern(data1, data2, name1, name2, location):
     trp = get_differences(trp, 'Trips per Person (' + name1 + ')', 'Trips per Person (' + name2 + ')', 2)
     trp = recode_index(trp, 'dpurp', 'Destination Purpose')
 
-    #Trip Rates by Purpose (BKR)
-    trp1_bkr = tp_hh_1_bkr[['dpurp', 'trexpfac']].groupby('dpurp').sum()['trexpfac'] / Person_1_total_bkr
-    trp2_bkr = tp_hh_2_bkr[['dpurp', 'trexpfac']].groupby('dpurp').sum()['trexpfac'] / Person_2_total_bkr
-    trp_bkr = pd.DataFrame()
-    trp_bkr['Trips per Person (' + name1 + ')'] = trp1_bkr
-    trp_bkr['Trips per Person (' + name2 + ')'] = trp2_bkr
-    trp_bkr = get_differences(trp_bkr, 'Trips per Person (' + name1 + ')', 'Trips per Person (' + name2 + ')', 2)
-    trp_bkr = recode_index(trp_bkr, 'dpurp', 'Destination Purpose')
-
     cp7 = time.time()
     print('Trip Rates by Purpose data frame created in ' + str(round(cp7 - cp6, 1)) + ' seconds')
 
     #Compile file
-    with pd.ExcelWriter(location + '/DayPatternReport_2023.xlsx', engine='xlsxwriter') as writer: #Defines the name of the file and that xlsxwriter will be used to write it
-        # Daily Activity Pattern (Regional)
-        tpp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 1) #Put the first data frame into excel
+    with pd.ExcelWriter(location + f'/DayPatternReport_2023{fname_tail}.xlsx', engine='xlsxwriter') as writer: #Defines the name of the file and that xlsxwriter will be used to write it
+        # Daily Activity Pattern
+        tpp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 1) #Put the first data frame into excel
         workbook = writer.book
-        worksheet = writer.sheets['Daily Activity Pattern Regional']
-        ptbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 5)
-        tpbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 15)
-        # Daily Activity Pattern (BKR)
-        tpp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 1) #Put the first data frame into excel
-        worksheet = writer.sheets['Daily Activity Pattern BKR']
-        ptbp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 5)
-        tpbp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 15)
-        # Tours by Purpose (Regional)
+        worksheet = writer.sheets['Daily Activity Pattern']
+        ptbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 5)
+        tpbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 15)
+        # Tours by Purpose
         purposes = data2['Tour_cloned']['pdpurp'].value_counts().index
         for i in range(len(purposes)): #There are two data frames for each tour purpose, so this loops over them
-            tpd[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose Regional', na_rep = 'NA', startrow = 1, startcol = 6 * i)
-            worksheet = writer.sheets['Tours by Purpose Regional']
-            stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose Regional', na_rep = 'NA', startrow = 13, startcol = 6 * i)
+            tpd[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 1, startcol = 6 * i)
+            worksheet = writer.sheets['Tours by Purpose']
+            stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ') #This puts a filler column between each data frame, which is needed when getting the column widths
-        # Tours by Purpose (BKR)
-        for i in range(len(purposes)): #There are two data frames for each tour purpose, so this loops over them
-            tpd_bkr[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose BKR', na_rep = 'NA', startrow = 1, startcol = 6 * i)
-            worksheet = writer.sheets['Tours by Purpose BKR']
-            stops_bkr[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose BKR', na_rep = 'NA', startrow = 13, startcol = 6 * i)
-            if i != len(purposes):
-                worksheet.write(0, 6 * i + 5, ' ') #This puts a filler column between each data frame, which is needed when getting the column widths        
-        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops Regional', na_rep = 'NA', startrow = 0)
-        s_all_bkr.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops BKR', na_rep = 'NA', startrow = 0)
-        ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Regional', na_rep = 'NA', startrow = 1)
-        ttp_bkr.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour BKR', na_rep = 'NA', startrow = 1)
-        # Work-Based Subtour Generation (Regional)
-        worksheet = writer.sheets['Work-Based Subtour Regional']
-        trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Regional', na_rep = 'NA', startrow = 6)
-        # Work-Based Subtour Generation (BKR)
-        worksheet = writer.sheets['Work-Based Subtour BKR']
-        trp_bkr.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour BKR', na_rep = 'NA', startrow = 6)
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
+        ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour', na_rep = 'NA', startrow = 1)
+        # Work-Based Subtour Generation
+        worksheet = writer.sheets['Work-Based Subtour']
+        trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour', na_rep = 'NA', startrow = 6)
 
-    colwidths = getmaxwidths(location + '/DayPatternReport_2023.xlsx') #Gets the column widths
+    colwidths = getmaxwidths(location + f'/DayPatternReport_2023{fname_tail}.xlsx') #Gets the column widths
     colors = ['#004488', '#00C0C0']
 
-    with pd.ExcelWriter(location + '/DayPatternReport_2023.xlsx', engine='xlsxwriter') as writer: #The file is deleted and recreated, this time with formatting
-        tpp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 1)
-        tpp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 1)
+    with pd.ExcelWriter(location + f'/DayPatternReport_2023{fname_tail}.xlsx', engine='xlsxwriter') as writer: #The file is deleted and recreated, this time with formatting
+        tpp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 1)
         workbook = writer.book
-        # Daily Activity Pattern (Regional)
-        worksheet = writer.sheets['Daily Activity Pattern Regional']
+        # Daily Activity Pattern
+        worksheet = writer.sheets['Daily Activity Pattern']
         merge_format = workbook.add_format({'align': 'center', 'bold': True, 'border': 1}) #Defines formatting
         worksheet.merge_range(0, 0, 0, 4, 'Tours Per Person', merge_format) #Merges some cells, writes something, and applies formating
         worksheet.merge_range(4, 0, 4, 4, 'Percent of Tours by Purpose', merge_format)
-        ptbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 5)
+        ptbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 5)
         worksheet.merge_range(15, 0, 15, 4, 'Tours per Person by Purpose', merge_format)
-        tpbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern Regional', na_rep = 'NA', startrow = 16)
-        # Daily Activity Pattern (BKR)
-        worksheet = writer.sheets['Daily Activity Pattern BKR']
-        merge_format = workbook.add_format({'align': 'center', 'bold': True, 'border': 1}) #Defines formatting
-        worksheet.merge_range(0, 0, 0, 4, 'Tours Per Person', merge_format) #Merges some cells, writes something, and applies formating
-        worksheet.merge_range(4, 0, 4, 4, 'Percent of Tours by Purpose', merge_format)
-        ptbp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 5)
-        worksheet.merge_range(15, 0, 15, 4, 'Tours per Person by Purpose', merge_format)
-        tpbp_bkr.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern BKR', na_rep = 'NA', startrow = 16)        
-        # Tours by Purpose (Regional)
+        tpbp.to_excel(excel_writer = writer, sheet_name = 'Daily Activity Pattern', na_rep = 'NA', startrow = 16)       
+        # Tours by Purpose
         purposes = data1['Tour']['pdpurp'].value_counts().index
         for i in range(len(purposes)):
-            tpd[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose Regional', na_rep = 'NA', startrow = 1, startcol = 6 * i)
-            worksheet = writer.sheets['Tours by Purpose Regional']
+            tpd[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 1, startcol = 6 * i)
+            worksheet = writer.sheets['Tours by Purpose']
             worksheet.merge_range(0, 6 * i , 0, 6 * i + 4, purposes[i] + ' Tours by Person Type', merge_format)
             worksheet.merge_range(12, 6 * i, 12, 6 * i + 4, 'Number of Stops', merge_format)
-            stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose Regional', na_rep = 'NA', startrow = 13, startcol = 6 * i)
+            stops[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose', na_rep = 'NA', startrow = 13, startcol = 6 * i)
             if i != len(purposes):
                 worksheet.write(0, 6 * i + 5, ' ')
-        # Tours by Purpose (BKR)
-        for i in range(len(purposes)):
-            tpd_bkr[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose BKR', na_rep = 'NA', startrow = 1, startcol = 6 * i)
-            worksheet = writer.sheets['Tours by Purpose BKR']
-            worksheet.merge_range(0, 6 * i , 0, 6 * i + 4, purposes[i] + ' Tours by Person Type', merge_format)
-            worksheet.merge_range(12, 6 * i, 12, 6 * i + 4, 'Number of Stops', merge_format)
-            stops_bkr[purposes[i]].to_excel(excel_writer = writer, sheet_name = 'Tours by Purpose BKR', na_rep = 'NA', startrow = 13, startcol = 6 * i)
-            if i != len(purposes):
-                worksheet.write(0, 6 * i + 5, ' ')
-        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops Regional', na_rep = 'NA', startrow = 0)
-        s_all_bkr.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops BKR', na_rep = 'NA', startrow = 0)
-        # Work-Based Subtour Generation (Regional)
-        ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Regional', na_rep = 'NA', startrow = 1)
-        worksheet = writer.sheets['Work-Based Subtour Regional']
+        s_all.to_excel(excel_writer = writer, sheet_name = 'All Number of Stops', na_rep = 'NA', startrow = 0)
+        # Work-Based Subtour Generation
+        ttp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour', na_rep = 'NA', startrow = 1)
+        worksheet = writer.sheets['Work-Based Subtour']
         worksheet.merge_range(0, 0, 0, 4, 'Total Trips', merge_format)
         worksheet.merge_range(5, 0, 5, 4,'Trip Rates by Purpose', merge_format)
-        trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour Regional', na_rep = 'NA', startrow = 6)
-        # Work-Based Subtour Generation (BKR)
-        ttp_bkr.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour BKR', na_rep = 'NA', startrow = 1)
-        worksheet = writer.sheets['Work-Based Subtour BKR']
-        worksheet.merge_range(0, 0, 0, 4, 'Total Trips', merge_format)
-        worksheet.merge_range(5, 0, 5, 4,'Trip Rates by Purpose', merge_format)
-        trp_bkr.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour BKR', na_rep = 'NA', startrow = 6)
+        trp.to_excel(excel_writer = writer, sheet_name = 'Work-Based Subtour', na_rep = 'NA', startrow = 6)
         #Add charts
         for sheet in writer.sheets:
             worksheet = writer.sheets[sheet]
@@ -578,7 +380,7 @@ def DayPattern(data1, data2, name1, name2, location):
 
     print('---Day Pattern Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
-def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfile):
+def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfile, fname_tail):
     """Generate a summary that compares Daysim output and the survey data
 
     Args:
@@ -589,27 +391,23 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
         name2 (str): the name that represents data2, e.g., '2023SurveyDaysimFormat'
         name3 (str): the name that represents data3, e.g., '2023SurveyFull'
         location (str): the path pointing to the Daysim outputs
-        districtfile (pandas.core.frame.DataFrame): a pandas dataframe that stores dictrict data 
+        districtfile (pandas.core.frame.DataFrame): a pandas dataframe that stores dictrict data
+        fname_tail (str): can be '' for regionwide summary or '_BKR' for BKR summary
     """
     print('---Begin DaySim Report Compilation---')
     start = time.time()
 
-    # Merge data (Regional)
+    # Merge data
     merge_per_hh_1 = pd.merge(data1['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno', 'ptpass']],
-                              data1['Household'][['hhtaz', 'hhparcel', 'hhno', 'bkr']],
+                              data1['Household'][['hhtaz', 'hhparcel', 'hhno']],
                               on = 'hhno')
     merge_per_hh_2 = pd.merge(data2['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno', 'ptpass']],
-                              data2['Household'][['hhtaz', 'hhparcel', 'hhno', 'bkr']],
+                              data2['Household'][['hhtaz', 'hhparcel', 'hhno']],
                               on = 'hhno')
     merge_per_hh_3 = pd.merge(data3['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno', 'ptpass']],
-                              data3['Household'][['hhtaz', 'hhparcel', 'hhno', 'bkr']],
+                              data3['Household'][['hhtaz', 'hhparcel', 'hhno']],
                               on = 'hhno')
-    # Merge data (BKR)
-    merge_per_hh_1_bkr = merge_per_hh_1[merge_per_hh_1['bkr']>0].copy(deep=True)
-    merge_per_hh_2_bkr = merge_per_hh_2[merge_per_hh_2['bkr']>0].copy(deep=True)
-    merge_per_hh_3_bkr = merge_per_hh_3[merge_per_hh_3['bkr']>0].copy(deep=True)
     
-    # Regional stats
     label = []
     value1 = []
     value2 = []
@@ -638,54 +436,10 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     trip_ok_2 = data2['Trip_cloned'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
     trip_ok_3 = data3['Trip'][['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
 
-    # BKR stats
-    label_bkr = []
-    value1_bkr = []
-    value2_bkr = []
-    value3_bkr = []
-
-    Person_1_total_bkr = get_total(merge_per_hh_1_bkr['psexpfac'])
-    Person_2_total_bkr = get_total(merge_per_hh_2_bkr['psexpfac'])
-    Person_3_total_bkr = get_total(merge_per_hh_3_bkr['psexpfac'])
-    label_bkr.append('Number of People')
-    value1_bkr.append(int(round(Person_1_total_bkr, 0)))
-    value2_bkr.append(int(round(Person_2_total_bkr, 0)))
-    value3_bkr.append(int(round(Person_3_total_bkr, 0)))
-
-    merge_tp_1_bkr = data1['Trip'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    merge_tp_2_bkr = data2['Trip_cloned'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    merge_tp_3_bkr = data3['Trip'].merge(data3['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    merge_tp_1_bkr = merge_tp_1_bkr[merge_tp_1_bkr['bkr']>0]
-    merge_tp_2_bkr = merge_tp_2_bkr[merge_tp_2_bkr['bkr']>0]
-    merge_tp_3_bkr = merge_tp_3_bkr[merge_tp_3_bkr['bkr']>0]
-
-    Trip_1_total_bkr = get_total(merge_tp_1_bkr['trexpfac'])
-    Trip_2_total_bkr = get_total(merge_tp_2_bkr['trexpfac'])
-    Trip_3_total_bkr = get_total(merge_tp_3_bkr['trexpfac'])
-    label_bkr.append('Number of Trips')
-    value1_bkr.append(int(round(Trip_1_total_bkr, 0)))
-    value2_bkr.append(int(round(Trip_2_total_bkr, 0)))
-    value3_bkr.append(int(round(Trip_3_total_bkr, 0)))
-        
-    merge_tu_1_bkr = data1['Tour'].merge(data1['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    merge_tu_2_bkr = data2['Tour_cloned'].merge(data2['Household'][['hhno', 'bkr']], on='hhno', how='left')
-    merge_tu_1_bkr = merge_tu_1_bkr[merge_tu_1_bkr['bkr']>0]
-    merge_tu_2_bkr = merge_tu_2_bkr[merge_tu_2_bkr['bkr']>0]
-
-    Tour_1_total_bkr = get_total(merge_tu_1_bkr['toexpfac'])
-    Tour_2_total_bkr = get_total(merge_tu_2_bkr['toexpfac'])
-    label_bkr.append('Number of Tours')
-    value1_bkr.append(int(round(Tour_1_total_bkr, 0)))
-    value2_bkr.append(int(round(Tour_2_total_bkr, 0)))
-    value3_bkr.append(np.nan)
-    trip_ok_1_bkr = merge_tp_1_bkr[['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
-    trip_ok_2_bkr = merge_tp_2_bkr[['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
-    trip_ok_3_bkr = merge_tp_3_bkr[['travdist', 'trexpfac', 'dorp']].query('travdist > 0 and travdist < 200')
-
     cp1 = time.time()
     print('Preliminary data frames and variables created in ' + str(round(cp1 - start, 1)) + ' seconds')
 
-    ##Basic Summaries (Regional)
+    ##Basic Summaries
     #Total Households, Persons, and Trips
     tp1 = data1['Person']['psexpfac'].sum()  # total persons
     tp2 = data2['Person']['psexpfac'].sum()
@@ -773,101 +527,10 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     thp[name3] = [tp3, th3, ahhs3, ntr3, atl3, vmpp3, workers3_avg_dist, students3_avg_dist]
     thp = get_differences_wt_fullsurvey(thp, name1, name2, name3, [0, 0, 1, 1, 1, 1, 1, 1], need_diff_percent=True)
 
-    ##Basic Summaries (BKR)
-    hh_1_bkr = data1['Household'][data1['Household']['bkr']>0].copy(deep=True)
-    hh_2_bkr = data2['Household'][data2['Household']['bkr']>0].copy(deep=True)
-    hh_3_bkr = data3['Household'][data3['Household']['bkr']>0].copy(deep=True)
-    #Total Households, Persons, and Trips    
-    tp1_bkr = merge_per_hh_1_bkr['psexpfac'].sum()  # total persons
-    tp2_bkr = merge_per_hh_2_bkr['psexpfac'].sum()
-    tp3_bkr = merge_per_hh_3_bkr['psexpfac'].sum()
-    th1_bkr = hh_1_bkr['hhexpfac'].sum()  # total households
-    th2_bkr = hh_2_bkr['hhexpfac'].sum()
-    th3_bkr = hh_3_bkr['hhexpfac'].sum()
-    ttr1_bkr = trip_ok_1_bkr['trexpfac'].sum()  # total trips
-    ttr2_bkr = trip_ok_2_bkr['trexpfac'].sum()
-    ttr3_bkr = trip_ok_3_bkr['trexpfac'].sum()
-    ahhs1_bkr = tp1_bkr / th1_bkr  # average household size
-    ahhs2_bkr = tp2_bkr / th2_bkr
-    ahhs3_bkr = tp3_bkr / th3_bkr
-    ntr1_bkr = ttr1_bkr / tp1_bkr # average number of trips per person
-    ntr2_bkr = ttr2_bkr / tp2_bkr
-    ntr3_bkr = ttr3_bkr / tp3_bkr
-    atl1_bkr = weighted_average(trip_ok_1_bkr, 'travdist', 'trexpfac', grouper=None)  # average trip length
-    atl2_bkr = weighted_average(trip_ok_2_bkr, 'travdist', 'trexpfac', grouper=None)
-    atl3_bkr = weighted_average(trip_ok_3_bkr, 'travdist', 'trexpfac', grouper=None)
-    driver_trips1_bkr = trip_ok_1_bkr[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')  # vehicle miles (unweighted)
-    driver_trips2_bkr = trip_ok_2_bkr[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')
-    driver_trips3_bkr = trip_ok_3_bkr[['dorp', 'travdist', 'trexpfac']].query('dorp == "Driver"')
-    vmpp1sp_bkr = (driver_trips1_bkr['travdist'].multiply(driver_trips1_bkr['trexpfac'])).sum()  # weighted vehicle miles
-    vmpp2sp_bkr = (driver_trips2_bkr['travdist'].multiply(driver_trips2_bkr['trexpfac'])).sum()
-    vmpp3sp_bkr = (driver_trips3_bkr['travdist'].multiply(driver_trips3_bkr['trexpfac'])).sum()
-    vmpp1_bkr = vmpp1sp_bkr / Person_1_total_bkr  # vehicle miles per person
-    vmpp2_bkr = vmpp2sp_bkr / Person_2_total_bkr
-    vmpp3_bkr = vmpp3sp_bkr / Person_3_total_bkr
-
-    #Work Location
-    wrkrs1_bkr = merge_per_hh_1_bkr[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
-        query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
-    wrkrs2_bkr = merge_per_hh_2_bkr[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
-        query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
-    wrkrs3_bkr = merge_per_hh_3_bkr[['pwtyp', 'hhtaz', 'psexpfac', 'pwpcl', 'pwaudist', 'hhparcel']].\
-        query('pwtyp == "Paid Full-Time Worker" or pwtyp == "Paid Part-Time Worker"')
-    wrkr_1_hzone_bkr = pd.merge(wrkrs1_bkr, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
-    wrkr_2_hzone_bkr = pd.merge(wrkrs2_bkr, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
-    wrkr_3_hzone_bkr = pd.merge(wrkrs3_bkr, districtfile, left_on = 'hhtaz', right_on = 'TAZ')
-    total_workers_1_bkr = wrkrs1_bkr['psexpfac'].sum()
-    total_workers_2_bkr = wrkrs2_bkr['psexpfac'].sum()
-    total_workers_3_bkr = wrkrs3_bkr['psexpfac'].sum()
-    # only take those in-person workers: usual work location parcel != home location parcel
-    workers_1_bkr = wrkr_1_hzone_bkr.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
-    workers_2_bkr = wrkr_2_hzone_bkr.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
-    workers_3_bkr = wrkr_3_hzone_bkr.query('pwpcl != hhparcel and pwaudist > 0 and pwaudist < 200').copy()
-    workers_1_bkr['Share (%)'] = workers_1_bkr['psexpfac'] / workers_1_bkr['psexpfac'].sum()
-    workers_2_bkr['Share (%)'] = workers_2_bkr['psexpfac'] / workers_2_bkr['psexpfac'].sum()
-    workers_3_bkr['Share (%)'] = workers_3_bkr['psexpfac'] / workers_3_bkr['psexpfac'].sum()
-    workers1_avg_dist_bkr = weighted_average(workers_1_bkr, 'pwaudist', 'psexpfac')
-    workers2_avg_dist_bkr = weighted_average(workers_2_bkr, 'pwaudist', 'psexpfac')
-    workers3_avg_dist_bkr = weighted_average(workers_3_bkr, 'pwaudist', 'psexpfac')
-
-    #School Location
-    st1_bkr = merge_per_hh_1_bkr[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
-        query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
-    st2_bkr = merge_per_hh_2_bkr[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
-        query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
-    st3_bkr = merge_per_hh_3_bkr[['pstyp', 'hhtaz', 'psexpfac', 'pspcl', 'psaudist', 'hhparcel']].\
-        query('pstyp == "Full-Time Student" or pstyp == "Part-Time Student"')
-    st_1_hzone_bkr = pd.merge(st1_bkr, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
-    st_2_hzone_bkr = pd.merge(st2_bkr, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
-    st_3_hzone_bkr = pd.merge(st3_bkr, districtfile, 'outer', left_on = 'hhtaz', right_on = 'TAZ')
-    total_students_1_bkr = st1_bkr['psexpfac'].sum()
-    total_students_2_bkr = st2_bkr['psexpfac'].sum()
-    total_students_3_bkr = st3_bkr['psexpfac'].sum()
-    # only take those in-person students: usual school/university location parcel != home location parcel
-    students_1_bkr = st_1_hzone_bkr.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
-    students_2_bkr = st_2_hzone_bkr.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
-    students_3_bkr = st_3_hzone_bkr.query('pspcl != hhparcel and psaudist > 0 and psaudist < 200').copy()
-
-    students_1_bkr['Share (%)'] = students_1_bkr['psexpfac'] / students_1_bkr['psexpfac'].sum()
-    students_2_bkr['Share (%)'] = students_2_bkr['psexpfac'] / students_2_bkr['psexpfac'].sum()
-    students_3_bkr['Share (%)'] = students_3_bkr['psexpfac'] / students_3_bkr['psexpfac'].sum()
-    students1_avg_dist_bkr = weighted_average(students_1_bkr, 'psaudist', 'psexpfac')
-    students2_avg_dist_bkr = weighted_average(students_2_bkr, 'psaudist', 'psexpfac')
-    students3_avg_dist_bkr = weighted_average(students_3_bkr, 'psaudist', 'psexpfac')
-
-    #Glue DataFrame Together
-    thp_bkr = pd.DataFrame(index = ['Total Persons', 'Total Households', 'Average Household Size', 'Average Trips Per Person', 
-                                'Average Trip Length', 'Vehicle Miles per Person', 
-                                'Average Distance to Work (Non-Home)', 'Average Distance to School (Non-Home)'])
-    thp_bkr[name1] = [tp1_bkr, th1_bkr, ahhs1_bkr, ntr1_bkr, atl1_bkr, vmpp1_bkr, workers1_avg_dist_bkr, students1_avg_dist_bkr]
-    thp_bkr[name2] = [tp2_bkr, th2_bkr, ahhs2_bkr, ntr2_bkr, atl2_bkr, vmpp2_bkr, workers2_avg_dist_bkr, students2_avg_dist_bkr]
-    thp_bkr[name3] = [tp3_bkr, th3_bkr, ahhs3_bkr, ntr3_bkr, atl3_bkr, vmpp3_bkr, workers3_avg_dist_bkr, students3_avg_dist_bkr]
-    thp_bkr = get_differences_wt_fullsurvey(thp_bkr, name1, name2, name3, [0, 0, 1, 1, 1, 1, 1, 1], need_diff_percent=True)
-
     cp2 = time.time()
     print('Basic Summaries data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
 
-    #Transit Pass Ownership (Regional)
+    #Transit Pass Ownership
     ttp1 = data1['Person']['ptpass'].multiply(data1['Person']['psexpfac']).sum()
     ttp2 = data2['Person'].loc[data2['Person']['ptpass'] > 0, 'psexpfac'].sum()
     ttp3 = data3['Person'].loc[data3['Person']['ptpass'] > 0, 'psexpfac'].sum()
@@ -880,26 +543,10 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     tpass[name3] = [ttp3, ppp3]
     tpass = get_differences_wt_fullsurvey(tpass, name1, name2, name3, [0, 3], need_diff_percent=True)
 
-    #Transit Pass Ownership (BKR)
-    ps_1_bkr = merge_per_hh_1_bkr[merge_per_hh_1_bkr['bkr']>0].copy(deep=True)
-    ps_2_bkr = merge_per_hh_2_bkr[merge_per_hh_2_bkr['bkr']>0].copy(deep=True)
-    ps_3_bkr = merge_per_hh_3_bkr[merge_per_hh_3_bkr['bkr']>0].copy(deep=True)
-    ttp1_bkr = ps_1_bkr['ptpass'].multiply(ps_1_bkr['psexpfac']).sum()
-    ttp2_bkr = ps_2_bkr.loc[ps_2_bkr['ptpass'] > 0, 'psexpfac'].sum()
-    ttp3_bkr = ps_3_bkr.loc[ps_3_bkr['ptpass'] > 0, 'psexpfac'].sum()
-    ppp1_bkr = ttp1_bkr / Person_1_total_bkr
-    ppp2_bkr = ttp2_bkr / Person_2_total_bkr
-    ppp3_bkr = ttp3_bkr / Person_3_total_bkr
-    tpass_bkr = pd.DataFrame(index = ['Total Passes', 'Passes per Person'])
-    tpass_bkr[name1] = [ttp1_bkr, ppp1_bkr]
-    tpass_bkr[name2] = [ttp2_bkr, ppp2_bkr]
-    tpass_bkr[name3] = [ttp3_bkr, ppp3_bkr]
-    tpass_bkr = get_differences_wt_fullsurvey(tpass_bkr, name1, name2, name3, [0, 3], need_diff_percent=True)
-
     cp3 = time.time()
     print('Transit Pass Ownership data frame created in ' + str(round(cp3 - cp2, 1)) + ' seconds')
 
-    #Auto Ownership (Regional)
+    #Auto Ownership
     # only includes stats from data1 (model outputs) and data3 (full survey), as data2 (daysim-formatted) removed many records
     ao1 = 100 * data1['Household'][['hhvehs','hhexpfac']].groupby('hhvehs').sum()['hhexpfac'] / data1['Household']['hhexpfac'].sum()
     veh3_ok = data3['Household'].query('hhvehs >= 0')
@@ -939,8 +586,10 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     #Transit Boardings
     board = pd.DataFrame(index=['Boardings'])
     board['Implied Transit Boardings (Assuming 1.3 Boardings/Trip)'] = 1.3 * data1['Trip'].query('mode == "Transit"')['trexpfac'].sum()
-    board['Total Observed Transit Boardings (2011)'] = 647127
-    # TODO: put the transit boardings data here, the boundary is puget sound?
+    if regionwide:
+        board['Total Observed Transit Boardings (2011)'] = 647127
+    else:
+        board['Total Observed Transit Boardings (2024)'] = 23265
     board = get_differences(board, 'Implied Transit Boardings (Assuming 1.3 Boardings/Trip)',
                                    'Total Observed Transit Boardings (2011)', 0)
 
@@ -948,26 +597,22 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     print('Transit Boardings data frame created in ' + str(round(cp5 - cp4, 1)) + ' seconds')
 
     #File Compile
-    with pd.ExcelWriter(location + '/DaysimReport_2023.xlsx', engine = 'xlsxwriter') as writer:
-        thp.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries (Region)', na_rep = 'NA')
-        thp_bkr.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries (BKR)', na_rep = 'NA')
-        tpass.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership (Region)', na_rep = 'NA')
-        tpass_bkr.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership (BKR)', na_rep = 'NA')
+    with pd.ExcelWriter(location + f'/DaysimReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
+        thp.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA')
+        tpass.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership', na_rep = 'NA')
         ao.to_excel(excel_writer = writer, sheet_name = 'Automobile Ownership', na_rep = 'NA')
         board.to_excel(excel_writer = writer, sheet_name = 'Transit Boardings', na_rep = 'NA')
 
-    colwidths = getmaxwidths(location + '/DaysimReport_2023.xlsx')
+    colwidths = getmaxwidths(location + f'/DaysimReport_2023{fname_tail}.xlsx')
     colors = ['#004488', '#00C0C0', '#749BC2']
     n_len = 4
-    with pd.ExcelWriter(location + '/DaysimReport_2023.xlsx', engine = 'xlsxwriter') as writer:
-        thp.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries (Region)', na_rep = 'NA')
-        thp_bkr.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries (BKR)', na_rep = 'NA')
-        tpass.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership (Region)', na_rep = 'NA')
-        tpass_bkr.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership (BKR)', na_rep = 'NA')
+    with pd.ExcelWriter(location + f'/DaysimReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
+        thp.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA')
+        tpass.to_excel(excel_writer = writer, sheet_name = 'Transit Pass Ownership', na_rep = 'NA')
         ao.to_excel(excel_writer = writer, sheet_name = 'Automobile Ownership', na_rep = 'NA')
         board.to_excel(excel_writer = writer, sheet_name = 'Transit Boardings', na_rep = 'NA')
         workbook = writer.book    
-        for sheet in ['Basic Summaries (Region)', 'Basic Summaries (BKR)']:
+        for sheet in ['Basic Summaries']:
             worksheet = writer.sheets[sheet]
             for colnum in range(worksheet.dim_colmax + 1):
                 worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
@@ -981,7 +626,7 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
             chart.set_legend({'position': 'top'})
             chart.set_size({'x_scale': 2, 'y_scale': 1.75})
             worksheet.insert_chart('B11', chart)
-        for sheet in ['Transit Pass Ownership (Region)', 'Transit Pass Ownership (BKR)']:
+        for sheet in ['Transit Pass Ownership']:
             worksheet = writer.sheets[sheet]
             for colnum in range(worksheet.dim_colmax + 1):
                 worksheet.set_column(colnum, colnum, colwidths[sheet][colnum])
@@ -1020,7 +665,7 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
 
     print('---DaySim Report successfully compiled in ' + str(round(end - start, 1)) + ' seconds---')
 
-def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile):
+def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile, fname_tail):
     """Generate a destination choice summary that compares Daysim output and the survey data
 
     Args:
@@ -1036,20 +681,26 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     print('---Begin Destination Choice Report compilation---')
     start = time.time()
 
-    #Filter out unreasonable trip/tour lengths
-    #survey data does not include drive to transit trips, remove- how can we do this without referencing max internal zone?    
-    tour_ok_1 = data1['Tour'].\
+    ###Filter out unreasonable trip/tour lengths
+    ##survey data does not include drive to transit trips, remove- how can we do this without referencing max internal zone?    
+    tu_hh_1 = data1['Tour'].merge(data1['Household'][['hhno', 'hhtaz']], on='hhno')
+    tu_hh_2 = data2['Tour_cloned'].merge(data2['Household'][['hhno', 'hhtaz']], on='hhno')
+    tp_hh_1 = data1['Trip'].merge(data1['Household'][['hhno', 'hhtaz']], on='hhno')
+    tp_hh_2 = data2['Trip_cloned'].merge(data2['Household'][['hhno', 'hhtaz']], on='hhno')
+    tp_hh_3 = data3['Trip'].merge(data3['Household'][['hhno', 'hhtaz']], on='hhno')
+
+    tour_ok_1 = tu_hh_1.\
         query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy(deep=True)
-    tour_ok_2 = data2['Tour_cloned'].\
+    tour_ok_2 = tu_hh_2.\
         query('tautodist>0 and tautodist<200')[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp', 'tdtaz']].copy(deep=True) 
-    trip_ok_1 = data1['Trip'].\
+    trip_ok_1 = tp_hh_1.\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']].copy(deep=True)
-    trip_ok_2 = data2['Trip_cloned'].\
+    trip_ok_2 = tp_hh_2.\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'tour', 'day', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
-    trip_ok_3 = data3['Trip'].\
+    trip_ok_3 = tp_hh_3.\
         query('travdist>0 and travdist<200')[['hhno', 'pno', 'travdist', 'trexpfac', 'dpurp', 'mode', 'dtaz']] .copy(deep=True)
 
-    #Get total trips and tours
+    ##Get total trips and tours
     Trip_1_total = get_total(trip_ok_1['trexpfac'])
     Trip_2_total = get_total(trip_ok_2['trexpfac'])
     Trip_3_total = get_total(trip_ok_3['trexpfac'])
@@ -1059,8 +710,7 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     cp1 = time.time()
     print('Preliminary data frames and variables created in ' + str(round(cp1 - start, 1)) + ' seconds')
 
-    #Average distance by tour purpose
-
+    ##Average distance by tour purpose
     #Merge tour and trip files
     tourtrip1 = pd.merge(tour_ok_1[['hhno', 'pno', 'tour', 'day', 'tautodist', 'toexpfac', 'pdpurp', 'tmodetp']],
                        trip_ok_1[['hhno', 'pno', 'tour', 'day', 'trexpfac']],
@@ -1282,7 +932,7 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     print('Number of People, Workers, and Students by District data frame created in ' + str(round(cp10-cp9,1)) + ' seconds')
 
     #Compile the file
-    with pd.ExcelWriter(location + '/DaysimDestChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/DaysimDestChoiceReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         atl.to_excel(excel_writer = writer, sheet_name = 'Average Dist by Tour Purpose', na_rep = 'NA')
         atlm.to_excel(excel_writer = writer, sheet_name = 'Average Dist by Tour Mode', na_rep = 'NA')
         nttp.to_excel(excel_writer = writer, sheet_name = 'Trips per Tour by Tour Purpose', na_rep = 'NA')
@@ -1293,10 +943,10 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
         tripdest.to_excel(excel_writer = writer, sheet_name = '% Trips by Destination District', na_rep = 'NA')
         people_workers_students_district.to_excel(excel_writer=writer,sheet_name='#People by District',na_rep='NA')
 
-    colwidths = getmaxwidths(location + '/DaysimDestChoiceReport_2023.xlsx')
+    colwidths = getmaxwidths(location + f'/DaysimDestChoiceReport_2023{fname_tail}.xlsx')
     colors =  ['#004488', '#00C0C0', '#749BC2']
 
-    with pd.ExcelWriter(location + '/DaysimDestChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/DaysimDestChoiceReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         atl.to_excel(excel_writer = writer, sheet_name = 'Average Dist by Tour Purpose', na_rep = 'NA')
         atlm.to_excel(excel_writer = writer, sheet_name = 'Average Dist by Tour Mode', na_rep = 'NA')
         nttp.to_excel(excel_writer = writer, sheet_name = 'Trips per Tour by Tour Purpose', na_rep = 'NA')
@@ -1356,7 +1006,7 @@ def DestChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
 
     print('---Destination Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def ModeChoice(data1, data2, data3, name1, name2, name3, location):
+def ModeChoice(data1, data2, data3, name1, name2, name3, location, fname_tail):
     start = time.time()
     print('---Begin Mode Choice Report compilation---')
     
@@ -1448,9 +1098,9 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     cp2_1 = time.time()
     print('Subtour Purpose Share data frame created in ' + str(round(cp2_1 - cp1, 1)) + ' seconds')
     
-    #Tour Mode Share (Regional)
-    # tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    # tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    #Tour Mode Share
+    tour_ok_1 = tour_ok_1[tour_ok_1['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    tour_ok_2 = tour_ok_2[tour_ok_2['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1 = tour_ok_1[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     mode2 = tour_ok_2[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
     modeshare1 = mode1 / Tour_1_total * 100
@@ -1464,55 +1114,12 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     msdf = get_differences(msdf, name1 + ' Share (%)', name2 + ' Share (%)', 2)
     msdf = recode_index(msdf, 'tmodetp', 'Mode')
 
-    #Tour Mode Share (BKR)
-    tour_ok_1_bkr = tour_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    tour_ok_1_bkr = tour_ok_1_bkr[tour_ok_1_bkr['bkr']>0]
-    # tour_ok_1_bkr = tour_ok_1_bkr[tour_ok_1_bkr['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    tour_ok_2_bkr = tour_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    tour_ok_2_bkr = tour_ok_2_bkr[tour_ok_2_bkr['bkr']>0]
-    # tour_ok_2_bkr = tour_ok_2_bkr[tour_ok_2_bkr['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    mode1_bkr = tour_ok_1_bkr[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
-    mode2_bkr = tour_ok_2_bkr[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
-    mode2_bkr_ = tour_ok_2_bkr[['tmodetp','toexpfac']].groupby('tmodetp').count()['toexpfac']
-    Tour_1_total_bkr = get_total(tour_ok_1_bkr['toexpfac'])
-    Tour_2_total_bkr = get_total(tour_ok_2_bkr['toexpfac'])    
-    modeshare1_bkr = mode1_bkr / Tour_1_total_bkr * 100
-    modeshare2_bkr = mode2_bkr / Tour_2_total_bkr * 100
-    msdf_bkr = pd.DataFrame()
-    difference = modeshare1_bkr - modeshare2_bkr
-    modeshare1_bkr = modeshare1_bkr.sort_index()
-    msdf_bkr[name1 + ' Share (%)'] = modeshare1_bkr
-    modeshare2_bkr = modeshare2_bkr.sort_index()
-    msdf_bkr[name2 + ' Share (%)'] = modeshare2_bkr
-    msdf_bkr = get_differences(msdf_bkr, name1 + ' Share (%)', name2 + ' Share (%)', 2)
-    msdf_bkr = recode_index(msdf_bkr, 'tmodetp', 'Mode')
-
-    #Tour Mode Share (Bellevue)
-    tour_ok_1_b = tour_ok_1_bkr[tour_ok_1_bkr['bkr']==1]
-    # tour_ok_1_b = tour_ok_1_b[tour_ok_1_b['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    tour_ok_2_b = tour_ok_2_bkr[tour_ok_2_bkr['bkr']==1]
-    # tour_ok_2_b = tour_ok_2_b[tour_ok_2_b['tmodetp']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    mode1_b = tour_ok_1_b[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
-    mode2_b = tour_ok_2_b[['tmodetp','toexpfac']].groupby('tmodetp').sum()['toexpfac']
-    Tour_1_total_b = get_total(tour_ok_1_b['toexpfac'])
-    Tour_2_total_b = get_total(tour_ok_2_b['toexpfac'])    
-    modeshare1_b = mode1_b / Tour_1_total_b * 100
-    modeshare2_b = mode2_b / Tour_2_total_b * 100
-    msdf_b = pd.DataFrame()
-    difference = modeshare1_b - modeshare2_b
-    modeshare1_b = modeshare1_b.sort_index()
-    msdf_b[name1 + ' Share (%)'] = modeshare1_b
-    modeshare2_b = modeshare2_b.sort_index()
-    msdf_b[name2 + ' Share (%)'] = modeshare2_bkr
-    msdf_b = get_differences(msdf_b, name1 + ' Share (%)', name2 + ' Share (%)', 2)
-    msdf_b = recode_index(msdf_b, 'tmodetp', 'Mode')
-
     cp2 = time.time()
     print('Tour Mode Share data frame created in ' + str(round(cp2 - cp1, 1)) + ' seconds')
 
-    #Trip share (Regional)
-    # trip_ok_1 = trip_ok_1[trip_ok_1['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    # trip_ok_2 = trip_ok_2[trip_ok_2['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    #Trip share
+    trip_ok_1 = trip_ok_1[trip_ok_1['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
+    trip_ok_2 = trip_ok_2[trip_ok_2['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
     mode1_tp = trip_ok_1[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
     mode2_tp = trip_ok_2[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
     mode3_tp = trip_ok_3[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
@@ -1532,72 +1139,6 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
                                                      name3 + ' Share (%)', 2)
     msdf_tp = recode_index(msdf_tp, 'mode', 'Mode')
 
-    #Trip share (BKR)
-    trip_ok_1_tp_bkr = trip_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_1_tp_bkr = trip_ok_1_tp_bkr[trip_ok_1_tp_bkr['bkr']>0]
-    # trip_ok_1_tp_bkr = trip_ok_1_tp_bkr[trip_ok_1_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    trip_ok_2_tp_bkr = trip_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_2_tp_bkr = trip_ok_2_tp_bkr[trip_ok_2_tp_bkr['bkr']>0]
-    # tour_ok_2_tp_bkr = tour_ok_2_tp_bkr[tour_ok_2_tp_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    trip_ok_3_tp_bkr = trip_ok_3.merge(data3['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_3_tp_bkr = trip_ok_3_tp_bkr[trip_ok_3_tp_bkr['bkr']>0]
-    # tour_ok_3_tp_bkr = tour_ok_3_tp_bkr[tour_ok_3_tp_bkr['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    mode1_tp_bkr = trip_ok_1_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    mode2_tp_bkr = trip_ok_2_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    mode3_tp_bkr = trip_ok_3_tp_bkr[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    Trip_1_total_tp_bkr = get_total(trip_ok_1_tp_bkr['trexpfac'])
-    Trip_2_total_tp_bkr = get_total(trip_ok_2_tp_bkr['trexpfac'])    
-    Trip_3_total_tp_bkr = get_total(trip_ok_3_tp_bkr['trexpfac'])    
-    modeshare1_tp_bkr = mode1_tp_bkr / Trip_1_total_tp_bkr * 100
-    modeshare2_tp_bkr = mode2_tp_bkr / Trip_2_total_tp_bkr * 100
-    modeshare3_tp_bkr = mode3_tp_bkr / Trip_3_total_tp_bkr * 100
-    msdf_tp_bkr = pd.DataFrame()
-    difference = modeshare1_tp_bkr - modeshare2_tp_bkr
-    modeshare1_tp_bkr = modeshare1_tp_bkr.sort_index()
-    msdf_tp_bkr[name1 + ' Share (%)'] = modeshare1_tp_bkr
-    modeshare2_tp_bkr = modeshare2_tp_bkr.sort_index()
-    msdf_tp_bkr[name2 + ' Share (%)'] = modeshare2_tp_bkr
-    modeshare3_tp_bkr = modeshare3_tp_bkr.sort_index()
-    msdf_tp_bkr[name3 + ' Share (%)'] = modeshare3_tp_bkr
-    msdf_tp_bkr = get_differences_wt_fullsurvey(msdf_tp_bkr, 
-                                                name1 + ' Share (%)', 
-                                                name2 + ' Share (%)',
-                                                name3 + ' Share (%)', 2)
-    msdf_tp_bkr = recode_index(msdf_tp_bkr, 'mode', 'Mode')
-
-    #Trip share (Bellevue)
-    trip_ok_1_tp_b = trip_ok_1.merge(data1['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_1_tp_b = trip_ok_1_tp_b[trip_ok_1_tp_b['bkr']>0]
-    # trip_ok_1_tp_b = trip_ok_1_tp_b[trip_ok_1_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    trip_ok_2_tp_b = trip_ok_2.merge(data2['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_2_tp_b = trip_ok_2_tp_b[trip_ok_2_tp_b['bkr']>0]
-    # tour_ok_2_tp_b = tour_ok_2_tp_b[tour_ok_2_tp_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    trip_ok_3_tp_b = trip_ok_3.merge(data3['Household'][['hhno', 'hhtaz', 'bkr']], on='hhno', how='left')
-    trip_ok_3_tp_b = trip_ok_3_tp_b[trip_ok_3_tp_b['bkr']>0]
-    # tour_ok_3_tp_b = tour_ok_3_tp_b[tour_ok_3_tp_b['mode']!='Other'].copy(deep=True)  # remove 'other' mode in the comparison, as the model doesn't have this mode
-    mode1_tp_b = trip_ok_1_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    mode2_tp_b = trip_ok_2_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    mode3_tp_b = trip_ok_3_tp_b[['mode','trexpfac']].groupby('mode').sum()['trexpfac']
-    Trip_1_total_tp_b = get_total(trip_ok_1_tp_b['trexpfac'])
-    Trip_2_total_tp_b = get_total(trip_ok_2_tp_b['trexpfac'])    
-    Trip_3_total_tp_b = get_total(trip_ok_3_tp_b['trexpfac'])    
-    modeshare1_tp_b = mode1_tp_b / Trip_1_total_tp_b * 100
-    modeshare2_tp_b = mode2_tp_b / Trip_2_total_tp_b * 100
-    modeshare3_tp_b = mode3_tp_b / Trip_3_total_tp_b * 100
-    msdf_tp_b = pd.DataFrame()
-    difference = modeshare1_tp_b - modeshare2_tp_b
-    modeshare1_tp_b = modeshare1_tp_b.sort_index()
-    msdf_tp_b[name1 + ' Share (%)'] = modeshare1_tp_b
-    modeshare2_tp_b = modeshare2_tp_b.sort_index()
-    msdf_tp_b[name2 + ' Share (%)'] = modeshare2_tp_b
-    modeshare3_tp_b = modeshare3_tp_b.sort_index()
-    msdf_tp_b[name3 + ' Share (%)'] = modeshare3_tp_b
-    msdf_tp_b = get_differences_wt_fullsurvey(msdf_tp_b, 
-                                                name1 + ' Share (%)', 
-                                                name2 + ' Share (%)',
-                                                name3 + ' Share (%)', 2)
-    msdf_tp_b = recode_index(msdf_tp_b, 'mode', 'Mode')
-    
     #Mode share by purpose
     tourpurpmode1 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_1['pdpurp']), ('Mode', tour_ok_1['tmodetp']), ('Expansion Factor', tour_ok_1['toexpfac']))))
     tourpurpmode2 = pd.DataFrame.from_dict(OrderedDict((('Purpose', tour_ok_2['pdpurp']), ('Mode', tour_ok_2['tmodetp']), ('Expansion Factor', tour_ok_2['toexpfac']))))
@@ -1695,6 +1236,10 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     tourtrip1['Trip Mode'] = tourtrip1['mode']
     tourtrip2['Trip Mode'] = tourtrip2['mode']
 
+    # remove other mode
+    tourtrip1 = tourtrip1[(tourtrip1['Primary Tour Mode']!='Other') & (tourtrip1['Trip Mode']!='Other')]
+    tourtrip2 = tourtrip2[(tourtrip2['Primary Tour Mode']!='Other') & (tourtrip2['Trip Mode']!='Other')]
+
     #Create pivot tables
     #creates data frame grouped by trip and primary tour mode
     counts1 = tourtrip1[['Primary Tour Mode', 'Trip Mode', 'trexpfac']].groupby(['Primary Tour Mode', 'Trip Mode']).sum()['trexpfac']
@@ -1705,21 +1250,19 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     counts2 = counts2.reset_index()
     counts1pivot = counts1.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
     counts2pivot = counts2.pivot(index = 'Primary Tour Mode', columns = 'Trip Mode', values = 'Trips')
-    if 'Other' not in counts1pivot.columns.tolist():
-        counts1pivot['Other'] = np.nan
 
     if include_tnc == True:
         if 'TNC' not in counts2pivot.columns.tolist():
             counts2pivot['TNC'] = np.nan
-        counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
-                                                [['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
-        counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
-                                                [['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
+        counts1pivot = counts1pivot.reindex(['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
+                                                [['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
+        counts2pivot = counts2pivot.reindex(['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
+                                                [['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk', 'TNC']]
     else:
-        counts1pivot = counts1pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
-                                                [['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
-        counts2pivot = counts2pivot.reindex(['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
-                                                [['Other', 'Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
+        counts1pivot = counts1pivot.reindex(['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
+                                                [['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
+        counts2pivot = counts2pivot.reindex(['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk'])\
+                                                [['Transit', 'School Bus', 'HOV3+', 'HOV2', 'SOV', 'Bike', 'Walk']]
 
     counts1pivot = counts1pivot.fillna(0).transpose().copy()
     counts2pivot = counts2pivot.fillna(0).transpose().copy()
@@ -1886,84 +1429,75 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
     print('Trips by Purpose and Travel Time data frame created in '+str(round(cp7 - cp6, 1))+' seconds')
 
     #Write DataFrames to Excel File
-    with pd.ExcelWriter(location + '/ModeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/ModeChoiceReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
-        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Regional', na_rep = 'NA')
-        msdf_bkr.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share BKR', na_rep = 'NA')
-        # msdf_b.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Bellevue', na_rep = 'NA')
-        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Regional', na_rep = 'NA')
-        msdf_tp_bkr.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share BKR', na_rep = 'NA')
-        # msdf_tp_b.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Bellevue', na_rep = 'NA')
+        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share', na_rep = 'NA')
         spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
-        counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
-        percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1, startcol = 10)
-        counts2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 13)
-        percent2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 13, startcol = 10)
-        counts_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 25)
-        share_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 25, startcol = 10)
-        counts_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 37)
-        share_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 37, startcol = 10)
+        counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 2)
+        percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 2, startcol = 9)
+        counts2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 14)
+        percent2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 14, startcol = 9)
+        counts_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 26)
+        share_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 26, startcol = 9)
+        counts_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 38)
+        share_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 38, startcol = 9)
         worksheet = writer.sheets['Trip Mode by Tour Mode']
         worksheet.write(1, 0, 'Tour Mode ->')
-        worksheet.write(1, 10, 'Tour Mode ->')
+        worksheet.write(1, 9, 'Tour Mode ->')
         worksheet.write(13, 0, 'Tour Mode ->')
-        worksheet.write(13, 10, 'Tour Mode ->')
+        worksheet.write(13, 9, 'Tour Mode ->')
         worksheet.write(25, 0, 'Tour Mode ->')
-        worksheet.write(25, 10, 'Tour Mode ->')
+        worksheet.write(25, 9, 'Tour Mode ->')
         worksheet.write(37, 0, 'Tour Mode ->')
-        worksheet.write(37, 10, 'Tour Mode ->')
-        worksheet.write(0, 9, ' ')
+        worksheet.write(37, 9, 'Tour Mode ->')
         toursmtt.to_excel(excel_writer = writer, sheet_name = 'Tours by Mode & Travel Time', na_rep = 'NA')
         tripsmtt.to_excel(excel_writer = writer, sheet_name = 'Trips by Mode & Travel Time', na_rep = 'NA')
         tptt.to_excel(excel_writer = writer, sheet_name = 'Trips by Purpose & Travel Time',na_rep = 'NA')
 
-    colwidths=getmaxwidths(location+'/ModeChoiceReport_2023.xlsx')
+    colwidths=getmaxwidths(location+f'/ModeChoiceReport_2023{fname_tail}.xlsx')
 
-    with pd.ExcelWriter(location+'/ModeChoiceReport_2023.xlsx',engine='xlsxwriter') as writer:
+    with pd.ExcelWriter(location+f'/ModeChoiceReport_2023{fname_tail}.xlsx',engine='xlsxwriter') as writer:
         workbook=writer.book
         merge_format = workbook.add_format({'bold': True, 'align': 'center', 'border': True})
         value_format = workbook.add_format({'bold': True, 'font_color': '#0000CC'})
         pd_format = workbook.add_format({'bold': True, 'font_color': '#880000'})
         vmpp.to_excel(excel_writer = writer, sheet_name = '# People, Trips, and Tours', na_rep = 'NA')
-        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Regional', na_rep = 'NA')
-        msdf_bkr.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share BKR', na_rep = 'NA')
-        # msdf_b.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share Bellevue', na_rep = 'NA')
-        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Regional', na_rep = 'NA')
-        msdf_tp_bkr.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share BKR', na_rep = 'NA')
-        # msdf_tp_b.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share Bellevue', na_rep = 'NA')
+        msdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share', na_rep = 'NA')
+        msdf_tp.to_excel(excel_writer = writer, sheet_name = 'Trip Mode Share', na_rep = 'NA')
         spsdf.to_excel(excel_writer = writer, sheet_name = '# of Subtour by Purpose', na_rep = 'NA')
         psdf.to_excel(excel_writer = writer, sheet_name = '# of Tour by Purpose', na_rep = 'NA')
         mbpcdf_num.to_excel(excel_writer = writer, sheet_name = '# of Tour Mode by Purpose', na_rep = 'NA')
         mbpcdf.to_excel(excel_writer = writer, sheet_name = 'Tour Mode Share by Purpose', na_rep = 'NA')
-        counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1)
-        percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 1, startcol = 10)
-        counts2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 13)
-        percent2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 13, startcol = 10)
-        counts_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 25)
-        share_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 25, startcol = 10)
-        counts_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 37)
-        share_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 37, startcol = 10)
+        counts1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 2)
+        percent1pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 2, startcol = 9)
+        counts2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 14)
+        percent2pivot.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 14, startcol = 9)
+        counts_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 26)
+        share_difference.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 26, startcol = 9)
+        counts_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 38)
+        share_pd.to_excel(excel_writer = writer, sheet_name = 'Trip Mode by Tour Mode', na_rep = 'NA', startrow = 38, startcol = 9)
         worksheet = writer.sheets['Trip Mode by Tour Mode']
-        worksheet.merge_range(0, 0, 0, 8, 'Number of Trips by Trip Mode and Tour Mode (' + name1 + ')', merge_format)
-        worksheet.merge_range(0, 10, 0, 18, 'Mode Share by Tour Mode (' + name1 + ') (%)', merge_format)
-        worksheet.merge_range(12, 0, 12, 8, 'Number of Trips by Trip Mode and Tour Mode (' + name2 + ')', merge_format)
-        worksheet.merge_range(12, 10, 12, 18, 'Mode Share by Tour Mode (' + name2 + ') (%)', merge_format)
-        worksheet.merge_range(24, 0, 24, 8, 'Difference in Number of Trips', merge_format)
-        worksheet.merge_range(24, 10, 24, 18, 'Difference in Mode Share', merge_format)
-        worksheet.merge_range(36, 0, 36, 8, 'Percent Difference in Number of Trips', merge_format)
-        worksheet.merge_range(36, 10, 36, 18, 'Percent Difference in Mode Share', merge_format)
+        worksheet.merge_range(0, 0, 0, 7, 'Number of Trips by Trip Mode and Tour Mode (' + name1 + ')', merge_format)
+        worksheet.merge_range(0, 9, 0, 16, 'Mode Share by Tour Mode (' + name1 + ') (%)', merge_format)
+        worksheet.merge_range(12, 0, 12, 7, 'Number of Trips by Trip Mode and Tour Mode (' + name2 + ')', merge_format)
+        worksheet.merge_range(12, 9, 12, 16,'Mode Share by Tour Mode (' + name2 + ') (%)', merge_format)
+        worksheet.merge_range(24, 0, 24, 7, 'Difference in Number of Trips', merge_format)
+        worksheet.merge_range(24, 9, 24, 16, 'Difference in Mode Share', merge_format)
+        worksheet.merge_range(36, 0, 36, 7, 'Percent Difference in Number of Trips', merge_format)
+        worksheet.merge_range(36, 9, 36, 16, 'Percent Difference in Mode Share', merge_format)
         worksheet.write(1, 0, 'Tour Mode ->', merge_format)
-        worksheet.write(1, 10, 'Tour Mode ->', merge_format)
+        worksheet.write(1, 9, 'Tour Mode ->', merge_format)
         worksheet.write(13, 0, 'Tour Mode ->', merge_format)
-        worksheet.write(13, 10, 'Tour Mode ->', merge_format)
+        worksheet.write(13, 9, 'Tour Mode ->', merge_format)
         worksheet.write(25, 0, 'Tour Mode ->', merge_format)
-        worksheet.write(25, 10, 'Tour Mode ->', merge_format)
+        worksheet.write(25, 9, 'Tour Mode ->', merge_format)
         worksheet.write(37, 0, 'Tour Mode ->', merge_format)
-        worksheet.write(37, 10, 'Tour Mode ->', merge_format)
-        worksheet.write(0, 9, ' ')
+        worksheet.write(37, 9, 'Tour Mode ->', merge_format)
+        worksheet.write(0, 8, ' ')
         # worksheet.conditional_format('L4:S11', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
         # worksheet.conditional_format('L16:S23', {'type': 'cell', 'criteria': '>=', 'value': 20, 'format': value_format})
         # worksheet.conditional_format('B40:I47', {'type': 'cell', 'criteria': '>=', 'value': 100, 'format': pd_format})
@@ -1979,6 +1513,8 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
             worksheet=writer.sheets[sheet]
             # worksheet.write('A20', 'Transit Lengths are wrong! Ignore')
             for col_num in range(worksheet.dim_colmax+1):
+                if colwidths[sheet][col_num] == 0: 
+                    colwidths[sheet][col_num] = 2
                 worksheet.set_column(col_num,col_num,colwidths[sheet][col_num])
             if sheet != 'Trip Mode by Tour Mode':
                 worksheet.freeze_panes(0,1)
@@ -2020,7 +1556,7 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location):
 
     print('---Mode Choice Report successfully compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
+def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile, fname_tail):
     start = time.time()
     print('---Begin Long Term Report compilation---')
     merge_per_hh_1 = pd.merge(data1['Person'][['hhno', 'psexpfac', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'pwaudist']],
@@ -2072,40 +1608,57 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
     total_workers_1 = wrkrs1['psexpfac'].sum()
     total_workers_2 = wrkrs2['psexpfac'].sum()
     total_workers_3 = wrkrs3['psexpfac'].sum()
-    works_at_home_1 = wkr_1_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
-    works_at_home_2 = wkr_2_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
-    works_at_home_3 = wkr_3_hzone[['pwpcl', 'hhparcel', 'psexpfac', 'County', 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
-    work_home_county_1 = works_at_home_1.groupby('County').sum()['psexpfac']
-    work_home_county_2 = works_at_home_2[['County', 'psexpfac']].groupby('County').sum()['psexpfac']
-    work_home_county_3 = works_at_home_3[['County', 'psexpfac']].groupby('County').sum()['psexpfac']
+
+    local_tag = 'County'
+    region_tag = 'Region'
+    if not regionwide:
+        local_tag = 'City'
+        region_tag = 'BKR'
+        wkr_1_hzone = wkr_1_hzone[wkr_1_hzone['Region']=='BKR'].copy(deep=True)
+        wkr_2_hzone = wkr_2_hzone[wkr_2_hzone['Region']=='BKR'].copy(deep=True)
+        wkr_3_hzone = wkr_3_hzone[wkr_3_hzone['Region']=='BKR'].copy(deep=True)
+        taz_bellevue = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Bellevue_TAZ.txt'))
+        taz_kirkland = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Kirkland_TAZ.txt'))
+        taz_redmond = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Redmond_TAZ.txt'))
+        for tab in [wkr_1_hzone, wkr_2_hzone, wkr_3_hzone]:
+            tab['City'] = ''
+            tab.loc[tab['TAZ'].isin(taz_bellevue['TAZ']), 'City'] = 'Bellevue'
+            tab.loc[tab['TAZ'].isin(taz_kirkland['TAZ']), 'City'] = 'Kirkland'
+            tab.loc[tab['TAZ'].isin(taz_redmond['TAZ']), 'City'] = 'Redmond'
+    works_at_home_1 = wkr_1_hzone[['pwpcl', 'hhparcel', 'psexpfac', local_tag, 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
+    works_at_home_2 = wkr_2_hzone[['pwpcl', 'hhparcel', 'psexpfac', local_tag, 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
+    works_at_home_3 = wkr_3_hzone[['pwpcl', 'hhparcel', 'psexpfac', local_tag, 'pwaudist', 'pwtyp', 'pgend', 'pagey']].query('pwpcl == hhparcel')
+    work_home_county_1 = works_at_home_1[[local_tag, 'psexpfac']].groupby(local_tag).sum()['psexpfac']
+    work_home_county_2 = works_at_home_2[[local_tag, 'psexpfac']].groupby(local_tag).sum()['psexpfac']
+    work_home_county_3 = works_at_home_3[[local_tag, 'psexpfac']].groupby(local_tag).sum()['psexpfac']
     work_home_1 = work_home_county_1.sum()
     work_home_2 = work_home_county_2.sum()
     work_home_3 = work_home_county_3.sum()
     wh = pd.DataFrame(index = ['Total Workers at Home', 'Total Workers', 'Share at Home (%)'])
     wh[name1] = [work_home_1, total_workers_1, work_home_1 / total_workers_1 * 100]
     work_at_home_acs= pd.read_excel(acs_data,sheet_name = 'WorkAtHome')
-    region_wah = work_at_home_acs.loc[work_at_home_acs['County'] == 'Region']
+    region_wah = work_at_home_acs.loc[work_at_home_acs[local_tag] == region_tag]
     region_wah_values = [region_wah['ACS'].sum(), region_wah['Total hhs'].sum(), region_wah['percent'].sum()]
     wh['ACS'] = region_wah_values
 
     wh[name3] = [work_home_3, total_workers_3, work_home_3 / total_workers_3 * 100]
 
     wh = get_differences_wt_fullsurvey(wh, name1, "ACS", name3, [0, 0, 1], need_diff_percent=True)
-    #By county\
+    #By county
 
     work_home_county_1 = work_home_county_1[0:]
     work_home_county_1= work_home_county_1.reset_index() 
     
     work_home_county_1 = pd.DataFrame(work_home_county_1)
-    work_home_county_1.columns = ['County', 'Model']
+    work_home_county_1.columns = [local_tag, 'Model']
 
     whbc = pd.DataFrame()
     whbc= work_home_county_1
-
-    county_wah = work_at_home_acs.loc[work_at_home_acs['County'] != 'Region'].copy(deep=True)
-    county_wah = county_wah[['County', 'ACS', 'Total hhs', 'percent']]
-    whbc = pd.merge(whbc, county_wah, on = 'County')
-    whbc = pd.merge(whbc, work_home_county_3, on='County')
+    
+    county_wah = work_at_home_acs.loc[work_at_home_acs[local_tag] != region_tag].copy(deep=True)
+    county_wah = county_wah[[local_tag, 'ACS', 'Total hhs', 'percent']]
+    whbc = pd.merge(whbc, county_wah, on = local_tag)
+    whbc = pd.merge(whbc, work_home_county_3, on=local_tag)
     whbc.rename(columns={'psexpfac': 'FullSurvey'}, inplace=True)
     whbc = whbc.drop(columns = ['Total hhs', 'percent'])
 
@@ -2314,8 +1867,16 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
     hh_taz1 = pd.merge(districtfile, data1['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     hh_taz2 = pd.merge(districtfile, data2['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     hh_taz3 = pd.merge(districtfile, data3['Household'], left_on = 'TAZ', right_on = 'hhtaz')
-    aoc1 = hh_taz1[['County', 'hhvehs', 'hhexpfac']].groupby(['County', 'hhvehs']).sum()['hhexpfac']
-    aoc3 = hh_taz3[['County', 'hhvehs', 'hhexpfac']].groupby(['County', 'hhvehs']).sum()['hhexpfac']
+
+    if not regionwide:
+        for tab in [hh_taz1, hh_taz2, hh_taz3]:
+            tab['City'] = ''
+            tab.loc[tab['TAZ'].isin(taz_bellevue['TAZ']), 'City'] = 'Bellevue'
+            tab.loc[tab['TAZ'].isin(taz_kirkland['TAZ']), 'City'] = 'Kirkland'
+            tab.loc[tab['TAZ'].isin(taz_redmond['TAZ']), 'City'] = 'Redmond'
+
+    aoc1 = hh_taz1[[local_tag, 'hhvehs', 'hhexpfac']].groupby([local_tag, 'hhvehs']).sum()['hhexpfac']
+    aoc3 = hh_taz3[[local_tag, 'hhvehs', 'hhexpfac']].groupby([local_tag, 'hhvehs']).sum()['hhexpfac']
     autos_by_county= pd.read_excel(acs_data, sheet_name = 'AutosCounty')
     acs_auto_share = pd.DataFrame(autos_by_county)
 
@@ -2334,11 +1895,11 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
     aoc = aoc.fillna(float(0))
     aoc3_ = aoc3.copy(deep=True).reset_index()
     aoc3_.loc[aoc3_['hhvehs']>4, 'hhvehs'] = 4
-    aoc3_ = aoc3_.groupby(['County', 'hhvehs']).sum()['hhexpfac']
+    aoc3_ = aoc3_.groupby([local_tag, 'hhvehs']).sum()['hhexpfac']
     for aoci, name in zip([aoc1, aoc3_], [name1, name3]):
         for i in range(len(aoci.index)):
-            county_group = hh_taz1[['County', 'hhexpfac']].groupby('County').sum()
-            denominator = county_group.query('County == "' + aoci.index[i][0] + '"')['hhexpfac']
+            county_group = hh_taz1[[local_tag, 'hhexpfac']].groupby(local_tag).sum()
+            denominator = county_group.query(f'{local_tag} == "' + aoci.index[i][0] + '"')['hhexpfac']
 
             if denominator.empty:
                 continue
@@ -2461,7 +2022,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
 
 
     #Compile file
-    with pd.ExcelWriter(location + '/LongTermReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/LongTermReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         ph.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA', startrow = 1)
         workbook = writer.book
         worksheet = writer.sheets['Basic Summaries']
@@ -2477,14 +2038,14 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
         worksheet = writer.sheets['Transit Pass and Auto Ownership']
         ao.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 4)
         aoc.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 12)
-        worksheet.write(12, 0, 'County')
+        worksheet.write(12, 0, local_tag)
         aoi.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 18)
         worksheet.write(18, 0, 'Household Income')
 
-    colwidths = getmaxwidths(location + '/LongTermReport_2023.xlsx')
+    colwidths = getmaxwidths(location + f'/LongTermReport_2023{fname_tail}.xlsx')
     colors =  ['#004488', '#00C0C0', '#749BC2']
 
-    with pd.ExcelWriter(location + '/LongTermReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/LongTermReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         ph.to_excel(excel_writer = writer, sheet_name = 'Basic Summaries', na_rep = 'NA', startrow = 1)
         workbook = writer.book
         worksheet = writer.sheets['Basic Summaries']
@@ -2502,7 +2063,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
                                 'values': [sheet, 7, col_num, 10, col_num],
                                 'fill': {'color': colors[col_num - 2]}})
         chart.set_legend({'position': 'top'})
-        chart.set_x_axis({'name': 'County'})
+        chart.set_x_axis({'name': local_tag})
         chart.set_y_axis({'name':' Number of Home Workers'})
         worksheet.insert_chart('A14', chart)
         adw.to_excel(excel_writer = writer, sheet_name = 'Avg Dist to Work and School', na_rep = 'NA', startrow = 1)
@@ -2536,7 +2097,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
         worksheet = writer.sheets['Transit Pass and Auto Ownership']
         ao.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 4)
         aoc.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 12)
-        worksheet.write(12, 0, 'County', merge_format)
+        worksheet.write(12, 0, local_tag, merge_format)
         aoi.to_excel(excel_writer = writer, sheet_name = 'Transit Pass and Auto Ownership', na_rep = 'NA', startrow = 18)
         worksheet.write(18, 0, 'Household Income', merge_format)
         worksheet.freeze_panes(0, 1)
@@ -2547,7 +2108,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile):
 
     print('---Long Term Report succesfuly compiled in ' + str(round(time.time() - start, 1)) + ' seconds---')
 
-def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile):
+def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile, fname_tail):
     start = time.time()
     print('---Begin Time Choice Report compilation---')
 
@@ -2621,15 +2182,15 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile)
     print('Tour Primary Destination Departure Time by Hour data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
     #Compile the file
-    with pd.ExcelWriter(location + '/TimeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/TimeChoiceReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         trip_time.to_excel(excel_writer = writer, sheet_name = 'Trip Arrival Times by Hour', na_rep = 'NA')
         tour_time_apd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 1)
         tour_time_lpd.to_excel(excel_writer = writer, sheet_name = 'Tour PD Arr & Dep Times by Hour', na_rep = 'NA', startrow = 29)
 
-    colwidths = getmaxwidths(location + '/TimeChoiceReport_2023.xlsx')
+    colwidths = getmaxwidths(location + f'/TimeChoiceReport_2023{fname_tail}.xlsx')
     colors =  ['#004488', '#00C0C0', '#749BC2']
 
-    with pd.ExcelWriter(location + '/TimeChoiceReport_2023.xlsx', engine = 'xlsxwriter') as writer:
+    with pd.ExcelWriter(location + f'/TimeChoiceReport_2023{fname_tail}.xlsx', engine = 'xlsxwriter') as writer:
         workbook = writer.book
         merge_format = workbook.add_format({'align': 'center', 'bold': True, 'border': 1})
         trip_time.to_excel(excel_writer = writer, sheet_name = 'Trip Arrival Times by Hour', na_rep = 'NA')
@@ -2716,9 +2277,7 @@ def report_compile(h5_results_file, h5_results_name,
                    guidefile,districtfile, report_output_location):
     print('+-+-+-+Begin summary report file compilation+-+-+-+')
     timerstart = time.time()
-    taz_bellevue = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Bellevue_TAZ.txt'))
-    taz_kirkland = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Kirkland_TAZ.txt'))
-    taz_redmond = pd.read_csv(os.path.join('inputs', 'subarea_definition', 'Redmond_TAZ.txt'))
+    taz_subarea = pd.read_csv(districtfile)
     data1 = convert(h5_results_file, guidefile, h5_results_name)
     data2 = convert(h5_comparison_file, guidefile, h5_comparison_name)
     data3 = convert(h5_fullsurvey_file, guidefile, h5_fullsurvey_name)
@@ -2727,36 +2286,45 @@ def report_compile(h5_results_file, h5_results_name,
     data3['Trip']['mode'] = data3['Trip']['mode'].replace('TNC','Other')
     #data1=hhmm_to_min(data1) #don't need this for the new survey file - the times are already in minutes
     #data2=hhmm_to_min(data2) #don't need this for the new survey file - the times are already in minutes
-    data1['Household']['bkr'] = 0
-    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
-    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
-    data1['Household'].loc[data1['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
-
-    data2['Household']['bkr'] = 0
-    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
-    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
-    data2['Household'].loc[data2['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
-
-    data3['Household']['bkr'] = 0
-    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_bellevue['TAZ']), 'bkr'] = 1
-    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_kirkland['TAZ']), 'bkr'] = 2
-    data3['Household'].loc[data3['Household']['hhtaz'].isin(taz_redmond['TAZ']), 'bkr'] = 3
+    fname_tail = ''
+    if not regionwide:
+        fname_tail = '_BKR'
+        taz_bkr = taz_subarea.query('Region == "BKR"')['TAZ'].unique()
+        data2.pop('PersonDay')
+        data2.pop('Tour')
+        data2.pop('Trip')
+        # merge hhtaz to all tables
+        for key in ['Person', 'Trip', 'Tour', 'PersonDay']:
+            data1[key] = pd.merge(data1[key], data1['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+            if key == 'Trip':
+                data2[f'{key}_cloned'] = pd.merge(data2[f'{key}_cloned'], data2['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+                data3[key] = pd.merge(data3[key], data3['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+            elif key == 'Tour' or key == 'PersonDay':
+                data2[f'{key}_cloned'] = pd.merge(data2[f'{key}_cloned'], data2['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+            else:
+                data2[key] = pd.merge(data2[key], data2['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+                data3[key] = pd.merge(data3[key], data3['Household'][['hhno', 'hhtaz']], on='hhno', how='left')
+        # retain records in BKR only
+        for data in [data1, data2, data3]:
+            for key in data.keys():
+                if key == 'HouseholdDay': continue
+                data[key] = data[key][data[key]['hhtaz'].isin(taz_bkr)].copy(deep=True)
 
     zone_district = get_districts(districtfile)
     if run_daysim_report == True:
-        DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+        DaysimReport(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district, fname_tail)
     if run_day_pattern_report == True:
-        DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location)
+        DayPattern(data1, data2, h5_results_name, h5_comparison_name, report_output_location, fname_tail)
     if run_mode_choice_report == True:
-        ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location)
+        ModeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, fname_tail)
     if run_dest_choice_report == True:
-        DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+        DestChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district, fname_tail)
     if run_long_term_report == True:
-        LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+        LongTerm(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district, fname_tail)
     if run_time_choice_report == True:
-        TimeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district)
+        TimeChoice(data1, data2, data3, h5_results_name, h5_comparison_name, h5_fullsurvey_name, report_output_location, zone_district, fname_tail)
     if run_district_summary_report == True:
-        WorkFAZSummary(data1, data2, h5_results_name, h5_comparison_name, report_output_location, zone_district)
+        WorkFAZSummary(data1, report_output_location)
     totaltime = round(time.time() - timerstart, 1)
     if totaltime < 60:
         print('+-+-+-+Summary report compilation complete in ' + str(totaltime % 60) + ' seconds+-+-+-+')

@@ -267,6 +267,9 @@ pollutant_map = {
 h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
 
+# summary for regionwide or BKR area only. True for regionwide, otherwise BKR only.
+regionwide = True
+
 if int(model_year) <= 2023:
     # survey in hdf5 format
     h5_comparison_file = 'inputs/model/survey/survey.h5'  # 2014 setting
@@ -286,7 +289,10 @@ else:
     districtfile = 'inputs/model/TAZ_TAD_County.csv'
     FAZ_TAZ = ''  # only for 2014-survey comparison
     LEHD_work_flows = ''  # only for 2014-survey comparison
-    acs_data = 'inputs/model/survey/ACS_2023.xlsx'
+    if regionwide:
+        acs_data = 'inputs/model/survey/ACS_2023.xlsx'
+    else:
+        acs_data = 'inputs/model/survey/ACS_2023_BKR.xlsx'
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
