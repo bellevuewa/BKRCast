@@ -15,6 +15,7 @@
         "daysim_2016": true,
         "daysim_2019": true,
         "daysim_2024": true,
+        "daysim_2025": true,
         "outputs": true,
         "release": true,
         "working": true,
