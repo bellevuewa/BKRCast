@@ -182,22 +182,25 @@ def DayPattern(data1, data2, name1, name2, location, fname_tail):
     print('Tours per Person by Purpose data frame created in ' + str(round(cp4 - cp3, 1)) + ' seconds')
 
     ## Number of Stops for all Purposes
-    stop_columns = ['wkstops', 'scstops', 'esstops', 'pbstops', 'shstops', 'mlstops', 'sostops', 'restops', 'mestops']
-    person_day_all_hh1 = pd.merge(data1['PersonDay'][['hhno', 'pdexpfac']+stop_columns], data1['Household'][['hhno']], on = ['hhno'])
-    person_day_all_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', 'pdexpfac']+stop_columns], data2['Household'][['hhno']], on = ['hhno'])
-    # add number of stops
-    person_day_all_hh1['all_stops'] = person_day_all_hh1[stop_columns].sum(axis=1)
-    person_day_all_hh2['all_stops'] = person_day_all_hh2[stop_columns].sum(axis=1)
-    no_stops_all1 = 100 * person_day_all_hh1.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh1['pdexpfac'].sum()
-    no_stops_all2 = 100 * person_day_all_hh2.query('all_stops == 0')['pdexpfac'].sum() / person_day_all_hh2['pdexpfac'].sum()
-    has_stops_all1 = 100 - no_stops_all1
-    has_stops_all2 = 100 - no_stops_all2
+    # number of stops can be retrieved from tripsh1 and tripsh2, which aggregate the number of stops from origin and destination
+    data1['Tour']['all_stops'] = data1['Tour']['tripsh1'] + data1['Tour']['tripsh2'] - 2  # minus the origin and destination
+    data2['Tour_cloned']['all_stops'] = data2['Tour_cloned']['tripsh1'] + data2['Tour_cloned']['tripsh2'] - 2  # minus the origin and destination
+    # calculate the percentage of each number of stops
+    intermediate_stops1 = data1['Tour'].groupby('all_stops')['toexpfac'].sum().reset_index()
+    intermediate_stops2 = data2['Tour_cloned'].groupby('all_stops')['toexpfac'].sum().reset_index()
+    intermediate_stops1['percentage'] = intermediate_stops1['toexpfac'] / intermediate_stops1['toexpfac'].sum() * 100
+    intermediate_stops2['percentage'] = intermediate_stops2['toexpfac'] / intermediate_stops2['toexpfac'].sum() * 100
+    # compare the first 10 stops
+    imstp1 = intermediate_stops1[intermediate_stops1['all_stops']<=10].copy(deep=True)
+    imstp2 = intermediate_stops2[intermediate_stops2['all_stops']<=10].copy(deep=True)
+    imstp1 = imstp1.set_index('all_stops').reindex(range(0, 11), fill_value=0).reset_index()
+    imstp2 = imstp2.set_index('all_stops').reindex(range(0, 11), fill_value=0).reset_index()
     s_all = pd.DataFrame() 
-    s_all['% of Tours (' + name1 + ')'] = [no_stops_all1, has_stops_all1]
-    s_all['% of Tours (' + name2 + ')'] = [no_stops_all2, has_stops_all2]
-    s_all['Tours'] = ['0', '1+']
-    s_all = s_all.set_index('Tours')
-    s_all = get_differences(s_all, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
+    s_all['% of (' + name1 + ')'] = list(imstp1['percentage'])
+    s_all['% of (' + name2 + ')'] = list(imstp2['percentage'])
+    s_all['# Stops in tour'] = range(0, 11)
+    s_all = s_all.set_index('# Stops in tour')
+    s_all = get_differences(s_all, '% of (' + name1 + ')', '% of (' + name2 + ')', 2)
 
     cp4_1 = time.time()
     print('Number of stops for all purpose data frame created in ' + str(round(cp4_1 - cp4, 1)) + ' seconds')
@@ -205,6 +208,12 @@ def DayPattern(data1, data2, name1, name2, location, fname_tail):
     ##Tours per Person by Purpose and Person Type/Number of Stops
     PersonsDay1 = pd.merge(data1['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data1['PersonDay'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
     PersonsDay2 = pd.merge(data2['Person'][['hhno', 'pno', 'pptyp', 'psexpfac']], data2['PersonDay_cloned'][['hhno', 'pno', 'pdexpfac']], on= ['hhno', 'pno']).copy()
+    # calculate the percentage of each number of stops by purpose
+    intermediate_stopsbypurp1 = data1['Tour'].groupby(['all_stops', 'pdpurp'])['toexpfac'].sum().reset_index()
+    intermediate_stopsbypurp2 = data2['Tour_cloned'].groupby(['all_stops', 'pdpurp'])['toexpfac'].sum().reset_index()
+    # retain only the first 5 stops
+    intermediate_stopsbypurp1 = intermediate_stopsbypurp1[intermediate_stopsbypurp1['all_stops']<=5]
+    intermediate_stopsbypurp2 = intermediate_stopsbypurp2[intermediate_stopsbypurp2['all_stops']<=5]
     tpd = {}
     stops = {}
     for purpose in data1['Tour']['pdpurp'].value_counts().index:
@@ -247,16 +256,20 @@ def DayPattern(data1, data2, name1, name2, location, fname_tail):
         #Number of stops by purpose
         dfstart = time.time()
         tpd.update({purpose: toursPersPurp}) #This dictionary is for creating the Excel file
-        person_day_hh1 = pd.merge(data1['PersonDay'][['hhno', sc, 'pdexpfac']], data1['Household'][['hhno']], on = ['hhno'])
-        person_day_hh2 = pd.merge(data2['PersonDay_cloned'][['hhno', sc, 'pdexpfac']], data2['Household'][['hhno']], on = ['hhno'])
-        no_stops1 = 100 * person_day_hh1.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh1['pdexpfac'].sum()
-        no_stops2 = 100 * person_day_hh2.query(sc + ' == 0')['pdexpfac'].sum() / person_day_hh2['pdexpfac'].sum()
-        has_stops1 = 100 - no_stops1
-        has_stops2 = 100 - no_stops2
-        ps = pd.DataFrame() 
-        ps['% of Tours (' + name1 + ')'] = [no_stops1, has_stops1]
-        ps['% of Tours (' + name2 + ')'] = [no_stops2, has_stops2]
-        ps[purpose + ' Tours'] = ['0', '1+']
+        ps = pd.DataFrame()
+        # fill missing 'all_stops' values with 0 for both intermediate_stopsbypurp1 and intermediate_stopsbypurp2
+        imstpbypurp1 = intermediate_stopsbypurp1[intermediate_stopsbypurp1['pdpurp']==purpose].copy(deep=True)
+        imstpbypurp2 = intermediate_stopsbypurp2[intermediate_stopsbypurp2['pdpurp']==purpose].copy(deep=True)
+        # calculate percentage
+        imstpbypurp1['percentage'] = imstpbypurp1['toexpfac'] / imstpbypurp1['toexpfac'].sum() * 100
+        imstpbypurp2['percentage'] = imstpbypurp2['toexpfac'] / imstpbypurp2['toexpfac'].sum() * 100
+        imstpbypurp1 = imstpbypurp1[imstpbypurp1['all_stops']<=5]
+        imstpbypurp2 = imstpbypurp2[imstpbypurp2['all_stops']<=5]
+        imstpbypurp1 = imstpbypurp1.set_index('all_stops').reindex(range(0, 6), fill_value=0).reset_index()
+        imstpbypurp2 = imstpbypurp2.set_index('all_stops').reindex(range(0, 6), fill_value=0).reset_index()
+        ps['% of Tours (' + name1 + ')'] = list(imstpbypurp1['percentage'])
+        ps['% of Tours (' + name2 + ')'] = list(imstpbypurp2['percentage'])
+        ps[purpose + ' Tours'] = range(0, 6)
         ps = ps.set_index(purpose + ' Tours')
         ps = get_differences( ps, '% of Tours (' + name1 + ')', '% of Tours (' + name2 + ')', 2)
         stops.update({purpose:ps})
@@ -364,7 +377,7 @@ def DayPattern(data1, data2, name1, name2, location, fname_tail):
                                             'fill': {'color': colors[col_num % 6 - 1]}})
                         chart.set_legend({'position': 'top'})
                         chart.set_size({'x_scale': 1.4, 'y_scale': 1.25})
-                    worksheet.insert_chart(18, 6 * i, chart)
+                    worksheet.insert_chart(21, 6 * i, chart)
             if 'Work-Based Subtour' in sheet:
                 chart = workbook.add_chart({'type': 'column'})
                 for col_num in range(1, 3):
