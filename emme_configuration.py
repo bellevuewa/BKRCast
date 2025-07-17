@@ -136,16 +136,44 @@ transit_submodes = ['b', 'c', 'f', 'p', 'r']
 transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
                            'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
                            'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
-transit_node_constants = {'am':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}},
-                          'pm':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}}}
+transit_node_constants = {'am':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'md':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'pm':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'ni':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}}                          
+
+                          }
 
 transit_network_tod_dict = sound_cast_net_dict                
 
