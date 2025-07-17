@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2024baseyear\BKR3-24-v5'
+project_folder = r'F:\projects\2024baseyear\BKR3-24-v36_telecommute'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -18,7 +18,7 @@ supplemental_module_base_year = '2018'   # this is the base year used only by su
 scenario_name = '2024' #name of the folder with scenario data
 
 #settings automatically assigned
-daysim_code = project_folder + '/daysim_2024' 
+daysim_code = project_folder + '/daysim_2024_25_combined' 
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
@@ -30,7 +30,7 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False 
+run_accessibility_calcs = True 
 run_copy_daysim_code = True
 run_copy_input_files = False
 run_setup_emme_project_folders = False
@@ -88,7 +88,7 @@ min_pop_sample_convergence_test = 10
     
 # start building shadow prices - only run work locations
 shadow_work = [1, 1, 1]
-shadow_con = 30 #%RMSE for shadow pricing to consider being converged
+shadow_con = 20 #%RMSE for shadow pricing to consider being converged
 
 #################################### LOG FILES  ####################################
 
