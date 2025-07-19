@@ -4,13 +4,13 @@
     "name": "@bkrlink",
     "description": "BKR flag for link",
     "overwrite": "True",
-    "file_name": "@bkrlink.txt"
+    "file_name": "inputs/extra_attributes/@bkrlink.txt"
   },
   {
     "type": "LINK",
     "name": "@facility_moves",
     "description": "faility flag for MOVES",
     "overwrite": "True",
-    "file_name": "@facility_moves.txt"
+    "file_name": "inputs/extra_attributes/@facility_moves.txt"
   }
 ]

@@ -667,7 +667,21 @@ def main():
         print('  create link extra attributes')        
         for name, description in input_config.extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, description, True)
-        
+
+        # if @bkrlink and @facility_moves are not defined, create them and import values
+        emission_attributes_dict = json.load(open('inputs/skim_params/emission_calc_attrs.json', "r"))      
+        for attr in emission_attributes_dict:
+            # if attr is not defined, create it
+            if my_project.current_scenario.extra_attribute(attr['name']) == None:
+                my_project.create_extra_attribute(attr['type'], attr['name'], attr['description'], attr['overwrite'])
+                print('  ', attr['name'], ' is created')
+                filepath = os.path.join(input_config.project_folder, attr['file_name']).replace('\\','/')
+                if os.path.isfile(filepath) == True:
+                    my_project.import_attribute_values(filepath, False, False)
+                    print('      value is imported.')
+                else:
+                    print('    ', attr['file_name'], ' is not a valid file.')     
+
         print('  analyze line to line transfer.')            
         if tod_hour in emme_config.transit_tod.keys():
             _df_transit_transfers = line_to_line_transfers(my_project, tod_hour)

@@ -38,8 +38,8 @@ def calculate_interzonal_vmt():
 
     # Remove links with @bkrlink = 0 from the calculation
     # @bkrlink > 0: all links inside King County    
-    df = df[df['@bkrlink'] > 0]
-    df['county'] = 'King'    
+    df = df.loc[(df['@bkrlink'] > 0) & (df['length'] > 0)]
+    df['county'] = 'King'   # has to be set to first capital letter for consistency with other files 
 
     # Calculate VMT by bus, SOV, HOV2, HOV3+, medium truck, heavy truck
     df['sov_vol'] = df['@svtl1'] + df['@svtl2'] + df['@svtl3'] + df['@svnt1'] + df['@svnt2'] + df['@svnt3']
@@ -54,15 +54,15 @@ def calculate_interzonal_vmt():
     df['heavy_truck_vmt'] = df['@hveh'] * df['length']
 
     # Convert TOD periods into hours used in emission rate files
-    df['hourId'] = df['tod'].map(input_config.emission_tod_lookup).astype('int')
+    df['hourId'] = df['tod'].map(input_config.emission_tod_lookup).astype('int64')
 
     # Calculate congested speed to separate time-of-day link results into speed bins
     df['congested_speed'] = (df['length']/df['auto_time']) * 60
-    df['avgspeedbinId'] = pd.cut(df['congested_speed'], input_config.auto_speed_bins, labels=range(1, len(input_config.auto_speed_bins))).astype('int')
+    df['avgspeedbinId'] = pd.cut(df['congested_speed'], input_config.auto_speed_bins, labels=range(1, len(input_config.auto_speed_bins))).astype('int64')
 
     # Relate soundcast facility types to emission rate definitions (e.g., minor arterial, freeway)
     # @facility_moves: facility type compatible with EPA MOVES roadway definition    
-    df['roadtypeId'] = df['@facility_moves'].astype('int')
+    df['roadtypeId'] = df['@facility_moves'].astype('int64')
 
     # Take total across columns where distinct emission rate are available
     # This calculates total VMT, by vehicle type (e.g., HOV3 VMT for hour 8, freeway, King County, 55-59 mph)
