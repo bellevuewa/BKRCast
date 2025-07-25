@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2024baseyear\BKR3-24-v36_telecommute'
+project_folder = r'F:\projects\2024baseyear\BKR3-24-v38_telecommute'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -63,6 +63,9 @@ include_tnc_to_transit = False # AV to transit path type allowed #not implemente
 
 ## Recreational bike
 include_rec_bike = True # inplemented as part of supplemental
+
+# include work from home
+include_wfh = True
 
 include_delivery = False
 
