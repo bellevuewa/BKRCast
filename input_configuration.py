@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2024baseyear\BKR3-24-v38_telecommute'
+project_folder = r'F:\projects\2024baseyear\BKR3-24-v40_telecommute'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -18,7 +18,7 @@ supplemental_module_base_year = '2018'   # this is the base year used only by su
 scenario_name = '2024' #name of the folder with scenario data
 
 #settings automatically assigned
-daysim_code = project_folder + '/daysim_2024_25_combined' 
+daysim_code = project_folder + '/daysim_2025' 
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
