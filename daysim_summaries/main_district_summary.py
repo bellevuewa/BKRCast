@@ -62,7 +62,7 @@ def read_data():
                 trips[f'_{col}'] = trips[col]
                 trips[col] = trips[f'_{col}'].map(dict(zip(col_df.iloc[:, 1], col_df.iloc[:, 0])))
                 
-        elif int(base_year) in [2023, 2024]:
+        elif int(base_year) in [2023, 2024] and dataset == "survey":
             fname_full = os.path.join(project_folder, 'inputs', 'model', 'survey', 'survey_2023_full.h5')
             fname = os.path.join(project_folder, 'inputs', 'model', 'survey', 'survey_2023.h5')
             file_full = convert(fname_full, guidefile, '2023FullSurvey')
@@ -144,7 +144,7 @@ def data_filter(hhs, persons, person_day, trips_, tours):
     # Filtering and write trips
     #####    
     # preprocess the hhno in the trip and tour dataframe
-    if int(base_year) in [2023, 2024]:
+    if int(base_year) in [2023, 2024] and dataset == "survey":
         trips = trips_[0]
         trips_full = trips_[1]
         trips_full['hhno_'] = trips_full['hhno']
@@ -158,7 +158,7 @@ def data_filter(hhs, persons, person_day, trips_, tours):
         trips['hhno_'] = trips['hhno']
 
     # save bkrcast_all data
-    if int(base_year) in [2023, 2024]:
+    if int(base_year) in [2023, 2024] and dataset == "survey":
         trips_full.to_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips_full_all.csv"), 
                 index=False)    
     trips.to_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips_all.csv"), 
@@ -180,7 +180,7 @@ def data_filter(hhs, persons, person_day, trips_, tours):
         trips_bkr = trips_bkr.merge(taz_corr, how='left', left_on='dtaz', right_on='zone_id').\
             rename(columns={'district': 'd_district'})
         
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full_bkr = trips_full.merge(taz_corr, how='left', left_on='otaz', right_on='zone_id').\
                 rename(columns={'district': 'o_district'})
             trips_full_bkr = trips_full_bkr.merge(taz_corr, how='left', left_on='dtaz', right_on='zone_id').\
@@ -198,7 +198,7 @@ def data_filter(hhs, persons, person_day, trips_, tours):
         trips_in.to_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips{ext_in}.csv"), 
                         index=False)
         
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full_out = trips_full_bkr[(trips_full_bkr["o_district"] != "BKR") & 
                                             (trips_full_bkr["d_district"] != "BKR")]
             trips_full_in = trips_full_bkr[(trips_full_bkr["o_district"] == "BKR") | 
@@ -227,7 +227,7 @@ def data_filter(hhs, persons, person_day, trips_, tours):
         trips_out[trips.columns].to_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips{ext_out}.csv"), 
                                         index=False)
         
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full_in = trips_full[trips_full["hhno_"].isin(hh_bkr['hhno'])]
             trips_full_in[trips_full.columns].to_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips_full{ext_in}.csv"), 
                                         index=False)            
@@ -304,7 +304,7 @@ def district_summary_purp():
         outfile_district = os.path.join(project_folder, "daysim_summaries", bkrcast_folder, "district_summary.csv")
         outfile_mode = os.path.join(project_folder, "daysim_summaries", bkrcast_folder, "TL_mode.csv")
         outfile_ptype = os.path.join(project_folder, "daysim_summaries", bkrcast_folder, "summary_ptype.csv")
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             outfile_district_full = os.path.join(project_folder, "daysim_summaries", bkrcast_folder, "district_summary_full.csv")
             outfile_mode_full = os.path.join(project_folder, "daysim_summaries", bkrcast_folder, "TL_mode_full.csv")
 
@@ -313,12 +313,12 @@ def district_summary_purp():
         persons = pd.read_csv(os.path.join(project_folder, "daysim_summaries", "data", f"persons_{bkrcast_folder.split('_')[1]}.csv"))
         tours = pd.read_csv(os.path.join(project_folder, "daysim_summaries", "data", f"tours_{bkrcast_folder.split('_')[1]}.csv"))
         trips = pd.read_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips_{bkrcast_folder.split('_')[1]}.csv"))
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full = pd.read_csv(os.path.join(project_folder, "daysim_summaries", "data", f"trips_full_{bkrcast_folder.split('_')[1]}.csv"))
 
         # preprocess
         trips = trips[(trips['travdist']>0) & (trips['travdist']<=200)].copy(deep=True)
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips['_hhno'] = trips['hhno'].astype(str)
             trips['_hhno'] = trips['_hhno'].str[:-1]
             trips['_hhno'] = trips['_hhno'].astype('int64')
@@ -332,7 +332,7 @@ def district_summary_purp():
         persons['wrk_district'] = persons['pwtaz'].map(dict(zip(zone_district['BKRCastTAZ'], zone_district['DistrictFlowID'])))
         tours['d_district'] = tours['tdtaz'].map(dict(zip(zone_district['BKRCastTAZ'], zone_district['DistrictFlowID'])))
 
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full['temp'] = trips_full['travdist'] * trips_full['trexpfac']
             summary_mode_full = trips_full.groupby('mode')[['temp', 'trexpfac']].sum()
             summary_mode_full['avg_triplength'] = summary_mode_full['temp'] / summary_mode_full['trexpfac']
@@ -365,7 +365,7 @@ def district_summary_purp():
         trips['purp'] = np.where((trips['oadtyp'] == 1) & (trips['dpurp'] > 1) |
                                     (trips['dadtyp'] == 1) & (trips['opurp'] > 1), "HBO", trips['purp'])
 
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             trips_full['purp'] = np.where((trips_full['oadtyp'] == 1) & (trips_full['dpurp'] == 1) |
                                           (trips_full['dadtyp'] == 1) & (trips_full['opurp'] == 1), "HBW", "NHB")
             trips_full['purp'] = np.where((trips_full['oadtyp'] > 1) & (trips_full['dpurp'] == 1) |
@@ -398,7 +398,7 @@ def district_summary_purp():
         summary_stops.to_csv(outfile_ptype, index=False)
         summary_district.to_csv(outfile_district, index=False)
 
-        if int(base_year) in [2023, 2024]:
+        if int(base_year) in [2023, 2024] and dataset == "survey":
             mode_output_full.to_csv(outfile_mode_full, index=False)
             summary_district_full.to_csv(outfile_district_full, index=False)
     
