@@ -148,6 +148,8 @@ def data_filter(hhs, persons, person_day, trips_, tours):
         trips = trips_[0]
         trips_full = trips_[1]
         trips_full['hhno_'] = trips_full['hhno']
+        trips_full['pno_'] = trips_full['pno']
+        trips_full['pno'] = trips_full['pno'] - trips_full['hhno']*100
         trips_full = trips_full[trips_full['travdist']<200].copy(deep=True)
         trips['hhno_'] = trips['hhno'].astype(str)
         trips['hhno_'] = trips['hhno_'].str[:-1].astype('int64')
