@@ -80,7 +80,7 @@ def read_data():
             guide_tour = pd.read_excel(os.path.join(project_folder, "inputs", "model", "CatVarDict_2023.xlsx"), sheet_name='Tour')
 
             for tr in [trips, trips_full]:
-                for col in ['opurp', 'dpurp', 'oadtyp', 'dadtyp']:
+                for col in ['opurp', 'dpurp', 'oadtyp', 'dadtyp', 'mode']:
                     icol = guide_trip.columns.get_loc(col)
                     col_df = guide_trip.iloc[:, icol:icol+2]
                     col_df = col_df.dropna()
@@ -96,7 +96,7 @@ def read_data():
             persons[f'_{col}'] = persons[col]
             persons[col] = persons[f'_{col}'].map(dict(zip(col_df.iloc[:, 1], col_df.iloc[:, 0])))
 
-        for col in ['pdpurp']:
+        for col in ['pdpurp', 'tmodetp']:
             icol = guide_tour.columns.get_loc(col)
             col_df = guide_tour.iloc[:, icol:icol+2]
             col_df = col_df.dropna()
