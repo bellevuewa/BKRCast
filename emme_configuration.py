@@ -184,11 +184,11 @@ transit_tod = {'6to9' : {'4k_tp' : 'am', 'num_of_hours' : 3},
 
 transit_submode_class_lookup = {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry', 'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}                
 # Transit Fare:
-zone_file = 'inputs/Fares/transit_fare_zones.grt'
-peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
-peak_monthly_pass = 'inputs/Fares/am_fares_monthly_pass.in'
-offpeak_fare_box = 'inputs/Fares/md_fares_farebox.in'
-offpeak_monthly_pass = 'inputs/Fares/md_fares_monthly_pass.in'
+zone_file = 'inputs/Fares/2024/transit_fare_zones.grt'
+peak_fare_box = 'inputs/Fares/2024/am_fares_farebox.in'
+peak_monthly_pass = 'inputs/Fares/2024/am_fares_monthly_pass.in'
+offpeak_fare_box = 'inputs/Fares/2024/md_fares_farebox.in'
+offpeak_monthly_pass = 'inputs/Fares/2024/md_fares_monthly_pass.in'
 fare_matrices_tod = ['6to9', '9to1530']
 
 # Intrazonals
@@ -231,3 +231,6 @@ pkhrfac_dict = {'pm': 0.35, 'am': 0.38, 'md': 0.154}
 transit_line_dict = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
 special_route_lookup = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
 
+# VOT ranges for assignment classes, consistent with SC2023
+vot_1_max = 9.85    # VOT for User Class 1 < vot_1_max
+vot_2_max = 36.22    # vot_1_max < VOT for User Class 2 < vot_2_max

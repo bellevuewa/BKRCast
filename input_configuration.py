@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2024baseyear\BKR3-24-v40_telecommute'
+project_folder = r'C:\Users\HDong\source\repos\BKRCastTestBed\BKR4-24-v2'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -35,7 +35,7 @@ run_copy_daysim_code = True
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_import_networks = False
+run_import_networks = True
 run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips

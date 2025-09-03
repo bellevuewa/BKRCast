@@ -908,8 +908,8 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
         
         #Regular Daysim Output:            
         else:
-            if vot[x] < 15: vot[x]=1
-            elif vot[x] < 25: vot[x]=2
+            if vot[x] < vot_1_max: vot[x]=1
+            elif vot[x] < vot_2_max: vot[x]=2
             else: vot[x]=3
 
         #get the matrix name from matrix_dict. Throw out school bus (8) for now.
