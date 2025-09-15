@@ -24,6 +24,11 @@ from data_wrangling import *
 # create LINK extra attribute @voltransit_daily
 # Create node extra attribute @daily_boarding and @daily_alighting at each transit stop
 
+# 7/22/2025
+# create daily transit network by merging all time of day transit lines.
+# add transit boarding and alighting by TOD and daily (segment data) to the daily bank.
+# now we can look into segment level boarding and alighting by TOD and daily inside the daily bank.
+
 print(os.getcwd())
 
 daily_network_fname = 'outputs/network/daily_network_results.csv'
@@ -101,6 +106,7 @@ def merge_networks(master_network, merge_network):
 
     for line in merge_network.transit_lines():
         if not master_network.transit_line(line.id):
+            print(f'Adding transit line {line.id}, {line.description} to master network')
             newline = master_network.create_transit_line(line.id, line.vehicle.id, line.itinerary())
             newline.description = line.description
             newline.headway = line.headway
@@ -110,6 +116,19 @@ def merge_networks(master_network, merge_network):
             newline.data2 = line.data2
             newline.data3 = line.data3
 
+            # update segments of the newly added line
+            new_segments = newline.segments()
+            seq = 0
+            for segment in new_segments:
+                segment.allow_alightings = line.segment(seq).allow_alightings
+                segment.allow_boardings = line.segment(seq).allow_boardings
+                segment.dwell_time = line.segment(seq).dwell_time
+                segment.factor_dwell_time_by_length = line.segment(seq).factor_dwell_time_by_length
+                segment.transit_time_func = line.segment(seq).transit_time_func
+                segment.data1 = line.segment(seq).data1
+                segment.data2 = line.segment(seq).data2
+                segment.data3 = line.segment(seq).data3
+                seq += 1
     return master_network
 
 def export_link_values(my_project):
@@ -306,12 +325,41 @@ def main():
             daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # load transit segment boarding into dataframe
-        # unlike auto network in daily bank, we do not have a daily transit network. Can only export daily boarding 
-        # in dataframe.
+        # we now have daily transit network.load segment boarding / alighting 
         segment_df = get_transit_segment_data(scenario)
         segment_df.rename(columns =  {'transit_boardings':'board_'+ tod}, inplace = True)
         segments.append(segment_df[['id', 'board_'+ tod]])
         templates.append(segment_df[['id', 'line']])
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@tboard_seg_' + time_period)
+        attr.description = 'total segment boardings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@tboard']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@iboard_seg_' + time_period)
+        attr.description = 'initial segment boardings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@iboard']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values) 
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@trsboard_seg_' + time_period)
+        attr.description = 'transfer segment boardings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@trsboard']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values)      
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@talight_seg_' + time_period)
+        attr.description = 'total segment alightings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@talight']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@finalight_seg_' + time_period)
+        attr.description = 'final segment alightings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@finalight']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@trsalight_seg_' + time_period)
+        attr.description = 'transfer segment alightings ' + time_period
+        values = scenario.get_attribute_values('TRANSIT_SEGMENT', ['@transalight']) 
+        daily_scenario.set_attribute_values('TRANSIT_SEGMENT', [attr], values)
 
         ## copy boarding alighting at transit stop in each tod to daily bank.
         # calculate daily boarding/alighting at each stop.
@@ -390,6 +438,22 @@ def main():
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_trsalighting')
     attr.description = 'daily transfer alighting at stop'
 
+
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_seg_board')
+    attr.description = 'daily total boarding at segment'
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_seg_iboard')
+    attr.description = 'daily initial boarding at segment'
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_seg_trsboard')
+    attr.description = 'daily transfer boarding at segment'
+
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_seg_alight')
+    attr.description = 'daily total alighting at segment'
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_seg_falight')
+    attr.description = 'daily final alighting at segment'
+    attr = daily_scenario.create_extra_attribute('TRANSIT_SEGMENT', '@daily_trsalight')
+    attr.description = 'daily transfer alighting at segment'
+
+
     daily_network = daily_scenario.get_network()
 
     attr_list = ['@v' + x for x in tods]
@@ -430,6 +494,15 @@ def main():
             node['@daily_alighting'] += node['@talight_' + tod]
             node['@daily_falighting'] += node['@falight_' + tod]
             node['@daily_trsalighting'] += node['@trsalight_' + tod]
+
+    for segment in daily_network.transit_segments():
+        for tod in sound_cast_net_dict.values():
+            segment['@daily_seg_board'] += segment['@tboard_seg_' + tod]
+            segment['@daily_seg_iboard'] += segment['@iboard_seg_' + tod]
+            segment['@daily_seg_trsboard'] += segment['@trsboard_seg_' + tod]
+            segment['@daily_seg_alight'] += segment['@talight_seg_' + tod]
+            segment['@daily_seg_falight'] += segment['@finalight_seg_' + tod]
+            segment['@daily_trsalight'] += segment['@trsalight_seg_' + tod]
 
     daily_scenario.publish_network(daily_network, resolve_attributes=True)
 

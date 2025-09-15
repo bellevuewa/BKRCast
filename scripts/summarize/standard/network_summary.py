@@ -667,7 +667,21 @@ def main():
         print('  create link extra attributes')        
         for name, description in input_config.extra_attributes_dict.items():
             my_project.create_extra_attribute('LINK', name, description, True)
-        
+
+        # if @bkrlink and @facility_moves are not defined, create them and import values
+        emission_attributes_dict = json.load(open('inputs/skim_params/emission_calc_attrs.json', "r"))      
+        for attr in emission_attributes_dict:
+            # if attr is not defined, create it
+            if my_project.current_scenario.extra_attribute(attr['name']) == None:
+                my_project.create_extra_attribute(attr['type'], attr['name'], attr['description'], attr['overwrite'])
+                print('  ', attr['name'], ' is created')
+                filepath = os.path.join(input_config.project_folder, attr['file_name']).replace('\\','/')
+                if os.path.isfile(filepath) == True:
+                    my_project.import_attribute_values(filepath, False, False)
+                    print('      value is imported.')
+                else:
+                    print('    ', attr['file_name'], ' is not a valid file.')     
+
         print('  analyze line to line transfer.')            
         if tod_hour in emme_config.transit_tod.keys():
             _df_transit_transfers = line_to_line_transfers(my_project, tod_hour)
@@ -777,6 +791,8 @@ def calculate_boarding_for_partner_cities(df_transit_line, df_transit_segment):
     transit_route_lookup_dict = data_wrangling.json_to_dictionary("local_transit_lines_lookup")   
     subarea_df = pd.read_csv(r'inputs\subarea_definition\TAZ_subarea.csv') 
     subarea_df = subarea_df.loc[subarea_df['Subarea'] > 0, ['Jurisdiction', 'Subarea', 'SubareaName']].drop_duplicates()    
+    bkr_routes = transit_route_lookup_dict['Bellevue'] + transit_route_lookup_dict['Kirkland'] + transit_route_lookup_dict['Redmond'] + transit_route_lookup_dict['BKR']
+    transit_route_lookup_dict['BKR'] = sorted(set(bkr_routes))  # combine all BKR cities' routes into one list
 
     with pd.ExcelWriter(os.path.join(input_config.report_transit_location, 'transit_boarding_for_BKR_cities.xlsx'), engine = 'xlsxwriter') as writer:  
         wksheet = writer.book.add_worksheet('readme')
@@ -802,7 +818,10 @@ def calculate_boarding_for_partner_cities(df_transit_line, df_transit_segment):
             if city == 'Others': # include all segments regardless of locations
                 selected_segments = df_transit_segment.loc[df_transit_segment['line_id'].isin(route_list)]
             else:  # only select segments located inside of each city
-                subarea_list = subarea_df.loc[subarea_df['Jurisdiction'] == city.upper(), 'Subarea'].to_list()                
+                if city == 'BKR':  # BKR includes all BKR cities
+                    subarea_list = subarea_df.loc[subarea_df['Jurisdiction'].isin(['BELLEVUE','KIRKLAND','REDMOND']), 'Subarea'].to_list()
+                else:
+                    subarea_list = subarea_df.loc[subarea_df['Jurisdiction'] == city.upper(), 'Subarea'].to_list()                
                 selected_segments = df_transit_segment.loc[df_transit_segment['line_id'].isin(route_list) & (df_transit_segment['i_node_subarea'].isin(subarea_list))]
             selected_segments.to_excel(writer, sheet_name = f'{city}_raw', startrow = 1, index = False)
             wksheet = writer.sheets[f'{city}_raw']
