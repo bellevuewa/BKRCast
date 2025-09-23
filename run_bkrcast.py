@@ -336,6 +336,17 @@ def run_all_summaries():
    if run_truck_summary:
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
+   if run_vmt_summary:
+       subprocess.call([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'])
+    
+   if run_telecommute_summary:
+       subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'])
+
+   if run_modeshare_summary:
+       for district in ['BelDT', 'Bellevue']:
+          subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district])
+          subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district])
+
 def clean_output_folder():
     folders_kept = ['landuse', 'bike'] # subfolders inside outputs
     output_folder = os.path.join(project_folder, 'outputs')

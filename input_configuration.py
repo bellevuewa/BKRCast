@@ -53,6 +53,9 @@ run_daysim_popsampler = False
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
+run_vmt_summary = True
+run_telecommute_summary = True
+run_modeshare_summary = True
 
 ##############################
 # Modes and Path Types
