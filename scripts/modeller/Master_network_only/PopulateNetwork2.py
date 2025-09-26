@@ -162,15 +162,17 @@ class BKRCastExportNetwork(_modeller.Tool()):
             bike_selection = {} # selection for bike only links
             hot_selection = {} # selection for HOT lanes
 
-            if self.include_unfunded:
-                selection['link'] = f'@project_year=0,{self.horizon_year} or @cip_tfp>=3'
-                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} or @bike_cip_tfp>=3'
+            # @cip_tfp: 1 - CIP, 2 - TFP, 0 - unspecified
+            #           3 - unfunded, 99 - unfunded but are excluded when populating network
+            if self.include_unfunded: # include all unfunded projects
+                selection['link'] = f'@project_year=0,{self.horizon_year} or @cip_tfp=3,99' 
+                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} or @bike_cip_tfp=3,99'
             elif self.include_unfunded_type_3:
                 selection['link'] = f'@project_year=0,{self.horizon_year} or @cip_tfp=3'
                 bike_selection['link'] = f'@bike_year=0,{self.horizon_year} or @bike_cip_tfp=3'
             else:
-                selection['link'] = f'@project_year=0,{self.horizon_year}'
-                bike_selection['link'] = f'@bike_year=0,{self.horizon_year}'
+                selection['link'] = f'@project_year=0,{self.horizon_year} and @cip_tfp=0,2' # @cip_tfp: 1 - CIP, 2 - TFP, 0 - unspecified
+                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} and @bike_cip_tfp=0,2'
  
            
             self.copyAttribute('@imp_lanes', 'lanes', horizon_scen, selection)
@@ -281,6 +283,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
             self.BAT_link_processing(amScen, 'am')
             self.BAT_link_processing(mdScen, 'md')
             self.BAT_link_processing(pmScen, 'pm')
+            self.BAT_link_processing(niScen, 'ni')
 
             _modeller.Modeller().desktop.data_explorer().replace_primary_scenario(amScen)
             self.linkNetCalculator("ul1", "@revlane_cap", "@revlane = 1,4")
@@ -389,20 +392,24 @@ class BKRCastExportNetwork(_modeller.Tool()):
         # set filter for BAT on and off, only for time dependent BAT links
         if tod == 'am':
             bat_close = f'@bat_tod=2 or @bat_tod=3 or @bat_tod=6'
-            bat_on = f'@bat_tod=1 or @bat_tod=4 or @bat_tod=5'
+            bat_on = f'@bat_tod=1 or @bat_tod=4 or @bat_tod=5 or @bat_tod=10'
             #selection = f'type=70 and @bat_tod=2 or type=70 and @bat_tod=3 or type=70 and @bat_tod=6'
             #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=1 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=5'
         elif tod == 'md':
             bat_close = f'@bat_tod=1 or @bat_tod=2 or @bat_tod=4'
-            bat_on = f'@bat_tod=3 or @bat_tod=5 or @bat_tod=6'
+            bat_on = f'@bat_tod=3 or @bat_tod=5 or @bat_tod=6 or @bat_tod=10'
             #selection = f'type=70 and @bat_tod=1 or type=70 and @bat_tod=2 or type=70 and @bat_tod=4'
             #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=3 or @tod_bat_conversion=1 and @bat_tod=5 or @tod_bat_conversion=1 and @bat_tod=6'        
         elif tod == 'pm':
             bat_close = f'@bat_tod=1 or @bat_tod=3 or @bat_tod=5'
-            bat_on = f'@bat_tod=2 or @bat_tod=4 or @bat_tod=6'
+            bat_on = f'@bat_tod=2 or @bat_tod=4 or @bat_tod=6 or @bat_tod=10'
             #selection = f'type=70 and @bat_tod=1 or type=70 and @bat_tod=3 or type=70 and @bat_tod=5'
             #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=2 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=6'
-
+        elif tod == 'ni':
+            bat_close = f'@bat_tod=7'
+            bat_on = f'@bat_tod=10'
+            #selection = f'type=70 and @bat_tod=10'
+            #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=1 or @tod_bat_conversion=1 and @bat_tod=2 or @tod_bat_conversion=1 and @bat_tod=3 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=5 or @tod_bat_conversion=1 and @bat_tod=6'
         NAMESPACE = "inro.emme.data.extra_attribute.create_extra_attribute"
         create_attribute = _modeller.Modeller().tool(NAMESPACE)
         create_attribute(scenario = scen, extra_attribute_name = '@temp1', extra_attribute_type = 'LINK')
