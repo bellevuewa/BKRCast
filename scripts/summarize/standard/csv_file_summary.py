@@ -55,14 +55,14 @@ class CSVAnalyzer(QMainWindow):
         layout.addLayout(hbox)
 
         hbox = QHBoxLayout()
-        self.sum_btn = QPushButton("Merge Files")
+        self.sum_btn = QPushButton("Merge or Load Files")
         self.sum_btn.clicked.connect(self.merge_files)
         hbox.addWidget(self.sum_btn)
 
         self.save_btn = QPushButton("Save Merged CSV")
         self.save_btn.clicked.connect(self.export_merged_results)
 
-        self.validation_btn = QPushButton("Validation")
+        self.validation_btn = QPushButton("Validate")
         self.validation_btn.clicked.connect(self.validation)
         hbox.addWidget(self.validation_btn)
         hbox.addWidget(self.save_btn)
