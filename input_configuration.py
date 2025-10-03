@@ -49,7 +49,6 @@ run_skims_and_paths = True
 run_truck_model = True
 run_supplemental_trips = True
 run_daysim = True
-run_daysim_popsampler = False
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
