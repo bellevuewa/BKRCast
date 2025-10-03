@@ -69,6 +69,7 @@ include_rec_bike = True # inplemented as part of supplemental
 
 # include work from home
 include_wfh = True
+WFH_Percent = 0.3 # this is the WFH percentage assumption for the model year.  This will be used to calculate the WFH constant in daysim.
 
 include_delivery = False
 

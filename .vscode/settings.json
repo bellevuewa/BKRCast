@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./scripts"
+        "./scripts",
+        "${workspaceFolder}/scripts/accessibility"
     ],
     "files.exclude": {
         "**/.git": true,

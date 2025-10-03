@@ -122,8 +122,9 @@ def read_attribute_from_daysim_config_template(attr_name, default=""):
 
 @timed
 def build_shadow_only(include_tnc_mode, include_wfh_mode):
+     wfh_constant = calculate_daysim_WFH_constant(WFH_Percent)
      for shad_iter in range(0, len(shadow_work)):
-        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
+        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
         if int(model_year) >= 2044:
             daysim_config_update.append(("$OP_COST", 0.36))
@@ -486,7 +487,8 @@ def main():
         #run daysim popsampler
         if run_daysim_popsampler:
             daysim_popsampler(sampling_option)
-        
+
+        wfh_constant = calculate_daysim_WFH_constant(WFH_Percent)        
         for iteration in range(len(pop_sample)):
             print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))
@@ -505,8 +507,8 @@ def main():
                         print(' error copying shadow pricing file from shadow_pricing at ' + base_inputs+'/shadow_pricing/shadow_prices.txt')
                         sys.exit(1)
 
-                # Set up your Daysim Configration
-                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                # Set up your Daysim Configration 
+                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                 # use new operating cost 0.36 after 2044, otherwise use 0.2 
                 if int(model_year) >= 2044:
                     daysim_config_update.append(("$OP_COST", 0.36))
@@ -520,7 +522,7 @@ def main():
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
@@ -528,7 +530,7 @@ def main():
                         daysim_config_update.append(("$OP_COST", 0.20))
                     modify_config(daysim_config_update)
                 else:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))

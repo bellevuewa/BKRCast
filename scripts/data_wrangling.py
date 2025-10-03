@@ -590,3 +590,12 @@ def generate_pr_node_file(input_csv, output_csv, year):
     df[['NodeID', 'ZoneID', 'XCoord', 'YCoord', 'Capacity', 'Cost', 'Description', 'EMME_Description']].to_csv(output_csv, index=False)
     print(f"PnR file for {year} is {output_csv}")
 
+def calculate_daysim_WFH_constant(wfh_percent):
+    '''
+    Calculate the Daysim WFH constant based on the given WFH percentage assumption.
+    The formula is derived from the relationship between WFH percentage and the constant.
+    WorkAtHome_AlternativeSpecificConstant = ln(wfh_percent / 57.18%) / 0.4874
+    '''
+    constant = np.log(wfh_percent / 0.5718) / 0.4874
+    # round to 3 decimal places
+    return float(round(constant, 3))
