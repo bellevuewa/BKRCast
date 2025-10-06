@@ -597,5 +597,6 @@ def calculate_daysim_WFH_constant(wfh_percent):
     WorkAtHome_AlternativeSpecificConstant = ln(wfh_percent / 57.18%) / 0.4874
     '''
     constant = np.log(wfh_percent / 0.5718) / 0.4874
-    # round to 3 decimal places
-    return float(round(constant, 3))
+    # round to 1 decimal places to be consistent with Daysim models we have done.
+    # but should be revised to three decimal places in the next round of model update.
+    return float(round(constant, 1))
