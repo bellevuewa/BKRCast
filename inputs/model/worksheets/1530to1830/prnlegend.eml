@@ -1,0 +1,71 @@
+DFB86B4C-679B-4727-B8F4-243C36D707A1 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 0 0
+# Emme set of layers generated on Sat Aug 22 19:05:38 2009
+# File: prnlegend.eml
+#
+[Legend]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name : (0x0,1)
+Name = PrintLegend
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x3500000
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = LegendMapper
+TranslationContext[] = Mapper
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 1
+# Bool XFlag: intercept all graphic input
+XFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Float TextSize: text size for scales and symbols
+TextSize[] = 20
+TextSize[] = 8
+# Float TextXPos: horizontal position of text anchor
+TextXPos[] = 0
+TextXPos[] = 0
+# Float TextYPos: vertical position of text anchor
+TextYPos[] = -15
+TextYPos[] = -5
+# Float StyleIndex: style index used for frame and text of item
+StyleIndex[] = 0
+StyleIndex[] = 0
+# Float ImageSizeFactor: size factor for scaling images
+ImageSizeFactor[] = 1
+ImageSizeFactor[] = 1
+# Integer TextLayout: layout definition
+TextLayout[] = 48
+TextLayout[] = 331920
+# String SymbolType: symbol type (for symbol scale item only) (subst)
+SymbolType[] = No shape
+SymbolType[] = 
+# Text TextString: text that appears in item (tr,subst)
+TextString[] = %<Caption>%
+TextString[] = %<$DatabaseTitle>% (%<$Database>%)\
+Scenario  %<$ScenarioNumber>%: %<$ScenarioTitle>%\
+%<$Date>% %<$Hour>%:%<$Minute>% (%<$User>%@%<$Host>%)\
+Modeling and Analysis Group\
+Transportation Department\
+City of Bellevue
+# Style FrameStyle: style used for text and frame of items
+FrameStyle : LegendFrameStyle
+FrameStyle[] = 0x00000000 0x01ffffff 0x00000000 0x00
+FrameStyle[] = 0x20000000 0x01ffffff 0x08000000 0x00
+FrameStyle[] = 0x20000000 0x01ffffff 0x10000000 0x00
+FrameStyle[] = 0x20ff0000 0x01ffffff 0x08ff0000 0x00
+# Style SymbolStyle: style used for graphic part of items
+SymbolStyle = 0x20000000 0x01ffffff 0x00000000 0x00
+# Float Scale: scale used for scale items
+Scale : /BarScale
+Scale = 0
+# Float Margin: relative margin for item frame
+Margin[] = 0.25
+Margin[] = 0
+

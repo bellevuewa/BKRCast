@@ -1,0 +1,2251 @@
+D2461A6A-1F51-4A2C-87AC-6C3C49AA9DF7 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 4 0
+# Emme worksheet generated on Wed Oct 15 16:30:09 2025
+# File: F:/projects/TFP/TFP2044/COB_WFH_method/build/BKR4-24-T45_TFP_network_20%WFH_50%_Errands/projects/1530to1830/Worksheets/Traffic_volumes_at_intersections.emw
+#
+# String Name: name of worksheet (tr,subst)
+Name : PlotName
+Name = Traffic volumes at intersections
+# Text Description: description of worksheet (tr,subst)
+Description : (0x800)
+Description = <h2>Traffic volumes at intersections</h2>\
+This worksheet can be used to display:\
+<ul>\
+<li>Turn volume as bars for <b>one</b> intersection node, with numeric values or not (layer <i>Intersection</i>).\
+Predefined turn expressions are provided for the <i>Turn value</i> to display.\
+By default, the size of the bars is computed automatically to a reasonable value.\
+To fix the scale value, enter the desired value and keep the padlock closed (locked).\
+<li>Nodes connected to the adjacent links (layer <i>Nodes</i>).\
+Nodes are colored using <i>Node style</i>: first color for regular nodes, second color for centroids and third color for intersections.\
+</ul>\
+<b>Using this worksheet</b>\
+<ul>\
+<li>The initial intersection selection is set to <tt>isMarked</tt>.\
+To select a specific intersection node, select from the predefined choices\
+(layer <i>Intersection</i>) or from the associated <i>nodes</i> table\
+(when the intersection selection is set to <tt>isMarked</tt>).\
+To display one intersection node after another, \
+position the mouse in the <i>Intersection node</i> input field\
+and then use the up and down arrow keys.\
+<li>Initially, numeric values are displayed inside the linear part of the beginning of the turn.\
+To display the values outside the turn beginning and/or end, set the linear part to 0 (layer <i>Intersection</i>). \
+To display numeric values even for small turn values, \
+the turn offset must be at least equal to the text size.\
+<li>To display values on links, enter a link value expression in the <i>Link value</i> field (layer <i>Link info</i>). \
+<li>To rotate the intersection, specify the angle in degrees (layer <i>Nodes</i>). \
+<li>The display of the intersection node number and of the turn table can be modified\
+(layer <i>Legend</i>).\
+</ul>\
+<p><small>Copyright &copy; 2025, Bentley Systems, Incorporated. All rights reserved.</small>\
+<p>
+# Flags Flags: worksheet configuration flags
+Flags = 0x1
+# String IncomingSyncs: regular expression to filter incoming sync signals
+IncomingSyncs = [$%>].
+# String Caption: caption that appears on window bar (tr,subst)
+Caption : //SubTitle
+Caption = %<SR:SubTitle>%
+# String StatusMessage: message to display on status bar (tr,subst)
+StatusMessage = %<%ViewScale>%
+# String Active: name of currently active layer
+Active = Intersection
+# Bool AllowReordering: Layers reordering of this configuration is permitted
+AllowReordering = 0
+# Bool IgnoreShapes
+IgnoreShapes = 1
+# Expression Condition: indicates that the worksheet is valid only if the condition is met (tr)
+Condition =  hasAutoAssignment
+# Integer IA: Integer-valued startup parameter IA (nosave)
+IA : ValueIndex
+# String SA: String-valued startup parameter SA (nosave)
+SA : $Emme0IncomingGroups
+# Float TransformationMatrix: coordinate transformation matrix
+TransformationMatrix : (0x200) /TransformationMatrix!/$WorksheetLoaded
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 1
+TransformationMatrix[] = 1
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+
+[Configurable attribute list]
+# String Name: name of attribute configurations (tr)
+Name = configurable attributes
+# String IncomingSyncs: regular expression to filter incoming sync signals
+IncomingSyncs = .
+# String OutgoingSyncs: regular expression to filter outgoing sync signals
+OutgoingSyncs = .
+
+[Configurable attribute]
+# String Name: configurable attribute name
+Name = k1
+# Text Description: description of configurable attribute (tr,subst)
+Description = minimum index of outgoing links
+# String ExpressionType: domain of expression
+ExpressionType = turns
+# Expression Expression: expression for computing attribute values (tr,turn,string)
+Expression = index
+# String AggregationPointer: pointer from expression to result element
+AggregationPointer = Pij
+# String AggregationOperator: aggregation operator for computing result value
+AggregationOperator = min
+
+[Background]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Background color
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowBackColor
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowBackColor
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Style Style: style for filling background when no wallpaper is used
+Style : (0x200) BackgroundColor!/BackgroundColor!/$WorksheetLoaded
+Style = 0x00000000 0x01f4f4f4 0x00000000 0x00000000
+
+[Generic scatterplot]
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Used to fix the size of the bounding box (-1,1,2,2).
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x9f90000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Bool DisplayDiagram: display diagram on network plane using the specified position and size parameters
+DisplayDiagram = 0
+# Float XPosition: X-coordinate of upper left corner
+XPosition = -1
+# Float YPosition: Y-coordinate of upper left corner
+YPosition = 1
+# Float Width: width of rectangle
+Width : ImageWidth
+Width = 2
+# Float Height: height of rectangle
+Height : ImageHeight
+Height = 2
+# Float AspectRatio: fixed aspect ratio of diagram
+AspectRatio = 1
+# Style FrameStyle: style used to draw diagram frame (0:outer frame, 1:scales, 2:inner frame, 3:zero lines)
+FrameStyle[] = 0x00000000 0x00000000 0x00000000 0x00000000
+FrameStyle[] = 0x00000000 0x00000000 0x00000000 0x00000000
+FrameStyle[] = 0x00000000 0x00000000 0x00000000 0x00000000
+
+[Legend]
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Text item to display the turn table
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x35b0000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowLegend
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLegend
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag : /ShowLegend
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 1
+# Bool XFlag: intercept all graphic input
+XFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Float TextSize: text size for scales and symbols
+TextSize = 10
+# Float TextXPos: horizontal position of text anchor
+TextXPos = 6
+# Float TextYPos: vertical position of text anchor
+TextYPos = 6
+# Float StyleIndex: style index used for frame and text of item
+StyleIndex = 2
+# Float ImageSizeFactor: size factor for scaling images
+ImageSizeFactor = 0
+# Integer TextLayout: layout definition
+TextLayout = 332144
+# Text TextString: text that appears in item (tr,subst)
+TextString = Intersection node %<ResultValues:@SelectedNode>%:\
+\
+%<ResultValues[*\n]:TurnTable>%
+# Style FrameStyle: style used for text and frame of items
+FrameStyle : (0x200) /LegendFrameStyle!/$WorksheetLoaded
+FrameStyle[] = 0x00000000 0x01ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x20000000 0x01ffffff 0x08000000 0x00000000
+FrameStyle[] = 0x20000000 0x01ffffff 0x03000000 0x00000000
+FrameStyle[] = 0x20ff0000 0x01ffffff 0x08ff0000 0x00000000
+# Style SymbolStyle: style used for graphic part of items
+SymbolStyle = 0x20000000 0x01ffffff 0x00000000 0x00000000
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = SubTitle
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Generates the caption subtitle (selected turn value)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst,nosave)
+SA : (0x80) /TurnValue
+# String SB: string parameter SB (subst,nosave)
+SB : (0x80) @SelectedNode
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = "Intersection "+SB+": "+if(length(comment(SA))>0,comment(SA),SA)
+# String SR: string result (nosave)
+SR : (0x80) SubTitle/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Intersection diameter
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Computes size of intersection diameter \
+(diameter and node circles should fit in the Emme window size)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA (nosave)
+FA : (0x80) /ImageWidth
+# String SA: string parameter SA (subst)
+SA : //%CurrentView
+SA = %<%ViewScale>%
+# Float FB: floating point parameter FB (nosave)
+FB : (0x80) /ImageHeight
+# Float FC: floating point parameter FC (nosave)
+FC : (0x80) /DistanceFactor
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = max(FA,FB)/number(SA)/max(FC,1)
+# Float FR: floating point result (nosave)
+FR : (0x80) Diameter/
+# Integer IR: integer result (nosave)
+IR : (0x80)
+# String SR: string result (nosave)
+SR : (0x80)
+# Box BR: box result (nosave)
+BR : (0x80)
+
+[Intersection]
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xae00000
+# Box BoundingBox: current bounding box of this layer (ro,nosave)
+BoundingBox : IntersectionBB/
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowIntersection
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowIntersection
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag : /ShowIntersection
+LFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 1
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Integer ArrowWidth: width of the arrows (in pixels)
+ArrowWidth : TurnArrowWidth
+ArrowWidth = 5
+# Integer ArrowHeight: height of the arrows (in pixels)
+ArrowHeight : TurnArrowHeight
+ArrowHeight = 15
+# Style Arrow style: style for arrows outline and fill properties
+Arrow style : TurnArrowStyle
+Arrow style = 0x22000000 0x01ffffff 0x00000000 0x00000000
+# Expression ArrowStyleIndex: expression for arrows style index (tr,turn)
+ArrowStyleIndex : TurnArrowStyleIndex
+ArrowStyleIndex = 
+# Bool IntersectionCircles: draw a background circle at each intersection
+IntersectionCircles : IntersectionCircles
+IntersectionCircles = 1
+# Bool TurnArrows: draw an arrow at the beginning and the end of each turn
+TurnArrows : TurnArrows
+TurnArrows = 1
+# Bool SplineCurves: draw turns as curves instead of straight lines
+SplineCurves : SplineCurves
+SplineCurves = 1
+# Bool NumericValues: display turn values numerically on the turns
+NumericValues = 1
+# Bool ValuesAtBeginning: display turn values numerically at beginning of turn
+ValuesAtBeginning : ValuesAtBeginning
+ValuesAtBeginning = 1
+# Bool ValuesAtEnd: display turn values numerically at end of turn
+ValuesAtEnd : ValuesAtEnd
+ValuesAtEnd = 0
+# Bool AutoFlip: flip turn text to read from left to right
+AutoFlip = 1
+# Integer Decimals: number of decimals in numeric values
+Decimals : /Decimals
+Decimals = 0
+# Float Offset: link offset (pixels)
+Offset : Offset
+Offset = 5
+# Float Diameter: intersection diameter (pixels)
+Diameter : Diameter
+Diameter = 392.250079822891
+# Float LinearPart: portion of diameter used for linear part of spline turns
+LinearPart : LinearPart
+LinearPart = 0.3
+# Float CircleSize: size of circle relative to intersection size
+CircleSize : CircleSize
+CircleSize = 0.7
+# Style CircleStyle: style for intersection circle outline and fill properties
+CircleStyle : CircleStyle!
+CircleStyle = 0x20c8c8c8 0x01ffffff 0xe0000000 0x00000000
+# Float TurnOffset: turn offset (pixels)
+TurnOffset : TurnOffset
+TurnOffset = 8
+# Float Scale: value scale for proportional bars (units/pixel)
+Scale : (0x4000) Scale
+Scale = 75
+# Break Breaks: exclusive upper bound to select style based on the index value
+Breaks : TurnBreaks
+Breaks[] = ;
+Breaks[] = ;
+# Bool UseBreaks: use breaks
+UseBreaks : TurnUseBreaks
+UseBreaks = 0
+# Integer BreakDecimals: break decimals
+BreakDecimals : TurnBreakDecimals
+BreakDecimals = 2
+# String BreakMethod: break compute method
+BreakMethod : TurnBreakMethod
+BreakMethod = Linear
+# Click ComputeBreaks: compute breaks (nosave)
+ComputeBreaks : TurnComputeBreaks
+# Bool DecreasingBreaks: decreasing breaks
+DecreasingBreaks : TurnDecreasingBreaks
+DecreasingBreaks = 0
+# Bool DiscreteBreaks: discrete breaks
+DiscreteBreaks : TurnDiscreteBreaks
+DiscreteBreaks = 0
+# Style Style: style for turn outline and fill properties
+Style : /Turns!
+Style[] = 0x20008000 0x0100b800 0x00000000 0x01320000
+Style[] = 0x20c82527 0x01ff2f32 0x00000000 0x01320000
+Style[] = 0x20003ab0 0x010055ff 0x00000000 0x01320000
+Style[] = 0x20be7206 0x01ffa10a 0x00000000 0x01320000
+Style[] = 0x207f27b5 0x01b337ff 0x00000000 0x01320000
+Style[] = 0x20afa702 0x01e6ff05 0x00000000 0x01320000
+Style[] = 0x20744a2a 0x019f673a 0x00000000 0x01320000
+Style[] = 0x20cf78c9 0x01ff94f7 0x00000000 0x01320000
+Style[] = 0x20009898 0x0100cccc 0x00000000 0x01320000
+Style[] = 0x20b43c00 0x01ff5500 0x00000000 0x01320000
+Style[] = 0x207bb800 0x01aaff00 0x00000000 0x01320000
+Style[] = 0x206e7781 0x019daab9 0x00000000 0x01320000
+# Float TextSize: text size for turn values
+TextSize : TextSize
+TextSize = 8
+# Expression TurnValue: expression for turn value (tr,turn)
+TurnValue : TurnValue2
+TurnValue = ([auto volume] pvolau)* not((Pi->isZone)||(Pk->isZone))
+# Filter NodeFilter: expression for intersection filtering [,intersection iterator] (tr,nosave,node,string,max. 2 values)
+NodeFilter : (0x90) />SelectedIntersection/$NumberOfMarkedNodes*
+# Expression StyleIndex: expression for turn style index (tr,turn,string)
+StyleIndex : TurnIndex
+StyleIndex[] = [colored by turn angle] if(angle<-15,1,if(angle>15,2,0))
+StyleIndex[] = [colored by from-node] (Pij->angle+180)/45
+StyleIndex[] = [colored by to-node] index-Pij->k1
+StyleIndex[] = [colored by turn penalty] tpf+1
+StyleIndex[] = [colored by turn angle] if(angle<-15,1,if(angle>15,2,0))
+# Expression IntersectionPosition: intersection position x, y (tr,node,max. 2 values)
+IntersectionPosition : IntersectionPosition
+IntersectionPosition = 0,0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Circle size
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Computes circle size to exclude the linear part
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /LinearPart
+FA = 0.3
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = 1-FA
+# Float FR: floating point result
+FR : CircleSize/
+FR = 0.7
+# String SR: string result
+SR = 0.700000000000000
+# Box BR: box result
+BR = 0.7;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Linear part
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : /Linear100
+IA = 30
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = IA/100
+# Float FR: floating point result
+FR : LinearPart/
+FR = 0.3
+# String SR: string result
+SR = 0.300000000000000
+# Box BR: box result
+BR = 0.3;0;0;0
+
+[Link symbol]
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Dummy layer used to compute auto scale
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbf20000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool AutoFlip: flip text to read from left to right
+AutoFlip = 1
+# Float Scale: value scale for shapes (units/pixel)
+Scale : (0x4000) Scale
+Scale = 75
+# Style Style: style for symbol outline, fill and text properties
+Style = 0x00000000 0x00ff0000 0x00000000 0x00000500
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,link,max. 4 values)
+SymbolPosition : (0x10)
+SymbolPosition = 0,0
+# Expression Value: expression for up to 12 values (tr,link,string,max. 12 values)
+Value : (0x110) //TurnValue
+Value[] = [auto volume] volau
+Value[] = [auto volume] volau
+Value[] = [additional volume] volad
+Value[] = [total auto volume] volau + volad
+# Filter Filter: expression for element filtering [, iterator] (tr,link,string,max. 2 values)
+Filter = isJActive
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Intersection
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Gives access to the parameters defining the display of the turn movements
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbd00000
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = IntersectionMapper
+TranslationContext[] = SelectorField
+TranslationContext[] = Mapper
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowIntersection
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowIntersection
+MFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Filter0;Filter;Intersection node:;node expression for intersection selection [,intersection iterator];0;0;0;0;nodes;
+Layout[] = Expression0;Expression;Turn value:;expression for turn value;1;1;0;0;turns;1;0
+Layout[] = Float4;Scale;Scale:;value scale for proportional bars (units/pixel);2;2;0;0;1
+Layout[] = StyleLegend0;StyleLegend;Turns:;style for turn outline and fill properties;3;3;0;0;turns;
+Layout[] = Float0;Spinbox;Link offset:;link offset (pixels);5;5;0;0;-500;500;
+Layout[] = Float3;Spinbox;Turn offset:;turn offset (pixels);6;6;0;0;-500;500;
+Layout[] = Bool1;Checkbox;Show turns on connectors;show turns from or to a centroid;7;7;0;0;;
+Layout[] = Bool2;Checkbox;Value at beginning of turn;display turn value numerically at beginning of turn;8;8;0;0;;
+Layout[] = Bool3;Checkbox;Value at end of turn;display turn value numerically at end of turn;9;9;0;0;;
+Layout[] = Bool0;Checkbox;Intersection circle;draw a background circle at each intersection;11;11;0;0;;
+Layout[] = Style1;Style;Circle:;style for intersection circle outline and fill properties;12;12;0;0;;
+Layout[] = Float1;Spinbox;Diameter:;intersection diameter in pixels (should not exceed 50% of viewport height);13;13;0;0;0;2000;
+Layout[] = Integer0;Spinbox;Linear part:;portion of diameter used for linear part of spline turns (in %);14;14;0;0;0;100;
+Layout[] = Float2;Spinbox;Text size:;text size for turn value;15;15;0;0;0;100;
+Layout[] = Integer1;Spinbox;Decimals:;number of decimals in numeric value;16;16;0;0;-6;15;
+# Bool Bool0: draw a background circle at each intersection
+Bool0 : IntersectionCircles
+Bool0 = 1
+# Bool Bool1: show turns from or to a centroid
+Bool1 : ConnectorTurns
+Bool1 = 0
+# Bool Bool2: display turn value numerically at beginning of turn
+Bool2 : ValuesAtBeginning
+Bool2 = 1
+# Bool Bool3: display turn value numerically at end of turn
+Bool3 : ValuesAtEnd
+Bool3 = 0
+# Integer Integer0: portion of diameter used for linear part of spline turns (in %)
+Integer0 : Linear100/
+Integer0 = 30
+# Integer Integer1: number of decimals in numeric value
+Integer1 : Decimals
+Integer1 = 0
+# Float Float0: link offset (pixels)
+Float0 : Offset
+Float0 = 5
+# Float Float1: intersection diameter in pixels (should not exceed 50% of viewport height)
+Float1 : Diameter
+Float1 = 392.250079822891
+# Float Float2: text size for turn value
+Float2 : TextSize
+Float2 = 8
+# Float Float3: turn offset (pixels)
+Float3 : TurnOffset/
+Float3 = 8
+# Float Float4: value scale for proportional bars (units/pixel)
+Float4 : (0x4000) Scale
+Float4 = 75
+# Expression Expression0: expression for turn value (tr,turn)
+Expression0 : (0x140) TurnValue/TurnValue/ValueIndex
+Expression0[] = [auto volume] pvolau
+Expression0[] = [auto volume] pvolau
+Expression0[] = [additional volume] pvolad
+Expression0[] = [total volume] pvolau + pvolad
+# Filter Filter0: node expression for intersection selection [,intersection iterator] (tr,nosave,node,string,max. 2 values)
+Filter0 : (0x90) >SelectedIntersection
+# Style Style1: style for intersection circle outline and fill properties
+Style1 : (0x200) CircleStyle!/CircleStyle!/$WorksheetLoaded
+Style1 = 0x20c8c8c8 0x01ffffff 0xe0000000 0x00000000
+
+[[Style legend]]
+# String Name: user definable name of configurable object (tr)
+Name = StyleLegend0
+# String IncomingSyncs: regular expression to filter incoming sync signals
+IncomingSyncs = .
+# String OutgoingSyncs: regular expression to filter outgoing sync signals
+OutgoingSyncs = .
+# Expression StyleIndex: expression for style index (tr,turn,string)
+StyleIndex : (0x70) TurnIndex
+StyleIndex[] = [colored by turn angle] if(angle<-15,1,if(angle>15,2,0))
+StyleIndex[] = [colored by from-node] (Pij->angle+180)/45
+StyleIndex[] = [colored by to-node] index-Pij->k1
+StyleIndex[] = [colored by turn penalty] tpf+1
+StyleIndex[] = [colored by turn angle] if(angle<-15,1,if(angle>15,2,0))
+# Style Style: style
+Style : (0x200) Turns!/Turns!/$WorksheetLoaded
+Style[] = 0x20008000 0x0100b800 0x00000000 0x01320000
+Style[] = 0x20c82527 0x01ff2f32 0x00000000 0x01320000
+Style[] = 0x20003ab0 0x010055ff 0x00000000 0x01320000
+Style[] = 0x20be7206 0x01ffa10a 0x00000000 0x01320000
+Style[] = 0x207f27b5 0x01b337ff 0x00000000 0x01320000
+Style[] = 0x20afa702 0x01e6ff05 0x00000000 0x01320000
+Style[] = 0x20744a2a 0x019f673a 0x00000000 0x01320000
+Style[] = 0x20cf78c9 0x01ff94f7 0x00000000 0x01320000
+Style[] = 0x20009898 0x0100cccc 0x00000000 0x01320000
+Style[] = 0x20b43c00 0x01ff5500 0x00000000 0x01320000
+Style[] = 0x207bb800 0x01aaff00 0x00000000 0x01320000
+Style[] = 0x206e7781 0x019daab9 0x00000000 0x01320000
+# Break Breaks: exclusive upper bound to select style based on the index value
+Breaks : TurnBreaks
+Breaks[] = ;
+Breaks[] = ;
+# Bool UseBreaks: use breaks
+UseBreaks : TurnUseBreaks
+UseBreaks = 0
+# Integer BreakDecimals: break decimals
+BreakDecimals : TurnBreakDecimals
+BreakDecimals = 2
+# String BreakMethod: break compute method
+BreakMethod : TurnBreakMethod
+BreakMethod = Linear
+# Click ComputeBreaks: compute breaks (nosave)
+ComputeBreaks : TurnComputeBreaks
+# Bool DecreasingBreaks: decreasing breaks
+DecreasingBreaks : TurnDecreasingBreaks
+DecreasingBreaks = 0
+# Bool DiscreteBreaks: discrete breaks
+DiscreteBreaks : TurnDiscreteBreaks
+DiscreteBreaks = 0
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Turn arrows
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbd20000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : TurnArrows
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /TurnArrows
+MFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Bool0;Checkbox;Turn arrows;draw an arrow at the beginning and the end of each turn;0;0;0;0;;
+Layout[] = Integer0;Spinbox;Arrow width;width of the arrows (in pixels);1;1;0;0;0;100;
+Layout[] = Integer1;Spinbox;Arrow height;height of the arrows (in pixels);2;2;0;0;0;100;
+Layout[] = Style0;Style;Arrow style:;style for arrows outline and fill properties;3;3;0;0;;
+Layout[] = Expression0;Expression;Arrow index:;expression for arrows style index (tr,turn);4;4;0;0;turns;1;0
+# Bool Bool0: draw an arrow at the beginning and the end of each turn
+Bool0 : TurnArrows
+Bool0 = 1
+# Integer Integer0: width of the arrows (in pixels)
+Integer0 : TurnArrowWidth
+Integer0 = 5
+# Integer Integer1: height of the arrows (in pixels)
+Integer1 : TurnArrowHeight
+Integer1 = 15
+# Expression Expression0: expression for arrows style index (tr,turn) (tr,turn)
+Expression0 : TurnArrowStyleIndex
+Expression0 = 
+# Style Style0: style for arrows outline and fill properties
+Style0 : TurnArrowStyle
+Style0 = 0x22000000 0x01ffffff 0x00000000 0x00000000
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = JNode position
+# Text Description: user definable layer description (tr,subst)
+Description = Symbol position for JNode of links\
+(assumes xi,yi = intersection position = 0,0; _ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Diameter
+FA = 392.250079822891
+# String SA: string parameter SA (subst)
+SA : //%CurrentView
+SA = %<%ViewScale>%
+# Float FB: floating point parameter FB (nosave)
+FB : (0x80) /DistanceFactor
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = put(FA/2*FB*number(SA))+"*Cos(angle),"+get(1)+"*Sin(angle)"
+# String SR: string result (nosave)
+SR : (0x80) JNodePosition/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = INode position
+# Text Description: user definable layer description (tr,subst)
+Description = Symbol position for INode of links\
+(assumes xj,yj = intersection position = 0,0; _ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Diameter
+FA = 392.250079822891
+# String SA: string parameter SA (subst)
+SA : //%CurrentView
+SA = %<%ViewScale>%
+# Float FB: floating point parameter FB (nosave)
+FB : (0x80) /DistanceFactor
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = put(FA/2*FB*number(SA))+"*(-Cos(angle)),"+get(1)+"*(-Sin(angle))"
+# String SR: string result (nosave)
+SR : (0x80) INodePosition/
+
+[Link symbol]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = J-Node symbols
+# Text Description: user definable layer description (tr,subst)
+Description = Draws a symbol at JNode position and displays J-node number as numeric value of link symbol\
+(_ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x9f00000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : /ShowNodes
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowNodes
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Bool NumericValues: display numeric/string values
+NumericValues : DisplayNodes
+NumericValues = 1
+# Bool AutoScaleButton: display auto scale button in scale field
+AutoScaleButton = 0
+# Float TextSize: text size for values
+TextSize : NodeTextSize
+TextSize = 14
+# String Symbol: Symbol used for drawing values (nosave)
+Symbol : (0x80) /Symbol
+# Float Scale: value scale for shapes (units/pixel)
+Scale : NodeScale
+Scale = 1
+# Float XOffset: horizontal offset from specified position
+XOffset : NodeHOffset
+XOffset = 0
+# Float YOffset: vertical offset from specified position
+YOffset : NodeYOffset
+YOffset = 0
+# Style Style: style for symbol outline, fill and text properties
+Style : Nodes!
+Style[] = 0x2088896d 0x01fffddb 0x00000000 0x00000000
+Style[] = 0x20ff5c0a 0x01ffe4d7 0x00000000 0x00000000
+Style[] = 0x2000665f 0x01bef9be 0x00000000 0x00000000
+Style[] = 0x2000647f 0x01afdbdc 0x00000000 0x00000000
+Style[] = 0x207e5f08 0x01b5a57c 0x00000000 0x00000000
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,nosave,link,max. 4 values)
+SymbolPosition : (0x80) JNodePosition
+# Expression Value: expression for up to 12 values (tr,link,string,max. 12 values)
+Value = string(j)
+# Float DefaultValue: numeric default value(s) used for string-valued expressions
+DefaultValue : NodeDiameter
+DefaultValue = 50
+# Filter Filter: expression for element filtering [, iterator] (tr,link,string,max. 2 values)
+Filter : JNodeSelector
+Filter[] = [all nodes] isIActive&&isAuto
+Filter[] = [all nodes] isIActive&&isAuto
+Filter[] = [regular nodes] isIActive&&isAuto&&not(isConnector)
+Filter[] = [centroids] isIActive&&isAuto&&isConnector
+# Expression StyleIndex: expression for style index (tr,link,string)
+StyleIndex = which(1,Pj->isZone,Pj->isIntersection)
+
+[Link symbol]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = I-Node symbols
+# Text Description: user definable layer description (tr,subst)
+Description = Draws a symbol at INode position for one-way incoming links\
+(_ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x9e00000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : /ShowNodes
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowNodes
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag : /ShowNodes
+LFlag = 1
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Bool NumericValues: display numeric/string values
+NumericValues : DisplayNodes
+NumericValues = 1
+# Bool AutoScaleButton: display auto scale button in scale field
+AutoScaleButton = 0
+# Float TextSize: text size for values
+TextSize : NodeTextSize
+TextSize = 14
+# String Symbol: Symbol used for drawing values (nosave)
+Symbol : (0x80) /Symbol
+# Float Scale: value scale for shapes (units/pixel)
+Scale : NodeScale
+Scale = 1
+# Float XOffset: horizontal offset from specified position
+XOffset : NodeHOffset
+XOffset = 0
+# Float YOffset: vertical offset from specified position
+YOffset : NodeYOffset
+YOffset = 0
+# Style Style: style for symbol outline, fill and text properties
+Style : Nodes!
+Style[] = 0x2088896d 0x01fffddb 0x00000000 0x00000000
+Style[] = 0x20ff5c0a 0x01ffe4d7 0x00000000 0x00000000
+Style[] = 0x2000665f 0x01bef9be 0x00000000 0x00000000
+Style[] = 0x2000647f 0x01afdbdc 0x00000000 0x00000000
+Style[] = 0x207e5f08 0x01b5a57c 0x00000000 0x00000000
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,nosave,link,max. 4 values)
+SymbolPosition : (0x80) INodePosition
+# Expression Value: expression for up to 12 values (tr,link,string,max. 12 values)
+Value = string(i)
+# Float DefaultValue: numeric default value(s) used for string-valued expressions
+DefaultValue : NodeDiameter
+DefaultValue = 50
+# Filter Filter: expression for element filtering [, iterator] (tr,link,string,max. 2 values)
+Filter : (0x100) //JNodeSelector
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)&&not(isConnector)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)&&isConnector
+# Expression StyleIndex: expression for style index (tr,link,string)
+StyleIndex = which(1,Pi->isZone,Pi->isIntersection)
+
+[Node symbol]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Intersection ID
+# Text Description: user definable layer description (tr,subst)
+Description = Draws a symbol with node ID at intersection position\
+(_ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbf90000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : /ShowIntersectionID
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowIntersectionID
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool NumericValues: display numeric/string values
+NumericValues : ShowIntersectionID
+NumericValues = 0
+# Bool AutoScaleButton: display auto scale button in scale field
+AutoScaleButton = 0
+# Float TextSize: text size for values
+TextSize : NodeTextSize
+TextSize = 14
+# String Symbol: Symbol used for drawing values (nosave)
+Symbol : (0x80) /Symbol
+# Float Scale: value scale for shapes (units/pixel)
+Scale : NodeScale
+Scale = 1
+# Float XOffset: horizontal offset from specified position
+XOffset : NodeHOffset
+XOffset = 0
+# Float YOffset: vertical offset from specified position
+YOffset : NodeYOffset
+YOffset = 0
+# Style Style: style for symbol outline, fill and text properties
+Style : Nodes!
+Style[] = 0x2088896d 0x01fffddb 0x00000000 0x00000000
+Style[] = 0x20ff5c0a 0x01ffe4d7 0x00000000 0x00000000
+Style[] = 0x2000665f 0x01bef9be 0x00000000 0x00000000
+Style[] = 0x2000647f 0x01afdbdc 0x00000000 0x00000000
+Style[] = 0x207e5f08 0x01b5a57c 0x00000000 0x00000000
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,node,max. 4 values)
+SymbolPosition : (0x10)
+SymbolPosition = 0,0
+# Expression Value: expression for up to 12 values (tr,node,string,max. 12 values)
+Value = string(i)
+# Float DefaultValue: numeric default value(s) used for string-valued expressions
+DefaultValue : NodeDiameter
+DefaultValue = 50
+# Filter Filter: expression for element filtering [, iterator] (tr,node,string,max. 2 values)
+Filter : />SelectedIntersection
+Filter[] = [intersection selected in the table] isMarked
+Filter[] = [intersection selected in the table] isMarked
+Filter[] = i==1597
+Filter[] = i==1602
+Filter[] = i==1606
+Filter[] = i==1607
+Filter[] = i==1617
+Filter[] = i==1637
+Filter[] = i==1661
+Filter[] = i==1672
+Filter[] = i==1679
+Filter[] = i==1681
+Filter[] = i==1682
+Filter[] = i==1683
+Filter[] = i==1684
+Filter[] = i==1686
+Filter[] = i==1687
+Filter[] = i==1689
+Filter[] = i==1690
+Filter[] = i==1691
+Filter[] = i==1692
+Filter[] = i==1693
+Filter[] = i==1694
+Filter[] = i==1698
+Filter[] = i==1699
+Filter[] = i==1700
+Filter[] = i==1702
+Filter[] = i==1711
+Filter[] = i==1712
+Filter[] = i==1713
+Filter[] = i==1714
+Filter[] = i==1715
+Filter[] = i==1716
+Filter[] = i==1717
+Filter[] = i==1718
+Filter[] = i==1719
+Filter[] = i==1720
+Filter[] = i==1721
+Filter[] = i==1722
+Filter[] = i==1724
+Filter[] = i==1725
+Filter[] = i==1726
+Filter[] = i==1727
+Filter[] = i==1728
+Filter[] = i==1729
+Filter[] = i==1730
+Filter[] = i==1731
+Filter[] = i==1732
+Filter[] = i==1733
+Filter[] = i==1734
+Filter[] = i==1735
+Filter[] = i==1736
+Filter[] = i==1737
+Filter[] = i==1738
+Filter[] = i==1739
+Filter[] = i==1740
+Filter[] = i==1741
+Filter[] = i==1742
+Filter[] = i==1743
+Filter[] = i==1745
+Filter[] = i==1747
+Filter[] = i==1748
+Filter[] = i==1749
+Filter[] = i==1750
+Filter[] = i==1751
+Filter[] = i==1753
+Filter[] = i==1754
+Filter[] = i==1755
+Filter[] = i==1756
+Filter[] = i==1757
+Filter[] = i==1758
+Filter[] = i==1759
+Filter[] = i==1760
+Filter[] = i==1761
+Filter[] = i==1762
+Filter[] = i==1763
+Filter[] = i==1764
+Filter[] = i==1765
+Filter[] = i==1766
+Filter[] = i==1767
+Filter[] = i==1768
+Filter[] = i==1769
+Filter[] = i==1770
+Filter[] = i==1776
+Filter[] = i==1880
+Filter[] = i==1905
+Filter[] = i==1906
+Filter[] = i==1907
+Filter[] = i==1985
+Filter[] = i==1987
+Filter[] = i==1988
+Filter[] = i==1994
+Filter[] = i==1995
+Filter[] = i==1996
+Filter[] = i==2007
+Filter[] = i==2008
+Filter[] = i==2108
+Filter[] = i==2127
+Filter[] = i==2212
+Filter[] = i==2213
+Filter[] = i==2214
+Filter[] = i==2215
+Filter[] = i==2217
+Filter[] = i==2218
+Filter[] = i==2219
+Filter[] = i==2220
+Filter[] = i==2221
+Filter[] = i==2222
+Filter[] = i==2224
+Filter[] = i==2226
+Filter[] = i==2228
+Filter[] = i==2229
+Filter[] = i==2230
+Filter[] = i==2232
+Filter[] = i==2233
+Filter[] = i==2234
+Filter[] = i==2235
+Filter[] = i==2236
+Filter[] = i==2238
+Filter[] = i==2240
+Filter[] = i==2242
+Filter[] = i==2321
+Filter[] = i==2538
+Filter[] = i==2539
+Filter[] = i==2540
+Filter[] = i==2582
+Filter[] = i==2640
+Filter[] = i==2641
+Filter[] = i==2642
+Filter[] = i==2646
+Filter[] = i==2672
+Filter[] = i==2900
+Filter[] = i==2901
+Filter[] = i==2902
+Filter[] = i==2904
+Filter[] = i==2905
+Filter[] = i==2907
+Filter[] = i==2909
+Filter[] = i==2910
+Filter[] = i==2990
+Filter[] = i==3025
+Filter[] = i==3106
+Filter[] = i==3107
+Filter[] = i==3108
+Filter[] = i==3109
+Filter[] = i==3119
+Filter[] = i==3128
+Filter[] = i==3141
+Filter[] = i==3158
+Filter[] = i==3362
+Filter[] = i==3387
+Filter[] = i==3390
+Filter[] = i==3392
+Filter[] = i==3436
+Filter[] = i==3480
+Filter[] = i==3502
+Filter[] = i==3543
+Filter[] = i==3545
+Filter[] = i==3546
+Filter[] = i==3547
+Filter[] = i==3573
+Filter[] = i==3593
+Filter[] = i==3604
+Filter[] = i==3681
+Filter[] = i==3699
+Filter[] = i==3702
+Filter[] = i==3710
+Filter[] = i==3775
+Filter[] = i==3778
+Filter[] = i==3897
+Filter[] = i==3905
+Filter[] = i==3998
+Filter[] = i==4009
+Filter[] = i==4013
+Filter[] = i==4014
+Filter[] = i==4015
+Filter[] = i==4016
+Filter[] = i==4020
+Filter[] = i==4080
+Filter[] = i==4081
+Filter[] = i==4082
+Filter[] = i==4112
+Filter[] = i==4139
+Filter[] = i==4171
+Filter[] = i==4252
+Filter[] = i==4270
+Filter[] = i==4271
+Filter[] = i==4297
+Filter[] = i==4355
+Filter[] = i==4552
+Filter[] = i==4807
+Filter[] = i==4808
+Filter[] = i==4812
+Filter[] = i==4818
+Filter[] = i==4821
+Filter[] = i==4831
+Filter[] = i==4833
+Filter[] = i==4840
+Filter[] = i==4859
+Filter[] = i==4868
+Filter[] = i==4905
+Filter[] = i==5000
+Filter[] = i==5002
+Filter[] = i==5003
+Filter[] = i==5004
+Filter[] = i==5007
+Filter[] = i==5010
+Filter[] = i==5012
+Filter[] = i==5015
+Filter[] = i==5016
+Filter[] = i==5017
+Filter[] = i==5018
+Filter[] = i==5019
+Filter[] = i==5020
+Filter[] = i==5021
+Filter[] = i==5022
+Filter[] = i==5023
+Filter[] = i==5024
+Filter[] = i==5025
+Filter[] = i==5026
+Filter[] = i==5027
+Filter[] = i==5028
+Filter[] = i==5029
+Filter[] = i==5030
+Filter[] = i==5031
+Filter[] = i==5032
+Filter[] = i==5033
+Filter[] = i==5034
+Filter[] = i==5035
+Filter[] = i==5036
+Filter[] = i==5037
+Filter[] = i==5038
+Filter[] = i==5039
+Filter[] = i==5043
+Filter[] = i==5046
+Filter[] = i==5048
+Filter[] = i==5049
+Filter[] = i==5050
+Filter[] = i==5051
+Filter[] = i==5053
+Filter[] = i==5056
+Filter[] = i==5057
+Filter[] = i==5058
+Filter[] = i==5059
+Filter[] = i==5060
+Filter[] = i==5061
+Filter[] = i==5062
+Filter[] = i==5063
+Filter[] = i==5064
+Filter[] = i==5065
+Filter[] = i==5066
+Filter[] = i==5067
+Filter[] = i==5073
+Filter[] = i==5074
+Filter[] = i==5075
+Filter[] = i==5076
+Filter[] = i==5077
+Filter[] = i==5078
+Filter[] = i==5079
+Filter[] = i==5080
+Filter[] = i==5083
+Filter[] = i==5084
+Filter[] = i==5086
+Filter[] = i==5087
+Filter[] = i==5088
+Filter[] = i==5090
+Filter[] = i==5091
+Filter[] = i==5092
+Filter[] = i==5096
+Filter[] = i==5097
+Filter[] = i==5098
+Filter[] = i==5099
+Filter[] = i==5100
+Filter[] = i==5101
+Filter[] = i==5103
+Filter[] = i==5104
+Filter[] = i==5105
+Filter[] = i==5106
+Filter[] = i==5107
+Filter[] = i==5109
+Filter[] = i==5110
+Filter[] = i==5111
+Filter[] = i==5115
+Filter[] = i==5128
+Filter[] = i==5143
+Filter[] = i==5150
+Filter[] = i==5165
+Filter[] = i==5171
+Filter[] = i==5178
+Filter[] = i==5184
+Filter[] = i==5200
+Filter[] = i==5205
+Filter[] = i==5206
+Filter[] = i==5214
+Filter[] = i==5215
+Filter[] = i==5228
+Filter[] = i==5229
+Filter[] = i==5230
+Filter[] = i==5244
+Filter[] = i==5245
+Filter[] = i==5246
+Filter[] = i==5247
+Filter[] = i==5257
+Filter[] = i==5261
+Filter[] = i==5272
+Filter[] = i==5273
+Filter[] = i==5277
+Filter[] = i==5282
+Filter[] = i==5286
+Filter[] = i==5297
+Filter[] = i==5305
+Filter[] = i==5326
+Filter[] = i==5330
+Filter[] = i==5331
+Filter[] = i==5340
+Filter[] = i==5344
+Filter[] = i==5348
+Filter[] = i==5355
+Filter[] = i==5359
+Filter[] = i==5366
+Filter[] = i==5383
+Filter[] = i==5387
+Filter[] = i==5390
+Filter[] = i==5391
+Filter[] = i==5392
+Filter[] = i==5393
+Filter[] = i==5394
+Filter[] = i==5395
+Filter[] = i==5396
+Filter[] = i==5397
+Filter[] = i==5399
+Filter[] = i==5400
+Filter[] = i==5401
+Filter[] = i==5402
+Filter[] = i==5403
+Filter[] = i==5405
+Filter[] = i==5406
+Filter[] = i==5407
+Filter[] = i==5408
+Filter[] = i==5409
+Filter[] = i==5410
+Filter[] = i==5411
+Filter[] = i==5412
+Filter[] = i==5415
+Filter[] = i==5419
+Filter[] = i==5420
+Filter[] = i==5421
+Filter[] = i==5422
+Filter[] = i==5423
+Filter[] = i==5424
+Filter[] = i==5426
+Filter[] = i==5428
+Filter[] = i==5429
+Filter[] = i==5430
+Filter[] = i==5431
+Filter[] = i==5432
+Filter[] = i==5433
+Filter[] = i==5434
+Filter[] = i==5435
+Filter[] = i==5436
+Filter[] = i==5437
+Filter[] = i==5439
+Filter[] = i==5442
+Filter[] = i==5443
+Filter[] = i==5444
+Filter[] = i==5446
+Filter[] = i==5447
+Filter[] = i==5448
+Filter[] = i==5449
+Filter[] = i==5450
+Filter[] = i==5451
+Filter[] = i==5452
+Filter[] = i==5453
+Filter[] = i==5454
+Filter[] = i==5455
+Filter[] = i==5456
+Filter[] = i==5457
+Filter[] = i==5458
+Filter[] = i==5459
+Filter[] = i==5460
+Filter[] = i==5462
+Filter[] = i==5463
+Filter[] = i==5466
+Filter[] = i==5481
+Filter[] = i==5484
+Filter[] = i==5498
+Filter[] = i==5499
+Filter[] = i==5501
+Filter[] = i==5503
+Filter[] = i==5505
+Filter[] = i==5506
+Filter[] = i==5507
+Filter[] = i==5508
+Filter[] = i==5509
+Filter[] = i==5510
+Filter[] = i==5511
+Filter[] = i==5512
+Filter[] = i==5515
+Filter[] = i==5516
+Filter[] = i==5517
+Filter[] = i==5520
+Filter[] = i==5523
+Filter[] = i==5525
+Filter[] = i==5533
+Filter[] = i==5538
+Filter[] = i==5539
+Filter[] = i==5540
+Filter[] = i==5551
+Filter[] = i==5553
+Filter[] = i==5555
+Filter[] = i==5571
+Filter[] = i==5573
+Filter[] = i==5578
+Filter[] = i==5583
+Filter[] = i==5592
+Filter[] = i==5595
+Filter[] = i==5596
+Filter[] = i==5597
+Filter[] = i==5599
+Filter[] = i==5602
+Filter[] = i==5604
+Filter[] = i==5606
+Filter[] = i==5609
+Filter[] = i==5610
+Filter[] = i==5611
+Filter[] = i==5618
+Filter[] = i==5621
+Filter[] = i==5622
+Filter[] = i==5631
+Filter[] = i==5632
+Filter[] = i==5633
+Filter[] = i==5634
+Filter[] = i==5636
+Filter[] = i==5639
+Filter[] = i==5641
+Filter[] = i==5642
+Filter[] = i==5643
+Filter[] = i==5652
+Filter[] = i==5653
+Filter[] = i==5666
+Filter[] = i==5670
+Filter[] = i==5681
+Filter[] = i==5704
+Filter[] = i==5707
+Filter[] = i==5708
+Filter[] = i==5733
+Filter[] = i==5734
+Filter[] = i==5736
+Filter[] = i==5738
+Filter[] = i==5743
+Filter[] = i==5792
+Filter[] = i==5797
+Filter[] = i==5801
+Filter[] = i==5802
+Filter[] = i==5803
+Filter[] = i==5855
+Filter[] = i==5864
+Filter[] = i==5892
+Filter[] = i==5894
+Filter[] = i==5895
+Filter[] = i==5897
+Filter[] = i==5899
+Filter[] = i==5900
+Filter[] = i==5921
+Filter[] = i==5922
+Filter[] = i==6005
+Filter[] = i==6006
+Filter[] = i==6007
+Filter[] = i==6009
+Filter[] = i==6012
+Filter[] = i==6013
+Filter[] = i==6016
+Filter[] = i==6018
+Filter[] = i==6029
+Filter[] = i==6030
+Filter[] = i==6031
+Filter[] = i==6032
+Filter[] = i==6033
+Filter[] = i==6035
+Filter[] = i==6037
+Filter[] = i==6038
+Filter[] = i==6039
+Filter[] = i==6040
+Filter[] = i==6047
+Filter[] = i==6050
+Filter[] = i==6052
+Filter[] = i==6053
+Filter[] = i==6054
+Filter[] = i==6063
+Filter[] = i==6064
+Filter[] = i==6065
+Filter[] = i==6067
+Filter[] = i==6068
+Filter[] = i==6073
+Filter[] = i==6078
+Filter[] = i==6086
+Filter[] = i==6092
+Filter[] = i==6094
+Filter[] = i==6096
+Filter[] = i==6100
+Filter[] = i==6102
+Filter[] = i==6104
+Filter[] = i==6107
+Filter[] = i==6109
+Filter[] = i==6110
+Filter[] = i==6114
+Filter[] = i==6120
+Filter[] = i==6121
+Filter[] = i==6122
+Filter[] = i==6123
+Filter[] = i==6124
+Filter[] = i==6125
+Filter[] = i==6126
+Filter[] = i==6127
+Filter[] = i==6128
+Filter[] = i==6131
+Filter[] = i==6132
+Filter[] = i==6133
+Filter[] = i==6153
+Filter[] = i==6156
+Filter[] = i==6157
+Filter[] = i==6165
+Filter[] = i==6166
+Filter[] = i==6168
+Filter[] = i==6170
+Filter[] = i==6175
+Filter[] = i==6200
+Filter[] = i==6201
+Filter[] = i==6202
+Filter[] = i==6203
+Filter[] = i==6205
+Filter[] = i==6210
+Filter[] = i==6215
+Filter[] = i==6216
+Filter[] = i==6220
+Filter[] = i==6221
+Filter[] = i==6226
+Filter[] = i==6251
+Filter[] = i==6252
+Filter[] = i==6253
+Filter[] = i==6395
+Filter[] = i==6407
+Filter[] = i==6482
+Filter[] = i==6486
+Filter[] = i==6494
+Filter[] = i==6523
+Filter[] = i==6525
+Filter[] = i==6533
+Filter[] = i==6538
+Filter[] = i==6539
+Filter[] = i==6540
+Filter[] = i==6542
+Filter[] = i==6544
+Filter[] = i==6554
+Filter[] = i==6555
+Filter[] = i==6557
+Filter[] = i==6558
+Filter[] = i==6559
+Filter[] = i==6560
+Filter[] = i==6563
+Filter[] = i==6564
+Filter[] = i==6566
+Filter[] = i==6567
+Filter[] = i==6580
+Filter[] = i==6592
+Filter[] = i==6594
+Filter[] = i==6596
+Filter[] = i==6597
+Filter[] = i==6598
+Filter[] = i==6600
+Filter[] = i==6601
+Filter[] = i==6602
+Filter[] = i==6613
+Filter[] = i==6621
+Filter[] = i==6623
+Filter[] = i==6625
+Filter[] = i==6634
+Filter[] = i==6659
+Filter[] = i==6662
+Filter[] = i==6670
+Filter[] = i==6672
+Filter[] = i==6675
+Filter[] = i==6685
+Filter[] = i==6695
+Filter[] = i==6696
+Filter[] = i==6698
+Filter[] = i==6707
+Filter[] = i==6712
+Filter[] = i==6718
+Filter[] = i==6720
+Filter[] = i==6727
+Filter[] = i==6729
+Filter[] = i==6737
+Filter[] = i==6749
+Filter[] = i==6754
+Filter[] = i==6755
+Filter[] = i==6758
+Filter[] = i==6762
+Filter[] = i==6763
+Filter[] = i==6766
+Filter[] = i==6768
+Filter[] = i==6772
+Filter[] = i==6779
+Filter[] = i==6782
+Filter[] = i==6799
+Filter[] = i==6810
+Filter[] = i==6814
+Filter[] = i==6997
+Filter[] = i==6999
+Filter[] = i==7001
+Filter[] = i==7033
+Filter[] = i==7051
+Filter[] = i==7052
+Filter[] = i==7056
+Filter[] = i==7062
+Filter[] = i==7066
+Filter[] = i==7067
+Filter[] = i==7075
+Filter[] = i==7076
+Filter[] = i==7077
+Filter[] = i==7078
+Filter[] = i==7083
+Filter[] = i==7093
+Filter[] = i==7102
+Filter[] = i==7108
+Filter[] = i==7153
+Filter[] = i==7175
+Filter[] = i==7177
+Filter[] = i==7203
+Filter[] = i==7204
+Filter[] = i==7209
+Filter[] = i==7291
+Filter[] = i==7350
+Filter[] = i==7378
+Filter[] = i==7392
+Filter[] = i==7403
+Filter[] = i==7527
+Filter[] = i==7530
+Filter[] = i==7533
+Filter[] = i==7535
+Filter[] = i==7536
+Filter[] = i==7537
+Filter[] = i==7539
+Filter[] = i==7546
+Filter[] = i==7547
+Filter[] = i==7551
+Filter[] = i==7552
+Filter[] = i==7553
+Filter[] = i==7554
+Filter[] = i==7555
+Filter[] = i==7557
+Filter[] = i==7560
+Filter[] = i==7561
+Filter[] = i==7567
+Filter[] = i==7568
+Filter[] = i==7569
+Filter[] = i==7570
+Filter[] = i==7571
+Filter[] = i==7572
+Filter[] = i==7573
+Filter[] = i==7578
+Filter[] = i==7581
+Filter[] = i==7582
+Filter[] = i==7592
+Filter[] = i==7598
+Filter[] = i==7617
+Filter[] = i==7636
+Filter[] = i==7638
+Filter[] = i==7655
+Filter[] = i==7662
+Filter[] = i==7664
+Filter[] = i==7669
+Filter[] = i==7671
+Filter[] = i==7691
+Filter[] = i==7721
+Filter[] = i==7730
+Filter[] = i==7742
+Filter[] = i==7743
+Filter[] = i==7756
+Filter[] = i==7757
+Filter[] = i==7764
+Filter[] = i==7766
+Filter[] = i==7768
+Filter[] = i==7786
+Filter[] = i==7789
+Filter[] = i==7792
+Filter[] = i==7796
+Filter[] = i==7797
+Filter[] = i==7803
+Filter[] = i==7806
+Filter[] = i==7844
+Filter[] = i==7870
+Filter[] = i==7888
+Filter[] = i==7891
+Filter[] = i==7892
+Filter[] = i==7895
+Filter[] = i==7898
+Filter[] = i==7935
+Filter[] = i==8035
+Filter[] = i==8237
+Filter[] = i==8350
+Filter[] = i==8357
+Filter[] = i==8373
+Filter[] = i==8382
+Filter[] = i==8383
+Filter[] = i==8384
+Filter[] = i==8385
+Filter[] = i==8386
+Filter[] = i==8387
+Filter[] = i==8400
+Filter[] = i==8502
+Filter[] = i==8616
+Filter[] = i==8878
+Filter[] = i==8879
+Filter[] = i==81704
+Filter[] = i==82297
+Filter[] = i==85358
+Filter[] = i==93380
+Filter[] = i==93937
+Filter[] = i==125764
+Filter[] = i==195186
+# Expression StyleIndex: expression for style index (tr,node,string)
+StyleIndex = which(1,isZone,isIntersection)
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Nodes
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Gives access to the parameters defining the display of the node circles\
+(_ALL_INTER_NODES)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbda0000
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = Symb
+TranslationContext[] = SelectorField
+TranslationContext[] = Mapper
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowNodes
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowNodes
+MFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag : /ShowNodes
+BFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Filter0;Filter;Node filter:;nodes connected to the incoming and outgoing links;0;0;0;0;links;
+Layout[] = String0;String combo;Symbol:;shape used for drawing nodes;1;1;0;0;;
+Layout[] = Bool0;Checkbox;Adjacent nodes;display adjacent nodes;2;2;0;0;;
+Layout[] = Bool1;Checkbox;Intersection ID;display intersection ID;3;3;0;0;;
+Layout[] = Float0;Scale;Node diameter:;node diameter (in pixels);4;4;0;0;0
+Layout[] = Float2;Scale;Distance factor:;distance factor from intersection circle;5;5;0;0;0
+Layout[] = Float1;Spinbox;Text size:;text size for node numbers;6;6;0;0;0;100;
+Layout[] = Integer0;Spinbox;Rotation angle:;rotation angle in degrees;7;7;0;0;-9999;9999;
+Layout[] = Style0;Style;Node style:;Node symbol style (regular nodes, centroids, intersections);8;8;0;0;;
+# Bool Bool0: display adjacent nodes
+Bool0 : DisplayNodes
+Bool0 = 1
+# Bool Bool1: display intersection ID
+Bool1 : ShowIntersectionID
+Bool1 = 0
+# Integer Integer0: rotation angle in degrees
+Integer0 : RotationAngle
+Integer0 = 0
+# Float Float0: node diameter (in pixels)
+Float0 : NodeDiameter/
+Float0 = 50
+# Float Float1: text size for node numbers
+Float1 : NodeTextSize
+Float1 = 14
+# Float Float2: distance factor from intersection circle
+Float2 : DistanceFactor/
+Float2 = 1.2
+# String String0: shape used for drawing nodes
+String0 : (0x820) SymbolIndex/
+String0[] = Circle
+String0[] = No shape
+String0[] = Circle
+String0[] = Square
+String0[] = Diamond
+String0[] = Delta
+String0[] = Nabla
+String0[] = Star
+# Filter Filter0: nodes connected to the incoming and outgoing links (tr,link,string,max. 2 values)
+Filter0 : (0x70) JNodeSelector
+Filter0[] = [all nodes] isIActive&&isAuto
+Filter0[] = [all nodes] isIActive&&isAuto
+Filter0[] = [regular nodes] isIActive&&isAuto&&not(isConnector)
+Filter0[] = [centroids] isIActive&&isAuto&&isConnector
+# Style Style0: Node symbol style (regular nodes, centroids, intersections)
+Style0 : (0x200) Nodes!/Nodes!/$WorksheetLoaded
+Style0[] = 0x2088896d 0x01fffddb 0x00000000 0x00000000
+Style0[] = 0x20ff5c0a 0x01ffe4d7 0x00000000 0x00000000
+Style0[] = 0x2000665f 0x01bef9be 0x00000000 0x00000000
+Style0[] = 0x2000647f 0x01afdbdc 0x00000000 0x00000000
+Style0[] = 0x207e5f08 0x01b5a57c 0x00000000 0x00000000
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = English symbol
+# Text Description: user definable layer description (tr,subst)
+Description = Send English name of chosen symbol (_ALL_SYMBOLS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = SymbolMapper
+TranslationContext[] = Mapper
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : (0x100) //SymbolIndex
+IA = 2
+# Integer IB: integer parameter IB
+IB : /DisplayNodes
+IB = 1
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(IB,lookup(IA,"No shape","Circle","Square","Diamond","Delta","Nabla","Star"),"No shape")
+# String SR: string result (nosave)
+SR : (0x80) Symbol/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Outgoing link position
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Link info Configurable control (_ALL_INTER_LINKS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Diameter
+FA = 392.250079822891
+# String SA: string parameter SA (subst)
+SA : //%CurrentView
+SA = %<%ViewScale>%
+# Float FB: floating point parameter FB (nosave)
+FB : (0x80) /TextPosition
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = put(FA/2*FB*number(SA))+"*Cos(angle),"+get(1)+"*Sin(angle),angle"
+# String SR: string result (nosave)
+SR : (0x80) JTextPosition/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = One-way incoming link position
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Link info Configurable control (_ALL_INTER_LINKS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Diameter
+FA = 392.250079822891
+# String SA: string parameter SA (subst)
+SA : //%CurrentView
+SA = %<%ViewScale>%
+# Float FB: floating point parameter FB (nosave)
+FB : (0x80) /TextPosition
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = put(FA/2*FB*number(SA))+"*(-Cos(angle)),"+get(1)+"*(-Sin(angle)),angle"
+# String SR: string result (nosave)
+SR : (0x80) ITextPosition/
+
+[Link symbol]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Text on outgoing link of turn
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Link info Configurable control (_ALL_INTER_LINKS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbf90000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinkInfo
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : ShowLinkInfo
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag : ShowLinkInfo
+BFlag = 0
+# Bool NumericValues: display numeric/string values
+NumericValues : RdNumericValues
+NumericValues = 1
+# Bool AutoScaleButton: display auto scale button in scale field
+AutoScaleButton = 0
+# Bool AutoFlip: flip text to read from left to right
+AutoFlip = 1
+# Float TextSize: text size for values
+TextSize : RdTextSize
+TextSize = 12
+# String Symbol: Symbol used for drawing values
+Symbol : RdSymbol
+Symbol = No shape
+# Float ArrowHead: factors for length [0] and width [1] of arrowhead
+ArrowHead[] = 1
+ArrowHead[] = 1.2
+# Style Style: style for symbol outline, fill and text properties
+Style : RdStyle
+Style = 0x20000000 0x01ffffff 0x00000000 0x0000002e
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,link,max. 4 values)
+SymbolPosition : (0x10) JTextPosition
+SymbolPosition = 0.833333*Cos(angle),0.833333*Sin(angle),angle
+# Expression Value: expression for up to 12 values (tr,link,string,max. 12 values)
+Value : RdValue
+Value = [auto volume] volau
+# Float DefaultValue: numeric default value(s) used for string-valued expressions
+DefaultValue : NodeDiameter
+DefaultValue = 50
+# Filter Filter: expression for element filtering [, iterator] (tr,link,string,max. 2 values)
+Filter : JNodeSelector
+Filter[] = [all nodes] isIActive&&isAuto
+Filter[] = [all nodes] isIActive&&isAuto
+Filter[] = [regular nodes] isIActive&&isAuto&&not(isConnector)
+Filter[] = [centroids] isIActive&&isAuto&&isConnector
+# Expression StyleIndex: expression for style index (tr,link,string)
+StyleIndex : RdStyleIndex
+StyleIndex = 
+
+[Link symbol]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Text on one-way incoming links
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Link info Configurable control (_ALL_INTER_LINKS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbf90000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinkInfo
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : ShowLinkInfo
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag : ShowLinkInfo
+BFlag = 0
+# Bool NumericValues: display numeric/string values
+NumericValues : RdNumericValues
+NumericValues = 1
+# Bool AutoScaleButton: display auto scale button in scale field
+AutoScaleButton = 0
+# Bool AutoFlip: flip text to read from left to right
+AutoFlip = 1
+# Float TextSize: text size for values
+TextSize : RdTextSize
+TextSize = 12
+# String Symbol: Symbol used for drawing values
+Symbol : RdSymbol
+Symbol = No shape
+# Float ArrowHead: factors for length [0] and width [1] of arrowhead
+ArrowHead[] = 1
+ArrowHead[] = 1.2
+# Style Style: style for symbol outline, fill and text properties
+Style : RdStyle
+Style = 0x20000000 0x01ffffff 0x00000000 0x0000002e
+# Expression SymbolPosition: symbol position x, y [,angle [,shapeval]] (tr,link,max. 4 values)
+SymbolPosition : (0x10) ITextPosition
+SymbolPosition = 0.833333*(-Cos(angle)),0.833333*(-Sin(angle)),angle
+# Expression Value: expression for up to 12 values (tr,link,string,max. 12 values)
+Value : RdValue
+Value = [auto volume] volau
+# Float DefaultValue: numeric default value(s) used for string-valued expressions
+DefaultValue : NodeDiameter
+DefaultValue = 50
+# Filter Filter: expression for element filtering [, iterator] (tr,link,string,max. 2 values)
+Filter : (0x100) //JNodeSelector
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)&&not(isConnector)
+Filter[] = isJActive&&isAuto&&not(Pji->lanes)&&isConnector
+# Expression StyleIndex: expression for style index (tr,link,string)
+StyleIndex : RdStyleIndex
+StyleIndex = 
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Link info
+# Text Description: user definable layer description (tr,subst)
+Description = Gives access to the parameters for adding link info\
+(_ALL_INTER_LINKS)
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowLinkInfo
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : ShowLinkInfo
+MFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag : ShowLinkInfo
+BFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Expression0;Expression;Link value:;;0;0;0;0;links;12;1
+Layout[] = Float0;Scale;Position:;position of text relative to nodes;2;2;0;0;0
+Layout[] = Float1;Spinbox;Text size:;text size for text on links;1;1;0;0;0;100;
+Layout[] = Style0;Style;Text style:;;3;3;0;0;;
+# Float Float0: position of text relative to nodes
+Float0 : TextPosition
+Float0 = 1
+# Float Float1: text size for text on links
+Float1 : RdTextSize
+Float1 = 12
+# Expression Expression0:  (tr,link,string,max. 12 values)
+Expression0 : RdValue
+Expression0 = [auto volume] volau
+# Style Style0: 
+Style0 : RdStyle
+Style0 = 0x20000000 0x01ffffff 0x00000000 0x0000002e
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Turn Value
+# Text Description: user definable layer description (tr,subst)
+Description = Resulting turn value (Sync: TurnValue2) to show or not turns using connectors
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : ConnectorTurns
+IA = 0
+# String SA: string parameter SA (subst,nosave)
+SA : (0x80) /TurnValue
+# Box BA: box parameter BA
+BA = 0;0;0;0
+# Box BB: box parameter BB
+BB = 0;0;0;0
+# Box BC: box parameter BC
+BC = 0;0;0;0
+# Box BD: box parameter BD
+BD = 0;0;0;0
+# Box BE: box parameter BE
+BE = 0;0;0;0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(IA,SA,"("+SA+")* not((Pi->isZone)||(Pk->isZone))")
+# String SR: string result (nosave)
+SR : (0x80) TurnValue2
+# Box BR: box result
+BR = 0;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Transformation matrix
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Computes transformation matrix following rotation angle
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA (nosave)
+FA : (0x80) /IntersectionPosition
+# Integer IA: integer parameter IA
+IA : RotationAngle
+IA = 0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = FA,FA1,Cos(IA),Cos(IA),FA,FA1,Sin(IA),-Sin(IA)
+# Float FR: floating point result (nosave)
+FR : (0x80) TransformationMatrix/
+# Integer IR: integer result (nosave)
+IR : (0x80)
+# String SR: string result (nosave)
+SR : (0x80)
+# Box BR: box result
+BR = 0;0;1;1
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Turn selector
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Generates turn selector \
+(turns with positive volume from or to the selected intersection node).\
+Receives '>SelectedIntersection' from node parameter layer and selects turns \
+total volume is positive.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst,nosave)
+SA : (0xb0) />SelectedIntersection
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = "Pj->("+uncomment(SA)+")&&(pvolau+pvolad>0)"
+# String SR: string result
+SR : TurnSelector
+SR = Pj->( isMarked)&&(pvolau+pvolad>0)
+
+[Turn parameter]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Turn table
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Generates an expression to diplay the 'from' node, 'to' node \
+traffic volume and additional volume for each turn.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool ResetToDefault: reset to default values before each evaluation
+ResetToDefault = 1
+# Integer StartingIndex: starting index for computed parameter values
+StartingIndex = 1
+# Expression Value: expression for parameter values (tr,turn,string)
+Value : //>SelectedIntersection
+Value = string(i,0,6) + string(k,0,7) +": "+string(pvolau,0,6)+string(pvolad,0,6)
+# Filter Filter: expression for element filtering [, iterator] (tr,turn,string,max. 2 values)
+Filter : /TurnSelector
+Filter = Pj->( isMarked)&&(pvolau+pvolad>0)
+# String DefaultValues: default values for indices below starting index (subst)
+DefaultValues : (0x800)
+DefaultValues = from:     to:  volau volad
+# String ResultValues: parameter in which results are stored (nosave)
+ResultValues : TurnTable/
+
+[Node parameter]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Intersection nodes
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Generates predefined choices corresponding to individual intersection nodes.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool ResetToDefault: reset to default values before each evaluation
+ResetToDefault = 1
+# Integer StartingIndex: starting index for computed parameter values
+StartingIndex = 2
+# Expression Value: expression for parameter values (tr,node,string)
+Value = "i=="+id
+# Filter Filter: expression for element filtering [, iterator] (tr,node,string,max. 2 values)
+Filter = [intersection nodes] isIntersection
+# String DefaultValues: default values for indices below starting index (subst)
+DefaultValues[] = [intersection selected in the table] isMarked
+DefaultValues[] = [intersection selected in the table] isMarked
+# String ResultValues: parameter in which results are stored (nosave)
+ResultValues : >SelectedIntersection/
+
+[Node parameter]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Selected node
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Identifier of the selected node
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Integer MaximumNumberOfValues: maximum number of values to be evaluated
+MaximumNumberOfValues = 1
+# Expression Value: expression for parameter values (tr,node,string)
+Value = id
+# Filter Filter: expression for element filtering [, iterator] (tr,nosave,node,string,max. 2 values)
+Filter : (0x80) />SelectedIntersection/$NumberOfMarkedNodes*
+# String ResultValues: parameter in which results are stored (nosave)
+ResultValues : @SelectedNode
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Associated table
+# Text Description: user definable layer description (tr,subst)
+Description = Turn traffic volume and times table
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfa0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile = %<$EmmePath>%/common/autores_turn.emt
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Intersection picker
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfa0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile = %<$EmmePath>%/common/intersectionpicker.emt
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Other inclusion
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowOtherInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowOtherInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile[] = %<$ProjectPath>%/Worksheets/prnlegend.eml
+ConfigurationFile[] = %<$EmmePath>%/common/transform.eml
+
