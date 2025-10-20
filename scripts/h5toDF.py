@@ -57,7 +57,7 @@ def zero_out_negative_expansion_factors(data, name):
     return(data)          
 
 #Imports the variable guide Excel file
-def get_guide(guide_file):
+def get_guide(guide_file, stdout=True):
     guide = openpyxl.load_workbook(guide_file, read_only = True)
     fileguides = {}
     j = 0
@@ -70,11 +70,12 @@ def get_guide(guide_file):
             #fileguides.update({guide.sheet_names()[j][0:].encode('ascii', 'replace'): guide.sheet_by_name(guide.sheet_names()[j])})
             fileguides.update({guide.sheetnames[j][0:] : guide.get_sheet_by_name(guide.sheetnames[j])})
             j = j + 1
-    print('Guide import complete')
+    if stdout:
+        print('Guide import complete')
     return(fileguides)
 
 # this is implementation for openpyxl
-def guide_to_dict(guide):
+def guide_to_dict(guide, stdout=True):
     time_start = time.time()
     catdict = {} #Main dictionary
     for file, sheet in guide.items():
@@ -94,14 +95,16 @@ def guide_to_dict(guide):
             # vardict.update({0: 'N\A'})  # TODO: why this is N/A instead of home?
             vardict.update({-1: 'N\A'})
             catdict[vnames[2 * var]] = vardict
-    print('Guide converted to dictionary in ' + str(round(time.time() - time_start, 1)) + ' seconds')
+    if stdout:
+        print('Guide converted to dictionary in ' + str(round(time.time() - time_start, 1)) + ' seconds')
     return(catdict)
 
-def convert(filename, guidefile, name):
+def convert(filename, guidefile, name, stdout=True):
     has_negative_expansion_factors = False
     L = len(guidefile)
     if guidefile[L-4:L] == 'json':
-        print('---Begin ' + name + ' conversion---')
+        if stdout:
+            print('---Begin ' + name + ' conversion---')
         ts = time.time()
         input = h5py.File(filename, 'r')
         with open(guidefile, 'rb') as fp:
@@ -128,15 +131,18 @@ def convert(filename, guidefile, name):
                 else:
                     negative_check(df[v], v)                                            
             output.update({f: df})
-            print(f + ' File import/recode complete in ' + str(round(time.time() - fs, 1)) + ' seconds')
-        print('---' + name + ' import/recode complete in ' + str(round(time.time() - ts, 1)) + ' seconds---')
+            if stdout:
+                print(f + ' File import/recode complete in ' + str(round(time.time() - fs, 1)) + ' seconds')
+        if stdout:
+            print('---' + name + ' import/recode complete in ' + str(round(time.time() - ts, 1)) + ' seconds---')
         return(output)
     elif guidefile[L-4:L] == 'xlsx':
-        print('---Begin ' + name + ' conversion---')
+        if stdout:
+            print('---Begin ' + name + ' conversion---')
         ts = time.time()
         input = h5py.File(filename, 'r')
-        guides = get_guide(guidefile)
-        categorical_dict = guide_to_dict(guides)
+        guides = get_guide(guidefile, stdout=stdout)
+        categorical_dict = guide_to_dict(guides, stdout=stdout)
         output = {}
         for f in input: #loop through the files
             fs = time.time()
@@ -160,16 +166,21 @@ def convert(filename, guidefile, name):
                     if v in ['psexpfac', 'pdexpfac', 'hhexpfac', 'hdexpfac', 'toexpfac', 'trexpfac']:
                         if pd.Series.min(df[v]) < 0:
                             has_negative_expansion_factors = True
-                            print('WARNING: Negative Expansion Factor Present!')
+                            if stdout:
+                                print('WARNING: Negative Expansion Factor Present!')
                     if v in ['taudist', 'travdist']:
                         if pd.Series.min(df[v]) < 0:
-                            print('WARNING: Negative Travel Distance Present!')
+                            if stdout:
+                                print('WARNING: Negative Travel Distance Present!')
                     if v in ['tautotime', 'travtime']:
                         if pd.Series.min(df[v]) < 0:
-                            print('WARNING: Negative Travel Time Present!')
+                            if stdout:
+                                print('WARNING: Negative Travel Time Present!')
             output.update({f: df})
-            print(f + ' File import/recode complete in '+str(round(time.time() - fs, 1)) + ' seconds')
-        print('---' + name + ' import/recode complete in '+str(round(time.time() - ts, 1)) + ' seconds---')
+            if stdout:
+                print(f + ' File import/recode complete in '+str(round(time.time() - fs, 1)) + ' seconds')
+        if stdout:
+            print('---' + name + ' import/recode complete in '+str(round(time.time() - ts, 1)) + ' seconds---')
         if has_negative_expansion_factors == True:
             output = zero_out_negative_expansion_factors(output, name)
         return(output)

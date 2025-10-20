@@ -496,7 +496,7 @@ def write_csv(df,fname):
     '''
     Write dataframe to file; append existing file
     '''
-#     df.to_csv(os.path.join(output_dir,fname),mode='a')
+    #df.to_csv(os.path.join(output_dir,fname),mode='a')
     if not os.path.isfile(os.path.join(output_dir,fname)):
         df.to_csv(os.path.join(output_dir,fname))
     else: # append without writing the header
@@ -513,20 +513,20 @@ if __name__ == '__main__':
     output_dir = sys.argv[2]
 
     if overwrite:
-	    for fname in output_csv_list:
-	        if os.path.isfile(os.path.join(output_dir,fname+'.csv')):
-	            os.remove(os.path.join(output_dir,fname+'.csv'))
+        for fname in output_csv_list:
+            if os.path.isfile(os.path.join(output_dir,fname+'.csv')):
+                os.remove(os.path.join(output_dir,fname+'.csv'))
 
-	# Process all files with h5 extension in input_dir
+    # Process all files with h5 extension in input_dir
     for fname in os.listdir(input_dir):
-		if fname.endswith('.h5'):
+        if fname.endswith('.h5'):
 
-			daysim_h5 = h5py.File(os.path.join(input_dir,fname))
+            daysim_h5 = h5py.File(os.path.join(input_dir,fname))
 
-			print('processing ' + fname)
+            print('processing ' + fname)
 
-			process_dataset(h5file=daysim_h5, scenario_name=fname.split('.')[0])
-			del daysim_h5 # drop from memory to save space for next comparison
+            process_dataset(h5file=daysim_h5, scenario_name=fname.split('.')[0])
+            del daysim_h5 # drop from memory to save space for next comparison
 
     # Create network summaries
     output_csv_list = ['transit_boardings','traffic_counts','net_summary']

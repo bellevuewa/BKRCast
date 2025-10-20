@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-10-20">
+
+<title>2&nbsp; Basic Summary – BKRCast Model Validation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<link href="./day_pattern.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8997191cfdf513e1b7fd3ae1bb1700ca.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-b5c00d174d5540907e26a71bbd896dfc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-8997191cfdf513e1b7fd3ae1bb1700ca.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+if (typeof require !== 'undefined') {
+require.undef("plotly");
+requirejs.config({
+    paths: {
+        'plotly': ['https://cdn.plot.ly/plotly-2.35.2.min']
+    }
+});
+require(['plotly'], function(Plotly) {
+    window._Plotly = Plotly;
+});
+}
+</script>
+
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./basic_summary.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basic Summary</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./logo/CityLogo_color200x200.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./logo/CityLogo_color200x200.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">BKRCast Model Validation</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/bellevuewa" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basic_summary.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basic Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./day_pattern.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Day Pattern</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tours</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./trip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Trips</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./long_term.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Long-term Report</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./time_choice.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Time Choice</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#household-and-population" id="toc-household-and-population" class="nav-link active" data-scroll-target="#household-and-population"><span class="header-section-number">2.1</span> Household and Population</a></li>
+  <li><a href="#population-by-district" id="toc-population-by-district" class="nav-link" data-scroll-target="#population-by-district"><span class="header-section-number">2.2</span> Population by District</a></li>
+  <li><a href="#workers-by-district" id="toc-workers-by-district" class="nav-link" data-scroll-target="#workers-by-district"><span class="header-section-number">2.3</span> Workers by District</a></li>
+  <li><a href="#students-by-district" id="toc-students-by-district" class="nav-link" data-scroll-target="#students-by-district"><span class="header-section-number">2.4</span> Students by District</a></li>
+  <li><a href="#population-by-person-type" id="toc-population-by-person-type" class="nav-link" data-scroll-target="#population-by-person-type"><span class="header-section-number">2.5</span> Population by Person Type</a></li>
+  <li><a href="#population-by-person-type-and-district" id="toc-population-by-person-type-and-district" class="nav-link" data-scroll-target="#population-by-person-type-and-district"><span class="header-section-number">2.6</span> Population by Person Type and District</a></li>
+  <li><a href="#transit-pass-ownership" id="toc-transit-pass-ownership" class="nav-link" data-scroll-target="#transit-pass-ownership"><span class="header-section-number">2.7</span> Transit Pass Ownership</a></li>
+  <li><a href="#automobile-ownership" id="toc-automobile-ownership" class="nav-link" data-scroll-target="#automobile-ownership"><span class="header-section-number">2.8</span> Automobile Ownership</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basic Summary</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 20, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="household-and-population" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="household-and-population"><span class="header-section-number">2.1</span> Household and Population</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="" aria-current="page">PSRC Region</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">BKR</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="a6fe2ebb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:21.711936Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:21.711936Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:31.509861Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:31.509861Z&quot;}}" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_6617f" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_6617f_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_6617f_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2023Survey</th>
+<th id="T_6617f_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (DaysimOutputs - 2023Survey)</th>
+<th id="T_6617f_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (DaysimOutputs - 2023Survey)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_6617f_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Total Persons</th>
+<td id="T_6617f_row0_col0" class="data row0 col0">4306155.0</td>
+<td id="T_6617f_row0_col1" class="data row0 col1">4221182.1</td>
+<td id="T_6617f_row0_col2" class="data row0 col2">84972.9</td>
+<td id="T_6617f_row0_col3" class="data row0 col3">2.0%</td>
+</tr>
+<tr class="even">
+<th id="T_6617f_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Total Households</th>
+<td id="T_6617f_row1_col0" class="data row1 col0">1759281.0</td>
+<td id="T_6617f_row1_col1" class="data row1 col1">1733407.2</td>
+<td id="T_6617f_row1_col2" class="data row1 col2">25873.8</td>
+<td id="T_6617f_row1_col3" class="data row1 col3">1.5%</td>
+</tr>
+<tr class="odd">
+<th id="T_6617f_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Average Household Size</th>
+<td id="T_6617f_row2_col0" class="data row2 col0">2.4</td>
+<td id="T_6617f_row2_col1" class="data row2 col1">2.4</td>
+<td id="T_6617f_row2_col2" class="data row2 col2">0.0</td>
+<td id="T_6617f_row2_col3" class="data row2 col3">0.5%</td>
+</tr>
+<tr class="even">
+<th id="T_6617f_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Average Trips Per Person</th>
+<td id="T_6617f_row3_col0" class="data row3 col0">3.8</td>
+<td id="T_6617f_row3_col1" class="data row3 col1">3.8</td>
+<td id="T_6617f_row3_col2" class="data row3 col2">-0.1</td>
+<td id="T_6617f_row3_col3" class="data row3 col3">-1.4%</td>
+</tr>
+<tr class="odd">
+<th id="T_6617f_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Average Trip Length</th>
+<td id="T_6617f_row4_col0" class="data row4 col0">5.8</td>
+<td id="T_6617f_row4_col1" class="data row4 col1">6.6</td>
+<td id="T_6617f_row4_col2" class="data row4 col2">-0.8</td>
+<td id="T_6617f_row4_col3" class="data row4 col3">-11.8%</td>
+</tr>
+<tr class="even">
+<th id="T_6617f_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">Vehicle Miles per Person</th>
+<td id="T_6617f_row5_col0" class="data row5 col0">16.7</td>
+<td id="T_6617f_row5_col1" class="data row5 col1">15.4</td>
+<td id="T_6617f_row5_col2" class="data row5 col2">1.2</td>
+<td id="T_6617f_row5_col3" class="data row5 col3">7.9%</td>
+</tr>
+<tr class="odd">
+<th id="T_6617f_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Average Distance to Work (Non-Home)</th>
+<td id="T_6617f_row6_col0" class="data row6 col0">12.1</td>
+<td id="T_6617f_row6_col1" class="data row6 col1">11.7</td>
+<td id="T_6617f_row6_col2" class="data row6 col2">0.4</td>
+<td id="T_6617f_row6_col3" class="data row6 col3">3.4%</td>
+</tr>
+<tr class="even">
+<th id="T_6617f_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">Average Distance to School (Non-Home)</th>
+<td id="T_6617f_row7_col0" class="data row7 col0">5.5</td>
+<td id="T_6617f_row7_col1" class="data row7 col1">4.2</td>
+<td id="T_6617f_row7_col2" class="data row7 col2">1.3</td>
+<td id="T_6617f_row7_col3" class="data row7 col3">31.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="8a7bbb54-d298-4d01-b7e9-d54a40af216d" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("8a7bbb54-d298-4d01-b7e9-d54a40af216d")) {                    Plotly.newPlot(                        "8a7bbb54-d298-4d01-b7e9-d54a40af216d",                        [{"alignmentgroup":"True","hovertemplate":"Source=DaysimOutputs\u003cbr\u003eMetric=%{x}\u003cbr\u003eValue=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"DaysimOutputs","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"DaysimOutputs","offsetgroup":"DaysimOutputs","orientation":"v","showlegend":true,"textposition":"auto","x":["Average Household Size","Average Trips Per Person","Average Trip Length","Vehicle Miles per Person","Average Distance to Work (Non-Home)","Average Distance to School (Non-Home)"],"xaxis":"x","y":[2.4,3.8,5.8,16.7,12.1,5.5],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=2023Survey\u003cbr\u003eMetric=%{x}\u003cbr\u003eValue=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"2023Survey","marker":{"color":"#006598","pattern":{"shape":""}},"name":"2023Survey","offsetgroup":"2023Survey","orientation":"v","showlegend":true,"textposition":"auto","x":["Average Household Size","Average Trips Per Person","Average Trip Length","Vehicle Miles per Person","Average Distance to Work (Non-Home)","Average Distance to School (Non-Home)"],"xaxis":"x","y":[2.4,3.8,6.6,15.4,11.7,4.2],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Daysim Outputs vs Survey Summary (PSRC Region)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('8a7bbb54-d298-4d01-b7e9-d54a40af216d');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="1bc27a7d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:31.512868Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:31.512868Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:43.972312Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:43.972312Z&quot;}}" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_0240a" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_0240a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_0240a_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2023Survey</th>
+<th id="T_0240a_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (DaysimOutputs - 2023Survey)</th>
+<th id="T_0240a_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (DaysimOutputs - 2023Survey)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_0240a_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Total Persons</th>
+<td id="T_0240a_row0_col0" class="data row0 col0">323575.0</td>
+<td id="T_0240a_row0_col1" class="data row0 col1">337021.8</td>
+<td id="T_0240a_row0_col2" class="data row0 col2">-13446.8</td>
+<td id="T_0240a_row0_col3" class="data row0 col3">-4.0%</td>
+</tr>
+<tr class="even">
+<th id="T_0240a_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Total Households</th>
+<td id="T_0240a_row1_col0" class="data row1 col0">134808.0</td>
+<td id="T_0240a_row1_col1" class="data row1 col1">135324.1</td>
+<td id="T_0240a_row1_col2" class="data row1 col2">-516.1</td>
+<td id="T_0240a_row1_col3" class="data row1 col3">-0.4%</td>
+</tr>
+<tr class="odd">
+<th id="T_0240a_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Average Household Size</th>
+<td id="T_0240a_row2_col0" class="data row2 col0">2.4</td>
+<td id="T_0240a_row2_col1" class="data row2 col1">2.5</td>
+<td id="T_0240a_row2_col2" class="data row2 col2">-0.1</td>
+<td id="T_0240a_row2_col3" class="data row2 col3">-3.6%</td>
+</tr>
+<tr class="even">
+<th id="T_0240a_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Average Trips Per Person</th>
+<td id="T_0240a_row3_col0" class="data row3 col0">3.9</td>
+<td id="T_0240a_row3_col1" class="data row3 col1">4.0</td>
+<td id="T_0240a_row3_col2" class="data row3 col2">-0.0</td>
+<td id="T_0240a_row3_col3" class="data row3 col3">-1.2%</td>
+</tr>
+<tr class="odd">
+<th id="T_0240a_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Average Trip Length</th>
+<td id="T_0240a_row4_col0" class="data row4 col0">4.5</td>
+<td id="T_0240a_row4_col1" class="data row4 col1">6.5</td>
+<td id="T_0240a_row4_col2" class="data row4 col2">-2.0</td>
+<td id="T_0240a_row4_col3" class="data row4 col3">-30.2%</td>
+</tr>
+<tr class="even">
+<th id="T_0240a_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">Vehicle Miles per Person</th>
+<td id="T_0240a_row5_col0" class="data row5 col0">13.5</td>
+<td id="T_0240a_row5_col1" class="data row5 col1">13.9</td>
+<td id="T_0240a_row5_col2" class="data row5 col2">-0.3</td>
+<td id="T_0240a_row5_col3" class="data row5 col3">-2.5%</td>
+</tr>
+<tr class="odd">
+<th id="T_0240a_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Average Distance to Work (Non-Home)</th>
+<td id="T_0240a_row6_col0" class="data row6 col0">9.5</td>
+<td id="T_0240a_row6_col1" class="data row6 col1">8.3</td>
+<td id="T_0240a_row6_col2" class="data row6 col2">1.1</td>
+<td id="T_0240a_row6_col3" class="data row6 col3">13.6%</td>
+</tr>
+<tr class="even">
+<th id="T_0240a_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">Average Distance to School (Non-Home)</th>
+<td id="T_0240a_row7_col0" class="data row7 col0">4.2</td>
+<td id="T_0240a_row7_col1" class="data row7 col1">4.6</td>
+<td id="T_0240a_row7_col2" class="data row7 col2">-0.4</td>
+<td id="T_0240a_row7_col3" class="data row7 col3">-7.9%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="384f64d0-d6bd-4864-96f9-3e7b85a715a6" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("384f64d0-d6bd-4864-96f9-3e7b85a715a6")) {                    Plotly.newPlot(                        "384f64d0-d6bd-4864-96f9-3e7b85a715a6",                        [{"alignmentgroup":"True","hovertemplate":"Source=DaysimOutputs\u003cbr\u003eMetric=%{x}\u003cbr\u003eValue=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"DaysimOutputs","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"DaysimOutputs","offsetgroup":"DaysimOutputs","orientation":"v","showlegend":true,"textposition":"auto","x":["Average Household Size","Average Trips Per Person","Average Trip Length","Vehicle Miles per Person","Average Distance to Work (Non-Home)","Average Distance to School (Non-Home)"],"xaxis":"x","y":[2.4,3.9,4.5,13.5,9.5,4.2],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=2023Survey\u003cbr\u003eMetric=%{x}\u003cbr\u003eValue=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"2023Survey","marker":{"color":"#006598","pattern":{"shape":""}},"name":"2023Survey","offsetgroup":"2023Survey","orientation":"v","showlegend":true,"textposition":"auto","x":["Average Household Size","Average Trips Per Person","Average Trip Length","Vehicle Miles per Person","Average Distance to Work (Non-Home)","Average Distance to School (Non-Home)"],"xaxis":"x","y":[2.5,4.0,6.5,13.9,8.3,4.6],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Daysim Outputs vs Survey Summary (BKR)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('384f64d0-d6bd-4864-96f9-3e7b85a715a6');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="population-by-district" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="population-by-district"><span class="header-section-number">2.2</span> Population by District</h2>
+<div id="3ced50fe" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:43.975684Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:43.975684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:46.157776Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:46.157776Z&quot;}}" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_f5974" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_f5974_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_f5974_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2023Survey</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">DistrictFlowName</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_f5974_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Bellevue (excluding downtown)</th>
+<td id="T_f5974_row0_col0" class="data row0 col0">136,949</td>
+<td id="T_f5974_row0_col1" class="data row0 col1">148,910</td>
+</tr>
+<tr class="even">
+<th id="T_f5974_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Bellevue Downtown</th>
+<td id="T_f5974_row1_col0" class="data row1 col0">18,107</td>
+<td id="T_f5974_row1_col1" class="data row1 col1">9,443</td>
+</tr>
+<tr class="odd">
+<th id="T_f5974_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Kirkland</th>
+<td id="T_f5974_row2_col0" class="data row2 col0">95,301</td>
+<td id="T_f5974_row2_col1" class="data row2 col1">75,425</td>
+</tr>
+<tr class="even">
+<th id="T_f5974_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Redmond</th>
+<td id="T_f5974_row3_col0" class="data row3 col0">73,218</td>
+<td id="T_f5974_row3_col1" class="data row3 col1">103,244</td>
+</tr>
+<tr class="odd">
+<th id="T_f5974_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Seattle (excluding Seattle downtown)</th>
+<td id="T_f5974_row4_col0" class="data row4 col0">711,443</td>
+<td id="T_f5974_row4_col1" class="data row4 col1">693,485</td>
+</tr>
+<tr class="even">
+<th id="T_f5974_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">Seattle downtown</th>
+<td id="T_f5974_row5_col0" class="data row5 col0">89,865</td>
+<td id="T_f5974_row5_col1" class="data row5 col1">82,039</td>
+</tr>
+<tr class="odd">
+<th id="T_f5974_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Rest</th>
+<td id="T_f5974_row6_col0" class="data row6 col0">3,181,272</td>
+<td id="T_f5974_row6_col1" class="data row6 col1">3,108,589</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="workers-by-district" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="workers-by-district"><span class="header-section-number">2.3</span> Workers by District</h2>
+<div id="b7d37659" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:46.171867Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:46.171867Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:46.355457Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:46.355457Z&quot;}}" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_853fd" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_853fd_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Number of Workers (DaysimOutputs)</th>
+<th id="T_853fd_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Number of Workers (2023Survey)</th>
+<th id="T_853fd_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (Number of Workers (DaysimOutputs) - Number of Workers (2023Survey))</th>
+<th id="T_853fd_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (Number of Workers (DaysimOutputs) - Number of Workers (2023Survey))</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">DistrictFlowName</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_853fd_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Bellevue (excluding downtown)</th>
+<td id="T_853fd_row0_col0" class="data row0 col0">89,487</td>
+<td id="T_853fd_row0_col1" class="data row0 col1">86,218</td>
+<td id="T_853fd_row0_col2" class="data row0 col2">3,269</td>
+<td id="T_853fd_row0_col3" class="data row0 col3">4.0%</td>
+</tr>
+<tr class="even">
+<th id="T_853fd_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Bellevue Downtown</th>
+<td id="T_853fd_row1_col0" class="data row1 col0">80,196</td>
+<td id="T_853fd_row1_col1" class="data row1 col1">33,543</td>
+<td id="T_853fd_row1_col2" class="data row1 col2">46,653</td>
+<td id="T_853fd_row1_col3" class="data row1 col3">139.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_853fd_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Kirkland</th>
+<td id="T_853fd_row2_col0" class="data row2 col0">39,958</td>
+<td id="T_853fd_row2_col1" class="data row2 col1">58,906</td>
+<td id="T_853fd_row2_col2" class="data row2 col2">-18,948</td>
+<td id="T_853fd_row2_col3" class="data row2 col3">-32.0%</td>
+</tr>
+<tr class="even">
+<th id="T_853fd_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Redmond</th>
+<td id="T_853fd_row3_col0" class="data row3 col0">97,501</td>
+<td id="T_853fd_row3_col1" class="data row3 col1">78,797</td>
+<td id="T_853fd_row3_col2" class="data row3 col2">18,704</td>
+<td id="T_853fd_row3_col3" class="data row3 col3">24.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_853fd_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Seattle (excluding Seattle downtown)</th>
+<td id="T_853fd_row4_col0" class="data row4 col0">434,236</td>
+<td id="T_853fd_row4_col1" class="data row4 col1">312,757</td>
+<td id="T_853fd_row4_col2" class="data row4 col2">121,479</td>
+<td id="T_853fd_row4_col3" class="data row4 col3">39.0%</td>
+</tr>
+<tr class="even">
+<th id="T_853fd_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">Seattle downtown</th>
+<td id="T_853fd_row5_col0" class="data row5 col0">252,285</td>
+<td id="T_853fd_row5_col1" class="data row5 col1">178,833</td>
+<td id="T_853fd_row5_col2" class="data row5 col2">73,452</td>
+<td id="T_853fd_row5_col3" class="data row5 col3">41.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_853fd_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Rest</th>
+<td id="T_853fd_row6_col0" class="data row6 col0">1,343,124</td>
+<td id="T_853fd_row6_col1" class="data row6 col1">1,035,486</td>
+<td id="T_853fd_row6_col2" class="data row6 col2">307,638</td>
+<td id="T_853fd_row6_col3" class="data row6 col3">30.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="2352107f-1d87-4ba1-b0dd-a02b205a5e67" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("2352107f-1d87-4ba1-b0dd-a02b205a5e67")) {                    Plotly.newPlot(                        "2352107f-1d87-4ba1-b0dd-a02b205a5e67",                        [{"alignmentgroup":"True","hovertemplate":"Source=Number of Workers (DaysimOutputs)\u003cbr\u003eDistrict=%{x}\u003cbr\u003eNumber of Workers=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Number of Workers (DaysimOutputs)","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"Number of Workers (DaysimOutputs)","offsetgroup":"Number of Workers (DaysimOutputs)","orientation":"v","showlegend":true,"textposition":"auto","x":["Bellevue (excluding downtown)","Bellevue Downtown","Kirkland","Redmond","Seattle (excluding Seattle downtown)","Seattle downtown","Rest"],"xaxis":"x","y":[89487.0,80196.0,39958.0,97501.0,434236.0,252285.0,1343124.0],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Number of Workers (2023Survey)\u003cbr\u003eDistrict=%{x}\u003cbr\u003eNumber of Workers=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Number of Workers (2023Survey)","marker":{"color":"#006598","pattern":{"shape":""}},"name":"Number of Workers (2023Survey)","offsetgroup":"Number of Workers (2023Survey)","orientation":"v","showlegend":true,"textposition":"auto","x":["Bellevue (excluding downtown)","Bellevue Downtown","Kirkland","Redmond","Seattle (excluding Seattle downtown)","Seattle downtown","Rest"],"xaxis":"x","y":[86218.0,33543.0,58906.0,78797.0,312757.0,178833.0,1035486.0],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Number of Workers"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Workers by District"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('2352107f-1d87-4ba1-b0dd-a02b205a5e67');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</section>
+<section id="students-by-district" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="students-by-district"><span class="header-section-number">2.4</span> Students by District</h2>
+<div id="e4dcc232" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:46.358465Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:46.358465Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:46.537817Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:46.537817Z&quot;}}" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_9d3d1" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_9d3d1_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Number of Students (DaysimOutputs)</th>
+<th id="T_9d3d1_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Number of Students (2023Survey)</th>
+<th id="T_9d3d1_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (Number of Students (DaysimOutputs) - Number of Students (2023Survey))</th>
+<th id="T_9d3d1_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (Number of Students (DaysimOutputs) - Number of Students (2023Survey))</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">DistrictFlowName</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_9d3d1_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Bellevue (excluding downtown)</th>
+<td id="T_9d3d1_row0_col0" class="data row0 col0">47,317</td>
+<td id="T_9d3d1_row0_col1" class="data row0 col1">60,036</td>
+<td id="T_9d3d1_row0_col2" class="data row0 col2">-12,719</td>
+<td id="T_9d3d1_row0_col3" class="data row0 col3">-21.0%</td>
+</tr>
+<tr class="even">
+<th id="T_9d3d1_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Bellevue Downtown</th>
+<td id="T_9d3d1_row1_col0" class="data row1 col0">1,917</td>
+<td id="T_9d3d1_row1_col1" class="data row1 col1">300</td>
+<td id="T_9d3d1_row1_col2" class="data row1 col2">1,617</td>
+<td id="T_9d3d1_row1_col3" class="data row1 col3">539.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_9d3d1_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Kirkland</th>
+<td id="T_9d3d1_row2_col0" class="data row2 col0">21,274</td>
+<td id="T_9d3d1_row2_col1" class="data row2 col1">23,455</td>
+<td id="T_9d3d1_row2_col2" class="data row2 col2">-2,181</td>
+<td id="T_9d3d1_row2_col3" class="data row2 col3">-9.0%</td>
+</tr>
+<tr class="even">
+<th id="T_9d3d1_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Redmond</th>
+<td id="T_9d3d1_row3_col0" class="data row3 col0">10,044</td>
+<td id="T_9d3d1_row3_col1" class="data row3 col1">12,993</td>
+<td id="T_9d3d1_row3_col2" class="data row3 col2">-2,949</td>
+<td id="T_9d3d1_row3_col3" class="data row3 col3">-23.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_9d3d1_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">Seattle (excluding Seattle downtown)</th>
+<td id="T_9d3d1_row4_col0" class="data row4 col0">187,686</td>
+<td id="T_9d3d1_row4_col1" class="data row4 col1">177,046</td>
+<td id="T_9d3d1_row4_col2" class="data row4 col2">10,640</td>
+<td id="T_9d3d1_row4_col3" class="data row4 col3">6.0%</td>
+</tr>
+<tr class="even">
+<th id="T_9d3d1_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">Seattle downtown</th>
+<td id="T_9d3d1_row5_col0" class="data row5 col0">17,305</td>
+<td id="T_9d3d1_row5_col1" class="data row5 col1">11,458</td>
+<td id="T_9d3d1_row5_col2" class="data row5 col2">5,847</td>
+<td id="T_9d3d1_row5_col3" class="data row5 col3">51.0%</td>
+</tr>
+<tr class="odd">
+<th id="T_9d3d1_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Rest</th>
+<td id="T_9d3d1_row6_col0" class="data row6 col0">631,559</td>
+<td id="T_9d3d1_row6_col1" class="data row6 col1">644,688</td>
+<td id="T_9d3d1_row6_col2" class="data row6 col2">-13,129</td>
+<td id="T_9d3d1_row6_col3" class="data row6 col3">-2.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="724b1483-5976-44cb-b4ff-e320c004d62a" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("724b1483-5976-44cb-b4ff-e320c004d62a")) {                    Plotly.newPlot(                        "724b1483-5976-44cb-b4ff-e320c004d62a",                        [{"alignmentgroup":"True","hovertemplate":"Source=Number of Students (DaysimOutputs)\u003cbr\u003eDistrict=%{x}\u003cbr\u003eNumber of Students=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Number of Students (DaysimOutputs)","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"Number of Students (DaysimOutputs)","offsetgroup":"Number of Students (DaysimOutputs)","orientation":"v","showlegend":true,"textposition":"auto","x":["Bellevue (excluding downtown)","Bellevue Downtown","Kirkland","Redmond","Seattle (excluding Seattle downtown)","Seattle downtown","Rest"],"xaxis":"x","y":[47317.0,1917.0,21274.0,10044.0,187686.0,17305.0,631559.0],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Number of Students (2023Survey)\u003cbr\u003eDistrict=%{x}\u003cbr\u003eNumber of Students=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Number of Students (2023Survey)","marker":{"color":"#006598","pattern":{"shape":""}},"name":"Number of Students (2023Survey)","offsetgroup":"Number of Students (2023Survey)","orientation":"v","showlegend":true,"textposition":"auto","x":["Bellevue (excluding downtown)","Bellevue Downtown","Kirkland","Redmond","Seattle (excluding Seattle downtown)","Seattle downtown","Rest"],"xaxis":"x","y":[60036.0,300.0,23455.0,12993.0,177046.0,11458.0,644688.0],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Number of Students"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Students by District"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('724b1483-5976-44cb-b4ff-e320c004d62a');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</section>
+<section id="population-by-person-type" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="population-by-person-type"><span class="header-section-number">2.5</span> Population by Person Type</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">PSRC Region</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">BKR</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="4d6dd63f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:46.546780Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:46.546780Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:46.827548Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:46.827548Z&quot;}}" data-execution_count="11">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_2e2f6" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_2e2f6_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_2e2f6_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2024Survey</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">Person Type</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_2e2f6_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Full-Time Worker</th>
+<td id="T_2e2f6_row0_col0" class="data row0 col0">1,746,787</td>
+<td id="T_2e2f6_row0_col1" class="data row0 col1">1,771,100</td>
+</tr>
+<tr class="even">
+<th id="T_2e2f6_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Part-Time Worker</th>
+<td id="T_2e2f6_row1_col0" class="data row1 col0">420,163</td>
+<td id="T_2e2f6_row1_col1" class="data row1 col1">431,954</td>
+</tr>
+<tr class="odd">
+<th id="T_2e2f6_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Non-Working Adult Age 65+</th>
+<td id="T_2e2f6_row2_col0" class="data row2 col0">417,292</td>
+<td id="T_2e2f6_row2_col1" class="data row2 col1">408,446</td>
+</tr>
+<tr class="even">
+<th id="T_2e2f6_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Non-Working Adult Age &lt;65</th>
+<td id="T_2e2f6_row3_col0" class="data row3 col0">444,376</td>
+<td id="T_2e2f6_row3_col1" class="data row3 col1">564,035</td>
+</tr>
+<tr class="odd">
+<th id="T_2e2f6_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">University Student</th>
+<td id="T_2e2f6_row4_col0" class="data row4 col0">267,869</td>
+<td id="T_2e2f6_row4_col1" class="data row4 col1">88,730</td>
+</tr>
+<tr class="even">
+<th id="T_2e2f6_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">High School Student Age 16+</th>
+<td id="T_2e2f6_row5_col0" class="data row5 col0">109,550</td>
+<td id="T_2e2f6_row5_col1" class="data row5 col1">152,255</td>
+</tr>
+<tr class="odd">
+<th id="T_2e2f6_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Child Age 5-15</th>
+<td id="T_2e2f6_row6_col0" class="data row6 col0">613,249</td>
+<td id="T_2e2f6_row6_col1" class="data row6 col1">569,767</td>
+</tr>
+<tr class="even">
+<th id="T_2e2f6_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">Child Age 0-4</th>
+<td id="T_2e2f6_row7_col0" class="data row7 col0">286,869</td>
+<td id="T_2e2f6_row7_col1" class="data row7 col1">234,895</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="f304c71b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:46.829555Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:46.829555Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:46.856610Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:46.856610Z&quot;}}" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_f9dc4" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_f9dc4_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_f9dc4_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2024Survey</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">Person Type</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_f9dc4_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Full-Time Worker</th>
+<td id="T_f9dc4_row0_col0" class="data row0 col0">135,779</td>
+<td id="T_f9dc4_row0_col1" class="data row0 col1">149,856</td>
+</tr>
+<tr class="even">
+<th id="T_f9dc4_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Part-Time Worker</th>
+<td id="T_f9dc4_row1_col0" class="data row1 col0">30,828</td>
+<td id="T_f9dc4_row1_col1" class="data row1 col1">29,516</td>
+</tr>
+<tr class="odd">
+<th id="T_f9dc4_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Non-Working Adult Age 65+</th>
+<td id="T_f9dc4_row2_col0" class="data row2 col0">30,816</td>
+<td id="T_f9dc4_row2_col1" class="data row2 col1">30,256</td>
+</tr>
+<tr class="even">
+<th id="T_f9dc4_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Non-Working Adult Age &lt;65</th>
+<td id="T_f9dc4_row3_col0" class="data row3 col0">32,337</td>
+<td id="T_f9dc4_row3_col1" class="data row3 col1">39,976</td>
+</tr>
+<tr class="odd">
+<th id="T_f9dc4_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">University Student</th>
+<td id="T_f9dc4_row4_col0" class="data row4 col0">19,056</td>
+<td id="T_f9dc4_row4_col1" class="data row4 col1">9,678</td>
+</tr>
+<tr class="even">
+<th id="T_f9dc4_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">High School Student Age 16+</th>
+<td id="T_f9dc4_row5_col0" class="data row5 col0">7,945</td>
+<td id="T_f9dc4_row5_col1" class="data row5 col1">11,954</td>
+</tr>
+<tr class="odd">
+<th id="T_f9dc4_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Child Age 5-15</th>
+<td id="T_f9dc4_row6_col0" class="data row6 col0">44,707</td>
+<td id="T_f9dc4_row6_col1" class="data row6 col1">48,466</td>
+</tr>
+<tr class="even">
+<th id="T_f9dc4_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">Child Age 0-4</th>
+<td id="T_f9dc4_row7_col0" class="data row7 col0">22,107</td>
+<td id="T_f9dc4_row7_col1" class="data row7 col1">17,319</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="population-by-person-type-and-district" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="population-by-person-type-and-district"><span class="header-section-number">2.6</span> Population by Person Type and District</h2>
+<div id="45c74336" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:46.859618Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:46.859618Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:47.442664Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:47.442664Z&quot;}}" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_f08a5" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="index_name level0" data-quarto-table-cell-role="th">DistrictFlowName</th>
+<th id="T_f08a5_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Bellevue (excluding downtown)</th>
+<th id="T_f08a5_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Bellevue Downtown</th>
+<th id="T_f08a5_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Kirkland</th>
+<th id="T_f08a5_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Redmond</th>
+<th id="T_f08a5_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Rest</th>
+<th id="T_f08a5_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">Seattle (excluding Seattle downtown)</th>
+<th id="T_f08a5_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">Seattle downtown</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">Person Type</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col4" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col5" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col6" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_f08a5_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Full-Time Worker</th>
+<td id="T_f08a5_row0_col0" class="data row0 col0">54,003</td>
+<td id="T_f08a5_row0_col1" class="data row0 col1">7,993</td>
+<td id="T_f08a5_row0_col2" class="data row0 col2">42,154</td>
+<td id="T_f08a5_row0_col3" class="data row0 col3">31,629</td>
+<td id="T_f08a5_row0_col4" class="data row0 col4">1,239,405</td>
+<td id="T_f08a5_row0_col5" class="data row0 col5">320,840</td>
+<td id="T_f08a5_row0_col6" class="data row0 col6">50,763</td>
+</tr>
+<tr class="even">
+<th id="T_f08a5_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Part-Time Worker</th>
+<td id="T_f08a5_row1_col0" class="data row1 col0">12,299</td>
+<td id="T_f08a5_row1_col1" class="data row1 col1">1,927</td>
+<td id="T_f08a5_row1_col2" class="data row1 col2">9,445</td>
+<td id="T_f08a5_row1_col3" class="data row1 col3">7,157</td>
+<td id="T_f08a5_row1_col4" class="data row1 col4">301,281</td>
+<td id="T_f08a5_row1_col5" class="data row1 col5">76,472</td>
+<td id="T_f08a5_row1_col6" class="data row1 col6">11,582</td>
+</tr>
+<tr class="odd">
+<th id="T_f08a5_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">Non-Working Adult Age 65+</th>
+<td id="T_f08a5_row2_col0" class="data row2 col0">13,313</td>
+<td id="T_f08a5_row2_col1" class="data row2 col1">3,100</td>
+<td id="T_f08a5_row2_col2" class="data row2 col2">8,304</td>
+<td id="T_f08a5_row2_col3" class="data row2 col3">6,099</td>
+<td id="T_f08a5_row2_col4" class="data row2 col4">314,556</td>
+<td id="T_f08a5_row2_col5" class="data row2 col5">63,178</td>
+<td id="T_f08a5_row2_col6" class="data row2 col6">8,742</td>
+</tr>
+<tr class="even">
+<th id="T_f08a5_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">Non-Working Adult Age &lt;65</th>
+<td id="T_f08a5_row3_col0" class="data row3 col0">14,485</td>
+<td id="T_f08a5_row3_col1" class="data row3 col1">1,784</td>
+<td id="T_f08a5_row3_col2" class="data row3 col2">8,909</td>
+<td id="T_f08a5_row3_col3" class="data row3 col3">7,159</td>
+<td id="T_f08a5_row3_col4" class="data row3 col4">350,461</td>
+<td id="T_f08a5_row3_col5" class="data row3 col5">54,142</td>
+<td id="T_f08a5_row3_col6" class="data row3 col6">7,436</td>
+</tr>
+<tr class="odd">
+<th id="T_f08a5_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">University Student</th>
+<td id="T_f08a5_row4_col0" class="data row4 col0">8,163</td>
+<td id="T_f08a5_row4_col1" class="data row4 col1">1,222</td>
+<td id="T_f08a5_row4_col2" class="data row4 col2">5,519</td>
+<td id="T_f08a5_row4_col3" class="data row4 col3">4,152</td>
+<td id="T_f08a5_row4_col4" class="data row4 col4">178,237</td>
+<td id="T_f08a5_row4_col5" class="data row4 col5">63,485</td>
+<td id="T_f08a5_row4_col6" class="data row4 col6">7,091</td>
+</tr>
+<tr class="even">
+<th id="T_f08a5_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">High School Student Age 16+</th>
+<td id="T_f08a5_row5_col0" class="data row5 col0">4,131</td>
+<td id="T_f08a5_row5_col1" class="data row5 col1">262</td>
+<td id="T_f08a5_row5_col2" class="data row5 col2">2,040</td>
+<td id="T_f08a5_row5_col3" class="data row5 col3">1,512</td>
+<td id="T_f08a5_row5_col4" class="data row5 col4">88,285</td>
+<td id="T_f08a5_row5_col5" class="data row5 col5">13,114</td>
+<td id="T_f08a5_row5_col6" class="data row5 col6">206</td>
+</tr>
+<tr class="odd">
+<th id="T_f08a5_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">Child Age 5-15</th>
+<td id="T_f08a5_row6_col0" class="data row6 col0">21,904</td>
+<td id="T_f08a5_row6_col1" class="data row6 col1">1,087</td>
+<td id="T_f08a5_row6_col2" class="data row6 col2">12,021</td>
+<td id="T_f08a5_row6_col3" class="data row6 col3">9,695</td>
+<td id="T_f08a5_row6_col4" class="data row6 col4">488,073</td>
+<td id="T_f08a5_row6_col5" class="data row6 col5">78,530</td>
+<td id="T_f08a5_row6_col6" class="data row6 col6">1,939</td>
+</tr>
+<tr class="even">
+<th id="T_f08a5_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">Child Age 0-4</th>
+<td id="T_f08a5_row7_col0" class="data row7 col0">8,651</td>
+<td id="T_f08a5_row7_col1" class="data row7 col1">732</td>
+<td id="T_f08a5_row7_col2" class="data row7 col2">6,909</td>
+<td id="T_f08a5_row7_col3" class="data row7 col3">5,815</td>
+<td id="T_f08a5_row7_col4" class="data row7 col4">220,974</td>
+<td id="T_f08a5_row7_col5" class="data row7 col5">41,682</td>
+<td id="T_f08a5_row7_col6" class="data row7 col6">2,106</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="transit-pass-ownership" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="transit-pass-ownership"><span class="header-section-number">2.7</span> Transit Pass Ownership</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">PSRC Region</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">BKR</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="05a947e6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:47.455813Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:47.454815Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:47.603900Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:47.603900Z&quot;}}" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_f0746" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_f0746_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_f0746_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2023Survey</th>
+<th id="T_f0746_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (DaysimOutputs - 2023Survey)</th>
+<th id="T_f0746_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (DaysimOutputs - 2023Survey)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_f0746_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Total Passes</th>
+<td id="T_f0746_row0_col0" class="data row0 col0">996,474.0</td>
+<td id="T_f0746_row0_col1" class="data row0 col1">1,162,962.6</td>
+<td id="T_f0746_row0_col2" class="data row0 col2">-166,489.0</td>
+<td id="T_f0746_row0_col3" class="data row0 col3">-14.3</td>
+</tr>
+<tr class="even">
+<th id="T_f0746_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Passes per Person</th>
+<td id="T_f0746_row1_col0" class="data row1 col0">0.2</td>
+<td id="T_f0746_row1_col1" class="data row1 col1">0.3</td>
+<td id="T_f0746_row1_col2" class="data row1 col2">-0.0</td>
+<td id="T_f0746_row1_col3" class="data row1 col3">-16.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="bc716191-4e94-448a-bc4f-84b8a5c0a829" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("bc716191-4e94-448a-bc4f-84b8a5c0a829")) {                    Plotly.newPlot(                        "bc716191-4e94-448a-bc4f-84b8a5c0a829",                        [{"alignmentgroup":"True","hovertemplate":"Source=DaysimOutputs\u003cbr\u003eMetric=%{x}\u003cbr\u003eTotal Passes=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"DaysimOutputs","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"DaysimOutputs","offsetgroup":"DaysimOutputs","orientation":"v","showlegend":true,"textposition":"auto","x":["Total Passes"],"xaxis":"x","y":[996474.0],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=2023Survey\u003cbr\u003eMetric=%{x}\u003cbr\u003eTotal Passes=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"2023Survey","marker":{"color":"#006598","pattern":{"shape":""}},"name":"2023Survey","offsetgroup":"2023Survey","orientation":"v","showlegend":true,"textposition":"auto","x":["Total Passes"],"xaxis":"x","y":[1162962.5549004907],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Total Passes"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Total Transit Passes Comparison (PSRC Region)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('bc716191-4e94-448a-bc4f-84b8a5c0a829');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="3a229624" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:47.606905Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:47.606905Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:47.713286Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:47.713286Z&quot;}}" data-execution_count="16">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_6b23e" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_6b23e_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">DaysimOutputs</th>
+<th id="T_6b23e_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">2023Survey</th>
+<th id="T_6b23e_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Difference (DaysimOutputs - 2023Survey)</th>
+<th id="T_6b23e_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">% Difference (DaysimOutputs - 2023Survey)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_6b23e_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">Total Passes</th>
+<td id="T_6b23e_row0_col0" class="data row0 col0">94,191.0</td>
+<td id="T_6b23e_row0_col1" class="data row0 col1">99,080.9</td>
+<td id="T_6b23e_row0_col2" class="data row0 col2">-4,890.0</td>
+<td id="T_6b23e_row0_col3" class="data row0 col3">-4.9</td>
+</tr>
+<tr class="even">
+<th id="T_6b23e_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">Passes per Person</th>
+<td id="T_6b23e_row1_col0" class="data row1 col0">0.3</td>
+<td id="T_6b23e_row1_col1" class="data row1 col1">0.3</td>
+<td id="T_6b23e_row1_col2" class="data row1 col2">-0.0</td>
+<td id="T_6b23e_row1_col3" class="data row1 col3">-1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="94701833-e4ab-4a30-ae28-729134a8f313" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("94701833-e4ab-4a30-ae28-729134a8f313")) {                    Plotly.newPlot(                        "94701833-e4ab-4a30-ae28-729134a8f313",                        [{"alignmentgroup":"True","hovertemplate":"Source=DaysimOutputs\u003cbr\u003eMetric=%{x}\u003cbr\u003eTotal Passes=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"DaysimOutputs","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"DaysimOutputs","offsetgroup":"DaysimOutputs","orientation":"v","showlegend":true,"textposition":"auto","x":["Total Passes"],"xaxis":"x","y":[94191.0],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=2023Survey\u003cbr\u003eMetric=%{x}\u003cbr\u003eTotal Passes=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"2023Survey","marker":{"color":"#006598","pattern":{"shape":""}},"name":"2023Survey","offsetgroup":"2023Survey","orientation":"v","showlegend":true,"textposition":"auto","x":["Total Passes"],"xaxis":"x","y":[99080.93781960444],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":""},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Total Passes"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Total Transit Passes Comparison (BKR)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('94701833-e4ab-4a30-ae28-729134a8f313');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="automobile-ownership" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="automobile-ownership"><span class="header-section-number">2.8</span> Automobile Ownership</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">PSRC Region</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">BKR</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="459b5ed0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:47.730349Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:47.729346Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:48.284487Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:48.284487Z&quot;}}" data-execution_count="18">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_82d2c" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_82d2c_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Percent of Households (DaysimOutputs)</th>
+<th id="T_82d2c_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Percent of Households (2023Survey)</th>
+<th id="T_82d2c_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Percent of Households (ACS)</th>
+<th id="T_82d2c_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Difference (Percent of Households (DaysimOutputs) - Percent of Households (2023Survey))</th>
+<th id="T_82d2c_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Difference (Percent of Households (DaysimOutputs) - Percent of Households (ACS))</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">Number of Vehicles in Household</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col4" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_82d2c_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_82d2c_row0_col0" class="data row0 col0">7.8%</td>
+<td id="T_82d2c_row0_col1" class="data row0 col1">8.3%</td>
+<td id="T_82d2c_row0_col2" class="data row0 col2">8.0%</td>
+<td id="T_82d2c_row0_col3" class="data row0 col3">-0.6%</td>
+<td id="T_82d2c_row0_col4" class="data row0 col4">-0.2%</td>
+</tr>
+<tr class="even">
+<th id="T_82d2c_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_82d2c_row1_col0" class="data row1 col0">32.6%</td>
+<td id="T_82d2c_row1_col1" class="data row1 col1">33.1%</td>
+<td id="T_82d2c_row1_col2" class="data row1 col2">31.2%</td>
+<td id="T_82d2c_row1_col3" class="data row1 col3">-0.5%</td>
+<td id="T_82d2c_row1_col4" class="data row1 col4">1.4%</td>
+</tr>
+<tr class="odd">
+<th id="T_82d2c_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_82d2c_row2_col0" class="data row2 col0">37.5%</td>
+<td id="T_82d2c_row2_col1" class="data row2 col1">37.6%</td>
+<td id="T_82d2c_row2_col2" class="data row2 col2">35.5%</td>
+<td id="T_82d2c_row2_col3" class="data row2 col3">-0.0%</td>
+<td id="T_82d2c_row2_col4" class="data row2 col4">2.0%</td>
+</tr>
+<tr class="even">
+<th id="T_82d2c_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_82d2c_row3_col0" class="data row3 col0">15.3%</td>
+<td id="T_82d2c_row3_col1" class="data row3 col1">13.0%</td>
+<td id="T_82d2c_row3_col2" class="data row3 col2">14.8%</td>
+<td id="T_82d2c_row3_col3" class="data row3 col3">2.3%</td>
+<td id="T_82d2c_row3_col4" class="data row3 col4">0.5%</td>
+</tr>
+<tr class="odd">
+<th id="T_82d2c_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4+</th>
+<td id="T_82d2c_row4_col0" class="data row4 col0">6.8%</td>
+<td id="T_82d2c_row4_col1" class="data row4 col1">7.9%</td>
+<td id="T_82d2c_row4_col2" class="data row4 col2">7.9%</td>
+<td id="T_82d2c_row4_col3" class="data row4 col3">-1.1%</td>
+<td id="T_82d2c_row4_col4" class="data row4 col4">-1.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="634b8ccf-c5e4-41aa-a73e-1a8a828173cd" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("634b8ccf-c5e4-41aa-a73e-1a8a828173cd")) {                    Plotly.newPlot(                        "634b8ccf-c5e4-41aa-a73e-1a8a828173cd",                        [{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (DaysimOutputs)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (DaysimOutputs)","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"Percent of Households (DaysimOutputs)","offsetgroup":"Percent of Households (DaysimOutputs)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[7.8,32.6,37.5,15.3,6.8],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (2023Survey)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (2023Survey)","marker":{"color":"#006598","pattern":{"shape":""}},"name":"Percent of Households (2023Survey)","offsetgroup":"Percent of Households (2023Survey)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[8.3,33.1,37.6,13.0,7.9],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (ACS)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (ACS)","marker":{"color":"#FFA500","pattern":{"shape":""}},"name":"Percent of Households (ACS)","offsetgroup":"Percent of Households (ACS)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[7.9977782190641475,31.2077336395477,35.54204835539286,14.79205339181337,7.943269759316658],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Number of Vehicles in Household"},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Percent of Households"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Automobile Ownership by Household (PSRC Region)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('634b8ccf-c5e4-41aa-a73e-1a8a828173cd');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="45e4d3ef" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-10-20T17:58:48.286492Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-10-20T17:58:48.286492Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-10-20T17:58:48.467752Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-10-20T17:58:48.467247Z&quot;}}" data-execution_count="19">
+<div class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_6507b" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_6507b_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Percent of Households (DaysimOutputs)</th>
+<th id="T_6507b_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Percent of Households (2023Survey)</th>
+<th id="T_6507b_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Percent of Households (ACS)</th>
+<th id="T_6507b_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Difference (Percent of Households (DaysimOutputs) - Percent of Households (2023Survey))</th>
+<th id="T_6507b_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Difference (Percent of Households (DaysimOutputs) - Percent of Households (ACS))</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">Number of Vehicles in Household</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col4" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_6507b_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_6507b_row0_col0" class="data row0 col0">6.4%</td>
+<td id="T_6507b_row0_col1" class="data row0 col1">8.3%</td>
+<td id="T_6507b_row0_col2" class="data row0 col2">8.9%</td>
+<td id="T_6507b_row0_col3" class="data row0 col3">-1.9%</td>
+<td id="T_6507b_row0_col4" class="data row0 col4">-2.5%</td>
+</tr>
+<tr class="even">
+<th id="T_6507b_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_6507b_row1_col0" class="data row1 col0">32.0%</td>
+<td id="T_6507b_row1_col1" class="data row1 col1">38.4%</td>
+<td id="T_6507b_row1_col2" class="data row1 col2">43.2%</td>
+<td id="T_6507b_row1_col3" class="data row1 col3">-6.4%</td>
+<td id="T_6507b_row1_col4" class="data row1 col4">-11.2%</td>
+</tr>
+<tr class="odd">
+<th id="T_6507b_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_6507b_row2_col0" class="data row2 col0">39.4%</td>
+<td id="T_6507b_row2_col1" class="data row2 col1">38.2%</td>
+<td id="T_6507b_row2_col2" class="data row2 col2">33.6%</td>
+<td id="T_6507b_row2_col3" class="data row2 col3">1.1%</td>
+<td id="T_6507b_row2_col4" class="data row2 col4">5.8%</td>
+</tr>
+<tr class="even">
+<th id="T_6507b_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_6507b_row3_col0" class="data row3 col0">15.6%</td>
+<td id="T_6507b_row3_col1" class="data row3 col1">11.8%</td>
+<td id="T_6507b_row3_col2" class="data row3 col2">10.5%</td>
+<td id="T_6507b_row3_col3" class="data row3 col3">3.8%</td>
+<td id="T_6507b_row3_col4" class="data row3 col4">5.1%</td>
+</tr>
+<tr class="odd">
+<th id="T_6507b_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4+</th>
+<td id="T_6507b_row4_col0" class="data row4 col0">6.6%</td>
+<td id="T_6507b_row4_col1" class="data row4 col1">3.3%</td>
+<td id="T_6507b_row4_col2" class="data row4 col2">3.8%</td>
+<td id="T_6507b_row4_col3" class="data row4 col3">3.4%</td>
+<td id="T_6507b_row4_col4" class="data row4 col4">2.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<div>                            <div id="8ac220df-9795-469c-85f8-0bb7609c9a8e" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("8ac220df-9795-469c-85f8-0bb7609c9a8e")) {                    Plotly.newPlot(                        "8ac220df-9795-469c-85f8-0bb7609c9a8e",                        [{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (DaysimOutputs)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (DaysimOutputs)","marker":{"color":"#00C0C0","pattern":{"shape":""}},"name":"Percent of Households (DaysimOutputs)","offsetgroup":"Percent of Households (DaysimOutputs)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[6.4,32.0,39.4,15.6,6.6],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (2023Survey)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (2023Survey)","marker":{"color":"#006598","pattern":{"shape":""}},"name":"Percent of Households (2023Survey)","offsetgroup":"Percent of Households (2023Survey)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[8.3,38.4,38.2,11.8,3.3],"yaxis":"y","type":"bar"},{"alignmentgroup":"True","hovertemplate":"Source=Percent of Households (ACS)\u003cbr\u003eNumber of Vehicles=%{x}\u003cbr\u003ePercent of Households=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Percent of Households (ACS)","marker":{"color":"#FFA500","pattern":{"shape":""}},"name":"Percent of Households (ACS)","offsetgroup":"Percent of Households (ACS)","orientation":"v","showlegend":true,"textposition":"auto","x":["0","1","2","3","4+"],"xaxis":"x","y":[8.91667623751005,43.18077408981279,33.587199954059955,10.505196967956817,3.810152750660388],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"rgb(36,36,36)"},"error_y":{"color":"rgb(36,36,36)"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"baxis":{"endlinecolor":"rgb(36,36,36)","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"rgb(36,36,36)"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"histogram2d"}],"histogram":[{"marker":{"line":{"color":"white","width":0.6}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"},"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"rgb(237,237,237)"},"line":{"color":"white"}},"header":{"fill":{"color":"rgb(217,217,217)"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":1,"tickcolor":"rgb(36,36,36)","ticks":"outside"}},"colorscale":{"diverging":[[0.0,"rgb(103,0,31)"],[0.1,"rgb(178,24,43)"],[0.2,"rgb(214,96,77)"],[0.3,"rgb(244,165,130)"],[0.4,"rgb(253,219,199)"],[0.5,"rgb(247,247,247)"],[0.6,"rgb(209,229,240)"],[0.7,"rgb(146,197,222)"],[0.8,"rgb(67,147,195)"],[0.9,"rgb(33,102,172)"],[1.0,"rgb(5,48,97)"]],"sequential":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"sequentialminus":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]]},"colorway":["#00C0C0","#006598","#FFA500"],"font":{"color":"rgb(36,36,36)","family":"Poppins","size":12},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","radialaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"zaxis":{"backgroundcolor":"white","gridcolor":"rgb(232,232,232)","gridwidth":2,"linecolor":"rgb(36,36,36)","showbackground":true,"showgrid":false,"showline":true,"ticks":"outside","zeroline":false,"zerolinecolor":"rgb(36,36,36)"}},"shapedefaults":{"fillcolor":"black","line":{"width":0},"opacity":0.3},"ternary":{"aaxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"baxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"},"bgcolor":"white","caxis":{"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside"}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"},"yaxis":{"automargin":true,"gridcolor":"rgb(232,232,232)","linecolor":"rgb(36,36,36)","showgrid":false,"showline":true,"ticks":"outside","title":{"standoff":15},"zeroline":false,"zerolinecolor":"rgb(36,36,36)"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Number of Vehicles in Household"},"showgrid":true},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Percent of Households"},"showgrid":true},"legend":{"title":{"text":"Source"},"tracegroupgap":0},"title":{"text":"Automobile Ownership by Household (BKR)"},"barmode":"group"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('8ac220df-9795-469c-85f8-0bb7609c9a8e');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./day_pattern.html" class="pagination-link" aria-label="Day Pattern">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Day Pattern</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

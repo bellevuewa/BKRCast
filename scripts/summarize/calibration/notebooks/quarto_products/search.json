@@ -1,0 +1,752 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "BKRCast Model Validation",
+    "section": "",
+    "text": "1 Introduction\nThese Household Travel Survey (HHTS) Quarto pages present travel insights derived from the Puget Sound Regional Household Travel Survey, conducted periodically by the Puget Sound Regional Council (PSRC). The City of Bellevue (City) contributed to the survey studies in 2013 and 2023. The City collaborated with PSRC to conduct additional sampling within Bellevue and cleaned the survey data. This data was then used to update the BKRCast model and analyze travel demand across the region, particularly in the BKR area (Bellevue, Kirkland, and Redmond).\nThe Modeling and Analysis Group (MAG) is continuously adding useful statistics to assist in calibrating the BKRCast Model. Meanwhile, MAG keeps updating the figures to ensure that the data used in the analysis remains current.\nPlease note that the 2013 survey collected one-day travel activities with an online survey form and a call center. In addition to the abforemend data collection approaches for one-day travel activities, the 2023 survey also gathered up to seven-day travel diaries, which included individuals’ GPS locations, through a smartphone-based app. For more details, please visit PSRC HHTS Program.\n\n\n\n\nSurvey Data Access\nTo protect the confidentiality, integrity, and security of personal information, the City will not disclose personal information collected in the survey except as required by law. The survey data is stored in a secure drive, please reach out to your supervisor if you would like to access the data or analysis scripts. You may contact Ohay Angah for access assistance.\n\n\nTips for Navigating Pages\n\nYou can access Survey Highlights by clicking the forward arrow at the bottom of the page.\nYou may navigate to any desired analysis page by selecting the item from the left sidebar.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html",
+    "href": "basic_summary.html",
+    "title": "2  Basic Summary",
+    "section": "",
+    "text": "2.1 Household and Population",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#household-and-population",
+    "href": "basic_summary.html#household-and-population",
+    "title": "2  Basic Summary",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Persons\n4306155.0\n4221182.1\n84972.9\n2.0%\n\n\nTotal Households\n1759281.0\n1733407.2\n25873.8\n1.5%\n\n\nAverage Household Size\n2.4\n2.4\n0.0\n0.5%\n\n\nAverage Trips Per Person\n3.8\n3.8\n-0.1\n-1.4%\n\n\nAverage Trip Length\n5.8\n6.6\n-0.8\n-11.8%\n\n\nVehicle Miles per Person\n16.7\n15.4\n1.2\n7.9%\n\n\nAverage Distance to Work (Non-Home)\n12.1\n11.7\n0.4\n3.4%\n\n\nAverage Distance to School (Non-Home)\n5.5\n4.2\n1.3\n31.4%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Persons\n323575.0\n337021.8\n-13446.8\n-4.0%\n\n\nTotal Households\n134808.0\n135324.1\n-516.1\n-0.4%\n\n\nAverage Household Size\n2.4\n2.5\n-0.1\n-3.6%\n\n\nAverage Trips Per Person\n3.9\n4.0\n-0.0\n-1.2%\n\n\nAverage Trip Length\n4.5\n6.5\n-2.0\n-30.2%\n\n\nVehicle Miles per Person\n13.5\n13.9\n-0.3\n-2.5%\n\n\nAverage Distance to Work (Non-Home)\n9.5\n8.3\n1.1\n13.6%\n\n\nAverage Distance to School (Non-Home)\n4.2\n4.6\n-0.4\n-7.9%",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#population-by-district",
+    "href": "basic_summary.html#population-by-district",
+    "title": "2  Basic Summary",
+    "section": "2.2 Population by District",
+    "text": "2.2 Population by District\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\n\n\nDistrictFlowName\n \n \n\n\n\n\nBellevue (excluding downtown)\n136,949\n148,910\n\n\nBellevue Downtown\n18,107\n9,443\n\n\nKirkland\n95,301\n75,425\n\n\nRedmond\n73,218\n103,244\n\n\nSeattle (excluding Seattle downtown)\n711,443\n693,485\n\n\nSeattle downtown\n89,865\n82,039\n\n\nRest\n3,181,272\n3,108,589",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#workers-by-district",
+    "href": "basic_summary.html#workers-by-district",
+    "title": "2  Basic Summary",
+    "section": "2.3 Workers by District",
+    "text": "2.3 Workers by District\n\n\n\n\n\n\n\n \nNumber of Workers (DaysimOutputs)\nNumber of Workers (2023Survey)\nDifference (Number of Workers (DaysimOutputs) - Number of Workers (2023Survey))\n% Difference (Number of Workers (DaysimOutputs) - Number of Workers (2023Survey))\n\n\nDistrictFlowName\n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n89,487\n86,218\n3,269\n4.0%\n\n\nBellevue Downtown\n80,196\n33,543\n46,653\n139.0%\n\n\nKirkland\n39,958\n58,906\n-18,948\n-32.0%\n\n\nRedmond\n97,501\n78,797\n18,704\n24.0%\n\n\nSeattle (excluding Seattle downtown)\n434,236\n312,757\n121,479\n39.0%\n\n\nSeattle downtown\n252,285\n178,833\n73,452\n41.0%\n\n\nRest\n1,343,124\n1,035,486\n307,638\n30.0%",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#students-by-district",
+    "href": "basic_summary.html#students-by-district",
+    "title": "2  Basic Summary",
+    "section": "2.4 Students by District",
+    "text": "2.4 Students by District\n\n\n\n\n\n\n\n \nNumber of Students (DaysimOutputs)\nNumber of Students (2023Survey)\nDifference (Number of Students (DaysimOutputs) - Number of Students (2023Survey))\n% Difference (Number of Students (DaysimOutputs) - Number of Students (2023Survey))\n\n\nDistrictFlowName\n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n47,317\n60,036\n-12,719\n-21.0%\n\n\nBellevue Downtown\n1,917\n300\n1,617\n539.0%\n\n\nKirkland\n21,274\n23,455\n-2,181\n-9.0%\n\n\nRedmond\n10,044\n12,993\n-2,949\n-23.0%\n\n\nSeattle (excluding Seattle downtown)\n187,686\n177,046\n10,640\n6.0%\n\n\nSeattle downtown\n17,305\n11,458\n5,847\n51.0%\n\n\nRest\n631,559\n644,688\n-13,129\n-2.0%",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#population-by-person-type",
+    "href": "basic_summary.html#population-by-person-type",
+    "title": "2  Basic Summary",
+    "section": "2.5 Population by Person Type",
+    "text": "2.5 Population by Person Type\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2024Survey\n\n\nPerson Type\n \n \n\n\n\n\nFull-Time Worker\n1,746,787\n1,771,100\n\n\nPart-Time Worker\n420,163\n431,954\n\n\nNon-Working Adult Age 65+\n417,292\n408,446\n\n\nNon-Working Adult Age &lt;65\n444,376\n564,035\n\n\nUniversity Student\n267,869\n88,730\n\n\nHigh School Student Age 16+\n109,550\n152,255\n\n\nChild Age 5-15\n613,249\n569,767\n\n\nChild Age 0-4\n286,869\n234,895\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2024Survey\n\n\nPerson Type\n \n \n\n\n\n\nFull-Time Worker\n135,779\n149,856\n\n\nPart-Time Worker\n30,828\n29,516\n\n\nNon-Working Adult Age 65+\n30,816\n30,256\n\n\nNon-Working Adult Age &lt;65\n32,337\n39,976\n\n\nUniversity Student\n19,056\n9,678\n\n\nHigh School Student Age 16+\n7,945\n11,954\n\n\nChild Age 5-15\n44,707\n48,466\n\n\nChild Age 0-4\n22,107\n17,319",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#population-by-person-type-and-district",
+    "href": "basic_summary.html#population-by-person-type-and-district",
+    "title": "2  Basic Summary",
+    "section": "2.6 Population by Person Type and District",
+    "text": "2.6 Population by Person Type and District\n\n\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nRest\nSeattle (excluding Seattle downtown)\nSeattle downtown\n\n\nPerson Type\n \n \n \n \n \n \n \n\n\n\n\nFull-Time Worker\n54,003\n7,993\n42,154\n31,629\n1,239,405\n320,840\n50,763\n\n\nPart-Time Worker\n12,299\n1,927\n9,445\n7,157\n301,281\n76,472\n11,582\n\n\nNon-Working Adult Age 65+\n13,313\n3,100\n8,304\n6,099\n314,556\n63,178\n8,742\n\n\nNon-Working Adult Age &lt;65\n14,485\n1,784\n8,909\n7,159\n350,461\n54,142\n7,436\n\n\nUniversity Student\n8,163\n1,222\n5,519\n4,152\n178,237\n63,485\n7,091\n\n\nHigh School Student Age 16+\n4,131\n262\n2,040\n1,512\n88,285\n13,114\n206\n\n\nChild Age 5-15\n21,904\n1,087\n12,021\n9,695\n488,073\n78,530\n1,939\n\n\nChild Age 0-4\n8,651\n732\n6,909\n5,815\n220,974\n41,682\n2,106",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#transit-pass-ownership",
+    "href": "basic_summary.html#transit-pass-ownership",
+    "title": "2  Basic Summary",
+    "section": "2.7 Transit Pass Ownership",
+    "text": "2.7 Transit Pass Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Passes\n996,474.0\n1,162,962.6\n-166,489.0\n-14.3\n\n\nPasses per Person\n0.2\n0.3\n-0.0\n-16.0\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Passes\n94,191.0\n99,080.9\n-4,890.0\n-4.9\n\n\nPasses per Person\n0.3\n0.3\n-0.0\n-1.0",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "basic_summary.html#automobile-ownership",
+    "href": "basic_summary.html#automobile-ownership",
+    "title": "2  Basic Summary",
+    "section": "2.8 Automobile Ownership",
+    "text": "2.8 Automobile Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Households (DaysimOutputs)\nPercent of Households (2023Survey)\nPercent of Households (ACS)\nDifference (Percent of Households (DaysimOutputs) - Percent of Households (2023Survey))\nDifference (Percent of Households (DaysimOutputs) - Percent of Households (ACS))\n\n\nNumber of Vehicles in Household\n \n \n \n \n \n\n\n\n\n0\n7.8%\n8.3%\n8.0%\n-0.6%\n-0.2%\n\n\n1\n32.6%\n33.1%\n31.2%\n-0.5%\n1.4%\n\n\n2\n37.5%\n37.6%\n35.5%\n-0.0%\n2.0%\n\n\n3\n15.3%\n13.0%\n14.8%\n2.3%\n0.5%\n\n\n4+\n6.8%\n7.9%\n7.9%\n-1.1%\n-1.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Households (DaysimOutputs)\nPercent of Households (2023Survey)\nPercent of Households (ACS)\nDifference (Percent of Households (DaysimOutputs) - Percent of Households (2023Survey))\nDifference (Percent of Households (DaysimOutputs) - Percent of Households (ACS))\n\n\nNumber of Vehicles in Household\n \n \n \n \n \n\n\n\n\n0\n6.4%\n8.3%\n8.9%\n-1.9%\n-2.5%\n\n\n1\n32.0%\n38.4%\n43.2%\n-6.4%\n-11.2%\n\n\n2\n39.4%\n38.2%\n33.6%\n1.1%\n5.8%\n\n\n3\n15.6%\n11.8%\n10.5%\n3.8%\n5.1%\n\n\n4+\n6.6%\n3.3%\n3.8%\n3.4%\n2.8%",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Basic Summary</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html",
+    "href": "day_pattern.html",
+    "title": "3  Day Pattern",
+    "section": "",
+    "text": "3.1 Total Tours",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#total-tours",
+    "href": "day_pattern.html#total-tours",
+    "title": "3  Day Pattern",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n5,878,074.0\n5,050,722.0\n827,351.9\n16.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n462,441.0\n332,686.9\n129,754.1\n39.0%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-per-person",
+    "href": "day_pattern.html#tour-per-person",
+    "title": "3  Day Pattern",
+    "section": "3.2 Tour per Person",
+    "text": "3.2 Tour per Person\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n1.4\n1.3\n0.0\n2.2%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n1.4\n1.1\n0.3\n23.9%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-share-by-purpose",
+    "href": "day_pattern.html#tour-share-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.3 Tour Share by Purpose",
+    "text": "3.3 Tour Share by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n26.9%\n27.5%\n-0.6%\n-2.1%\n\n\nSchool\n9.8%\n9.7%\n0.2%\n1.6%\n\n\nEscort\n11.1%\n10.8%\n0.3%\n3.2%\n\n\nPersonal Business\n7.0%\n6.8%\n0.2%\n2.6%\n\n\nShop\n12.9%\n12.9%\n0.0%\n0.1%\n\n\nMeal\n7.2%\n7.0%\n0.2%\n3.4%\n\n\nSocial\n25.0%\n25.3%\n-0.3%\n-1.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n1.9%\n1.8%\n0.1%\n7.5%\n\n\nSchool\n0.9%\n0.8%\n0.1%\n7.1%\n\n\nEscort\n0.8%\n0.8%\n0.1%\n12.1%\n\n\nPersonal Business\n0.5%\n0.3%\n0.2%\n81.6%\n\n\nShop\n0.8%\n0.5%\n0.3%\n55.4%\n\n\nMeal\n0.7%\n0.4%\n0.2%\n53.9%\n\n\nSocial\n2.2%\n2.0%\n0.2%\n12.2%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-share-by-mode",
+    "href": "day_pattern.html#tour-share-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.4 Tour Share by Mode",
+    "text": "3.4 Tour Share by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n10.8%\n10.9%\n-0.1%\n-1.1%\n\n\nBike\n0.6%\n1.2%\n-0.7%\n-54.5%\n\n\nSOV\n38.6%\n37.3%\n1.4%\n3.6%\n\n\nHOV2\n22.3%\n22.8%\n-0.5%\n-2.0%\n\n\nHOV3+\n21.6%\n19.5%\n2.1%\n10.8%\n\n\nTransit Walk Access\n3.4%\n4.3%\n-0.8%\n-19.9%\n\n\nTransit Auto Access\n0.2%\n0.4%\n-0.2%\n-48.2%\n\n\nSchool Bus\n2.4%\n2.5%\n-0.1%\n-2.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n0.6%\n0.8%\n-0.2%\n-28.3%\n\n\nBike\n0.0%\n0.1%\n-0.0%\n-42.8%\n\n\nSOV\n3.0%\n2.2%\n0.8%\n38.5%\n\n\nHOV2\n1.9%\n1.6%\n0.3%\n17.3%\n\n\nHOV3+\n1.6%\n1.1%\n0.5%\n47.8%\n\n\nTransit Walk Access\n0.5%\n0.3%\n0.2%\n64.6%\n\n\nTransit Auto Access\n0.0%\n0.2%\n-0.1%\n-86.1%\n\n\nSchool Bus\n0.2%\n0.2%\n0.0%\n1.9%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tours-per-person-by-purpose",
+    "href": "day_pattern.html#tours-per-person-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.5 Tours per Person by Purpose",
+    "text": "3.5 Tours per Person by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n0.4\n0.4\n0.0\n0.0%\n\n\nSchool\n0.1\n0.1\n0.0\n3.9%\n\n\nEscort\n0.1\n0.1\n0.0\n5.5%\n\n\nPersonal Business\n0.1\n0.1\n0.0\n4.9%\n\n\nShop\n0.2\n0.2\n0.0\n2.3%\n\n\nMeal\n0.1\n0.1\n0.0\n5.7%\n\n\nSocial\n0.3\n0.3\n0.0\n0.9%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n0.3\n0.3\n0.0\n11.5%\n\n\nSchool\n0.2\n0.1\n0.0\n11.1%\n\n\nEscort\n0.1\n0.1\n0.0\n16.3%\n\n\nPersonal Business\n0.1\n0.1\n0.0\n88.4%\n\n\nShop\n0.1\n0.1\n0.1\n61.2%\n\n\nMeal\n0.1\n0.1\n0.1\n59.7%\n\n\nSocial\n0.4\n0.3\n0.1\n16.4%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tours-per-person-by-mode",
+    "href": "day_pattern.html#tours-per-person-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.6 Tours per Person by Mode",
+    "text": "3.6 Tours per Person by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n0.1\n0.1\n0.0\n1.1%\n\n\nBike\n0.0\n0.0\n-0.0\n-53.5%\n\n\nSOV\n0.5\n0.5\n0.0\n6.0%\n\n\nHOV2\n0.3\n0.3\n0.0\n0.1%\n\n\nHOV3+\n0.3\n0.3\n0.0\n13.2%\n\n\nTransit Walk Access\n0.1\n0.1\n-0.0\n-18.1%\n\n\nTransit Auto Access\n0.0\n0.0\n-0.0\n-47.0%\n\n\nSchool Bus\n0.0\n0.0\n-0.0\n-0.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n0.3\n0.3\n0.0\n11.5%\n\n\nSchool\n0.2\n0.1\n0.0\n11.1%\n\n\nEscort\n0.1\n0.1\n0.0\n16.3%\n\n\nPersonal Business\n0.1\n0.1\n0.0\n88.4%\n\n\nShop\n0.1\n0.1\n0.1\n61.2%\n\n\nMeal\n0.1\n0.1\n0.1\n59.7%\n\n\nSocial\n0.4\n0.3\n0.1\n16.4%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-distance-by-purpose",
+    "href": "day_pattern.html#tour-distance-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.7 Tour Distance by Purpose",
+    "text": "3.7 Tour Distance by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n11.5\n11.8\n-0.3\n-2.6%\n\n\nSchool\n4.8\n4.6\n0.3\n5.8%\n\n\nEscort\n7.4\n7.1\n0.3\n4.1%\n\n\nPersonal Business\n6.7\n8.0\n-1.3\n-15.9%\n\n\nShop\n4.7\n4.7\n0.0\n0.6%\n\n\nMeal\n3.6\n3.8\n-0.1\n-4.1%\n\n\nSocial\n5.8\n6.9\n-1.1\n-16.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n9.2\n7.0\n2.2\n31.0%\n\n\nSchool\n3.9\n4.3\n-0.3\n-8.2%\n\n\nEscort\n6.6\n11.2\n-4.7\n-41.6%\n\n\nPersonal Business\n7.1\n5.7\n1.4\n24.9%\n\n\nShop\n2.7\n4.0\n-1.3\n-32.2%\n\n\nMeal\n2.9\n5.3\n-2.4\n-45.9%\n\n\nSocial\n4.9\n8.0\n-3.1\n-39.1%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-distance-by-mode",
+    "href": "day_pattern.html#tour-distance-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.8 Tour Distance by Mode",
+    "text": "3.8 Tour Distance by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n11.5\n11.8\n-0.3\n-2.6%\n\n\nSchool\n4.8\n4.6\n0.3\n5.8%\n\n\nEscort\n7.4\n7.1\n0.3\n4.1%\n\n\nPersonal Business\n6.7\n8.0\n-1.3\n-15.9%\n\n\nShop\n4.7\n4.7\n0.0\n0.6%\n\n\nMeal\n3.6\n3.8\n-0.1\n-4.1%\n\n\nSocial\n5.8\n6.9\n-1.1\n-16.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n9.2\n7.0\n2.2\n31.0%\n\n\nSchool\n3.9\n4.3\n-0.3\n-8.2%\n\n\nEscort\n6.6\n11.2\n-4.7\n-41.6%\n\n\nPersonal Business\n7.1\n5.7\n1.4\n24.9%\n\n\nShop\n2.7\n4.0\n-1.3\n-32.2%\n\n\nMeal\n2.9\n5.3\n-2.4\n-45.9%\n\n\nSocial\n4.9\n8.0\n-3.1\n-39.1%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-travel-time-by-purpose",
+    "href": "day_pattern.html#tour-travel-time-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.9 Tour Travel Time by Purpose",
+    "text": "3.9 Tour Travel Time by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n28.8\n25.3\n3.5\n13.7%\n\n\nSchool\n15.2\n13.4\n1.9\n13.9%\n\n\nEscort\n21.2\n16.1\n5.1\n31.4%\n\n\nPersonal Business\n20.1\n37.6\n-17.5\n-46.5%\n\n\nShop\n16.5\n14.4\n2.2\n15.1%\n\n\nMeal\n13.6\n16.7\n-3.1\n-18.8%\n\n\nSocial\n17.5\n17.4\n0.1\n0.6%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n18.9\n17.5\n1.4\n8.2%\n\n\nSchool\n8.8\n12.1\n-3.2\n-26.8%\n\n\nEscort\n13.7\n23.2\n-9.5\n-40.9%\n\n\nPersonal Business\n14.9\n14.1\n0.9\n6.2%\n\n\nShop\n6.8\n12.2\n-5.4\n-44.1%\n\n\nMeal\n7.2\n13.5\n-6.3\n-46.9%\n\n\nSocial\n10.7\n20.6\n-9.9\n-48.1%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#tour-travel-time-by-mode",
+    "href": "day_pattern.html#tour-travel-time-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.10 Tour Travel Time by Mode",
+    "text": "3.10 Tour Travel Time by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n3.6\n19.1\n-15.4\n-81.0%\n\n\nBike\n9.0\n11.9\n-2.9\n-24.1%\n\n\nSOV\n24.4\n19.6\n4.8\n24.8%\n\n\nHOV2\n22.1\n17.7\n4.3\n24.4%\n\n\nHOV3+\n22.2\n17.8\n4.4\n24.7%\n\n\nTransit Walk Access\n26.9\n67.9\n-41.0\n-60.4%\n\n\nTransit Auto Access\n35.5\n37.9\n-2.5\n-6.5%\n\n\nSchool Bus\n13.0\n10.5\n2.4\n23.0%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n2.7\n12.7\n-9.9\n-78.6%\n\n\nBike\n7.2\n10.2\n-3.0\n-29.0%\n\n\nSOV\n14.4\n14.3\n0.1\n0.5%\n\n\nHOV2\n13.5\n23.7\n-10.2\n-43.1%\n\n\nHOV3+\n13.2\n16.4\n-3.2\n-19.4%\n\n\nTransit Walk Access\n13.8\n22.7\n-8.9\n-39.4%\n\n\nTransit Auto Access\n15.0\n37.5\n-22.5\n-59.9%\n\n\nSchool Bus\n6.9\n8.7\n-1.8\n-20.2%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#subtour-purpose-share",
+    "href": "day_pattern.html#subtour-purpose-share",
+    "title": "3  Day Pattern",
+    "section": "3.11 Subtour Purpose Share",
+    "text": "3.11 Subtour Purpose Share\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs Share (%)\nDaysimOutputs # of Subtours\n2023Survey Share (%)\n2023Survey # of Subtours\nDifference (DaysimOutputs Share (%) - 2023Survey Share (%))\n\n\nPurpose\n \n \n \n \n \n\n\n\n\nWork\n1.3%\n76,953\n0.6%\n31,396\n0.7%\n\n\nSchool\n0.0%\n105\n0.0%\n29\n0.0%\n\n\nEscort\n0.0%\n417\n0.0%\n409\n-0.0%\n\n\nPersonal Business\n0.0%\n1,433\n0.0%\n2,227\n-0.0%\n\n\nShop\n0.2%\n10,931\n0.2%\n8,681\n0.0%\n\n\nMeal\n0.9%\n51,851\n0.7%\n33,040\n0.2%\n\n\nSocial\n0.5%\n29,356\n0.5%\n27,150\n-0.0%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs Share (%)\nDaysimOutputs # of Subtours\n2023Survey Share (%)\n2023Survey # of Subtours\nDifference (DaysimOutputs Share (%) - 2023Survey Share (%))\n\n\nPurpose\n \n \n \n \n \n\n\n\n\nWork\n1.2%\n5,613\n1.6%\n5,405\n-0.4%\n\n\nSchool\n0.0%\n5\nnan%\nnan\nnan%\n\n\nEscort\n0.0%\n29\n0.0%\n63\n-0.0%\n\n\nPersonal Business\n0.0%\n101\n0.3%\n1,071\n-0.3%\n\n\nShop\n0.2%\n776\n0.1%\n217\n0.1%\n\n\nMeal\n0.9%\n4,233\n2.1%\n7,153\n-1.2%\n\n\nSocial\n0.5%\n2,138\nnan%\nnan\nnan%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#number-of-stops",
+    "href": "day_pattern.html#number-of-stops",
+    "title": "3  Day Pattern",
+    "section": "3.12 Number of Stops",
+    "text": "3.12 Number of Stops\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \n% of (DaysimOutputs)\n% of (2023Survey)\nDifference (% of (DaysimOutputs) - % of (2023Survey))\n\n\n# Stops in tour\n \n \n \n\n\n\n\n0\n57.5%\n60.1%\n-2.6\n\n\n1\n23.1%\n21.0%\n2.1\n\n\n2\n11.6%\n10.5%\n1.1\n\n\n3\n4.7%\n4.7%\n-0.1\n\n\n4\n1.9%\n1.8%\n0.1\n\n\n5\n0.7%\n0.8%\n-0.1\n\n\n6\n0.3%\n0.4%\n-0.1\n\n\n7\n0.1%\n0.4%\n-0.3\n\n\n8\n0.1%\n0.3%\n-0.2\n\n\n9\n0.0%\n0.1%\n-0.0\n\n\n10\n0.0%\n0.0%\n0.0\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \n% of (DaysimOutputs)\n% of (2023Survey)\nDifference (% of (DaysimOutputs) - % of (2023Survey))\n\n\n# Stops in tour\n \n \n \n\n\n\n\n0\n57.2%\n63.8%\n-6.6\n\n\n1\n23.4%\n23.4%\n0.0\n\n\n2\n11.7%\n8.8%\n2.9\n\n\n3\n4.6%\n1.6%\n3.1\n\n\n4\n1.9%\n1.5%\n0.3\n\n\n5\n0.7%\n1.0%\n-0.3\n\n\n6\n0.3%\n0.0%\n0.3\n\n\n7\n0.1%\n0.0%\n0.1\n\n\n8\n0.1%\n0.0%\n0.1\n\n\n9\n0.0%\n0.0%\n0.0\n\n\n10\n0.0%\n0.0%\n0.0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trip-per-person",
+    "href": "day_pattern.html#trip-per-person",
+    "title": "3  Day Pattern",
+    "section": "3.13 Trip per Person",
+    "text": "3.13 Trip per Person\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n \n \n \n \n\n\n\n\nAverage Trips Per Person\n3.8\n3.7\n0.1\n2.2%\n\n\nAverage Trip Length\n5.8\n5.9\n-0.1\n-1.0%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n \n \n \n \n\n\n\n\nAverage Trips Per Person\n3.9\n3.0\n1.0\n33.0%\n\n\nAverage Trip Length\n4.5\n5.9\n-1.4\n-23.0%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trips-per-person-by-purpose",
+    "href": "day_pattern.html#trips-per-person-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.14 Trips per Person by Purpose",
+    "text": "3.14 Trips per Person by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nDestination Purpose\n \n \n \n \n\n\n\n\nWork\n0.5\n0.5\n-0.0\n-3.0%\n\n\nSchool\n0.1\n0.1\n0.0\n3.7%\n\n\nEscort\n0.4\n0.4\n-0.0\n-1.3%\n\n\nPersonal Business\n0.2\n0.2\n-0.0\n-14.9%\n\n\nShop\n0.5\n0.5\n-0.0\n-1.5%\n\n\nMeal\n0.2\n0.2\n0.0\n3.4%\n\n\nSocial\n0.5\n0.5\n0.1\n9.6%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nDestination Purpose\n \n \n \n \n\n\n\n\nWork\n0.5\n0.4\n0.1\n24.2%\n\n\nSchool\n0.2\n0.1\n0.0\n16.9%\n\n\nEscort\n0.4\n0.3\n0.1\n17.0%\n\n\nPersonal Business\n0.2\n0.1\n0.0\n22.4%\n\n\nShop\n0.5\n0.2\n0.2\n110.1%\n\n\nMeal\n0.3\n0.3\n0.0\n10.1%\n\n\nSocial\n0.6\n0.5\n0.2\n37.1%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trips-per-person-by-mode",
+    "href": "day_pattern.html#trips-per-person-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.15 Trips per Person by Mode",
+    "text": "3.15 Trips per Person by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nDestination Mode\n \n \n \n \n\n\n\n\nWalk\n0.6\n0.4\n0.1\n36.7%\n\n\nBike\n0.0\n0.0\n-0.0\n-79.9%\n\n\nSOV\n1.8\n1.7\n0.1\n7.8%\n\n\nHOV2\n0.9\n0.8\n0.1\n13.5%\n\n\nHOV3+\n0.4\n0.6\n-0.2\n-28.7%\n\n\nTransit\n0.1\n0.1\n-0.0\n-40.8%\n\n\nSchool Bus\n0.0\n0.1\n-0.0\n-30.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nDestination Mode\n \n \n \n \n\n\n\n\nWalk\n0.5\n0.4\n0.1\n18.8%\n\n\nBike\n0.0\n0.0\n-0.0\n-68.2%\n\n\nSOV\n1.9\n1.2\n0.7\n58.9%\n\n\nHOV2\n1.0\n0.7\n0.3\n38.7%\n\n\nHOV3+\n0.4\n0.4\n0.0\n9.1%\n\n\nTransit\n0.1\n0.1\n-0.0\n-17.0%\n\n\nSchool Bus\n0.1\n0.1\n-0.0\n-26.8%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trip-distance-by-purpose",
+    "href": "day_pattern.html#trip-distance-by-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.16 Trip Distance by Purpose",
+    "text": "3.16 Trip Distance by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n9.0\n9.2\n-0.2\n-2.3%\n\n\nSchool\n4.7\n3.9\n0.8\n20.4%\n\n\nEscort\n5.9\n5.7\n0.2\n2.8%\n\n\nPersonal Business\n5.2\n5.6\n-0.4\n-6.4%\n\n\nShop\n4.3\n4.4\n-0.1\n-2.0%\n\n\nMeal\n3.8\n3.3\n0.5\n13.5%\n\n\nSocial\n5.2\n6.7\n-1.5\n-22.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n7.6\n6.7\n0.9\n13.2%\n\n\nSchool\n3.8\n4.2\n-0.4\n-9.2%\n\n\nEscort\n4.7\n7.5\n-2.7\n-36.3%\n\n\nPersonal Business\n5.0\n4.2\n0.8\n18.4%\n\n\nShop\n3.0\n4.2\n-1.2\n-27.6%\n\n\nMeal\n3.1\n2.9\n0.2\n7.5%\n\n\nSocial\n4.3\n6.4\n-2.0\n-31.9%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trip-distance-by-mode",
+    "href": "day_pattern.html#trip-distance-by-mode",
+    "title": "3  Day Pattern",
+    "section": "3.17 Trip Distance by Mode",
+    "text": "3.17 Trip Distance by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWalk\n0.9\n0.9\n-0.0\n-0.1%\n\n\nBike\n4.6\n2.0\n2.6\n129.0%\n\n\nSOV\n7.0\n6.9\n0.1\n1.5%\n\n\nHOV2\n5.9\n6.2\n-0.3\n-5.6%\n\n\nHOV3+\n6.8\n7.3\n-0.6\n-8.0%\n\n\nTransit\n9.7\n8.9\n0.8\n8.8%\n\n\nSchool Bus\n3.9\n3.6\n0.2\n6.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWalk\n1.4\n0.7\n0.7\n101.5%\n\n\nBike\n6.7\n1.5\n5.3\n356.2%\n\n\nSOV\n5.4\n6.2\n-0.8\n-13.1%\n\n\nHOV2\n4.5\n8.5\n-4.0\n-47.6%\n\n\nHOV3+\n4.5\n5.4\n-0.9\n-16.6%\n\n\nTransit\n5.5\n10.2\n-4.8\n-46.5%\n\n\nSchool Bus\n2.8\n3.1\n-0.3\n-11.2%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trips-per-tour-by-tour-purpose",
+    "href": "day_pattern.html#trips-per-tour-by-tour-purpose",
+    "title": "3  Day Pattern",
+    "section": "3.18 Trips per Tour by Tour Purpose",
+    "text": "3.18 Trips per Tour by Tour Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAvg # Trips/Tour (DaysimOutputs)\nAvg # Trips/Tour (2023Survey)\nDifference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n% Difference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n3.3\n2.9\n0.4\n13.6%\n\n\nSchool\n2.8\n2.4\n0.4\n15.6%\n\n\nEscort\n2.5\n2.6\n-0.0\n-1.4%\n\n\nPersonal Business\n2.6\n2.9\n-0.3\n-10.5%\n\n\nShop\n2.7\n2.7\n-0.0\n-1.2%\n\n\nMeal\n2.5\n2.6\n-0.1\n-3.4%\n\n\nSocial\n2.3\n2.7\n-0.3\n-11.9%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAvg # Trips/Tour (DaysimOutputs)\nAvg # Trips/Tour (2023Survey)\nDifference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n% Difference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n3.3\n2.8\n0.5\n17.3%\n\n\nSchool\n2.8\n2.1\n0.7\n33.0%\n\n\nEscort\n2.6\n2.4\n0.2\n8.9%\n\n\nPersonal Business\n2.6\n2.4\n0.2\n6.2%\n\n\nShop\n2.8\n2.5\n0.3\n13.0%\n\n\nMeal\n2.6\n2.2\n0.4\n16.3%\n\n\nSocial\n2.4\n2.7\n-0.3\n-12.3%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "day_pattern.html#trips-per-tour-by-tour-mode",
+    "href": "day_pattern.html#trips-per-tour-by-tour-mode",
+    "title": "3  Day Pattern",
+    "section": "3.19 Trips per Tour by Tour Mode",
+    "text": "3.19 Trips per Tour by Tour Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAvg # Trips/Tour (DaysimOutputs)\nAvg # Trips/Tour (2023Survey)\nDifference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n% Difference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n2.4\n2.2\n0.2\n9.5%\n\n\nBike\n2.4\n2.4\n-0.0\n-2.0%\n\n\nSOV\n2.7\n2.7\n0.0\n0.2%\n\n\nHOV2\n2.8\n2.8\n0.0\n1.1%\n\n\nHOV3+\n2.9\n3.0\n-0.1\n-2.8%\n\n\nTransit Walk Access\n2.7\n2.4\n0.3\n12.6%\n\n\nTransit Auto Access\n4.8\n2.7\n2.1\n79.9%\n\n\nSchool Bus\n2.6\n2.2\n0.4\n18.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAvg # Trips/Tour (DaysimOutputs)\nAvg # Trips/Tour (2023Survey)\nDifference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n% Difference (Avg # Trips/Tour (DaysimOutputs) - Avg # Trips/Tour (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n2.4\n2.3\n0.2\n6.7%\n\n\nBike\n2.4\n2.1\n0.3\n13.2%\n\n\nSOV\n2.7\n2.5\n0.2\n7.7%\n\n\nHOV2\n2.8\n2.8\n0.0\n0.6%\n\n\nHOV3+\n2.9\n2.8\n0.1\n4.2%\n\n\nTransit Walk Access\n2.7\n2.1\n0.6\n28.3%\n\n\nTransit Auto Access\n4.7\n2.4\n2.3\n94.9%\n\n\nSchool Bus\n2.6\n2.0\n0.6\n27.9%",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Day Pattern</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html",
+    "href": "tour.html",
+    "title": "4  Tours",
+    "section": "",
+    "text": "4.1 Total Tours",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#total-tours",
+    "href": "tour.html#total-tours",
+    "title": "4  Tours",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n5,878,074.0\n5,050,722.0\n827,351.9\n16.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n462,441.0\n332,686.9\n129,754.1\n39.0%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-per-person",
+    "href": "tour.html#tour-per-person",
+    "title": "4  Tours",
+    "section": "4.2 Tour per Person",
+    "text": "4.2 Tour per Person\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n1.4\n1.3\n0.0\n2.2%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTours\n1.4\n1.1\n0.3\n23.9%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-per-person-by-person-type",
+    "href": "tour.html#tours-per-person-by-person-type",
+    "title": "4  Tours",
+    "section": "4.3 Tours per Person by Person Type",
+    "text": "4.3 Tours per Person by Person Type\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.65\n0.66\n-0.01\n-1.89%\n\n\nPart-Time Worker\n0.61\n0.52\n0.09\n17.35%\n\n\nNon-Working Adult Age 65+\n0.00\n0.02\n-0.02\n-100.00%\n\n\nNon-Working Adult Age &lt;65\n0.00\n0.00\n-0.00\n-100.00%\n\n\nUniversity Student\n0.38\n0.21\n0.17\n78.79%\n\n\nHigh School Student Age 16+\n0.14\n0.09\n0.05\n59.78%\n\n\nChild Age 5-15\n0.00\n0.00\n0.00\n5,528.26%\n\n\nChild Age 0-4\n0.00\n0.00\n0.00\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nWork Tours\n \n \n \n \n\n\n\n\n0\n36.1\n53.2\n-17.1\n-32.1%\n\n\n1\n28.2\n22.2\n6.0\n26.8%\n\n\n2\n19.2\n14.4\n4.8\n33.3%\n\n\n3\n9.8\n7.4\n2.5\n33.2%\n\n\n4\n4.7\n2.2\n2.4\n110.4%\n\n\n5\n2.0\n0.5\n1.5\n271.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.32\n0.23\n0.09\n36.61%\n\n\nPart-Time Worker\n0.36\n0.31\n0.05\n15.39%\n\n\nNon-Working Adult Age 65+\n0.50\n0.42\n0.08\n19.92%\n\n\nNon-Working Adult Age &lt;65\n0.50\n0.36\n0.14\n40.30%\n\n\nUniversity Student\n0.22\n0.32\n-0.10\n-31.96%\n\n\nHigh School Student Age 16+\n0.38\n0.36\n0.02\n4.14%\n\n\nChild Age 5-15\n0.21\n0.17\n0.04\n25.28%\n\n\nChild Age 0-4\n0.26\n0.21\n0.05\n23.08%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nSocial Tours\n \n \n \n \n\n\n\n\n0\n75.1\n66.0\n9.1\n13.8%\n\n\n1\n17.7\n19.2\n-1.5\n-8.0%\n\n\n2\n5.4\n7.9\n-2.5\n-31.5%\n\n\n3\n1.4\n3.5\n-2.1\n-60.5%\n\n\n4\n0.4\n1.9\n-1.5\n-81.2%\n\n\n5\n0.1\n1.5\n-1.4\n-95.0%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.11\n0.09\n0.02\n24.43%\n\n\nPart-Time Worker\n0.19\n0.11\n0.08\n77.44%\n\n\nNon-Working Adult Age 65+\n0.30\n0.25\n0.05\n18.95%\n\n\nNon-Working Adult Age &lt;65\n0.43\n0.27\n0.16\n58.29%\n\n\nUniversity Student\n0.06\n0.09\n-0.03\n-33.58%\n\n\nHigh School Student Age 16+\n0.06\n0.06\n-0.00\n-3.15%\n\n\nChild Age 5-15\n0.11\n0.03\n0.08\n254.74%\n\n\nChild Age 0-4\n0.27\n0.09\n0.18\n189.71%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nShop Tours\n \n \n \n \n\n\n\n\n0\n59.5\n57.3\n2.2\n3.8%\n\n\n1\n22.3\n20.0\n2.2\n11.2%\n\n\n2\n12.2\n14.8\n-2.6\n-17.6%\n\n\n3\n4.2\n6.0\n-1.8\n-30.3%\n\n\n4\n1.4\n1.4\n0.1\n3.4%\n\n\n5\n0.5\n0.5\n-0.0\n-5.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.10\n0.07\n0.03\n39.07%\n\n\nPart-Time Worker\n0.17\n0.12\n0.04\n37.01%\n\n\nNon-Working Adult Age 65+\n0.16\n0.11\n0.05\n39.57%\n\n\nNon-Working Adult Age &lt;65\n0.33\n0.14\n0.19\n136.72%\n\n\nUniversity Student\n0.02\n0.04\n-0.02\n-47.04%\n\n\nHigh School Student Age 16+\n0.03\n0.02\n0.00\n10.06%\n\n\nChild Age 5-15\n0.15\n0.13\n0.02\n12.38%\n\n\nChild Age 0-4\n0.32\n0.16\n0.16\n103.35%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nEscort Tours\n \n \n \n \n\n\n\n\n0\n64.4\n70.6\n-6.2\n-8.8%\n\n\n1\n23.2\n15.9\n7.4\n46.4%\n\n\n2\n8.8\n7.8\n0.9\n11.8%\n\n\n3\n2.5\n3.9\n-1.3\n-34.1%\n\n\n4\n0.8\n0.1\n0.7\n515.1%\n\n\n5\n0.3\n1.7\n-1.4\n-84.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.00\n0.00\n-0.00\n-100.00%\n\n\nPart-Time Worker\n0.00\n0.01\n-0.01\n-100.00%\n\n\nNon-Working Adult Age 65+\n0.00\n0.00\n-0.00\n-100.00%\n\n\nNon-Working Adult Age &lt;65\n0.00\n0.00\n-0.00\n-100.00%\n\n\nUniversity Student\n0.51\n0.30\n0.22\n72.81%\n\n\nHigh School Student Age 16+\n0.71\n0.55\n0.16\n28.52%\n\n\nChild Age 5-15\n0.59\n0.62\n-0.02\n-3.98%\n\n\nChild Age 0-4\n0.00\n0.19\n-0.19\n-100.00%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nSchool Tours\n \n \n \n \n\n\n\n\n0\n55.9\n69.3\n-13.4\n-19.4%\n\n\n1\n23.7\n24.9\n-1.2\n-4.9%\n\n\n2\n12.9\n3.8\n9.2\n244.2%\n\n\n3\n5.2\n1.3\n3.9\n300.2%\n\n\n4\n1.8\n0.7\n1.1\n163.2%\n\n\n5\n0.6\n0.1\n0.5\n694.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.10\n0.10\n-0.00\n-4.67%\n\n\nPart-Time Worker\n0.10\n0.12\n-0.01\n-9.07%\n\n\nNon-Working Adult Age 65+\n0.09\n0.09\n0.00\n3.95%\n\n\nNon-Working Adult Age &lt;65\n0.15\n0.07\n0.08\n107.35%\n\n\nUniversity Student\n0.05\n0.03\n0.01\n41.67%\n\n\nHigh School Student Age 16+\n0.10\n0.06\n0.04\n77.77%\n\n\nChild Age 5-15\n0.01\n0.00\n0.01\n985.41%\n\n\nChild Age 0-4\n0.09\n0.05\n0.04\n86.03%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nMeal Tours\n \n \n \n \n\n\n\n\n0\n63.8\n58.0\n5.8\n9.9%\n\n\n1\n23.2\n22.8\n0.4\n1.7%\n\n\n2\n9.0\n14.2\n-5.2\n-36.7%\n\n\n3\n2.9\n3.1\n-0.1\n-4.9%\n\n\n4\n0.9\n1.8\n-1.0\n-52.8%\n\n\n5\n0.2\n0.1\n0.2\n275.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.06\n0.05\n0.01\n29.56%\n\n\nPart-Time Worker\n0.13\n0.10\n0.03\n31.24%\n\n\nNon-Working Adult Age 65+\n0.25\n0.15\n0.10\n71.34%\n\n\nNon-Working Adult Age &lt;65\n0.22\n0.14\n0.08\n55.73%\n\n\nUniversity Student\n0.03\n0.14\n-0.11\n-77.76%\n\n\nHigh School Student Age 16+\n0.03\n0.03\n0.00\n3.30%\n\n\nChild Age 5-15\n0.02\n0.02\n-0.00\n-8.67%\n\n\nChild Age 0-4\n0.06\n0.06\n0.00\n7.33%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nPersonal Business Tours\n \n \n \n \n\n\n\n\n0\n60.8\n53.2\n7.5\n14.2%\n\n\n1\n25.5\n28.9\n-3.4\n-11.9%\n\n\n2\n10.5\n8.1\n2.4\n29.2%\n\n\n3\n2.5\n4.8\n-2.2\n-46.9%\n\n\n4\n0.6\n4.4\n-3.8\n-86.4%\n\n\n5\n0.1\n0.5\n-0.4\n-77.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.38\n0.22\n0.17\n76.43%\n\n\nPart-Time Worker\n0.43\n0.36\n0.07\n19.15%\n\n\nNon-Working Adult Age 65+\n0.56\n0.25\n0.32\n126.82%\n\n\nNon-Working Adult Age &lt;65\n0.57\n0.71\n-0.14\n-19.40%\n\n\nUniversity Student\n0.27\n0.44\n-0.18\n-40.16%\n\n\nHigh School Student Age 16+\n0.44\n0.58\n-0.13\n-23.22%\n\n\nChild Age 5-15\n0.24\n0.20\n0.04\n21.22%\n\n\nChild Age 0-4\n0.31\n0.09\n0.22\n253.06%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nSocial Tours\n \n \n \n \n\n\n\n\n0\n74.6\n59.7\n14.9\n25.0%\n\n\n1\n18.0\n28.4\n-10.4\n-36.6%\n\n\n2\n5.5\n4.7\n0.8\n16.2%\n\n\n3\n1.4\n1.1\n0.3\n29.9%\n\n\n4\n0.4\n3.1\n-2.7\n-87.6%\n\n\n5\n0.1\n3.0\n-2.9\n-97.4%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.62\n0.63\n-0.01\n-1.62%\n\n\nPart-Time Worker\n0.55\n0.21\n0.34\n160.42%\n\n\nNon-Working Adult Age 65+\n0.00\n0.00\n-0.00\n-100.00%\n\n\nNon-Working Adult Age &lt;65\n0.00\n0.00\n0.00\nnan%\n\n\nUniversity Student\n0.32\n0.04\n0.28\n669.74%\n\n\nHigh School Student Age 16+\n0.14\n0.08\n0.06\n71.82%\n\n\nChild Age 5-15\n0.00\n0.00\n0.00\nnan%\n\n\nChild Age 0-4\n0.00\n0.00\n0.00\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nWork Tours\n \n \n \n \n\n\n\n\n0\n37.4\n46.9\n-9.5\n-20.3%\n\n\n1\n27.3\n27.8\n-0.5\n-1.7%\n\n\n2\n18.8\n21.1\n-2.3\n-10.8%\n\n\n3\n9.8\n2.6\n7.2\n269.1%\n\n\n4\n4.7\n1.6\n3.1\n193.7%\n\n\n5\n2.0\n0.0\n2.0\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.00\n0.00\n0.00\nnan%\n\n\nPart-Time Worker\n0.00\n0.00\n-0.00\n-100.00%\n\n\nNon-Working Adult Age 65+\n0.00\n0.00\n0.00\nnan%\n\n\nNon-Working Adult Age &lt;65\n0.00\n0.00\n-0.00\n-100.00%\n\n\nUniversity Student\n0.63\n0.26\n0.37\n141.84%\n\n\nHigh School Student Age 16+\n0.74\n0.25\n0.49\n198.75%\n\n\nChild Age 5-15\n0.74\n0.83\n-0.10\n-11.59%\n\n\nChild Age 0-4\n0.00\n0.27\n-0.27\n-100.00%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nSchool Tours\n \n \n \n \n\n\n\n\n0\n54.1\n93.5\n-39.4\n-42.1%\n\n\n1\n24.2\n4.7\n19.5\n413.2%\n\n\n2\n13.8\n0.7\n13.1\n1,771.0%\n\n\n3\n5.5\n0.4\n5.1\n1,295.3%\n\n\n4\n1.8\n0.2\n1.6\n700.7%\n\n\n5\n0.6\n0.5\n0.1\n29.5%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.11\n0.10\n0.01\n9.24%\n\n\nPart-Time Worker\n0.19\n0.29\n-0.10\n-35.71%\n\n\nNon-Working Adult Age 65+\n0.18\n0.04\n0.14\n389.71%\n\n\nNon-Working Adult Age &lt;65\n0.37\n0.26\n0.11\n43.45%\n\n\nUniversity Student\n0.02\n0.00\n0.02\nnan%\n\n\nHigh School Student Age 16+\n0.03\n0.00\n0.03\n1,431.90%\n\n\nChild Age 5-15\n0.10\n0.04\n0.06\n169.50%\n\n\nChild Age 0-4\n0.30\n0.02\n0.28\n1,313.87%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nEscort Tours\n \n \n \n \n\n\n\n\n0\n60.6\n67.8\n-7.2\n-10.6%\n\n\n1\n25.4\n26.7\n-1.3\n-4.9%\n\n\n2\n9.9\n4.1\n5.8\n141.7%\n\n\n3\n2.8\n1.4\n1.4\n93.7%\n\n\n4\n1.0\n0.0\n1.0\nnan%\n\n\n5\n0.3\n0.0\n0.3\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.10\n0.07\n0.03\n44.72%\n\n\nPart-Time Worker\n0.19\n0.09\n0.10\n107.86%\n\n\nNon-Working Adult Age 65+\n0.27\n0.16\n0.11\n66.52%\n\n\nNon-Working Adult Age &lt;65\n0.37\n0.20\n0.16\n80.81%\n\n\nUniversity Student\n0.05\n0.03\n0.01\n40.62%\n\n\nHigh School Student Age 16+\n0.04\n0.00\n0.04\nnan%\n\n\nChild Age 5-15\n0.02\n0.00\n0.02\n3,912.07%\n\n\nChild Age 0-4\n0.14\n0.01\n0.13\n2,058.69%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nShop Tours\n \n \n \n \n\n\n\n\n0\n52.1\n67.2\n-15.1\n-22.4%\n\n\n1\n25.3\n20.8\n4.5\n21.7%\n\n\n2\n14.7\n8.3\n6.4\n76.6%\n\n\n3\n5.3\n1.7\n3.6\n210.3%\n\n\n4\n1.9\n1.6\n0.4\n23.0%\n\n\n5\n0.6\n0.4\n0.2\n52.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.12\n0.15\n-0.03\n-19.24%\n\n\nPart-Time Worker\n0.14\n0.34\n-0.20\n-59.05%\n\n\nNon-Working Adult Age 65+\n0.12\n0.03\n0.08\n255.49%\n\n\nNon-Working Adult Age &lt;65\n0.18\n0.01\n0.17\n1,842.37%\n\n\nUniversity Student\n0.06\n0.04\n0.03\n73.76%\n\n\nHigh School Student Age 16+\n0.13\n0.05\n0.08\n147.27%\n\n\nChild Age 5-15\n0.02\n0.00\n0.01\n5,256.62%\n\n\nChild Age 0-4\n0.11\n0.00\n0.11\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nMeal Tours\n \n \n \n \n\n\n\n\n0\n63.1\n86.4\n-23.2\n-26.9%\n\n\n1\n24.1\n8.7\n15.3\n176.0%\n\n\n2\n8.9\n4.0\n4.9\n122.5%\n\n\n3\n2.8\n0.9\n1.9\n210.3%\n\n\n4\n0.9\n0.0\n0.9\nnan%\n\n\n5\n0.2\n0.0\n0.2\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nPerson Type\n \n \n \n \n\n\n\n\nFull-Time Worker\n0.07\n0.03\n0.04\n143.07%\n\n\nPart-Time Worker\n0.15\n0.06\n0.09\n161.86%\n\n\nNon-Working Adult Age 65+\n0.24\n0.17\n0.07\n41.71%\n\n\nNon-Working Adult Age &lt;65\n0.20\n0.06\n0.14\n244.24%\n\n\nUniversity Student\n0.03\n0.01\n0.02\n273.69%\n\n\nHigh School Student Age 16+\n0.03\n0.05\n-0.03\n-50.46%\n\n\nChild Age 5-15\n0.02\n0.00\n0.02\n1,404.12%\n\n\nChild Age 0-4\n0.06\n0.00\n0.06\n1,803.51%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \n% of Tours (DaysimOutputs)\n% of Tours (2023Survey)\nDifference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n% Difference (% of Tours (DaysimOutputs) - % of Tours (2023Survey))\n\n\nPersonal Business Tours\n \n \n \n \n\n\n\n\n0\n60.2\n63.2\n-3.0\n-4.7%\n\n\n1\n25.6\n32.3\n-6.7\n-20.7%\n\n\n2\n10.7\n2.4\n8.3\n340.8%\n\n\n3\n2.7\n2.1\n0.6\n30.0%\n\n\n4\n0.6\n0.0\n0.6\nnan%\n\n\n5\n0.1\n0.0\n0.1\nnan%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-per-person-by-purpose",
+    "href": "tour.html#tours-per-person-by-purpose",
+    "title": "4  Tours",
+    "section": "4.4 Tours per Person by Purpose",
+    "text": "4.4 Tours per Person by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n0.4\n0.4\n0.0\n0.0%\n\n\nSchool\n0.1\n0.1\n0.0\n3.9%\n\n\nEscort\n0.1\n0.1\n0.0\n5.5%\n\n\nPersonal Business\n0.1\n0.1\n0.0\n4.9%\n\n\nShop\n0.2\n0.2\n0.0\n2.3%\n\n\nMeal\n0.1\n0.1\n0.0\n5.7%\n\n\nSocial\n0.3\n0.3\n0.0\n0.9%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTours per Person (DaysimOutputs)\nTours per Person (2023Survey)\nDifference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n% Difference (Tours per Person (DaysimOutputs) - Tours per Person (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n0.3\n0.3\n0.0\n11.5%\n\n\nSchool\n0.2\n0.1\n0.0\n11.1%\n\n\nEscort\n0.1\n0.1\n0.0\n16.3%\n\n\nPersonal Business\n0.1\n0.1\n0.0\n88.4%\n\n\nShop\n0.1\n0.1\n0.1\n61.2%\n\n\nMeal\n0.1\n0.1\n0.1\n59.7%\n\n\nSocial\n0.4\n0.3\n0.1\n16.4%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-per-person-by-mode",
+    "href": "tour.html#tours-per-person-by-mode",
+    "title": "4  Tours",
+    "section": "4.5 Tours per Person by Mode",
+    "text": "4.5 Tours per Person by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.4\n0.5\n-0.0\n-9.1%\n\n\nBike\n0.2\n0.5\n-0.3\n-61.7%\n\n\nSOV\n0.6\n0.6\n0.0\n0.8%\n\n\nHOV2\n0.3\n0.3\n-0.0\n-10.6%\n\n\nHOV3+\n0.3\n0.2\n0.1\n22.9%\n\n\nTransit Walk Access\n0.5\n0.3\n0.2\n48.1%\n\n\nTransit Auto Access\n1.1\n0.6\n0.5\n80.3%\n\n\nSchool Bus\n0.0\n0.0\n0.0\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.8\n0.9\n-0.2\n-19.1%\n\n\nBike\n0.7\n0.5\n0.1\n27.0%\n\n\nSOV\n0.5\n0.4\n0.1\n25.6%\n\n\nHOV2\n0.5\n0.5\n0.0\n7.7%\n\n\nHOV3+\n0.5\n0.5\n-0.0\n-1.1%\n\n\nTransit Walk Access\n0.4\n0.3\n0.1\n21.0%\n\n\nTransit Auto Access\n0.3\n0.4\n-0.1\n-30.5%\n\n\nSchool Bus\n0.2\n0.1\n0.1\n37.0%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.3\n0.3\n0.0\n1.4%\n\n\nBike\n0.4\n0.1\n0.4\n576.6%\n\n\nSOV\n0.3\n0.2\n0.0\n5.6%\n\n\nHOV2\n0.4\n0.2\n0.1\n56.6%\n\n\nHOV3+\n0.4\n0.2\n0.2\n132.3%\n\n\nTransit Walk Access\n0.2\n0.3\n-0.1\n-33.9%\n\n\nTransit Auto Access\n0.1\n0.0\n0.0\n76.8%\n\n\nSchool Bus\n0.0\n0.0\n0.0\n1,017.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.2\n-0.0\n-12.6%\n\n\nBike\n0.2\n0.2\n0.0\n12.4%\n\n\nSOV\n0.1\n0.1\n0.0\n6.2%\n\n\nHOV2\n0.4\n0.4\n-0.0\n-2.9%\n\n\nHOV3+\n0.6\n0.5\n0.0\n7.3%\n\n\nTransit Walk Access\n0.1\n0.0\n0.0\n163.2%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\nnan%\n\n\nSchool Bus\n0.1\n0.1\n-0.0\n-24.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.1\n0.1\n0.0\n34.6%\n\n\nBike\n0.3\n0.2\n0.1\n46.1%\n\n\nSOV\n0.1\n0.1\n0.0\n82.3%\n\n\nHOV2\n0.1\n0.1\n-0.0\n-22.1%\n\n\nHOV3+\n0.2\n0.3\n-0.1\n-37.1%\n\n\nTransit Walk Access\n0.3\n0.1\n0.2\n136.5%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\nnan%\n\n\nSchool Bus\n1.0\n1.0\n0.0\n4.5%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.2\n0.0\n1.6%\n\n\nBike\n0.1\n0.1\n-0.0\n-24.9%\n\n\nSOV\n0.1\n0.1\n0.0\n10.9%\n\n\nHOV2\n0.2\n0.2\n-0.0\n-19.2%\n\n\nHOV3+\n0.1\n0.2\n-0.0\n-26.1%\n\n\nTransit Walk Access\n0.1\n0.0\n0.1\n192.9%\n\n\nTransit Auto Access\n0.1\n0.0\n0.0\n87.6%\n\n\nSchool Bus\n0.0\n0.0\n0.0\n2,059.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.1\n0.1\n92.2%\n\n\nBike\n0.1\n0.2\n-0.0\n-16.0%\n\n\nSOV\n0.2\n0.1\n0.0\n18.5%\n\n\nHOV2\n0.2\n0.1\n0.0\n5.6%\n\n\nHOV3+\n0.1\n0.1\n0.0\n29.1%\n\n\nTransit Walk Access\n0.2\n0.2\n-0.0\n-5.7%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\n18.8%\n\n\nSchool Bus\n0.0\n0.1\n-0.1\n-76.5%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.8\n0.9\n-0.1\n-15.6%\n\n\nBike\n0.9\n0.5\n0.3\n68.5%\n\n\nSOV\n0.6\n0.5\n0.2\n40.4%\n\n\nHOV2\n0.6\n0.5\n0.1\n22.7%\n\n\nHOV3+\n0.6\n0.7\n-0.2\n-25.8%\n\n\nTransit Walk Access\n0.6\n0.4\n0.2\n51.0%\n\n\nTransit Auto Access\n0.4\n0.7\n-0.4\n-50.3%\n\n\nSchool Bus\n0.2\n0.3\n-0.0\n-9.9%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.5\n0.4\n0.0\n6.7%\n\n\nBike\n0.2\n0.2\n0.1\n30.5%\n\n\nSOV\n0.6\n0.7\n-0.1\n-15.3%\n\n\nHOV2\n0.3\n0.2\n0.1\n18.8%\n\n\nHOV3+\n0.3\n0.2\n0.1\n20.6%\n\n\nTransit Walk Access\n0.4\n0.3\n0.1\n57.5%\n\n\nTransit Auto Access\n1.1\n0.3\n0.8\n282.0%\n\n\nSchool Bus\n0.0\n0.0\n0.0\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.1\n0.1\n-0.0\n-0.4%\n\n\nBike\n0.2\n0.5\n-0.3\n-59.0%\n\n\nSOV\n0.1\n0.0\n0.1\n433.1%\n\n\nHOV2\n0.1\n0.2\n-0.0\n-28.0%\n\n\nHOV3+\n0.2\n0.4\n-0.1\n-41.2%\n\n\nTransit Walk Access\n0.2\n0.4\n-0.2\n-41.4%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\nnan%\n\n\nSchool Bus\n1.0\n1.1\n-0.1\n-9.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.3\n-0.1\n-44.3%\n\n\nBike\n0.3\n0.6\n-0.3\n-53.6%\n\n\nSOV\n0.1\n0.1\n0.0\n51.1%\n\n\nHOV2\n0.4\n0.5\n-0.1\n-11.0%\n\n\nHOV3+\n0.5\n0.5\n0.1\n11.1%\n\n\nTransit Walk Access\n0.1\n0.0\n0.1\n3,884.2%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\nnan%\n\n\nSchool Bus\n0.1\n0.0\n0.1\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.1\n0.1\n86.5%\n\n\nBike\n0.2\n0.0\n0.2\nnan%\n\n\nSOV\n0.2\n0.2\n0.1\n33.0%\n\n\nHOV2\n0.2\n0.1\n0.1\n67.1%\n\n\nHOV3+\n0.2\n0.1\n0.0\n17.2%\n\n\nTransit Walk Access\n0.2\n0.1\n0.1\n111.0%\n\n\nTransit Auto Access\n0.1\n0.0\n0.1\nnan%\n\n\nSchool Bus\n0.0\n0.0\n0.0\n639.4%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.2\n0.2\n-0.0\n-13.8%\n\n\nBike\n0.1\n0.0\n0.1\n3,740.6%\n\n\nSOV\n0.2\n0.1\n0.1\n47.9%\n\n\nHOV2\n0.2\n0.1\n0.1\n56.7%\n\n\nHOV3+\n0.1\n0.1\n0.1\n67.9%\n\n\nTransit Walk Access\n0.2\n0.0\n0.1\n360.1%\n\n\nTransit Auto Access\n0.1\n0.0\n0.1\nnan%\n\n\nSchool Bus\n0.0\n0.0\n0.0\nnan%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\nMode\n \n \n \n \n\n\n\n\nWalk\n0.1\n0.0\n0.1\n1,058.5%\n\n\nBike\n0.2\n0.0\n0.2\nnan%\n\n\nSOV\n0.2\n0.2\n0.0\n11.3%\n\n\nHOV2\n0.1\n0.1\n0.1\n50.8%\n\n\nHOV3+\n0.1\n0.0\n0.1\n168.3%\n\n\nTransit Walk Access\n0.2\n0.1\n0.1\n264.4%\n\n\nTransit Auto Access\n0.0\n0.0\n0.0\nnan%\n\n\nSchool Bus\n0.0\n0.0\n0.0\nnan%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-share-by-purpose",
+    "href": "tour.html#tour-share-by-purpose",
+    "title": "4  Tours",
+    "section": "4.6 Tour Share by Purpose",
+    "text": "4.6 Tour Share by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n26.9%\n27.5%\n-0.6%\n-2.1%\n\n\nSchool\n9.8%\n9.7%\n0.2%\n1.6%\n\n\nEscort\n11.1%\n10.8%\n0.3%\n3.2%\n\n\nPersonal Business\n7.0%\n6.8%\n0.2%\n2.6%\n\n\nShop\n12.9%\n12.9%\n0.0%\n0.1%\n\n\nMeal\n7.2%\n7.0%\n0.2%\n3.4%\n\n\nSocial\n25.0%\n25.3%\n-0.3%\n-1.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n1.9%\n1.8%\n0.1%\n7.5%\n\n\nSchool\n0.9%\n0.8%\n0.1%\n7.1%\n\n\nEscort\n0.8%\n0.8%\n0.1%\n12.1%\n\n\nPersonal Business\n0.5%\n0.3%\n0.2%\n81.6%\n\n\nShop\n0.8%\n0.5%\n0.3%\n55.4%\n\n\nMeal\n0.7%\n0.4%\n0.2%\n53.9%\n\n\nSocial\n2.2%\n2.0%\n0.2%\n12.2%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-share-by-mode",
+    "href": "tour.html#tour-share-by-mode",
+    "title": "4  Tours",
+    "section": "4.7 Tour Share by Mode",
+    "text": "4.7 Tour Share by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n10.8%\n10.9%\n-0.1%\n-1.1%\n\n\nBike\n0.6%\n1.2%\n-0.7%\n-54.5%\n\n\nSOV\n38.6%\n37.3%\n1.4%\n3.6%\n\n\nHOV2\n22.3%\n22.8%\n-0.5%\n-2.0%\n\n\nHOV3+\n21.6%\n19.5%\n2.1%\n10.8%\n\n\nTransit Walk Access\n3.4%\n4.3%\n-0.8%\n-19.9%\n\n\nTransit Auto Access\n0.2%\n0.4%\n-0.2%\n-48.2%\n\n\nSchool Bus\n2.4%\n2.5%\n-0.1%\n-2.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Tours (DaysimOutputs)\nPercent of Tours (2023Survey)\nDifference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n% Difference (Percent of Tours (DaysimOutputs) - Percent of Tours (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n0.6%\n0.8%\n-0.2%\n-28.3%\n\n\nBike\n0.0%\n0.1%\n-0.0%\n-42.8%\n\n\nSOV\n3.0%\n2.2%\n0.8%\n38.5%\n\n\nHOV2\n1.9%\n1.6%\n0.3%\n17.3%\n\n\nHOV3+\n1.6%\n1.1%\n0.5%\n47.8%\n\n\nTransit Walk Access\n0.5%\n0.3%\n0.2%\n64.6%\n\n\nTransit Auto Access\n0.0%\n0.2%\n-0.1%\n-86.1%\n\n\nSchool Bus\n0.2%\n0.2%\n0.0%\n1.9%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-distance-by-purpose",
+    "href": "tour.html#tour-distance-by-purpose",
+    "title": "4  Tours",
+    "section": "4.8 Tour Distance by Purpose",
+    "text": "4.8 Tour Distance by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n11.5\n11.8\n-0.3\n-2.6%\n\n\nSchool\n4.8\n4.6\n0.3\n5.8%\n\n\nEscort\n7.4\n7.1\n0.3\n4.1%\n\n\nPersonal Business\n6.7\n8.0\n-1.3\n-15.9%\n\n\nShop\n4.7\n4.7\n0.0\n0.6%\n\n\nMeal\n3.6\n3.8\n-0.1\n-4.1%\n\n\nSocial\n5.8\n6.9\n-1.1\n-16.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n9.2\n7.0\n2.2\n31.0%\n\n\nSchool\n3.9\n4.3\n-0.3\n-8.2%\n\n\nEscort\n6.6\n11.2\n-4.7\n-41.6%\n\n\nPersonal Business\n7.1\n5.7\n1.4\n24.9%\n\n\nShop\n2.7\n4.0\n-1.3\n-32.2%\n\n\nMeal\n2.9\n5.3\n-2.4\n-45.9%\n\n\nSocial\n4.9\n8.0\n-3.1\n-39.1%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-distance-by-mode",
+    "href": "tour.html#tour-distance-by-mode",
+    "title": "4  Tours",
+    "section": "4.9 Tour Distance by Mode",
+    "text": "4.9 Tour Distance by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n11.5\n11.8\n-0.3\n-2.6%\n\n\nSchool\n4.8\n4.6\n0.3\n5.8%\n\n\nEscort\n7.4\n7.1\n0.3\n4.1%\n\n\nPersonal Business\n6.7\n8.0\n-1.3\n-15.9%\n\n\nShop\n4.7\n4.7\n0.0\n0.6%\n\n\nMeal\n3.6\n3.8\n-0.1\n-4.1%\n\n\nSocial\n5.8\n6.9\n-1.1\n-16.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Tour Length (DaysimOutputs)\nAverage Tour Length (2023Survey)\nDifference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n% Difference (Average Tour Length (DaysimOutputs) - Average Tour Length (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n9.2\n7.0\n2.2\n31.0%\n\n\nSchool\n3.9\n4.3\n-0.3\n-8.2%\n\n\nEscort\n6.6\n11.2\n-4.7\n-41.6%\n\n\nPersonal Business\n7.1\n5.7\n1.4\n24.9%\n\n\nShop\n2.7\n4.0\n-1.3\n-32.2%\n\n\nMeal\n2.9\n5.3\n-2.4\n-45.9%\n\n\nSocial\n4.9\n8.0\n-3.1\n-39.1%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-travel-time-by-purpose",
+    "href": "tour.html#tour-travel-time-by-purpose",
+    "title": "4  Tours",
+    "section": "4.10 Tour Travel Time by Purpose",
+    "text": "4.10 Tour Travel Time by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n28.8\n25.3\n3.5\n13.7%\n\n\nSchool\n15.2\n13.4\n1.9\n13.9%\n\n\nEscort\n21.2\n16.1\n5.1\n31.4%\n\n\nPersonal Business\n20.1\n37.6\n-17.5\n-46.5%\n\n\nShop\n16.5\n14.4\n2.2\n15.1%\n\n\nMeal\n13.6\n16.7\n-3.1\n-18.8%\n\n\nSocial\n17.5\n17.4\n0.1\n0.6%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n18.9\n17.5\n1.4\n8.2%\n\n\nSchool\n8.8\n12.1\n-3.2\n-26.8%\n\n\nEscort\n13.7\n23.2\n-9.5\n-40.9%\n\n\nPersonal Business\n14.9\n14.1\n0.9\n6.2%\n\n\nShop\n6.8\n12.2\n-5.4\n-44.1%\n\n\nMeal\n7.2\n13.5\n-6.3\n-46.9%\n\n\nSocial\n10.7\n20.6\n-9.9\n-48.1%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tour-travel-time-by-mode",
+    "href": "tour.html#tour-travel-time-by-mode",
+    "title": "4  Tours",
+    "section": "4.11 Tour Travel Time by Mode",
+    "text": "4.11 Tour Travel Time by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n3.6\n19.1\n-15.4\n-81.0%\n\n\nBike\n9.0\n11.9\n-2.9\n-24.1%\n\n\nSOV\n24.4\n19.6\n4.8\n24.8%\n\n\nHOV2\n22.1\n17.7\n4.3\n24.4%\n\n\nHOV3+\n22.2\n17.8\n4.4\n24.7%\n\n\nTransit Walk Access\n26.9\n67.9\n-41.0\n-60.4%\n\n\nTransit Auto Access\n35.5\n37.9\n-2.5\n-6.5%\n\n\nSchool Bus\n13.0\n10.5\n2.4\n23.0%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Tour Travel Time (DaysimOutputs)\nAverage Tour Travel Time (2023Survey)\nDifference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n% Difference (Average Tour Travel Time (DaysimOutputs) - Average Tour Travel Time (2023Survey))\n\n\nTour Mode\n \n \n \n \n\n\n\n\nWalk\n2.7\n12.7\n-9.9\n-78.6%\n\n\nBike\n7.2\n10.2\n-3.0\n-29.0%\n\n\nSOV\n14.4\n14.3\n0.1\n0.5%\n\n\nHOV2\n13.5\n23.7\n-10.2\n-43.1%\n\n\nHOV3+\n13.2\n16.4\n-3.2\n-19.4%\n\n\nTransit Walk Access\n13.8\n22.7\n-8.9\n-39.4%\n\n\nTransit Auto Access\n15.0\n37.5\n-22.5\n-59.9%\n\n\nSchool Bus\n6.9\n8.7\n-1.8\n-20.2%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-by-district",
+    "href": "tour.html#tours-by-district",
+    "title": "4  Tours",
+    "section": "4.12 Tours by District",
+    "text": "4.12 Tours by District\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference\n% Difference\n\n\nDistrictFlowName\n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n195,235\n156,198\n39,037\n25.0%\n\n\nBellevue Downtown\n27,127\n7,684\n19,443\n253.0%\n\n\nKirkland\n134,487\n61,197\n73,290\n119.8%\n\n\nRedmond\n105,592\n107,608\n-2,016\n-1.9%\n\n\nSeattle (excluding Seattle downtown)\n1,022,144\n799,965\n222,179\n27.8%\n\n\nSeattle downtown\n149,741\n73,367\n76,374\n104.1%\n\n\nRest\n4,243,748\n3,003,645\n1,240,103\n41.3%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-by-district-by-purpose",
+    "href": "tour.html#tours-by-district-by-purpose",
+    "title": "4  Tours",
+    "section": "4.13 Tours by District by Purpose",
+    "text": "4.13 Tours by District by Purpose\n\nNumber of ToursTour Share\n\n\n\n\n\n\n\n\n\nTable 4.1: DaysimOutputs\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTour Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n45,380\n6,209\n35,164\n27,676\n323,372\n57,647\n1,086,574\n\n\nSchool\n24,632\n1,784\n13,664\n10,750\n99,668\n5,671\n422,290\n\n\nEscort\n21,941\n2,301\n14,385\n11,279\n85,601\n7,344\n511,911\n\n\nPersonal Business\n12,397\n2,362\n8,853\n6,945\n65,631\n10,243\n306,790\n\n\nShop\n19,282\n3,283\n13,397\n10,431\n97,075\n14,795\n602,128\n\n\nMeal\n16,508\n3,013\n11,561\n9,169\n86,306\n15,271\n280,479\n\n\nSocial\n55,095\n8,175\n37,463\n29,342\n264,491\n38,770\n1,033,576\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.2: 2023Survey\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTour Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n42,306\n1,628\n21,347\n26,193\n216,041\n18,412\n840,701\n\n\nSchool\n15,741\n460\n6,663\n17,917\n89,718\n2,193\n326,254\n\n\nEscort\n19,935\n176\n11,294\n6,841\n100,471\n5,755\n319,216\n\n\nPersonal Business\n8,917\n825\n1,098\n3,616\n46,592\n7,087\n232,686\n\n\nShop\n13,154\n1,140\n6,288\n5,071\n80,216\n11,157\n405,194\n\n\nMeal\n8,593\n1,283\n2,940\n9,653\n71,605\n8,958\n160,869\n\n\nSocial\n47,552\n2,172\n11,567\n38,317\n195,321\n19,806\n718,726\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.3: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTour Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n7.3%\n281.4%\n64.7%\n5.7%\n49.7%\n213.1%\n29.2%\n\n\nSchool\n56.5%\n288.1%\n105.1%\n-40.0%\n11.1%\n158.5%\n29.4%\n\n\nEscort\n10.1%\n1,210.2%\n27.4%\n64.9%\n-14.8%\n27.6%\n60.4%\n\n\nPersonal Business\n39.0%\n186.3%\n706.2%\n92.1%\n40.9%\n44.5%\n31.8%\n\n\nShop\n46.6%\n187.9%\n113.1%\n105.7%\n21.0%\n32.6%\n48.6%\n\n\nMeal\n92.1%\n134.8%\n293.2%\n-5.0%\n20.5%\n70.5%\n74.4%\n\n\nSocial\n15.9%\n276.3%\n223.9%\n-23.4%\n35.4%\n95.8%\n43.8%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.4: DaysimOutputs\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTour Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n23.2%\n22.9%\n26.1%\n26.2%\n31.6%\n38.5%\n25.6%\n\n\nSchool\n12.6%\n6.6%\n10.2%\n10.2%\n9.8%\n3.8%\n10.0%\n\n\nEscort\n11.2%\n8.5%\n10.7%\n10.7%\n8.4%\n4.9%\n12.1%\n\n\nPersonal Business\n6.3%\n8.7%\n6.6%\n6.6%\n6.4%\n6.8%\n7.2%\n\n\nShop\n9.9%\n12.1%\n10.0%\n9.9%\n9.5%\n9.9%\n14.2%\n\n\nMeal\n8.5%\n11.1%\n8.6%\n8.7%\n8.4%\n10.2%\n6.6%\n\n\nSocial\n28.2%\n30.1%\n27.9%\n27.8%\n25.9%\n25.9%\n24.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.5: 2023Survey\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTour Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n27.1%\n21.2%\n34.9%\n24.3%\n27.0%\n25.1%\n28.0%\n\n\nSchool\n10.1%\n6.0%\n10.9%\n16.7%\n11.2%\n3.0%\n10.9%\n\n\nEscort\n12.8%\n2.3%\n18.5%\n6.4%\n12.6%\n7.8%\n10.6%\n\n\nPersonal Business\n5.7%\n10.7%\n1.8%\n3.4%\n5.8%\n9.7%\n7.7%\n\n\nShop\n8.4%\n14.8%\n10.3%\n4.7%\n10.0%\n15.2%\n13.5%\n\n\nMeal\n5.5%\n16.7%\n4.8%\n9.0%\n9.0%\n12.2%\n5.4%\n\n\nSocial\n30.4%\n28.3%\n18.9%\n35.6%\n24.4%\n27.0%\n23.9%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-by-district-by-mode",
+    "href": "tour.html#tours-by-district-by-mode",
+    "title": "4  Tours",
+    "section": "4.14 Tours by District by Mode",
+    "text": "4.14 Tours by District by Mode\n\nNumber of ToursTour Share\n\n\n\n\n\n\n\n\n\nTable 4.6: DaysimOutputs\n\n\n\n\n\nTour Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit Walk Access\nTransit Auto Access\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n10,317\n828\n72,625\n47,454\n42,486\n14,191\n740\n6,594\n\n\nBellevue Downtown\n8,800\n484\n8,088\n4,586\n1,990\n2,762\n67\n350\n\n\nKirkland\n9,406\n486\n53,236\n33,405\n26,408\n7,993\n277\n3,276\n\n\nRedmond\n7,340\n555\n42,267\n25,061\n20,909\n6,495\n341\n2,624\n\n\nSeattle (excluding Seattle downtown)\n189,246\n7,990\n387,431\n188,125\n151,150\n75,360\n2,413\n20,429\n\n\nSeattle downtown\n83,871\n1,775\n34,245\n12,402\n5,726\n11,059\n328\n335\n\n\nRest\n326,581\n21,321\n1,673,106\n999,200\n1,023,275\n84,016\n6,993\n109,256\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.7: 2023Survey\n\n\n\n\n\nTour Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit Walk Access\nTransit Auto Access\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n24,859\n1,722\n40,509\n52,129\n28,415\n4,405\nnan\n1,353\n\n\nBellevue Downtown\n1,909\n187\n2,728\n2,175\n208\n425\nnan\nnan\n\n\nKirkland\n9,449\nnan\n25,981\n10,864\n8,783\n3,146\n421\n1,500\n\n\nRedmond\n6,735\n1,627\n40,100\n15,781\n15,944\n8,441\n8,364\n7,973\n\n\nSeattle (excluding Seattle downtown)\n143,556\n29,563\n252,773\n206,703\n103,882\n50,194\n385\n6,909\n\n\nSeattle downtown\n30,339\n2,951\n14,023\n12,858\n3,386\n7,078\n985\n27\n\n\nRest\n191,968\n14,026\n1,157,926\n673,840\n720,968\n115,053\n4,303\n88,544\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.8: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nTour Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit Walk Access\nTransit Auto Access\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n-58.5%\n-51.9%\n79.3%\n-9.0%\n49.5%\n222.2%\nnan%\n387.2%\n\n\nBellevue Downtown\n361.0%\n158.6%\n196.4%\n110.9%\n856.7%\n549.7%\nnan%\nnan%\n\n\nKirkland\n-0.5%\nnan%\n104.9%\n207.5%\n200.7%\n154.1%\n-34.1%\n118.4%\n\n\nRedmond\n9.0%\n-65.9%\n5.4%\n58.8%\n31.1%\n-23.0%\n-95.9%\n-67.1%\n\n\nSeattle (excluding Seattle downtown)\n31.8%\n-73.0%\n53.3%\n-9.0%\n45.5%\n50.1%\n526.0%\n195.7%\n\n\nSeattle downtown\n176.4%\n-39.9%\n144.2%\n-3.5%\n69.1%\n56.2%\n-66.7%\n1,118.6%\n\n\nRest\n70.1%\n52.0%\n44.5%\n48.3%\n41.9%\n-27.0%\n62.5%\n23.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.9: DaysimOutputs\n\n\n\n\n\nTour Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit Walk Access\nTransit Auto Access\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n1.6%\n2.5%\n3.2%\n3.6%\n3.3%\n7.0%\n6.6%\n4.6%\n\n\nBellevue Downtown\n1.4%\n1.4%\n0.4%\n0.4%\n0.2%\n1.4%\n0.6%\n0.2%\n\n\nKirkland\n1.5%\n1.5%\n2.3%\n2.5%\n2.1%\n4.0%\n2.5%\n2.3%\n\n\nRedmond\n1.2%\n1.7%\n1.9%\n1.9%\n1.6%\n3.2%\n3.1%\n1.8%\n\n\nSeattle (excluding Seattle downtown)\n29.8%\n23.9%\n17.1%\n14.4%\n11.9%\n37.3%\n21.6%\n14.3%\n\n\nSeattle downtown\n13.2%\n5.3%\n1.5%\n0.9%\n0.5%\n5.5%\n2.9%\n0.2%\n\n\nRest\n51.4%\n63.8%\n73.7%\n76.3%\n80.4%\n41.6%\n62.7%\n76.5%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.10: 2023Survey\n\n\n\n\n\nTour Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit Walk Access\nTransit Auto Access\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n6.1%\n3.4%\n2.6%\n5.4%\n3.2%\n2.3%\nnan%\n1.3%\n\n\nBellevue Downtown\n0.5%\n0.4%\n0.2%\n0.2%\n0.0%\n0.2%\nnan%\nnan%\n\n\nKirkland\n2.3%\nnan%\n1.7%\n1.1%\n1.0%\n1.7%\n2.9%\n1.4%\n\n\nRedmond\n1.6%\n3.2%\n2.6%\n1.6%\n1.8%\n4.5%\n57.9%\n7.5%\n\n\nSeattle (excluding Seattle downtown)\n35.1%\n59.0%\n16.5%\n21.2%\n11.8%\n26.6%\n2.7%\n6.5%\n\n\nSeattle downtown\n7.4%\n5.9%\n0.9%\n1.3%\n0.4%\n3.8%\n6.8%\n0.0%\n\n\nRest\n47.0%\n28.0%\n75.5%\n69.2%\n81.8%\n61.0%\n29.8%\n83.3%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-by-purpose-by-auto-sufficiency",
+    "href": "tour.html#tours-by-purpose-by-auto-sufficiency",
+    "title": "4  Tours",
+    "section": "4.15 Tours by Purpose by Auto Sufficiency",
+    "text": "4.15 Tours by Purpose by Auto Sufficiency\n\nNumber of ToursTour Share\n\n\n\n\n\n\n\n\n\nTable 4.11: DaysimOutputs\n\n\n\n\n\nAuto Sufficiency\n0 veh\nautos &lt; drivers\nautos = drivers\nautos &gt; drivers\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n32,894\n275,585\n813,834\n459,709\n\n\nSchool\n22,833\n131,997\n256,393\n167,236\n\n\nEscort\n24,207\n140,271\n309,804\n180,480\n\n\nPersonal Business\n37,757\n64,983\n206,470\n104,011\n\n\nShop\n70,104\n125,940\n354,775\n209,572\n\n\nMeal\n19,194\n82,770\n205,351\n114,992\n\n\nSocial\n60,134\n238,359\n728,194\n440,225\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.12: 2023Survey\n\n\n\n\n\nAuto Sufficiency\n0 veh\nautos &lt; drivers\nautos = drivers\nautos &gt; drivers\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n26,609\n32,601\n515,906\n814,078\n\n\nSchool\n9,931\n11,824\n174,176\n293,231\n\n\nEscort\n1,508\n7,490\n204,598\n331,320\n\n\nPersonal Business\n30,306\n10,406\n129,196\n176,184\n\n\nShop\n78,908\n16,338\n170,704\n386,900\n\n\nMeal\n10,058\n16,156\n87,616\n237,257\n\n\nSocial\n20,065\n19,862\n342,370\n895,123\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.13: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nAuto Sufficiency\n0 veh\nautos &lt; drivers\nautos = drivers\nautos &gt; drivers\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n23.6%\n745.3%\n57.7%\n-43.5%\n\n\nSchool\n129.9%\n1,016.3%\n47.2%\n-43.0%\n\n\nEscort\n1,505.2%\n1,772.8%\n51.4%\n-45.5%\n\n\nPersonal Business\n24.6%\n524.5%\n59.8%\n-41.0%\n\n\nShop\n-11.2%\n670.8%\n107.8%\n-45.8%\n\n\nMeal\n90.8%\n412.3%\n134.4%\n-51.5%\n\n\nSocial\n199.7%\n1,100.1%\n112.7%\n-50.8%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.14: DaysimOutputs\n\n\n\n\n\nAuto Sufficiency\n0 veh\nautos &lt; drivers\nautos = drivers\nautos &gt; drivers\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n12.3%\n26.0%\n28.3%\n27.4%\n\n\nSchool\n8.5%\n12.5%\n8.9%\n10.0%\n\n\nEscort\n9.1%\n13.2%\n10.8%\n10.8%\n\n\nPersonal Business\n14.1%\n6.1%\n7.2%\n6.2%\n\n\nShop\n26.2%\n11.9%\n12.3%\n12.5%\n\n\nMeal\n7.2%\n7.8%\n7.1%\n6.9%\n\n\nSocial\n22.5%\n22.5%\n25.3%\n26.3%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.15: 2023Survey\n\n\n\n\n\nAuto Sufficiency\n0 veh\nautos &lt; drivers\nautos = drivers\nautos &gt; drivers\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n15.0%\n28.4%\n31.8%\n26.0%\n\n\nSchool\n5.6%\n10.3%\n10.7%\n9.4%\n\n\nEscort\n0.9%\n6.5%\n12.6%\n10.6%\n\n\nPersonal Business\n17.1%\n9.1%\n8.0%\n5.6%\n\n\nShop\n44.5%\n14.2%\n10.5%\n12.3%\n\n\nMeal\n5.7%\n14.1%\n5.4%\n7.6%\n\n\nSocial\n11.3%\n17.3%\n21.1%\n28.6%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "tour.html#tours-by-purpose-by-income-level",
+    "href": "tour.html#tours-by-purpose-by-income-level",
+    "title": "4  Tours",
+    "section": "4.16 Tours by Purpose by Income Level",
+    "text": "4.16 Tours by Purpose by Income Level\n\nNumber of ToursTour Share\n\n\n\n\n\n\n\n\n\nTable 4.16: DaysimOutputs\n\n\n\n\n\nIncome Level\nLess than 25,000\n$25,000-$44,999\n$45,000-74,999\nMore than $75,000\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n92,182\n180,260\n324,366\n984,904\n\n\nSchool\n74,136\n67,925\n109,374\n326,812\n\n\nEscort\n75,982\n77,617\n135,642\n365,338\n\n\nPersonal Business\n86,724\n73,573\n82,136\n170,627\n\n\nShop\n139,965\n113,180\n158,251\n348,716\n\n\nMeal\n40,925\n55,209\n85,246\n240,775\n\n\nSocial\n153,145\n192,866\n296,786\n823,652\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.17: 2023Survey\n\n\n\n\n\nIncome Level\nLess than 25,000\n$25,000-$44,999\n$45,000-74,999\nMore than $75,000\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n34,915\n90,047\n155,619\n769,885\n\n\nSchool\n22,898\n10,638\n79,640\n307,323\n\n\nEscort\n5,669\n33,867\n85,250\n294,494\n\n\nPersonal Business\n41,020\n35,946\n25,549\n159,770\n\n\nShop\n57,193\n97,456\n65,293\n254,464\n\n\nMeal\n32,658\n22,226\n25,663\n159,646\n\n\nSocial\n70,500\n79,700\n146,545\n635,093\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.18: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nIncome Level\nLess than 25,000\n$25,000-$44,999\n$45,000-74,999\nMore than $75,000\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n164.0%\n100.2%\n108.4%\n27.9%\n\n\nSchool\n223.8%\n538.5%\n37.3%\n6.3%\n\n\nEscort\n1,240.4%\n129.2%\n59.1%\n24.1%\n\n\nPersonal Business\n111.4%\n104.7%\n221.5%\n6.8%\n\n\nShop\n144.7%\n16.1%\n142.4%\n37.0%\n\n\nMeal\n25.3%\n148.4%\n232.2%\n50.8%\n\n\nSocial\n117.2%\n142.0%\n102.5%\n29.7%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.19: DaysimOutputs\n\n\n\n\n\nIncome Level\nLess than 25,000\n$25,000-$44,999\n$45,000-74,999\nMore than $75,000\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n13.9%\n23.7%\n27.2%\n30.2%\n\n\nSchool\n11.2%\n8.9%\n9.2%\n10.0%\n\n\nEscort\n11.5%\n10.2%\n11.4%\n11.2%\n\n\nPersonal Business\n13.1%\n9.7%\n6.9%\n5.2%\n\n\nShop\n21.1%\n14.9%\n13.3%\n10.7%\n\n\nMeal\n6.2%\n7.3%\n7.2%\n7.4%\n\n\nSocial\n23.1%\n25.4%\n24.9%\n25.3%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 4.20: 2023Survey\n\n\n\n\n\nIncome Level\nLess than 25,000\n$25,000-$44,999\n$45,000-74,999\nMore than $75,000\n\n\nTour Purpose\n \n \n \n \n\n\n\n\nWork\n13.2%\n24.3%\n26.7%\n29.8%\n\n\nSchool\n8.6%\n2.9%\n13.6%\n11.9%\n\n\nEscort\n2.1%\n9.2%\n14.6%\n11.4%\n\n\nPersonal Business\n15.5%\n9.7%\n4.4%\n6.2%\n\n\nShop\n21.6%\n26.3%\n11.2%\n9.9%\n\n\nMeal\n12.3%\n6.0%\n4.4%\n6.2%\n\n\nSocial\n26.6%\n21.5%\n25.1%\n24.6%",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tours</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html",
+    "href": "trip.html",
+    "title": "5  Trips",
+    "section": "",
+    "text": "5.1 Total Trips",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#total-trips",
+    "href": "trip.html#total-trips",
+    "title": "5  Trips",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTrip\n16,180,996\n13,902,503\n2,278,493\n16.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTrip\n1,273,757\n853,837\n419,920\n49.2%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-per-person",
+    "href": "trip.html#trips-per-person",
+    "title": "5  Trips",
+    "section": "5.2 Trips per Person",
+    "text": "5.2 Trips per Person\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTrip\n3.8\n3.7\n0.1\n2.2%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTrip\n3.9\n3.0\n1.0\n33.0%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-per-person-by-purpose",
+    "href": "trip.html#trips-per-person-by-purpose",
+    "title": "5  Trips",
+    "section": "5.3 Trips per Person by Purpose",
+    "text": "5.3 Trips per Person by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n0.5\n0.5\n-0.0\n-3.0%\n\n\nSchool\n0.1\n0.1\n0.0\n3.7%\n\n\nEscort\n0.4\n0.4\n-0.0\n-1.3%\n\n\nPersonal Business\n0.2\n0.2\n-0.0\n-14.9%\n\n\nShop\n0.5\n0.5\n-0.0\n-1.5%\n\n\nMeal\n0.2\n0.2\n0.0\n3.4%\n\n\nSocial\n0.5\n0.5\n0.1\n9.6%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n0.5\n0.4\n0.1\n24.2%\n\n\nSchool\n0.2\n0.1\n0.0\n16.9%\n\n\nEscort\n0.4\n0.3\n0.1\n17.0%\n\n\nPersonal Business\n0.2\n0.1\n0.0\n22.4%\n\n\nShop\n0.5\n0.2\n0.2\n110.1%\n\n\nMeal\n0.3\n0.3\n0.0\n10.1%\n\n\nSocial\n0.6\n0.5\n0.2\n37.1%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-per-person-by-mode",
+    "href": "trip.html#trips-per-person-by-mode",
+    "title": "5  Trips",
+    "section": "5.4 Trips per Person by Mode",
+    "text": "5.4 Trips per Person by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n0.6\n0.4\n0.1\n36.7%\n\n\nBike\n0.0\n0.0\n-0.0\n-79.9%\n\n\nSOV\n1.8\n1.7\n0.1\n7.8%\n\n\nHOV2\n0.9\n0.8\n0.1\n13.5%\n\n\nHOV3+\n0.4\n0.6\n-0.2\n-28.7%\n\n\nTransit\n0.1\n0.1\n-0.0\n-40.8%\n\n\nSchool Bus\n0.0\n0.1\n-0.0\n-30.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nTrips per Person (DaysimOutputs)\nTrips per Person (2023Survey)\nDifference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n% Difference (Trips per Person (DaysimOutputs) - Trips per Person (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n0.5\n0.4\n0.1\n18.8%\n\n\nBike\n0.0\n0.0\n-0.0\n-68.2%\n\n\nSOV\n1.9\n1.2\n0.7\n58.9%\n\n\nHOV2\n1.0\n0.7\n0.3\n38.7%\n\n\nHOV3+\n0.4\n0.4\n0.0\n9.1%\n\n\nTransit\n0.1\n0.1\n-0.0\n-17.0%\n\n\nSchool Bus\n0.1\n0.1\n-0.0\n-26.8%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-share-by-purpose",
+    "href": "trip.html#trip-share-by-purpose",
+    "title": "5  Trips",
+    "section": "5.5 Trip Share by Purpose",
+    "text": "5.5 Trip Share by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Trips (DaysimOutputs)\nPercent of Trips (2023Survey)\nDifference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n% Difference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n\n\nTrips Purpose\n \n \n \n \n\n\n\n\nWork\n12.6%\n13.2%\n-0.7%\n-5.1%\n\n\nSchool\n3.9%\n3.9%\n0.1%\n1.5%\n\n\nEscort\n9.5%\n9.9%\n-0.3%\n-3.5%\n\n\nPersonal Business\n4.6%\n5.5%\n-0.9%\n-16.8%\n\n\nShop\n12.9%\n13.4%\n-0.5%\n-3.7%\n\n\nMeal\n6.7%\n6.6%\n0.1%\n1.1%\n\n\nSocial\n14.4%\n13.4%\n1.0%\n7.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Trips (DaysimOutputs)\nPercent of Trips (2023Survey)\nDifference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n% Difference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n\n\nTrips Purpose\n \n \n \n \n\n\n\n\nWork\n0.9%\n0.8%\n0.1%\n19.7%\n\n\nSchool\n0.3%\n0.3%\n0.0%\n12.7%\n\n\nEscort\n0.7%\n0.6%\n0.1%\n12.8%\n\n\nPersonal Business\n0.3%\n0.3%\n0.1%\n17.9%\n\n\nShop\n0.9%\n0.5%\n0.5%\n102.5%\n\n\nMeal\n0.6%\n0.6%\n0.0%\n6.1%\n\n\nSocial\n1.2%\n0.9%\n0.3%\n32.2%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-share-by-mode",
+    "href": "trip.html#trip-share-by-mode",
+    "title": "5  Trips",
+    "section": "5.6 Trip Share by Mode",
+    "text": "5.6 Trip Share by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nPercent of Trips (DaysimOutputs)\nPercent of Trips (2023Survey)\nDifference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n% Difference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n\n\nTrips Mode\n \n \n \n \n\n\n\n\nWalk\n14.9%\n11.2%\n3.8%\n33.7%\n\n\nBike\n0.2%\n1.2%\n-1.0%\n-80.3%\n\n\nSOV\n48.1%\n45.6%\n2.5%\n5.5%\n\n\nHOV2\n23.2%\n20.9%\n2.3%\n11.0%\n\n\nHOV3+\n10.7%\n15.3%\n-4.7%\n-30.3%\n\n\nTransit\n1.7%\n3.0%\n-1.2%\n-42.1%\n\n\nSchool Bus\n1.1%\n1.6%\n-0.5%\n-31.7%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nPercent of Trips (DaysimOutputs)\nPercent of Trips (2023Survey)\nDifference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n% Difference (Percent of Trips (DaysimOutputs) - Percent of Trips (2023Survey))\n\n\nTrips Mode\n \n \n \n \n\n\n\n\nWalk\n1.0%\n0.9%\n0.1%\n14.5%\n\n\nBike\n0.0%\n0.1%\n-0.0%\n-69.4%\n\n\nSOV\n3.8%\n2.5%\n1.3%\n53.1%\n\n\nHOV2\n1.9%\n1.4%\n0.5%\n33.6%\n\n\nHOV3+\n0.8%\n0.8%\n0.0%\n5.1%\n\n\nTransit\n0.2%\n0.3%\n-0.1%\n-20.0%\n\n\nSchool Bus\n0.1%\n0.1%\n-0.0%\n-29.5%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-distance-by-purpose",
+    "href": "trip.html#trip-distance-by-purpose",
+    "title": "5  Trips",
+    "section": "5.7 Trip Distance by Purpose",
+    "text": "5.7 Trip Distance by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n9.0\n9.2\n-0.2\n-2.3%\n\n\nSchool\n4.7\n3.9\n0.8\n20.4%\n\n\nEscort\n5.9\n5.7\n0.2\n2.8%\n\n\nPersonal Business\n5.2\n5.6\n-0.4\n-6.4%\n\n\nShop\n4.3\n4.4\n-0.1\n-2.0%\n\n\nMeal\n3.8\n3.3\n0.5\n13.5%\n\n\nSocial\n5.2\n6.7\n-1.5\n-22.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n7.6\n6.7\n0.9\n13.2%\n\n\nSchool\n3.8\n4.2\n-0.4\n-9.2%\n\n\nEscort\n4.7\n7.5\n-2.7\n-36.3%\n\n\nPersonal Business\n5.0\n4.2\n0.8\n18.4%\n\n\nShop\n3.0\n4.2\n-1.2\n-27.6%\n\n\nMeal\n3.1\n2.9\n0.2\n7.5%\n\n\nSocial\n4.3\n6.4\n-2.0\n-31.9%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-distance-by-mode",
+    "href": "trip.html#trip-distance-by-mode",
+    "title": "5  Trips",
+    "section": "5.8 Trip Distance by Mode",
+    "text": "5.8 Trip Distance by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n0.9\n0.9\n-0.0\n-0.1%\n\n\nBike\n4.6\n2.0\n2.6\n129.0%\n\n\nSOV\n7.0\n6.9\n0.1\n1.5%\n\n\nHOV2\n5.9\n6.2\n-0.3\n-5.6%\n\n\nHOV3+\n6.8\n7.3\n-0.6\n-8.0%\n\n\nTransit\n9.7\n8.9\n0.8\n8.8%\n\n\nSchool Bus\n3.9\n3.6\n0.2\n6.3%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nAverage Trip Length (DaysimOutputs)\nAverage Trip Length (2023Survey)\nDifference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n% Difference (Average Trip Length (DaysimOutputs) - Average Trip Length (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n1.4\n0.7\n0.7\n101.5%\n\n\nBike\n6.7\n1.5\n5.3\n356.2%\n\n\nSOV\n5.4\n6.2\n-0.8\n-13.1%\n\n\nHOV2\n4.5\n8.5\n-4.0\n-47.6%\n\n\nHOV3+\n4.5\n5.4\n-0.9\n-16.6%\n\n\nTransit\n5.5\n10.2\n-4.8\n-46.5%\n\n\nSchool Bus\n2.8\n3.1\n-0.3\n-11.2%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-travel-time-by-purpose",
+    "href": "trip.html#trip-travel-time-by-purpose",
+    "title": "5  Trips",
+    "section": "5.9 Trip Travel Time by Purpose",
+    "text": "5.9 Trip Travel Time by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Trip Travel Time (DaysimOutputs)\nAverage Trip Travel Time (2023Survey)\nDifference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n% Difference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n24.5\n21.6\n2.8\n13.1%\n\n\nSchool\n18.6\n12.4\n6.2\n49.7%\n\n\nEscort\n19.2\n14.7\n4.5\n30.8%\n\n\nPersonal Business\n18.6\n21.6\n-3.0\n-14.1%\n\n\nShop\n16.9\n12.7\n4.2\n33.6%\n\n\nMeal\n15.2\n12.4\n2.8\n22.3%\n\n\nSocial\n18.8\n17.2\n1.5\n8.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Trip Travel Time (DaysimOutputs)\nAverage Trip Travel Time (2023Survey)\nDifference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n% Difference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n\n\nTrip Purpose\n \n \n \n \n\n\n\n\nWork\n18.1\n17.8\n0.3\n1.6%\n\n\nSchool\n14.7\n11.8\n2.9\n24.3%\n\n\nEscort\n13.1\n17.2\n-4.2\n-24.1%\n\n\nPersonal Business\n14.3\n13.2\n1.2\n8.9%\n\n\nShop\n11.2\n12.0\n-0.9\n-7.2%\n\n\nMeal\n11.1\n9.3\n1.8\n18.9%\n\n\nSocial\n14.1\n19.2\n-5.2\n-26.8%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trip-travel-time-by-mode",
+    "href": "trip.html#trip-travel-time-by-mode",
+    "title": "5  Trips",
+    "section": "5.10 Trip Travel Time by Mode",
+    "text": "5.10 Trip Travel Time by Mode\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Trip Travel Time (DaysimOutputs)\nAverage Trip Travel Time (2023Survey)\nDifference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n% Difference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n18.1\n18.2\n-0.1\n-0.7%\n\n\nBike\n30.7\n12.1\n18.6\n153.9%\n\n\nSOV\n20.3\n16.1\n4.1\n25.6%\n\n\nHOV2\n18.0\n14.5\n3.5\n24.4%\n\n\nHOV3+\n19.8\n16.3\n3.5\n21.8%\n\n\nTransit\n29.4\n56.0\n-26.6\n-47.6%\n\n\nSchool Bus\n12.8\n10.1\n2.6\n25.8%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTravel Time (minutes)\nAverage Trip Travel Time (DaysimOutputs)\nAverage Trip Travel Time (2023Survey)\nDifference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n% Difference (Average Trip Travel Time (DaysimOutputs) - Average Trip Travel Time (2023Survey))\n\n\nTrip Mode\n \n \n \n \n\n\n\n\nWalk\n28.8\n14.4\n14.4\n100.0%\n\n\nBike\n44.9\n8.9\n36.0\n405.7%\n\n\nSOV\n11.8\n15.1\n-3.3\n-21.7%\n\n\nHOV2\n9.7\n17.6\n-8.0\n-45.1%\n\n\nHOV3+\n9.5\n13.4\n-3.9\n-28.8%\n\n\nTransit\n25.4\n27.8\n-2.4\n-8.6%\n\n\nSchool Bus\n6.3\n8.5\n-2.2\n-25.5%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-by-district",
+    "href": "trip.html#trips-by-district",
+    "title": "5  Trips",
+    "section": "5.11 Trips by District",
+    "text": "5.11 Trips by District\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference\n% Difference\n\n\nDistrictFlowName\n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n539,077\n426,535\n112,542\n26.4%\n\n\nBellevue Downtown\n72,397\n19,581\n52,816\n269.7%\n\n\nKirkland\n371,216\n156,492\n214,724\n137.2%\n\n\nRedmond\n291,067\n251,229\n39,838\n15.9%\n\n\nSeattle (excluding Seattle downtown)\n2,826,156\n2,052,351\n773,805\n37.7%\n\n\nSeattle downtown\n397,716\n221,974\n175,742\n79.2%\n\n\nRest\n11,683,367\n8,337,507\n3,345,860\n40.1%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-by-district-by-purpose",
+    "href": "trip.html#trips-by-district-by-purpose",
+    "title": "5  Trips",
+    "section": "5.12 Trips by District by Purpose",
+    "text": "5.12 Trips by District by Purpose\n\nNumber of TripsTrip Share\n\n\n\n\n\n\n\n\n\nTable 5.1: DaysimOutputs\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTrip Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n58,597\n7,879\n45,210\n35,558\n419,390\n72,964\n1,393,661\n\n\nSchool\n27,089\n1,975\n15,029\n11,802\n109,725\n6,291\n461,701\n\n\nEscort\n51,501\n4,260\n34,100\n26,929\n234,879\n19,063\n1,173,120\n\n\nPersonal Business\n22,341\n3,809\n16,123\n12,335\n122,734\n18,247\n544,484\n\n\nShop\n61,616\n9,508\n43,003\n33,237\n314,294\n43,946\n1,584,314\n\n\nMeal\n42,117\n6,767\n29,100\n22,959\n221,839\n36,190\n721,653\n\n\nSocial\n84,113\n11,658\n57,606\n45,142\n414,055\n57,339\n1,661,237\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.2: 2023Survey\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTrip Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n48,404\n2,105\n22,413\n32,729\n284,045\n24,064\n1,071,449\n\n\nSchool\n17,564\n485\n6,663\n17,917\n87,425\n1,864\n373,969\n\n\nEscort\n52,885\n309\n16,923\n18,872\n214,830\n17,988\n840,813\n\n\nPersonal Business\n23,743\n1,357\n6,131\n8,556\n86,163\n9,377\n503,748\n\n\nShop\n29,946\n2,997\n20,814\n8,757\n226,225\n32,539\n1,231,062\n\n\nMeal\n54,027\n2,906\n12,741\n12,070\n128,974\n23,421\n479,709\n\n\nSocial\n61,144\n2,459\n13,513\n51,942\n286,611\n46,249\n1,020,379\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.3: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTrip Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n21.1%\n274.4%\n101.7%\n8.6%\n47.6%\n203.2%\n30.1%\n\n\nSchool\n54.2%\n307.4%\n125.6%\n-34.1%\n25.5%\n237.5%\n23.5%\n\n\nEscort\n-2.6%\n1,276.8%\n101.5%\n42.7%\n9.3%\n6.0%\n39.5%\n\n\nPersonal Business\n-5.9%\n180.8%\n163.0%\n44.2%\n42.4%\n94.6%\n8.1%\n\n\nShop\n105.8%\n217.2%\n106.6%\n279.6%\n38.9%\n35.1%\n28.7%\n\n\nMeal\n-22.0%\n132.9%\n128.4%\n90.2%\n72.0%\n54.5%\n50.4%\n\n\nSocial\n37.6%\n374.1%\n326.3%\n-13.1%\n44.5%\n24.0%\n62.8%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.4: DaysimOutputs\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTrip Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n16.9%\n17.2%\n18.8%\n18.9%\n22.8%\n28.7%\n18.5%\n\n\nSchool\n7.8%\n4.3%\n6.3%\n6.3%\n6.0%\n2.5%\n6.1%\n\n\nEscort\n14.8%\n9.3%\n14.2%\n14.3%\n12.8%\n7.5%\n15.6%\n\n\nPersonal Business\n6.4%\n8.3%\n6.7%\n6.6%\n6.7%\n7.2%\n7.2%\n\n\nShop\n17.7%\n20.7%\n17.9%\n17.7%\n17.1%\n17.3%\n21.0%\n\n\nMeal\n12.1%\n14.8%\n12.1%\n12.2%\n12.1%\n14.2%\n9.6%\n\n\nSocial\n24.2%\n25.4%\n24.0%\n24.0%\n22.5%\n22.6%\n22.0%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.5: 2023Survey\n\n\n\n\n\nDistrictFlowName\nBellevue (excluding downtown)\nBellevue Downtown\nKirkland\nRedmond\nSeattle (excluding Seattle downtown)\nSeattle downtown\nRest\n\n\nTrip Purpose\n \n \n \n \n \n \n \n\n\n\n\nWork\n16.8%\n16.7%\n22.6%\n21.7%\n21.6%\n15.5%\n19.4%\n\n\nSchool\n6.1%\n3.8%\n6.7%\n11.9%\n6.7%\n1.2%\n6.8%\n\n\nEscort\n18.4%\n2.5%\n17.1%\n12.5%\n16.3%\n11.6%\n15.2%\n\n\nPersonal Business\n8.3%\n10.8%\n6.2%\n5.7%\n6.6%\n6.0%\n9.1%\n\n\nShop\n10.4%\n23.8%\n21.0%\n5.8%\n17.2%\n20.9%\n22.3%\n\n\nMeal\n18.8%\n23.0%\n12.8%\n8.0%\n9.8%\n15.1%\n8.7%\n\n\nSocial\n21.3%\n19.5%\n13.6%\n34.4%\n21.8%\n29.7%\n18.5%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "trip.html#trips-by-district-by-mode",
+    "href": "trip.html#trips-by-district-by-mode",
+    "title": "5  Trips",
+    "section": "5.13 Trips by District by Mode",
+    "text": "5.13 Trips by District by Mode\n\nNumber of TripsTrip Share\n\n\n\n\n\n\n\n\n\nTable 5.6: DaysimOutputs\n\n\n\n\n\nTrip Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n57,033\n1,032\n256,461\n138,414\n60,338\n17,417\n8,382\n\n\nBellevue Downtown\n32,155\n550\n21,899\n10,727\n3,021\n3,612\n433\n\n\nKirkland\n38,595\n652\n188,043\n93,085\n37,080\n9,732\n4,029\n\n\nRedmond\n34,119\n721\n144,753\n70,617\n29,488\n8,180\n3,189\n\n\nSeattle (excluding Seattle downtown)\n700,433\n9,114\n1,261,569\n515,383\n212,522\n102,672\n24,463\n\n\nSeattle downtown\n251,016\n2,035\n88,825\n29,417\n8,841\n17,175\n407\n\n\nRest\n1,305,321\n24,598\n5,822,816\n2,899,225\n1,380,745\n118,233\n132,429\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.7: 2023Survey\n\n\n\n\n\nTrip Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n76,702\n4,485\n147,254\n128,070\n54,563\n7,128\n2,265\n\n\nBellevue Downtown\n4,578\n442\n7,211\n5,947\n523\n694\nnan\n\n\nKirkland\n23,580\nnan\n83,706\n21,964\n17,462\n5,945\n1,992\n\n\nRedmond\n16,671\n3,366\n104,779\n45,137\n33,636\n28,039\n15,273\n\n\nSeattle (excluding Seattle downtown)\n393,006\n76,872\n836,632\n433,242\n191,892\n96,273\n13,117\n\n\nSeattle downtown\n89,162\n7,743\n49,583\n45,357\n9,335\n14,781\n55\n\n\nRest\n556,911\n38,913\n3,946,708\n1,796,021\n1,514,071\n206,229\n154,794\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.8: Percentage Difference (DaysimOutputs - Survey)\n\n\n\n\n\nTrip Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n-25.6%\n-77.0%\n74.2%\n8.1%\n10.6%\n144.4%\n270.1%\n\n\nBellevue Downtown\n602.4%\n24.5%\n203.7%\n80.4%\n478.0%\n420.1%\nnan%\n\n\nKirkland\n63.7%\nnan%\n124.6%\n323.8%\n112.3%\n63.7%\n102.3%\n\n\nRedmond\n104.7%\n-78.6%\n38.2%\n56.5%\n-12.3%\n-70.8%\n-79.1%\n\n\nSeattle (excluding Seattle downtown)\n78.2%\n-88.1%\n50.8%\n19.0%\n10.8%\n6.6%\n86.5%\n\n\nSeattle downtown\n181.5%\n-73.7%\n79.1%\n-35.1%\n-5.3%\n16.2%\n640.3%\n\n\nRest\n134.4%\n-36.8%\n47.5%\n61.4%\n-8.8%\n-42.7%\n-14.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.9: DaysimOutputs\n\n\n\n\n\nTrip Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n2.4%\n2.7%\n3.3%\n3.7%\n3.5%\n6.3%\n4.8%\n\n\nBellevue Downtown\n1.3%\n1.4%\n0.3%\n0.3%\n0.2%\n1.3%\n0.2%\n\n\nKirkland\n1.6%\n1.7%\n2.4%\n2.5%\n2.1%\n3.5%\n2.3%\n\n\nRedmond\n1.4%\n1.9%\n1.9%\n1.9%\n1.7%\n3.0%\n1.8%\n\n\nSeattle (excluding Seattle downtown)\n29.0%\n23.5%\n16.2%\n13.7%\n12.3%\n37.1%\n14.1%\n\n\nSeattle downtown\n10.4%\n5.3%\n1.1%\n0.8%\n0.5%\n6.2%\n0.2%\n\n\nRest\n54.0%\n63.6%\n74.8%\n77.2%\n79.7%\n42.7%\n76.4%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 5.10: 2023Survey\n\n\n\n\n\nTrip Mode\nWalk\nBike\nSOV\nHOV2\nHOV3+\nTransit\nSchool Bus\n\n\nDistrictFlowName\n \n \n \n \n \n \n \n\n\n\n\nBellevue (excluding downtown)\n6.6%\n3.4%\n2.8%\n5.2%\n3.0%\n2.0%\n1.2%\n\n\nBellevue Downtown\n0.4%\n0.3%\n0.1%\n0.2%\n0.0%\n0.2%\nnan%\n\n\nKirkland\n2.0%\nnan%\n1.6%\n0.9%\n1.0%\n1.7%\n1.1%\n\n\nRedmond\n1.4%\n2.6%\n2.0%\n1.8%\n1.8%\n7.8%\n8.1%\n\n\nSeattle (excluding Seattle downtown)\n33.9%\n58.3%\n16.2%\n17.5%\n10.5%\n26.8%\n7.0%\n\n\nSeattle downtown\n7.7%\n5.9%\n1.0%\n1.8%\n0.5%\n4.1%\n0.0%\n\n\nRest\n48.0%\n29.5%\n76.3%\n72.5%\n83.1%\n57.4%\n82.6%",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Trips</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html",
+    "href": "long_term.html",
+    "title": "6  Long-term Report",
+    "section": "",
+    "text": "6.1 Total Households and Population",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#total-households-and-population",
+    "href": "long_term.html#total-households-and-population",
+    "title": "6  Long-term Report",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\nACS\n\n\n\n\nTotal Persons\n4,306,155.0\n4,221,182.1\n84,973.0\n2.0%\n4,294,373.0\n\n\nTotal Households\n1,759,281.0\n1,733,407.2\n25,874.0\n1.5%\n1,737,345.0\n\n\nAverage Household Size\n2.0\n2.4\n0.0\n0.5%\n2.5\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\nACS\n\n\n\n\nTotal Persons\n323,575.0\n337,021.8\n-13,447.0\n-4.0%\n4,294,373.0\n\n\nTotal Households\n134,808.0\n135,324.1\n-516.0\n-0.4%\n1,737,345.0\n\n\nAverage Household Size\n2.0\n2.5\n-0.0\n-3.6%\n2.5",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#average-distance-to-work-by-person-type",
+    "href": "long_term.html#average-distance-to-work-by-person-type",
+    "title": "6  Long-term Report",
+    "section": "6.2 Average Distance to Work by Person Type",
+    "text": "6.2 Average Distance to Work by Person Type\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTable 6.1: Average Distance to Work by Person Type\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal\n12.1\n11.7\n0.4\n3.4%\n\n\nFull-Time\n13.3\n12.8\n0.5\n3.9%\n\n\nPart-Time\n7.8\n7.2\n0.6\n7.8%\n\n\nFemale\n10.5\n10.2\n0.3\n2.9%\n\n\nMale\n13.5\n12.9\n0.5\n4.2%\n\n\nAge Under 30\n11.1\n7.1\n4.0\n56.9%\n\n\nAge 30-49\n12.3\n12.3\n-0.0\n-0.1%\n\n\nAge 50-64\n13.0\n12.2\n0.9\n7.1%\n\n\nAge Over 65\n11.8\n12.0\n-0.1\n-1.1%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 6.2: Worker Share by Travel Distance\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n\n\n\n\n% Workers &lt; 1 Mile to Work\n6.0%\n7.7%\n-1.7%\n\n\n% Workers &gt; 20 Miles to Work\n16.9%\n15.4%\n1.6%\n\n\n\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTable 6.3: Average Distance to Work by Person Type\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal\n9.5\n8.3\n1.1\n13.7%\n\n\nFull-Time\n10.4\n8.4\n2.0\n23.3%\n\n\nPart-Time\n6.2\n8.0\n-1.8\n-22.2%\n\n\nFemale\n8.0\n7.2\n0.7\n10.2%\n\n\nMale\n10.7\n9.6\n1.1\n12.0%\n\n\nAge Under 30\n8.8\n2.9\n5.9\n205.8%\n\n\nAge 30-49\n9.9\n9.1\n0.8\n8.2%\n\n\nAge 50-64\n9.7\n7.4\n2.3\n31.0%\n\n\nAge Over 65\n9.3\n15.4\n-6.2\n-39.9%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 6.4: Worker Share by Travel Distance\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n\n\n\n\n% Workers &lt; 1 Mile to Work\n7.9%\n8.4%\n-0.6%\n\n\n% Workers &gt; 20 Miles to Work\n9.7%\n5.5%\n4.3%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#average-distance-to-school-by-person-type",
+    "href": "long_term.html#average-distance-to-school-by-person-type",
+    "title": "6  Long-term Report",
+    "section": "6.3 Average Distance to School by Person Type",
+    "text": "6.3 Average Distance to School by Person Type\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nTable 6.5: Average Distance to School by Person Type\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nAll\n4.8\n4.2\n0.6\n14.5%\n\n\nUnder 5\n5.3\n3.8\n1.5\n40.4%\n\n\n5 to 12\n3.2\n3.4\n-0.2\n-5.7%\n\n\n13 to 18\n4.1\n4.4\n-0.2\n-5.8%\n\n\nOver 19\n6.1\n6.6\n-0.5\n-7.6%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 6.6: Student Share by Travel Distance\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n\n\n\n\n% Students &lt; 1 Mile to School\n26.5%\n19.6%\n6.9%\n\n\n% Students &gt; 20 Miles to School\n3.4%\n2.5%\n0.9%\n\n\n\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\nTable 6.7: Average Distance to School by Person Type\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nAll\n4.2\n4.6\n-0.4\n-8.1%\n\n\nUnder 5\n4.6\n3.0\n1.6\n52.2%\n\n\n5 to 12\n3.1\n4.3\n-1.3\n-29.2%\n\n\n13 to 18\n3.6\n5.0\n-1.4\n-28.3%\n\n\nOver 19\n5.2\n6.1\n-0.9\n-15.1%\n\n\n\n\n\n\n\n\n\n\n\n\n\nTable 6.8: Student Share by Travel Distance\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n\n\n\n\n% Students &lt; 1 Mile to School\n16.4%\n19.3%\n-2.9%\n\n\n% Students &gt; 20 Miles to School\n1.3%\n0.7%\n0.6%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#transit-pass-ownership",
+    "href": "long_term.html#transit-pass-ownership",
+    "title": "6  Long-term Report",
+    "section": "6.4 Transit Pass Ownership",
+    "text": "6.4 Transit Pass Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Transit Passes\n996,474.0\n1,162,962.6\n-166,489.0\n-14.3%\n\n\nTransit Passes per Person\n0.2\n0.3\n-0.0\n-16.0%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs\n2023Survey\nDifference (DaysimOutputs - 2023Survey)\n% Difference (DaysimOutputs - 2023Survey)\n\n\n\n\nTotal Transit Passes\n94,191.0\n99,080.9\n-4,890.0\n-4.9%\n\n\nTransit Passes per Person\n0.3\n0.3\n-0.0\n-1.0%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#auto-ownership",
+    "href": "long_term.html#auto-ownership",
+    "title": "6  Long-term Report",
+    "section": "6.5 Auto Ownership",
+    "text": "6.5 Auto Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \n% of Households (DaysimOutputs)\n% of Households (2023Survey)\nDifference (% of Households (DaysimOutputs) - % of Households (2023Survey))\n\n\nNumber of Vehicles in Household\n \n \n \n\n\n\n\n0\n7.8%\n8.3%\n-0.6%\n\n\n1\n32.6%\n33.1%\n-0.5%\n\n\n2\n37.5%\n37.6%\n-0.0%\n\n\n3\n15.3%\n13.0%\n2.3%\n\n\n4+\n6.8%\n7.9%\n-1.1%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n% of Households (DaysimOutputs)\n% of Households (2023Survey)\nDifference (% of Households (DaysimOutputs) - % of Households (2023Survey))\n\n\nNumber of Vehicles in Household\n \n \n \n\n\n\n\n0\n6.4%\n8.3%\n-1.9%\n\n\n1\n32.0%\n38.4%\n-6.4%\n\n\n2\n39.4%\n38.2%\n1.1%\n\n\n3\n15.6%\n11.8%\n3.8%\n\n\n4+\n6.6%\n3.3%\n3.4%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#share-households-by-auto-ownership",
+    "href": "long_term.html#share-households-by-auto-ownership",
+    "title": "6  Long-term Report",
+    "section": "6.6 Share Households by Auto Ownership",
+    "text": "6.6 Share Households by Auto Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nCounty\nKing\nKitsap\nPierce\nSnohomish\n\n\nNumber of Cars\n \n \n \n \n\n\n\n\n0 Cars (DaysimOutputs)\n9.4%\n4.5%\n6.4%\n5.7%\n\n\n0 Cars (ACS)\n11.0%\n4.1%\n5.2%\n4.5%\n\n\n0 Cars (2023Survey)\n10.7%\n4.5%\n5.5%\n5.4%\n\n\n1 Car (DaysimOutputs)\n33.9%\n30.9%\n32.4%\n29.9%\n\n\n1 Car (ACS)\n36.3%\n26.1%\n27.1%\n26.8%\n\n\n1 Car (2023Survey)\n35.7%\n24.8%\n27.8%\n31.8%\n\n\n2 Cars (DaysimOutputs)\n36.1%\n40.6%\n38.4%\n39.7%\n\n\n2 Cars (ACS)\n34.2%\n39.0%\n38.9%\n39.5%\n\n\n2 Cars (2023Survey)\n36.5%\n40.2%\n38.9%\n35.2%\n\n\n3 Cars (DaysimOutputs)\n14.4%\n16.6%\n15.8%\n16.9%\n\n\n3 Cars (ACS)\n12.5%\n20.0%\n18.3%\n18.0%\n\n\n3 Cars (2023Survey)\n10.9%\n16.2%\n14.6%\n15.2%\n\n\n4+ Cars (DaysimOutputs)\n6.3%\n7.4%\n7.0%\n7.8%\n\n\n4+ Cars (ACS)\n5.9%\n10.8%\n10.5%\n11.2%\n\n\n4+ Cars (2023Survey)\n6.3%\n10.5%\n11.5%\n7.2%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCity\nBellevue\nKirkland\nRedmond\n\n\nNumber of Cars\n \n \n \n\n\n\n\n0 Cars (DaysimOutputs)\n8.0%\n4.8%\n5.2%\n\n\n0 Cars (ACS)\n10.0%\n7.1%\n9.0%\n\n\n0 Cars (2023Survey)\n14.2%\n3.9%\n2.2%\n\n\n1 Car (DaysimOutputs)\n31.6%\n32.0%\n32.9%\n\n\n1 Car (ACS)\n43.2%\n35.7%\n51.3%\n\n\n1 Car (2023Survey)\n39.1%\n33.2%\n44.3%\n\n\n2 Cars (DaysimOutputs)\n38.2%\n40.5%\n40.2%\n\n\n2 Cars (ACS)\n33.3%\n40.3%\n26.7%\n\n\n2 Cars (2023Survey)\n32.7%\n27.5%\n64.2%\n\n\n3 Cars (DaysimOutputs)\n15.6%\n15.8%\n15.2%\n\n\n3 Cars (ACS)\n8.9%\n11.4%\n12.2%\n\n\n3 Cars (2023Survey)\n8.7%\n13.8%\n15.6%\n\n\n4+ Cars (DaysimOutputs)\n6.6%\n6.8%\n6.5%\n\n\n4+ Cars (ACS)\n4.6%\n5.5%\n0.7%\n\n\n4+ Cars (2023Survey)\n5.4%\n0.0%\n3.2%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "long_term.html#households-by-income-group-by-auto-ownership",
+    "href": "long_term.html#households-by-income-group-by-auto-ownership",
+    "title": "6  Long-term Report",
+    "section": "6.7 Households by Income Group by Auto Ownership",
+    "text": "6.7 Households by Income Group by Auto Ownership\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\nHousehold Income\nLess than $20,000\n$20,000-$39,999\n$40,000-$59,999\n$60,000-$74,999\nMore than $75,000\n\n\nNumber of Cars\n \n \n \n \n \n\n\n\n\n0 Cars (DaysimOutputs)\n28.8%\n12.4%\n8.2%\n4.0%\n2.0%\n\n\n0 Cars (2023Survey)\n43.5%\n20.1%\n8.0%\n5.7%\n2.2%\n\n\n1 Car (DaysimOutputs)\n53.5%\n51.1%\n41.9%\n33.3%\n18.9%\n\n\n1 Car (2023Survey)\n46.3%\n46.0%\n55.3%\n34.2%\n27.8%\n\n\n2 Cars (DaysimOutputs)\n13.3%\n27.4%\n35.6%\n41.6%\n46.0%\n\n\n2 Cars (2023Survey)\n0.0%\n0.0%\n0.0%\n0.0%\n0.0%\n\n\n3 Cars (DaysimOutputs)\n3.2%\n6.7%\n10.5%\n15.4%\n22.4%\n\n\n3 Cars (2023Survey)\n2.2%\n4.7%\n12.5%\n10.2%\n17.0%\n\n\n4+ Cars (DaysimOutputs)\n1.1%\n2.4%\n3.9%\n5.6%\n10.7%\n\n\n4+ Cars (2023Survey)\n8.0%\n29.2%\n24.1%\n50.0%\n52.9%\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHousehold Income\nLess than $20,000\n$20,000-$39,999\n$40,000-$59,999\n$60,000-$74,999\nMore than $75,000\n\n\nNumber of Cars\n \n \n \n \n \n\n\n\n\n0 Cars (DaysimOutputs)\n27.9%\n14.2%\n9.3%\n5.5%\n2.3%\n\n\n0 Cars (2023Survey)\n44.5%\n1.2%\n2.6%\n43.9%\n3.6%\n\n\n1 Car (DaysimOutputs)\n52.1%\n50.7%\n43.8%\n41.1%\n23.5%\n\n\n1 Car (2023Survey)\n44.7%\n96.0%\n71.9%\n23.0%\n31.2%\n\n\n2 Cars (DaysimOutputs)\n15.5%\n26.1%\n32.2%\n35.4%\n46.0%\n\n\n2 Cars (2023Survey)\n0.0%\n0.0%\n0.0%\n0.0%\n0.0%\n\n\n3 Cars (DaysimOutputs)\n3.2%\n6.6%\n10.5%\n13.1%\n19.6%\n\n\n3 Cars (2023Survey)\n0.2%\n0.0%\n9.0%\n0.1%\n16.9%\n\n\n4+ Cars (DaysimOutputs)\n1.4%\n2.4%\n4.2%\n5.0%\n8.6%\n\n\n4+ Cars (2023Survey)\n10.6%\n2.8%\n16.5%\n32.9%\n48.3%",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Long-term Report</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html",
+    "href": "time_choice.html",
+    "title": "7  Time Choice",
+    "section": "",
+    "text": "7.1 Trip Arrival Times by Hour",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html#trip-arrival-times-by-hour",
+    "href": "time_choice.html#trip-arrival-times-by-hour",
+    "title": "7  Time Choice",
+    "section": "",
+    "text": "PSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nArrival Hour\n \n \n \n\n\n\n\n00 - 01\n0.4%\n0.1%\n0.3%\n\n\n01 - 02\n0.1%\n0.1%\n-0.0%\n\n\n02 - 03\n0.1%\n0.1%\n-0.0%\n\n\n03 - 04\n0.4%\n0.1%\n0.3%\n\n\n04 - 05\n0.6%\n0.4%\n0.2%\n\n\n05 - 06\n0.7%\n0.9%\n-0.3%\n\n\n06 - 07\n3.1%\n2.3%\n0.8%\n\n\n07 - 08\n5.8%\n6.4%\n-0.6%\n\n\n08 - 09\n7.3%\n7.5%\n-0.2%\n\n\n09 - 10\n6.7%\n6.6%\n0.1%\n\n\n10 - 11\n5.5%\n3.9%\n1.6%\n\n\n11 - 12\n5.0%\n4.8%\n0.3%\n\n\n12 - 13\n4.8%\n5.3%\n-0.6%\n\n\n13 - 14\n6.0%\n5.5%\n0.5%\n\n\n14 - 15\n6.3%\n7.5%\n-1.1%\n\n\n15 - 16\n8.6%\n8.9%\n-0.3%\n\n\n16 - 17\n10.0%\n9.9%\n0.1%\n\n\n17 - 18\n8.8%\n8.9%\n-0.1%\n\n\n18 - 19\n7.1%\n7.6%\n-0.4%\n\n\n19 - 20\n4.3%\n5.5%\n-1.2%\n\n\n20 - 21\n3.1%\n3.7%\n-0.7%\n\n\n21 - 22\n2.5%\n2.0%\n0.5%\n\n\n22 - 23\n1.6%\n1.1%\n0.6%\n\n\n23 - 24\n1.2%\n0.8%\n0.4%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nArrival Hour\n \n \n \n\n\n\n\n00 - 01\n0.3%\n0.0%\n0.3%\n\n\n01 - 02\n0.1%\n0.0%\n0.1%\n\n\n02 - 03\n0.1%\n0.0%\n0.1%\n\n\n03 - 04\n0.3%\n0.1%\n0.2%\n\n\n04 - 05\n0.5%\n0.0%\n0.5%\n\n\n05 - 06\n0.6%\n0.9%\n-0.3%\n\n\n06 - 07\n3.0%\n2.1%\n0.9%\n\n\n07 - 08\n5.8%\n3.9%\n2.0%\n\n\n08 - 09\n7.5%\n9.8%\n-2.3%\n\n\n09 - 10\n6.9%\n5.7%\n1.2%\n\n\n10 - 11\n5.6%\n2.6%\n3.0%\n\n\n11 - 12\n5.1%\n4.7%\n0.4%\n\n\n12 - 13\n4.8%\n4.9%\n-0.0%\n\n\n13 - 14\n6.3%\n5.9%\n0.4%\n\n\n14 - 15\n6.5%\n5.1%\n1.4%\n\n\n15 - 16\n9.1%\n6.4%\n2.7%\n\n\n16 - 17\n10.3%\n8.5%\n1.8%\n\n\n17 - 18\n8.9%\n11.4%\n-2.5%\n\n\n18 - 19\n6.9%\n10.7%\n-3.8%\n\n\n19 - 20\n4.0%\n7.5%\n-3.6%\n\n\n20 - 21\n2.9%\n6.5%\n-3.6%\n\n\n21 - 22\n2.3%\n2.2%\n0.0%\n\n\n22 - 23\n1.4%\n0.6%\n0.9%\n\n\n23 - 24\n1.0%\n0.6%\n0.4%",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html#tour-primary-destination-arrival-times-by-hour",
+    "href": "time_choice.html#tour-primary-destination-arrival-times-by-hour",
+    "title": "7  Time Choice",
+    "section": "7.2 Tour Primary Destination Arrival Times by Hour",
+    "text": "7.2 Tour Primary Destination Arrival Times by Hour\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nPrimary Destination Arrival Hour\n \n \n \n\n\n\n\n00 - 01\n0.1%\n0.0%\n0.0%\n\n\n01 - 02\n0.0%\n0.0%\n0.0%\n\n\n02 - 03\n0.0%\n0.0%\n0.0%\n\n\n03 - 04\n0.4%\n0.0%\n0.3%\n\n\n04 - 05\n0.5%\n0.8%\n-0.3%\n\n\n05 - 06\n0.6%\n1.9%\n-1.3%\n\n\n06 - 07\n5.1%\n4.8%\n0.3%\n\n\n07 - 08\n10.8%\n11.5%\n-0.7%\n\n\n08 - 09\n13.3%\n14.2%\n-1.0%\n\n\n09 - 10\n10.4%\n10.8%\n-0.5%\n\n\n10 - 11\n5.7%\n5.8%\n-0.1%\n\n\n11 - 12\n5.2%\n4.8%\n0.4%\n\n\n12 - 13\n5.2%\n5.0%\n0.3%\n\n\n13 - 14\n5.6%\n5.3%\n0.3%\n\n\n14 - 15\n5.6%\n5.8%\n-0.2%\n\n\n15 - 16\n5.4%\n7.1%\n-1.7%\n\n\n16 - 17\n7.2%\n5.1%\n2.1%\n\n\n17 - 18\n6.3%\n6.0%\n0.2%\n\n\n18 - 19\n5.4%\n5.6%\n-0.2%\n\n\n19 - 20\n2.1%\n3.3%\n-1.1%\n\n\n20 - 21\n2.1%\n1.3%\n0.8%\n\n\n21 - 22\n1.9%\n0.3%\n1.6%\n\n\n22 - 23\n0.8%\n0.3%\n0.4%\n\n\n23 - 24\n0.4%\n0.1%\n0.2%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nPrimary Destination Arrival Hour\n \n \n \n\n\n\n\n00 - 01\n0.0%\nnan%\nnan%\n\n\n01 - 02\n0.0%\nnan%\nnan%\n\n\n02 - 03\n0.0%\nnan%\nnan%\n\n\n03 - 04\n0.4%\n0.0%\n0.3%\n\n\n04 - 05\n0.5%\n0.0%\n0.4%\n\n\n05 - 06\n0.5%\n0.2%\n0.3%\n\n\n06 - 07\n4.9%\n5.2%\n-0.3%\n\n\n07 - 08\n10.7%\n9.4%\n1.2%\n\n\n08 - 09\n13.4%\n20.5%\n-7.2%\n\n\n09 - 10\n10.5%\n10.4%\n0.0%\n\n\n10 - 11\n5.8%\n4.5%\n1.3%\n\n\n11 - 12\n5.3%\n5.2%\n0.1%\n\n\n12 - 13\n5.2%\n4.8%\n0.4%\n\n\n13 - 14\n5.6%\n6.3%\n-0.8%\n\n\n14 - 15\n5.5%\n4.6%\n0.9%\n\n\n15 - 16\n5.4%\n5.2%\n0.2%\n\n\n16 - 17\n7.7%\n4.7%\n3.0%\n\n\n17 - 18\n6.5%\n4.8%\n1.6%\n\n\n18 - 19\n5.4%\n9.5%\n-4.1%\n\n\n19 - 20\n2.1%\n2.1%\n0.1%\n\n\n20 - 21\n2.0%\n1.9%\n0.1%\n\n\n21 - 22\n1.7%\n0.2%\n1.5%\n\n\n22 - 23\n0.6%\nnan%\nnan%\n\n\n23 - 24\n0.3%\n0.2%\n0.1%",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html#tour-primary-destination-departure-times-by-hour",
+    "href": "time_choice.html#tour-primary-destination-departure-times-by-hour",
+    "title": "7  Time Choice",
+    "section": "7.3 Tour Primary Destination Departure Times by Hour",
+    "text": "7.3 Tour Primary Destination Departure Times by Hour\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nPrimary Destination Departure Hour\n \n \n \n\n\n\n\n00 - 01\n0.1%\n0.1%\n0.1%\n\n\n01 - 02\n0.1%\n0.0%\n0.1%\n\n\n02 - 03\n0.1%\n0.0%\n0.1%\n\n\n03 - 04\n0.1%\n0.0%\n0.1%\n\n\n04 - 05\n0.2%\n0.1%\n0.1%\n\n\n05 - 06\n0.2%\n0.3%\n-0.1%\n\n\n06 - 07\n0.4%\n0.2%\n0.2%\n\n\n07 - 08\n1.8%\n1.9%\n-0.1%\n\n\n08 - 09\n3.4%\n3.7%\n-0.3%\n\n\n09 - 10\n5.2%\n3.4%\n1.8%\n\n\n10 - 11\n5.0%\n3.3%\n1.7%\n\n\n11 - 12\n4.6%\n5.1%\n-0.5%\n\n\n12 - 13\n4.3%\n4.9%\n-0.6%\n\n\n13 - 14\n7.8%\n5.8%\n2.0%\n\n\n14 - 15\n7.6%\n11.2%\n-3.5%\n\n\n15 - 16\n16.9%\n15.3%\n1.6%\n\n\n16 - 17\n10.1%\n11.9%\n-1.9%\n\n\n17 - 18\n10.3%\n10.2%\n0.1%\n\n\n18 - 19\n7.0%\n8.1%\n-1.1%\n\n\n19 - 20\n4.1%\n5.0%\n-0.9%\n\n\n20 - 21\n3.4%\n4.9%\n-1.5%\n\n\n21 - 22\n3.0%\n2.0%\n0.9%\n\n\n22 - 23\n2.4%\n1.8%\n0.5%\n\n\n23 - 24\n1.9%\n0.8%\n1.1%\n\n\n\n\n\n                                                \n\n\n\n\n\n\n\n\n\n\n\n \nDaysimOutputs (%)\n2023Survey (%)\nDifference (DaysimOutputs (%) - 2023Survey (%))\n\n\nPrimary Destination Departure Hour\n \n \n \n\n\n\n\n00 - 01\n0.1%\nnan%\nnan%\n\n\n01 - 02\n0.1%\nnan%\nnan%\n\n\n02 - 03\n0.1%\nnan%\nnan%\n\n\n03 - 04\n0.1%\n0.0%\n0.1%\n\n\n04 - 05\n0.2%\nnan%\nnan%\n\n\n05 - 06\n0.2%\n0.0%\n0.1%\n\n\n06 - 07\n0.4%\nnan%\nnan%\n\n\n07 - 08\n1.8%\n4.2%\n-2.4%\n\n\n08 - 09\n3.4%\n3.3%\n0.1%\n\n\n09 - 10\n5.2%\n1.2%\n4.0%\n\n\n10 - 11\n5.1%\n0.9%\n4.2%\n\n\n11 - 12\n4.7%\n5.4%\n-0.7%\n\n\n12 - 13\n4.4%\n5.5%\n-1.1%\n\n\n13 - 14\n7.8%\n6.3%\n1.4%\n\n\n14 - 15\n7.6%\n4.3%\n3.2%\n\n\n15 - 16\n16.6%\n17.0%\n-0.5%\n\n\n16 - 17\n10.3%\n14.0%\n-3.7%\n\n\n17 - 18\n10.6%\n14.9%\n-4.3%\n\n\n18 - 19\n7.2%\n7.8%\n-0.6%\n\n\n19 - 20\n4.1%\n3.1%\n1.0%\n\n\n20 - 21\n3.4%\n8.7%\n-5.3%\n\n\n21 - 22\n2.9%\n1.9%\n1.0%\n\n\n22 - 23\n2.1%\n0.7%\n1.5%\n\n\n23 - 24\n1.7%\n0.6%\n1.1%",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html#model-bike-trips-departure-time-by-purpose",
+    "href": "time_choice.html#model-bike-trips-departure-time-by-purpose",
+    "title": "7  Time Choice",
+    "section": "7.4 Model Bike Trips Departure Time by Purpose",
+    "text": "7.4 Model Bike Trips Departure Time by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDeparture Hour\nAll Purposes\nHome\nSocial\nShop\nEscort\nWork\nSchool\nMeal\nPersonal Business\n\n\n\n\n0\n00 - 01\n4\n4\nnan\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n1\n01 - 02\n4\n4\nnan\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n2\n02 - 03\n2\n2\nnan\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n3\n03 - 04\n4\nnan\n1\nnan\n3\nnan\nnan\nnan\nnan\n\n\n4\n04 - 05\n74\nnan\n12\n6\n41\n12\n1\nnan\n2\n\n\n5\n05 - 06\n270\nnan\n43\n19\n126\n57\n12\n3\n10\n\n\n6\n06 - 07\n540\nnan\n121\n39\n212\n108\n30\n12\n18\n\n\n7\n07 - 08\n1,491\n735\n187\n92\n218\n114\n100\n11\n34\n\n\n8\n08 - 09\n2,132\n1,352\n193\n129\n189\n71\n129\n23\n46\n\n\n9\n09 - 10\n2,546\n1,871\n212\n142\n149\n24\n60\n26\n62\n\n\n10\n10 - 11\n2,451\n1,952\n148\n103\n121\n19\n48\n23\n37\n\n\n11\n11 - 12\n2,252\n1,748\n146\n107\n135\n30\n32\n28\n26\n\n\n12\n12 - 13\n2,179\n1,614\n145\n112\n168\n45\n25\n29\n41\n\n\n13\n13 - 14\n2,912\n2,308\n166\n124\n167\n50\n23\n30\n44\n\n\n14\n14 - 15\n2,875\n2,292\n179\n123\n178\n28\n11\n28\n36\n\n\n15\n15 - 16\n4,592\n3,872\n205\n199\n174\n37\n15\n53\n37\n\n\n16\n16 - 17\n4,223\n3,590\n225\n187\n125\n14\n8\n36\n38\n\n\n17\n17 - 18\n4,341\n3,872\n192\n126\n66\n12\n5\n42\n26\n\n\n18\n18 - 19\n3,337\n3,040\n130\n72\n33\n11\n6\n30\n15\n\n\n19\n19 - 20\n2,144\n2,027\n48\n42\n11\n2\n1\n10\n3\n\n\n20\n20 - 21\n210\n209\n1\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n21\n21 - 22\n71\n69\nnan\n2\nnan\nnan\nnan\nnan\nnan\n\n\n22\n22 - 23\n25\n25\nnan\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n23\n23 - 24\n23\n23\nnan\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDeparture Hour\nAll Purposes\nSocial\nHome\nSchool\nShop\nWork\nEscort\nMeal\nPersonal Business\n\n\n\n\n0\n04 - 05\n4\nnan\nnan\nnan\nnan\n2\n2\nnan\nnan\n\n\n1\n05 - 06\n25\n4\nnan\nnan\n2\n5\n13\n1\nnan\n\n\n2\n06 - 07\n80\n20\nnan\n2\n5\n24\n24\n3\n2\n\n\n3\n07 - 08\n149\n39\n53\n8\n2\n21\n21\n1\n4\n\n\n4\n08 - 09\n182\n30\n98\n9\n5\n13\n22\n2\n3\n\n\n5\n09 - 10\n181\n18\n132\n2\n8\n1\n14\n2\n4\n\n\n6\n10 - 11\n177\n16\n136\n1\n5\n3\n12\n2\n2\n\n\n7\n11 - 12\n141\n16\n102\n1\n4\n4\n8\n5\n1\n\n\n8\n12 - 13\n145\n20\n102\n1\n4\n3\n8\n3\n4\n\n\n9\n13 - 14\n230\n33\n166\n1\n4\n6\n13\n6\n1\n\n\n10\n14 - 15\n195\n28\n134\n1\n3\n2\n21\n2\n4\n\n\n11\n15 - 16\n304\n31\n231\n1\n11\n4\n15\n9\n2\n\n\n12\n16 - 17\n350\n31\n284\nnan\n9\nnan\n12\n10\n4\n\n\n13\n17 - 18\n353\n29\n305\n1\n6\n1\n6\n3\n2\n\n\n14\n18 - 19\n244\n8\n230\n1\n1\n1\nnan\n3\nnan\n\n\n15\n19 - 20\n163\n4\n153\nnan\n3\n1\n1\n1\nnan\n\n\n16\n20 - 21\n16\nnan\n16\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n17\n21 - 22\n10\nnan\n10\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n18\n22 - 23\n3\nnan\n3\nnan\nnan\nnan\nnan\nnan\nnan\n\n\n19\n23 - 24\n3\nnan\n3\nnan\nnan\nnan\nnan\nnan\nnan",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  },
+  {
+    "objectID": "time_choice.html#model-bike-tours-departure-time-by-purpose",
+    "href": "time_choice.html#model-bike-tours-departure-time-by-purpose",
+    "title": "7  Time Choice",
+    "section": "7.5 Model Bike Tours Departure Time by Purpose",
+    "text": "7.5 Model Bike Tours Departure Time by Purpose\n\nPSRC RegionBKR\n\n\n\n\n\n\n\n\n\n \nDeparture Hour\nAll Purposes\nSocial\nEscort\nSchool\nWork\nShop\nMeal\nPersonal Business\n\n\n\n\n0\n03 - 04\n162\n33\n30\n32\n48\n6\n2\n11\n\n\n1\n04 - 05\n260\n51\n75\n34\n67\n18\n5\n10\n\n\n2\n05 - 06\n783\n202\n166\n165\n139\n60\n11\n40\n\n\n3\n06 - 07\n2,439\n633\n264\n983\n245\n174\n29\n111\n\n\n4\n07 - 08\n4,197\n1,033\n259\n2,053\n250\n393\n42\n167\n\n\n5\n08 - 09\n4,478\n1,304\n236\n2,015\n148\n499\n49\n227\n\n\n6\n09 - 10\n3,162\n1,188\n180\n1,015\n64\n434\n57\n224\n\n\n7\n10 - 11\n2,073\n822\n136\n537\n51\n335\n49\n143\n\n\n8\n11 - 12\n1,915\n850\n164\n342\n43\n333\n45\n138\n\n\n9\n12 - 13\n1,847\n804\n196\n192\n58\n381\n62\n154\n\n\n10\n13 - 14\n1,960\n856\n199\n183\n73\n427\n61\n161\n\n\n11\n14 - 15\n1,985\n938\n192\n119\n54\n484\n62\n136\n\n\n12\n15 - 16\n2,315\n1,230\n153\n92\n35\n537\n115\n153\n\n\n13\n16 - 17\n2,650\n1,561\n114\n78\n20\n611\n119\n147\n\n\n14\n17 - 18\n2,018\n1,228\n51\n63\n19\n442\n112\n103\n\n\n15\n18 - 19\n1,020\n611\n22\n40\n9\n233\n52\n53\n\n\n16\n19 - 20\n175\n106\n8\n2\nnan\n48\n7\n4\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \nDeparture Hour\nAll Purposes\nSocial\nSchool\nWork\nMeal\nEscort\nShop\nPersonal Business\n\n\n\n\n0\n03 - 04\n22\n3\n2\n13\nnan\n3\n1\nnan\n\n\n1\n04 - 05\n30\n4\n2\n18\n1\n5\nnan\nnan\n\n\n2\n05 - 06\n98\n37\n15\n15\n3\n19\n5\n4\n\n\n3\n06 - 07\n203\n57\n65\n41\n5\n24\n4\n7\n\n\n4\n07 - 08\n290\n121\n87\n35\n1\n22\n16\n8\n\n\n5\n08 - 09\n248\n127\n52\n20\n4\n23\n13\n9\n\n\n6\n09 - 10\n164\n92\n25\n4\n5\n17\n11\n10\n\n\n7\n10 - 11\n133\n72\n15\n11\n6\n8\n13\n8\n\n\n8\n11 - 12\n128\n79\n7\n5\n4\n11\n16\n6\n\n\n9\n12 - 13\n134\n82\n2\n7\n10\n10\n17\n6\n\n\n10\n13 - 14\n150\n89\n4\n10\n6\n14\n15\n12\n\n\n11\n14 - 15\n158\n108\n1\n1\n8\n15\n17\n8\n\n\n12\n15 - 16\n217\n158\n1\n4\n14\n12\n20\n8\n\n\n13\n16 - 17\n190\n143\n1\nnan\n17\n9\n11\n9\n\n\n14\n17 - 18\n133\n101\n2\n2\n5\n4\n14\n5\n\n\n15\n18 - 19\n48\n31\n1\n1\n1\nnan\n12\n2\n\n\n16\n19 - 20\n7\n6\nnan\nnan\nnan\n1\nnan\nnan",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Time Choice</span>"
+    ]
+  }
+]

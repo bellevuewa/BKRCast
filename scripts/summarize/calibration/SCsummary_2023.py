@@ -406,9 +406,13 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
         location (str): the path pointing to the Daysim outputs
         districtfile (pandas.core.frame.DataFrame): a pandas dataframe that stores dictrict data
         fname_tail (str): can be '' for regionwide summary or '_BKR' for BKR summary
+        acs_data (str): the name of ACS survey, usually 
     """
     print('---Begin DaySim Report Compilation---')
     start = time.time()
+
+    # locate the ACS survey data
+    acs_data = f'inputs/model/survey/ACS_2023{fname_tail}.xlsx'
 
     # Merge data
     merge_per_hh_1 = pd.merge(data1['Person'][['pwtyp', 'psexpfac', 'pwpcl', 'pwaudist','pstyp', 'pspcl', 'psaudist', 'hhno', 'ptpass']],
@@ -599,10 +603,10 @@ def DaysimReport(data1, data2, data3, name1, name2, name3, location, districtfil
     #Transit Boardings
     board = pd.DataFrame(index=['Boardings'])
     board['Implied Transit Boardings (Assuming 1.3 Boardings/Trip)'] = 1.3 * data1['Trip'].query('mode == "Transit"')['trexpfac'].sum()
-    if regionwide:
+    if 'BKR' in fname_tail:
         board['Total Observed Transit Boardings (2011)'] = 647127
     else:
-        board['Total Observed Transit Boardings (2024)'] = 23265
+        board['Total Observed Transit Boardings (2024)'] = 228479 + 169747
     board = get_differences(board, 'Implied Transit Boardings (Assuming 1.3 Boardings/Trip)',
                                    'Total Observed Transit Boardings (2011)', 0)
 
@@ -1571,6 +1575,9 @@ def ModeChoice(data1, data2, data3, name1, name2, name3, location, fname_tail):
 
 def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile, fname_tail):
     start = time.time()
+    # read ACS survey data
+    acs_data = f'inputs/model/survey/ACS_2023{fname_tail}.xlsx'
+
     print('---Begin Long Term Report compilation---')
     merge_per_hh_1 = pd.merge(data1['Person'][['hhno', 'psexpfac', 'pwpcl', 'pwtyp', 'pgend', 'pagey', 'pwaudist']],
                               data1['Household'][['hhno', 'hhtaz', 'hhparcel']],
@@ -1594,7 +1601,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile, f
     tp3 = data3['Person']['psexpfac'].sum()
     ahs1 = tp1 / th1  # average household size
     ahs2 = tp2 / th2
-    ahs3 = tp3 / th2
+    ahs3 = tp3 / th3
     ph = pd.DataFrame(index = ['Total Persons', 'Total Households', 'Average Household Size'])
     ph[name1] = [tp1, th1, ahs1]
     ph[name2] = [tp2, th2, ahs2]
@@ -1624,7 +1631,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile, f
 
     local_tag = 'County'
     region_tag = 'Region'
-    if not regionwide:
+    if 'BKR' in fname_tail:
         local_tag = 'City'
         region_tag = 'BKR'
         wkr_1_hzone = wkr_1_hzone[wkr_1_hzone['Region']=='BKR'].copy(deep=True)
@@ -1881,7 +1888,7 @@ def LongTerm(data1, data2, data3, name1, name2, name3, location, districtfile, f
     hh_taz2 = pd.merge(districtfile, data2['Household'], left_on = 'TAZ', right_on = 'hhtaz')
     hh_taz3 = pd.merge(districtfile, data3['Household'], left_on = 'TAZ', right_on = 'hhtaz')
 
-    if not regionwide:
+    if 'BKR' in fname_tail:
         for tab in [hh_taz1, hh_taz2, hh_taz3]:
             tab['City'] = ''
             tab.loc[tab['TAZ'].isin(taz_bellevue['TAZ']), 'City'] = 'Bellevue'
@@ -2287,7 +2294,8 @@ def TimeChoice(data1, data2, data3, name1, name2, name3, location, districtfile,
 def report_compile(h5_results_file, h5_results_name,
                    h5_comparison_file, h5_comparison_name,
                    h5_fullsurvey_file, h5_fullsurvey_name,
-                   guidefile,districtfile, report_output_location):
+                   guidefile,districtfile, report_output_location,
+                   regionwide=True):
     print('+-+-+-+Begin summary report file compilation+-+-+-+')
     timerstart = time.time()
     taz_subarea = pd.read_csv(districtfile)
@@ -2348,10 +2356,18 @@ def report_compile(h5_results_file, h5_results_name,
 
 
 def main():    
+    # regionwide
     report_compile(h5_results_file, h5_results_name,
                    h5_comparison_file, h5_comparison_name,
                    h5_fullsurvey_file, h5_fullsurvey_name,
-                   guidefile, districtfile, report_output_location)
+                   guidefile, districtfile, report_output_location,
+                   regionwide=True)
+    # BKR
+    report_compile(h5_results_file, h5_results_name,
+                   h5_comparison_file, h5_comparison_name,
+                   h5_fullsurvey_file, h5_fullsurvey_name,
+                   guidefile, districtfile, report_output_location,
+                   regionwide=False)
 
 if __name__ == '__main__':
     main()

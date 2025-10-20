@@ -1,0 +1,42 @@
+project:
+  type: book
+  output-dir: "quarto_products"
+  
+book:
+  title: "BKRCast Model Validation"
+  repo-url: https://github.com/bellevuewa
+  search: false
+  sidebar:
+    logo: logo/CityLogo_color200x200.png
+
+  chapters:
+    - index.qmd
+    - basic_summary.ipynb
+    - day_pattern.ipynb
+    - tour.ipynb
+    - trip.ipynb
+    - long_term.ipynb
+    - time_choice.ipynb
+    # # - work_location.ipynb
+    # # - school_location.ipynb
+    # # - telecommute.ipynb
+
+format:
+  html:
+    mainfont: Open Sans
+    theme: 
+      light: [cosmo, notebook_styling\custom.scss]
+      dark: [darkly, notebook_styling\custom.scss]
+    echo: false
+    code-tools: true
+    toc: true
+    toc-location: left
+    # smooth-scroll: true
+    # number-sections: true
+    # html-math-method: katex
+
+jupyter: python3
+
+
+
+

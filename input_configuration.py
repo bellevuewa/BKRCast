@@ -292,7 +292,7 @@ else:
     h5_comparison_name = '2023DaysimFormatSurvey'  # this is daysim-formatted survey
     h5_fullsurvey_name = '2023FullSurvey'  # this is full survey data, as the daysim-formatted survey usually dropped records that are not complete
     guidefile = 'inputs/model/CatVarDict_2023.xlsx'
-    districtfile = 'inputs/model/TAZ_TAD_County.csv'
+    districtfile = 'inputs/subarea_definition/TAZ_subarea.csv'
     FAZ_TAZ = ''  # only for 2014-survey comparison
     LEHD_work_flows = ''  # only for 2014-survey comparison
     if regionwide:

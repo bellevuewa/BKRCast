@@ -234,7 +234,7 @@ def run_all_summaries():
       if int(model_year) <= 2023:
         subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'])
       else:
-        subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2023.py'])
+        subprocess.call([sys.executable, 'run_bkrcast_validation.py'])
 
    #Create a daily network with volumes. Will add counts and summary emme project. 
    if run_create_daily_bank:

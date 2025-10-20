@@ -1,9 +1,0 @@
-2025-09-02 19:05:12,940 - INFO - Running Daysim validation...
-2025-09-02 19:05:13,002 - INFO - Summarizing Tour Destination Choice...
-2025-09-02 19:05:13,002 - INFO - Summarizing Trip Time of Day Choice...
-2025-09-02 19:05:15,303 - INFO - Summarizing Trip Time of Day for BKRCast bkrcast_all...Finished
-2025-09-02 19:05:17,763 - INFO - Summarizing Trip Time of Day for BKRCast bkrcast_inbkr...Finished
-2025-09-02 19:05:20,072 - INFO - Summarizing Trip Time of Day for BKRCast bkrcast_outbkr...Finished
-2025-09-02 19:05:20,073 - INFO - Total run time: 0.12 minutes
-2025-09-02 19:05:20,073 - INFO - Total run time: 0.12 minutes
-2025-09-02 19:05:20,073 - INFO - All processing completed in 7.14 seconds total.

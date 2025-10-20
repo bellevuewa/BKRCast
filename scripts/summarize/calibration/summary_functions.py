@@ -74,21 +74,22 @@ def get_differences(df_in, colname1, colname2, roundto): #Computes the differenc
     df = df_in.copy()
     if colname2 not in df:
         colname2 = df.columns[1]
-    df['Difference'] = df[colname1] - df[colname2]
-    df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
-    df.loc[df['% Difference']==np.inf, '% Difference'] = np.nan
+    df[f'Difference ({colname1} - {colname2})'] = df[colname1] - df[colname2]
+    df[f'% Difference ({colname1} - {colname2})'] = (df[f'Difference ({colname1} - {colname2})'] / df[colname2] * 100).astype('float').round(2)
+    df.loc[df[f'% Difference ({colname1} - {colname2})']==np.inf, f'% Difference ({colname1} - {colname2})'] = np.nan
     if isinstance(roundto, list):
-        for i in range(len(df['Difference'])):
+        for i in range(len(df[f'Difference ({colname1} - {colname2})'])):
             col1_index = df.columns.get_loc(colname1)
             df.iloc[i, col1_index] = round(df.iloc[i, col1_index], roundto[i])
             col2_index = df.columns.get_loc(colname1)
             df.iloc[i, col2_index] = round(df.iloc[i, col2_index], roundto[i])
-            col3_index = df.columns.get_loc('Difference')
+            col3_index = df.columns.get_loc(f'Difference ({colname1} - {colname2})')
             df.iloc[i, col3_index] = round(df.iloc[i, col3_index], roundto[i])
     else:
         df[colname1] = df[colname1].round(roundto)
         df[colname2] = df[colname2].round(roundto)
-        df['Difference'] = df['Difference'].round(roundto)
+        df[f'Difference ({colname1} - {colname2})'] = df[f'Difference ({colname1} - {colname2})'].round(roundto)
+        df[f'% Difference ({colname1} - {colname2})'] = df[f'% Difference ({colname1} - {colname2})'].round(roundto)
     return(df)
 
 def get_counts(counts_df, input_time): #Function to get counts for a SoundCast time period

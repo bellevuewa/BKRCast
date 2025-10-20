@@ -1,0 +1,43 @@
+---
+title: Introduction
+format:
+  html:
+    toc: false
+    code-tools: false
+    css: styles.css
+date: today
+---
+
+
+# Introduction
+These Household Travel Survey (HHTS) Quarto pages present travel insights derived from the Puget Sound Regional Household Travel Survey, conducted periodically by the Puget Sound Regional Council (PSRC). The City of Bellevue (City) contributed to the survey studies in 2013 and 2023. The City collaborated with PSRC to conduct additional sampling within Bellevue and cleaned the survey data. This data was then used to update the BKRCast model and analyze travel demand across the region, particularly in the BKR area (Bellevue, Kirkland, and Redmond).
+
+The Modeling and Analysis Group (MAG) is continuously adding useful statistics to assist in calibrating the BKRCast Model. Meanwhile, MAG keeps updating the figures to ensure that the data used in the analysis remains current.
+
+Please note that the 2013 survey collected one-day travel activities with an online survey form and a call center. In addition to the abforemend data collection approaches for one-day travel activities, the 2023 survey also gathered up to seven-day travel diaries, which included individuals' GPS locations, through a smartphone-based app. For more details, please visit [PSRC HHTS Program](https://www.psrc.org/our-work/household-travel-survey-program).
+
+
+<!-- ## Data Structure
+Please reach out to [Ohay Angah](oangah@bellevuewa.gov) to access the data. Data you received in 2023 should be in the following structure:
+
+- `home_in_bellevue/`: processed data that travelers live in Bellevue.
+- `homeORwork_in_bellevue/`: processed data that travelers live or work in Bellevue.
+- `processed_regionwide/`: processed data that travelers live in the PSRC region.
+- `raw/`: raw survey data.
+- `2023-PSRC-Codebook-v2.xlsx`: codebook of the column names.  -->
+
+<!-- ### How to Get Access to Anlaysis Scripts
+The analysis (without datasets) is stored into the [HHTSurveyAnalysis GitHub Repository](https://github.com/bellevuewa/HHTSurveyAnalysis). Please contact [IT team](ITSupport@bellevuewa.gov) to get access to the repo.
+
+- If you want to analyze the data yourself, please refer to `config.toml` (in the [HHTSurveyAnalysis](https://github.com/bellevuewa/HHTSurveyAnalysis) repo) and `2023-PSRC-Codebook-v2.xlsx` for the data columns and their descriptions. The column names in `config.toml` are those should be used in the survey analysis.
+- **Please do NOT put any of the data onto your local machine.**
+- The [HHTSurveyAnalysis GitHub Repository](https://github.com/bellevuewa/HHTSurveyAnalysis) has scripts reading files from V drive and Z drive, thus this repo should not be open to public.
+- TAZ files can be downloaded from [the BKRCast GitHub Repository](https://github.com/bellevuewa/BKRCast/tree/develop/inputs/subarea_definition). -->
+
+<!-- ### Tips {.unnumbered} -->
+#### Survey Data Access {.unnumbered}
+To protect the confidentiality, integrity, and security of personal information, the City will not disclose personal information collected in the survey except as required by law. The survey data is stored in a secure drive, please reach out to <u>your supervisor</u> if you would like to access the data or analysis scripts. You may contact <a href="mailto:oangah@bellevuewa.gov">Ohay Angah</a> for access assistance.
+
+#### Tips for Navigating Pages {.unnumbered}
+- You can access **Survey Highlights** by clicking the **forward arrow** at the bottom of the page. 
+- You may navigate to any desired analysis page by selecting the item from the left sidebar.
