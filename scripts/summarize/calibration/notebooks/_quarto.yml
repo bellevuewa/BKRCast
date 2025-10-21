@@ -1,6 +1,6 @@
 project:
   type: book
-  output-dir: "quarto_products"
+  output-dir: "bkrcast_validation"
   
 book:
   title: "BKRCast Model Validation"

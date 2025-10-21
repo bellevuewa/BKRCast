@@ -33,3 +33,9 @@ UpgradeLog2.htm
 @ndstudybaseline.txt
 __pycache__
 .Rproj.user
+input_configuration_.py
+daysim_summaries_backup/*
+scripts/summarize/notebooks/calibration_
+scripts/summarize/calibration/daysim_summaries/
+run_bkrcast_.py
+scripts/summarize/calibration/notebooks/bkrcast_validation/
