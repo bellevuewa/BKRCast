@@ -17,6 +17,7 @@ book:
     - trip.ipynb
     - long_term.ipynb
     - time_choice.ipynb
+    - district_summary.ipynb
     # # - work_location.ipynb
     # # - school_location.ipynb
     # # - telecommute.ipynb
