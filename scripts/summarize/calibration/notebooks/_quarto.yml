@@ -18,9 +18,9 @@ book:
     - long_term.ipynb
     - time_choice.ipynb
     - district_summary.ipynb
+    - telecommute.ipynb
     # # - work_location.ipynb
     # # - school_location.ipynb
-    # # - telecommute.ipynb
 
 format:
   html:

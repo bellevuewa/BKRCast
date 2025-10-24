@@ -110,3 +110,11 @@ def get_homebased_tag(df, tag_colname='hb_tag'):
                 ((df['oadtyp'] == 'Usual School') & (df['dadtyp'] == 'Home'))
     df.loc[condition, tag_colname] = 'HBS'
     return df
+
+
+def get_telecommute(person_day):
+    person_day['worker_type'] = 'Not Worker'
+    person_day.loc[person_day['pwtyp']!='Not a Paid Worker', 'worker_type'] = 'Commuter'
+    person_day.loc[(person_day['pwtyp']!='Not a Paid Worker') & (person_day['pwpcl']==person_day['hhparcel']),'worker_type'] = 'WFH'
+    person_day.loc[(person_day['pwtyp']!='Not a Paid Worker') & (person_day['pwpcl']!=person_day['hhparcel']) & (person_day['wkathome']>=3),'worker_type'] = 'Telecommuter'
+    return person_day
