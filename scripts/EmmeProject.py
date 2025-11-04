@@ -699,6 +699,13 @@ class EmmeProject:
      my_expression = str(total_hours) + ' * vauteq * (60/hdw)'
      self.transit_segment_calculator(result = "@trnv3", expression = my_expression, aggregation = "+")
 
+    def signal_delay_for_bike(self):
+        '''Calculate signal delay for bike and store the result in extra attribute @bsigdelay '''
+        self.create_extra_attribute('LINK', '@bsigdelay', 'avg bike signal delay in minute', True, 0)
+        ns = "inro.emme.network_calculation.network_calculator"
+        network_calc = self.m.tool(ns)
+        spec = json_to_dictionary('signal_delay_for_bike')
+        network_calc(spec)
                                             
 def json_to_dictionary(dict_name):
 

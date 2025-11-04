@@ -1,0 +1,11 @@
+{
+    "result": "@bsigdelay",
+    "expression": "1*(1.max.up3)",
+    "aggregation": "average",
+    "selections": {
+        "incoming_link": "uj3=1,999",
+        "outgoing_link": "all"
+    },
+    "type": "NETWORK_CALCULATION",
+    "summary_results": null
+}

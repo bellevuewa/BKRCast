@@ -242,6 +242,7 @@ def run_importer(project_name, delete_all_scenarios = True):
         if create_no_toll_network == True:
             change_mode_for_no_toll_traffic(my_project)
 
+        my_project.signal_delay_for_bike()
         my_project.bank.dispose()
     my_project.desktop.close()
 
