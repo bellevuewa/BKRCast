@@ -32,7 +32,10 @@
     "aux_transit_time": {
         "perception_factor": "@bkwt"
     },
-    "aux_transit_cost": null,
+    "aux_transit_cost": {
+        "penalty": "@bsigdelay",
+        "perception_factor": 1
+    },    
     "flow_distribution_at_origins": {
         "by_time_to_destination": "BEST_CONNECTOR",
         "by_fixed_proportions": null
