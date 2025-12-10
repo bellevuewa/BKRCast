@@ -462,7 +462,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
             "result": "lanes",
             "expression": "lanes - 1",
             "selections": {
-                "link": "@tod_bat_conversion=1 and @temp1=1"}
+                "link": f"@bat_year=0,{self.horizon_year} and @tod_bat_conversion=1 and @temp1=1"}
             }
         report = netcalc(specs)
 
