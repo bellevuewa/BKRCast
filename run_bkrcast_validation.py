@@ -5,7 +5,6 @@ import shutil
 from nbconvert.preprocessors import ExecutePreprocessor
 from input_configuration import project_folder, run_bkrcast_summary
 
-
 def run_ipynb(sheet_name, nb_path):
     start_time = time.time()
     print("creating " + sheet_name + " page")
@@ -49,6 +48,15 @@ def create_quarto_notebook(notebook_name, summary_list, scripts_dir, output_fold
 def main():
     # create summary notebook
     if run_bkrcast_summary:
+        # copy all files from templates folder to scripts/summarize/calibration/notebooks
+        templates_folder = os.path.join(project_folder, 'scripts', 'summarize', 'calibration', 'notebooks', 'templates')
+        target_folder = os.path.join(project_folder, 'scripts', 'summarize', 'calibration', 'notebooks')
+        for item in os.listdir(templates_folder):
+            s = os.path.join(templates_folder, item)
+            d = os.path.join(target_folder, item)
+            if os.path.isfile(s):
+                shutil.copy2(s, d)
+
         qfile = os.path.join(project_folder, r'scripts\summarize\calibration\notebooks\_quarto.yml')
         if not os.path.exists(qfile):
             raise FileNotFoundError(f"{qfile} not found")
