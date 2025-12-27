@@ -1,0 +1,11 @@
+/.quarto/
+basic_summary.ipynb
+day_pattern.ipynb
+district_summary.ipynb
+long_term.ipynb
+telecommute.ipynb
+time_choice.ipynb
+tour.ipynb
+trip.ipynb
+work_location.ipynb
+**/*.quarto_ipynb
