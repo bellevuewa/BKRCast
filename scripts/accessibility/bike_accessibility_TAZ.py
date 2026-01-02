@@ -250,12 +250,12 @@ def main():
 
     # get emme_link and emme_node to df
     emme_link_df = my_project.emme_links_to_df()
-    emme_link_df = emme_link_df.loc[(emme_link_df['isConnector'] == False) & (emme_link_df['@biketype'].isin([10, 1, 2]))]
+    emme_link_df = emme_link_df.loc[(emme_link_df['isConnector'] == False) & (emme_link_df['@biketype'].isin([10, 1, 2, 9, 5]))]
     emme_link_df['geometry'] = emme_link_df['shape'].apply(LineString)
     emme_link_gdf = gpd.GeoDataFrame(emme_link_df, geometry = 'geometry', crs = input_config.gis_projection)
     my_project.closeDesktop()
 
-    accessibility_df = calculate_TAZ_accessibility_to_bike2(taz_gdf, emme_link_gdf, biketype = [10, 1, 2], buffer_dist = 2640)    
+    accessibility_df = calculate_TAZ_accessibility_to_bike2(taz_gdf, emme_link_gdf, biketype = [10, 1, 2, 9, 5], buffer_dist = 2640)    
            
     print('Recreational bike accessibility is finished')
 

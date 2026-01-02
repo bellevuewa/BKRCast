@@ -120,6 +120,9 @@ def calc_bike_weight(my_project, link_df):
     ''' Calculate perceived travel time weight for bikes
         based on facility attributes, slope, and vehicle traffic.'''
 
+    print('Calculating bike link weights... use pm period for attributes')
+    # Switch to pm period to import attributes
+    my_project.change_active_database('1530to1830')
     # Import link attributes for elevation gain and bike facilities
     process_attributes(my_project)
 

@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\HDong\source\repos\BKRCastTestBed\BKR4-24-v1'
+project_folder = r'F:\projects\bike_improvement_2025\BKR4-24-v18'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -31,7 +31,7 @@ modeller_initial = "hd"
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
 run_accessibility_calcs = True 
-run_copy_daysim_code = True
+run_copy_daysim_code = False
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
@@ -168,13 +168,18 @@ aadt_labels = [0,1,2,3] # Corresponding "bucket" labels for AADT segmentation fo
 
 # Crosswalk of bicycle facilities from geodatabase to a 2-tier typology - premium, standard (and none)
 # premium (@biketype=1, 10) - 1: Separated bike lane, 10: trail
+# unpaved trail (@bkfac=9) - unpaved trail
+# MPP (@bkfac=5) - multi-use path paved
 # standard (@biketype=2,3,4) - bike lane striped, Bike shoulder, and Wider lane/shared shoulder (Redmond does not have this category)
 bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'premium', 2:'standard', 
-                                        3:'standard', 4:'standard', 10:'premium'}}
+                                        3:'none', 4:'none', 5:'MPP', 9:'unpaved trail', 10:'premium'}}
 
 # Perception factor values corresponding to these tiers, from Broch et al., 2012
+# unpaved trail and MPP values are estimated from trial and error calibration
 facility_dict = {'facility_wt': {	'premium': -0.860,
                                     'standard': -0.108, 
+                                    'unpaved trail': -0.75,
+                                    'MPP': -0.65,
                                     'none': 0.5}}
 
 # Perception factor values for 3-tiered measure of elevation gain per link
