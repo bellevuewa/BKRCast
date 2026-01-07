@@ -216,7 +216,7 @@ def calculate_TAZ_accessibility_to_bike2 (taz_gdf, emme_link_gdf, biketype = [10
     taz_gdf['slope_accessibility'] = 0 # slope accessibility
     for type in biketype:
         taz_gdf['wsa'] += taz_gdf[f'bt_{type}_sqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre 
-        taz_gdf['slope_accessibility'] = 10* taz_gdf[f'bt_{type}_elegainsqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre  
+        taz_gdf['slope_accessibility'] += 10* taz_gdf[f'bt_{type}_elegainsqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre  
     
     taz_gdf['facility_accessibility'] = taz_gdf['wsa'] 
     taz_gdf['accessibility'] = (taz_gdf['facility_accessibility'] - taz_gdf['slope_accessibility']).clip(lower = 0)
