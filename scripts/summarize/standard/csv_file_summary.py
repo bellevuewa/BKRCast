@@ -468,7 +468,7 @@ class FileConfigDialog(QDialog):
 
     def get_config(self):
         sep_text = self.sep_combo.currentText()
-        self.selected_sep = "\t" if sep_text.startswith("\\t") else sep_text
+        self.selected_sep = "\t" if sep_text.startswith("\\t") else " " if sep_text == "Space" else sep_text
         self.selected_keys = [self.key_list.item(i).text()
                               for i in range(self.key_list.count())
                               if self.key_list.item(i).checkState() == Qt.CheckState.Checked]
