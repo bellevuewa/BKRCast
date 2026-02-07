@@ -216,7 +216,7 @@ def calculate_TAZ_accessibility_to_bike2 (taz_gdf, emme_link_gdf, biketype = [10
     taz_gdf['slope_accessibility'] = 0 # slope accessibility
     for type in biketype:
         taz_gdf['wsa'] += taz_gdf[f'bt_{type}_sqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre 
-        taz_gdf['slope_accessibility'] = 10* taz_gdf[f'bt_{type}_elegainsqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre  
+        taz_gdf['slope_accessibility'] += 10* taz_gdf[f'bt_{type}_elegainsqft'] * access_config.bike_lane_weight.get(type, 0) / 43560 # convert sqft to acre  
     
     taz_gdf['facility_accessibility'] = taz_gdf['wsa'] 
     taz_gdf['accessibility'] = (taz_gdf['facility_accessibility'] - taz_gdf['slope_accessibility']).clip(lower = 0)
@@ -250,12 +250,12 @@ def main():
 
     # get emme_link and emme_node to df
     emme_link_df = my_project.emme_links_to_df()
-    emme_link_df = emme_link_df.loc[(emme_link_df['isConnector'] == False) & (emme_link_df['@biketype'].isin([10, 1, 2]))]
+    emme_link_df = emme_link_df.loc[(emme_link_df['isConnector'] == False) & (emme_link_df['@biketype'].isin([10, 1, 2, 9, 5]))]
     emme_link_df['geometry'] = emme_link_df['shape'].apply(LineString)
     emme_link_gdf = gpd.GeoDataFrame(emme_link_df, geometry = 'geometry', crs = input_config.gis_projection)
     my_project.closeDesktop()
 
-    accessibility_df = calculate_TAZ_accessibility_to_bike2(taz_gdf, emme_link_gdf, biketype = [10, 1, 2], buffer_dist = 2640)    
+    accessibility_df = calculate_TAZ_accessibility_to_bike2(taz_gdf, emme_link_gdf, biketype = [10, 1, 2, 9, 5], buffer_dist = 2640)    
            
     print('Recreational bike accessibility is finished')
 

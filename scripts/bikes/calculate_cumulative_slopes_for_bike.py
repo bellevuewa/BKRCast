@@ -129,8 +129,8 @@ def main():
         df.to_csv(os.path.join(bkr_config.report_bikes_output_location, 'emme_link_with_elevation_gain.csv'))
 
     # Prepare final output
-    to_export = df[['INODE', 'JNODE', '@biketype', 'elev_gain', 'avg_upslope']].copy()
-    to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', '@biketype': '@bkfac', 'elev_gain': '@elegain', 'avg_upslope': '@upslp'}, inplace=True)
+    to_export = df[['INODE', 'JNODE', 'elev_gain', 'avg_upslope']].copy()
+    to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', 'elev_gain': '@elegain', 'avg_upslope': '@upslp'}, inplace=True)
     to_export.fillna(0, inplace=True)
 
     to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join(os.path.join('outputs/bikes'), '@upslp.in'), sep=' ', index=False)
