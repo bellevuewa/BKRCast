@@ -31,12 +31,12 @@ def calculate_elevation_gains(group):
     if len(elevations) < 2:
         return pd.Series({'elev_gain_ij': 0})
     diff = np.diff(elevations)  # Calculate differences between consecutive points
-    elev_gain_ij = np.sum(np.maximum(diff, 0)) 
+    elev_gain_ij = np.sum(np.maximum(diff, 0)) # downhill slope is not included in this calculation
     return pd.Series({'elev_gain_ij': elev_gain_ij})
 
 def help():
     print('Usage: python calculate_cumulative_slopes_for_bike.py')
-    print('This script calculates the cumulative slopes for each link.') 
+    print('This script calculates the cumulative slopes for each link. Downhill slope is not included in the calculation.') 
     print('The output is saved in the report_bikes_output_location folder.')
     print('The output includes the following files:')
     print('  - emme_attr.in: Emme attribute file with the following columns: inode, jnode, @bkfac, @upslp. Saved in the outputs/bikes folder.')
@@ -97,7 +97,7 @@ def main():
     # split points into chunks by numbver of cpus for multiprocessing
     geometry_with_index = list(zip(points_gdf.index, points_gdf.geometry))
     chunks = [geometry_with_index[i::cpu_count()] for i in range(cpu_count())]
-    with Pool(cpu_count()) as pool:
+    with Pool(cpu_count(), initializer = initial_raster_db) as pool:
         results = pool.map(query_chunk, chunks)
     # Combine results into a single GeoDataFrame
     flat_results_pair = [item for sublist in results for item in sublist]
@@ -121,7 +121,7 @@ def main():
     df['elev_gain'] *= 3.28084
 
     # Calculate average upslope
-    df['avg_upslope'] = df['elev_gain'] / (df['LENGTH'] * 5280)
+    df['avg_upslope'] = np.where(df['LENGTH'] > 0, df['elev_gain'] / (df['LENGTH'] * 5280), 0)
 
     if print_all_files:
         points_gdf.to_file(os.path.join(bkr_config.report_bikes_output_location, 'link_components_elevation.geojson'), driver='GeoJSON')
@@ -133,21 +133,25 @@ def main():
     to_export.rename(columns={'INODE': 'inode', 'JNODE': 'jnode', 'elev_gain': '@elegain', 'avg_upslope': '@upslp'}, inplace=True)
     to_export.fillna(0, inplace=True)
 
-    to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join(os.path.join('outputs/bikes'), '@upslp.in'), sep=' ', index=False)
-    to_export[['inode', 'jnode', '@elegain']].to_csv(os.path.join(os.path.join('outputs/bikes'), '@elegain.in'), sep=' ', index=False)
+    os.makedirs('outputs/bikes', exist_ok=True)
+    to_export[['inode', 'jnode', '@upslp']].to_csv(os.path.join('outputs/bikes', '@upslp.in'), sep=' ', index=False)
+    to_export[['inode', 'jnode', '@elegain']].to_csv(os.path.join('outputs/bikes', '@elegain.in'), sep=' ', index=False)
     # Export results
     to_export.to_csv(os.path.join(os.path.join('outputs/bikes'), 'emme_attr.in'), sep=' ', index=False)
     to_export['id'] = to_export['inode'].astype(str) + '-' + to_export['jnode'].astype(str)
-    to_export.to_csv(os.path.join(os.path.join('outputs/bikes'), 'emme_attr.csv'), sep=' ', index=False)
+    to_export.to_csv(os.path.join('outputs/bikes', 'emme_attr.csv'), sep=' ', index=False)
 
     print('Processing complete.')
 
+def initial_raster_db():
+    global _src, _band
+    _src = rasterio.open(bkr_config.elevation_raster_database)
 
 def query_chunk(indexed_geoms):
     idxs, geoms = zip(*indexed_geoms)
-    with rasterio.open(bkr_config.elevation_raster_database) as src:
-        elevations = point_query(geoms, src.read(1), affine=src.transform, nodata=src.nodata)
-        return list(zip(idxs, elevations))
+    # with rasterio.open(bkr_config.elevation_raster_database) as src:
+    elevations = point_query(geoms, _src.read(1), affine=_src.transform, nodata=_src.nodata)
+    return list(zip(idxs, elevations))
 
 if __name__ == '__main__':
     main()
