@@ -1,0 +1,25 @@
+292ED8A4-37FA-4242-AE4E-D78DB768CA1D 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 0 0
+# Emme table generated on Fri Jul 28 11:35:39 2017
+# File: D:/BKRCast_Calibration/BKRCast_v1-2_Calibration/BKRCast_Run21-S42/projects/1530to1830/Worksheets/Transit_lines.emt
+#
+[transit lines]
+# String Name: table name that appears in the table header (tr,subst)
+Name = Transit lines table
+# String SaveListConfiguration: file name to save current table configuration (subst,nosave)
+SaveListConfiguration : /$SaveListConfiguration
+# Click PrintCurrentListNoSetup: when clicked, current table will be printed without entering setup dialog (nosave)
+PrintCurrentListNoSetup : /$PrintCurrentListNoSetup/$PrintCurrentListNoSetup
+# String ExportCurrentTableToFile: when set to a file name, the current table is exported to it (nosave)
+ExportCurrentTableToFile : /$ExportCurrentTableToFile
+# Click CloseList: when clicked, table will be closed (nosave)
+CloseList : /$CloseList/$CloseList
+# Style Style: style used to generate table entries
+Style = 0x21000000 0x01ffffff 0x00000000 0x00000500
+# String ColumnDef: list column definitions (tr)
+ColumnDef[] = index;transit line index;8;0;index;0;;0;0
+ColumnDef[] = line;line name;-6;6;line;0;;0;0
+ColumnDef[] = description;line description;-20;20;description;0;;0;0
+ColumnDef[] = mode;transit mode;3;0;mode;0;;0;0
+ColumnDef[] = mdesc;transit mode description;10;0;mdesc;0;;0;0
+ColumnDef[] = ca_board_t;Total boardings per line;16;0;ca_board_t;0;-;0;0
+
