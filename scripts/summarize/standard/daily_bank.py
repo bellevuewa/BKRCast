@@ -541,17 +541,35 @@ def get_transit_segment_data(scenario):
 
 
 def create_daily_project_folder():
-    if os.path.exists(os.path.join('projects/daily')):
+    if os.path.exists(os.path.join('projects/Daily')):
         print('Delete Project Folder')
-        shutil.rmtree('projects/daily')
+        shutil.rmtree('projects/Daily')
 
-    project = app.create_project('projects', 'daily')
-    desktop = app.start_dedicated(False, modeller_initial, project)
+    emmeproject = app.create_project('projects', 'Daily')
+    desktop = app.start_dedicated(False, modeller_initial, emmeproject)
     data_explorer = desktop.data_explorer()
-    database = data_explorer.add_database('Banks/daily/emmebank')
+    database = data_explorer.add_database('Banks/Daily/emmebank')
     database.open()
     desktop.project.save()
     desktop.close()
+
+    old_emme_path = Path(project_folder) / 'Banks/Daily/emmebank'
+    with open(emmeproject, 'r') as f:
+        contents = f.read()
+    relative_mbank = os.path.relpath('Banks/Daily/emmebank', start=os.path.dirname(emmeproject))
+    print(relative_mbank)
+    contents = contents.replace(old_emme_path.as_posix(), relative_mbank)
+    with open(emmeproject, 'w') as f:
+        f.write(contents)
+            
+            #copy worksheets
+    wspath = os.path.join('inputs/model/worksheets/', 'Daily')
+    destpath = os.path.join('projects/', 'Daily', 'Worksheets')
+    copyfiles(wspath, destpath)
+    # copy media files
+    destpath = os.path.join('projects/', 'Daily', 'Media')
+    copyfiles('inputs/model/Media/', destpath)
+    
     print('daily project folder is created.')
 
 if __name__ == '__main__':

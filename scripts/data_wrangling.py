@@ -126,7 +126,7 @@ def setup_emme_bank_folders():
 
 @timed
 def setup_emme_project_folders():
-
+    from pathlib import Path
     tod_dict = text_to_dictionary('time_of_day')
     tod_list = list(set(tod_dict.values()))
 
@@ -135,27 +135,63 @@ def setup_emme_project_folders():
         shutil.rmtree('projects')
 
     # Create master project, associate with all tod emmebanks
-    project = app.create_project('projects', master_project)
-    desktop = app.start_dedicated(False, modeller_initial, project)
+    emmeproject = app.create_project('projects', master_project)
+    desktop = app.start_dedicated(False, modeller_initial, emmeproject)
     data_explorer = desktop.data_explorer()
-    for tod in tod_list:
-        database = data_explorer.add_database('Banks/' + tod + '/emmebank')
+    todpath = []
+    for tod in tod_list:        
+        relative_emme_path = 'Banks/' + tod + '/emmebank'
+        todpath.append(relative_emme_path)
+        database = data_explorer.add_database(relative_emme_path)
     #open the last database added so that there is an active one
     database.open()
     desktop.project.save()
     desktop.close()
 
+    # change absolute emmebank path to relative path
+    print(f'apply relative path in {emmeproject}')
+    old_emme_path = Path(project_folder) / relative_emme_path
+    with open(emmeproject, 'r') as f:
+        contents = f.read()
+
+    for tod_relatice_path in todpath:
+        old_emme_path = Path(project_folder) / tod_relatice_path
+        relative_mbank = os.path.relpath(tod_relatice_path, start=os.path.dirname(emmeproject))
+        print(relative_mbank)
+        contents = contents.replace(old_emme_path.as_posix(), relative_mbank)
+    with open(emmeproject, 'w') as f:
+        f.write(contents)
+          
+
     # Create time of day projects, associate with emmebank
     tod_list.append('TruckModel') 
     tod_list.append('Supplementals')
+    # if daily databank folder exists, add 'Daily to tod_list
+    if os.path.exists('Banks/Daily'):
+        print('daily bank exists')
+        tod_list.append('Daily')
+
     for tod in tod_list:
-        project = app.create_project('projects', tod)
-        desktop = app.start_dedicated(False, modeller_initial, project)
+        emmeproject = app.create_project('projects', tod)
+        desktop = app.start_dedicated(False, modeller_initial, emmeproject)
         data_explorer = desktop.data_explorer()
-        database = data_explorer.add_database('Banks/' + tod + '/emmebank')
+        relative_emme_path = 'Banks/' + tod + '/emmebank'
+        database = data_explorer.add_database(relative_emme_path)
         database.open()
         desktop.project.save()
+        # print(emmeproject)
         desktop.close()
+
+        print(f'apply relative path in {emmeproject}')
+        # change absolute emmebank path to relative path
+        old_emme_path = Path(project_folder) / relative_emme_path
+        with open(emmeproject, 'r') as f:
+            contents = f.read()
+        relative_mbank = os.path.relpath(relative_emme_path, start=os.path.dirname(emmeproject))
+        print(relative_mbank)
+        contents = contents.replace(old_emme_path.as_posix(), relative_mbank)
+        with open(emmeproject, 'w') as f:
+            f.write(contents)
         
         #copy worksheets
         wspath = os.path.join('inputs/model/worksheets/', tod)
