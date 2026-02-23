@@ -254,7 +254,7 @@ def run_all_summaries():
        subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'])
 
    if run_modeshare_summary:
-       for district in ['BelDT', 'Bellevue']:
+       for district in ['BelDT', 'Bellevue', 'Kirkland', 'Redmond']:
           subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district])
           subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district])
 
