@@ -295,10 +295,10 @@ def run_recreational_bike():
         print('recreational bike assignment is crashed.')
         sys.exit(1)
 
-    logger.info('Finished running the recreational bike model')                               
-##################################################################################################### ###################################################################################################### 
-# Main Script:
-def main():
+    logger.info('Finished running the recreational bike model')      
+
+def precheck():
+    # Check if project_folder is pointing to the current directory
     norm_proj_dir = os.path.normcase(project_folder)
     cur_dir = os.getcwd()
     if norm_proj_dir != os.path.normcase(cur_dir):
@@ -308,6 +308,20 @@ def main():
         print('They do not match. Please reconcile the difference first.')
         exit(-1)
 
+    # make sure emme lock file is not present in emme databank folder
+    databank_folders = tods.copy()
+    databank_folders.extend(['Suplementals', 'TruckModel'])
+    for folder in databank_folders:
+        emme_lock_file = os.path.join(project_folder, 'Banks', folder, 'emlocki')
+        if os.path.exists(emme_lock_file):
+            print(f"Error: Emme lock file found in {folder} databank. Please remove the lock file before running the model.")
+            exit(-1)
+
+##################################################################################################### ###################################################################################################### 
+# Main Script:
+def main():
+
+    precheck()
 ## SET UP INPUTS ##########################################################
 
     if not os.path.exists('outputs'):
@@ -324,7 +338,7 @@ def main():
         include_wfh_mode = 'false'
 
     # delete everything inside outputs/ folder, except accessibility outputs which resides in landuse subfolder.
-    clean_output_folder()    
+    # clean_output_folder()    
     build_output_dirs()
     update_daysim_modes()
     update_skim_parameters()
