@@ -10,15 +10,15 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'C:\Users\hdong\source\repos\bellevuewa\BKRCastCodeandTestBed\BKRCast'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\2018LU'
-base_year = '2018'  # BKRCast base year
-model_year = '2018'
+project_folder = r'C:\Users\HDong\source\repos\BKRCastTestBed\BKR4-24-v1'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
+base_year = '2024'  # BKRCast base year
+model_year = '2024'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2018' #name of the folder with scenario data
+scenario_name = '2024' #name of the folder with scenario data
 
 #settings automatically assigned
-daysim_code = project_folder + '/daysim_2019' 
+daysim_code = project_folder + '/daysim_2025' 
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
@@ -30,12 +30,13 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = False 
-run_copy_daysim_code = False
+run_accessibility_calcs = True 
+run_copy_daysim_code = True
 run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
 run_import_networks = False
+run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
@@ -52,13 +53,24 @@ run_daysim_popsampler = False
 run_bkrcast_summary =  True
 run_create_daily_bank = True
 run_truck_summary = False
+run_vmt_summary = True
+run_telecommute_summary = True
+run_modeshare_summary = True
 
 ##############################
 # Modes and Path Types
 ##############################
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
 include_tnc = False
-include_tnc_to_transit = False # AV to transit path type allowed
+include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
+
+## Recreational bike
+include_rec_bike = True # inplemented as part of supplemental
+
+# include work from home
+include_wfh = True
+
+include_delivery = False
 
 # Specific reports to run
 run_daysim_report = True
@@ -67,7 +79,7 @@ run_mode_choice_report = True
 run_dest_choice_report = True
 run_long_term_report = True
 run_time_choice_report = True
-run_district_summary_report = True
+run_district_summary_report = False  # only True for 2013/2014 survey
 run_landuse_summary = True
     
 #delete parcel files from the project directory
@@ -82,7 +94,7 @@ min_pop_sample_convergence_test = 10
     
 # start building shadow prices - only run work locations
 shadow_work = [1, 1, 1]
-shadow_con = 30 #%RMSE for shadow pricing to consider being converged
+shadow_con = 20 #%RMSE for shadow pricing to consider being converged
 
 #################################### LOG FILES  ####################################
 
@@ -99,8 +111,18 @@ input_ensemble = r"inputs/landuse/parking_gz.csv"
 
 input_folder_for_supplemental = 'inputs/supplemental'
 
+master_PnR_file = r'inputs\model\master_Park_and_Ride_file.csv'
+
+daysim_configuration_template_file = 'daysim_configuration_template.properties'
+# GIS Projection
+# Assign NAD83(HARN) / Washington North (ftUS) CRS
+gis_projection = 'EPSG:2926'
+
 # daysim mode definition
 mode_dict = {0:'Other',1:'Walk',2:'Bike',3:'SOV',4:'HOV2',5:'HOV3+',6:'Transit',8:'School_Bus', 9:'TNC'}
+
+bkrlink_dict = {1:'Bellevue', 2:'Kirkland', 3:'Redmond', 4:'Rest of KC', 5: 'Rest of KC', 0:'Outside KC'}
+
 #daysim trip purpose definition
 purp_trip_dict = {-1: 'All_Purpose', 0: 'home', 1: 'work', 2: 'school', 3: 'escort', 4: 'personal_biz', 5: 'shopping', 6: 'meal', 7: 'social', 8: 'rec', 9: 'medical', 10: 'change'}
 tour_purpose_dict = {0: 'all',
@@ -145,10 +167,10 @@ aadt_bins = [0,5000,10000,15000,9999999]
 aadt_labels = [0,1,2,3] # Corresponding "bucket" labels for AADT segmentation for aadt_dict
 
 # Crosswalk of bicycle facilities from geodatabase to a 2-tier typology - premium, standard (and none)
-# premium (@biketype=1) - Trail/Separated bike lane
+# premium (@biketype=1, 10) - 1: Separated bike lane, 10: trail
 # standard (@biketype=2,3,4) - bike lane striped, Bike shoulder, and Wider lane/shared shoulder (Redmond does not have this category)
 bike_facility_crosswalk = {'@bkfac': {  0:'none', 1:'premium', 2:'standard', 
-                                        3:'standard', 4:'standard'}}
+                                        3:'standard', 4:'standard', 10:'premium'}}
 
 # Perception factor values corresponding to these tiers, from Broch et al., 2012
 facility_dict = {'facility_wt': {	'premium': -0.860,
@@ -165,11 +187,15 @@ slope_bins = [-1,0.02,0.04,0.06,1]
 slope_labels = [0,1,2,3]                
 
 avg_bike_speed = 10 # miles per hour
+avg_walk_speed = 3 # miles per hour
+
+# the current elevation raster is from UW Geology. It is 30ft resolution.
+# The raster is in GeoMapNWFeb2010 geodatabase. The raster is named usgs_dem_30ft
+# The raster is in NAD83(HARN) / Washington North (ftUS) CRS
+elevation_raster_database = r'inputs/model/GeoMapNWFeb2010/usgs_dem_30ft'
 
 # Outputs directory
 bike_link_vol = 'outputs/bikes/bike_volumes.csv'
-bike_count_data = 'inputs/bikes/bike_counts.csv'
-#edges_file = 'inputs/bikes/edges_0.txt'
 
 # Multiplier for storing skim results
 bike_skim_mult = 100    # divide by 100 to store as int
@@ -179,10 +205,15 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@hveh' : 'heavy trucks', 
                          '@vmt' : 'vmt',\
                          '@vht' : 'vht', 
-                         '@trnv' : 'buses in auto equivalents',
+                         '@trnv3' : 'transit vehicles in PCE',
                          '@ovol' : 'observed volume', 
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
+transit_segment_extra_attributes_dict = {'@talight':'total segment alighting', '@finalight': 'final alighting', '@transalight':'transfer alighting', 
+                                         '@tboard': 'total segment boarding', 
+                                         '@iboard':'initial boarding', '@trsboard': 'transfer boarding'}
+node_transit_extra_attributes_dict = {'@tboard_nde': 'total boarding at node', '@tiboard_nde': 'total initial boarding at node', '@trsboard_nde':'total transfer boarding at node',
+                              '@talight_nde': 'total alighting at node', '@finalight_nde': 'total final alighting at node', '@trsalight_nde': 'total transfer alighting at node'}
 
 ### Equity analysis
 # 2016 federal poverty line   
@@ -197,26 +228,98 @@ hhsize_bins = [0, 1, 2, 3, 4, 20]
 trip_distance_bin = [0, 1, 2, 3, 5, 200]
 
 ### GHG and VMT
-auto_speed_bins = [0, 2.5, 7.5, 12.5, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5, 62.5, 67.5, 72.5, 100 ]
+auto_speed_bins = [-999999, 2.5, 7.5, 12.5, 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5, 62.5, 67.5, 72.5, 999999 ]
+
+# to decide which hour of emission rate should be used.
+emission_tod_lookup = {'6to9': 7, '9to1530': 12, '1530to1830': 17, '1830to6': 19}
+# List of pollutants to be summarized for summer
+# All other are to be summarized for winter season
+# using wintertime rates for all start emission rates except for VOCs
+# per X:\Trans\AIRQUAL\T2040 2018 Update\EmissionCalcs\Start Emissions\Starts_2040.xls
+summer_list = [87]
+
+pollutant_map = {
+    '1': 'Total Gaseous HCs',
+    '2': 'CO',
+    '3': 'NOx',
+    '5': 'Methane',
+    '6': 'N20',
+    '79': 'Non-methane HCs',
+    '87': 'VOCs',             
+    '90': 'Atmospheric CO2',
+    '91': 'Total Energy',
+    '98': 'CO2 Equivalent',
+    '100': 'PM10 Exhaust',
+    '106': 'PM10 Brakewear',
+    '107': 'PM10 Tirewear',
+    '110': 'PM25 Exhaust',
+    '112': 'Elemental Carbon',
+    '115': 'Sulfate Particulate',
+    '116': 'PM25 Brakewear',
+    '117': 'PM25 Tirewear',   
+    '118': 'Composite NonECPM',
+    '119': 'H20 Aerosol',
+    '200': 'Total PM10',
+    '201': 'Total PM25'        
+}
+
 
 #################################### CALIBRATION/VALIDATION ####################################
 
+#####
 # Calibration Summary Configuration
+#####
+# Daysim outputs
 h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
-h5_comparison_file = 'inputs/model/survey/survey.h5'
-h5_comparison_name = 'Survey'
-guidefile = 'inputs/model/CatVarDict.xlsx'
-districtfile = 'inputs/model/TAZ_TAD_County.csv'
-FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'
-LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'
 
-acs_data = 'inputs/model/survey/ACS_2014.xlsx'
+# summary for regionwide or BKR area only. True for regionwide, otherwise BKR only.
+regionwide = True
+
+if int(model_year) <= 2023:
+    # survey in hdf5 format
+    h5_comparison_file = 'inputs/model/survey/survey.h5'  # 2014 setting
+    h5_comparison_name = 'Survey'  # 2014 setting
+    guidefile = 'inputs/model/CatVarDict.xlsx'  # 2014 setting
+    districtfile = 'inputs/model/TAZ_TAD_County.csv'
+    FAZ_TAZ = 'inputs/model/FAZ_TAZ.xlsx'  # only for 2014-survey comparison
+    LEHD_work_flows = 'inputs/model/HFAZ_WFAZ_LEHD2014.xlsx'  # only for 2014-survey files
+    acs_data = 'inputs/model/survey/ACS_2014.xlsx'  # 2014 setting
+else:
+    # survey in hdf5 format
+    h5_comparison_file = 'inputs/model/survey/survey_2023.h5'
+    h5_fullsurvey_file = 'inputs/model/survey/survey_2023_full.h5'
+    h5_comparison_name = '2023DaysimFormatSurvey'  # this is daysim-formatted survey
+    h5_fullsurvey_name = '2023FullSurvey'  # this is full survey data, as the daysim-formatted survey usually dropped records that are not complete
+    guidefile = 'inputs/model/CatVarDict_2023.xlsx'
+    districtfile = 'inputs/model/TAZ_TAD_County.csv'
+    FAZ_TAZ = ''  # only for 2014-survey comparison
+    LEHD_work_flows = ''  # only for 2014-survey comparison
+    if regionwide:
+        acs_data = 'inputs/model/survey/ACS_2023.xlsx'
+    else:
+        acs_data = 'inputs/model/survey/ACS_2023_BKR.xlsx'
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
 report_output_location = 'outputs/daysim'
 report_lu_output_location = 'outputs/landuse'
-report_bikes_output_location = 'outputs/bike'
+report_bikes_output_location = 'outputs/bikes'
 report_net_output_location = 'outputs/network'
 report_summary_output_location = 'outputs/summary'
+report_transit_location = 'outputs/transit'
+
+## Summary files ##
+network_results_path = 'outputs/network/network_results.csv'
+iz_vol_path = 'outputs/network/iz_vol.csv'
+transit_line_path = 'outputs/transit/transit_line_results.csv'
+transit_node_path = 'outputs/transit/transit_node_results.csv'
+transit_segment_path = 'outputs/transit/transit_segment_results.csv'
+boardings_by_agency_path = 'outputs/transit/daily_boardings_by_agency.csv'
+special_routes_path = 'outputs/transit/daily_boardings_special_routes.csv'
+boardings_by_tod_agency_path = 'outputs/transit/boardings_by_tod_agency.csv'
+boardings_by_stop_path = 'outputs/transit/boardings_by_stop.xlsx'
+light_rail_boardings_path = 'outputs/transit/light_rail_boardings.csv'
+job_access_by_transit_file = 'outputs/transit/jobs_by_transit_access.xlsx'
+transit_transfer_file = 'outputs/transit/transit_transfers.csv'
+bkr_network_summary_path = 'outputs/network/network_summary.xlsx'

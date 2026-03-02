@@ -1,0 +1,5 @@
+time_of_day,mode,value
+1530to1830,recb,0.25
+1830to6,recb,0.20
+6to9,recb,0.10
+9to1530,recb,0.45

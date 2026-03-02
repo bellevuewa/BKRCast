@@ -9,6 +9,7 @@ import emme_configuration as emme_config
 from EmmeProject import *
 import accessibility.accessibility_configuration as access_config
 import input_configuration as bkr_config
+import data_wrangling
 
 def load_skims(skim_file_loc, table, divide_by_100=False):
     ''' Load H5 skim matrix for specified mode table and time period.
@@ -345,7 +346,7 @@ def summarize(mode_shares_dict, airport_trips_by_mode, total_trips_by_mode, airp
         for mode in airport_matrix_dict[tod].keys():
             total = airport_matrix_dict[tod][mode].sum().sum()
             _df.loc[mode,'total'] = total
-        df = df.append(_df)
+        df = pd.concat([df, _df],ignore_index = True)
     df.to_csv(os.path.join(output_dir,'airport_veh_trips_by_tod.csv'))
 
 def main():
@@ -354,8 +355,7 @@ def main():
     zones = my_project.current_scenario.zone_numbers
     zonesDim = len(my_project.current_scenario.zone_numbers)
 
-    parcel = pd.read_csv(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name), delim_whitespace=True)
-
+    parcel = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(bkr_config.parcels_file_folder, access_config.parcels_file_name))
     #Create a dictionary lookup where key is the taz id and value is it's numpy index. 
     zone_lookup_dict = dict((value,index) for index,value in enumerate(zones))
 

@@ -1,21 +1,23 @@
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import pandas as pd
 import numpy as np
 import re
 from pyproj import Proj, transform
-from accessibility_configuration import *
+import accessibility_configuration as access_config
 from input_configuration import *
 from emme_configuration import *
+import data_wrangling
 
 
 # 10/25/2021
 # modified to be compatible with python 3
 
-def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
-    """Adds an attribute node_ids to the given dataset."""
-    dataset[column_name] = network.get_node_ids(dataset[x_name].values, dataset[y_name].values)
+# def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
+#     """Adds an attribute node_ids to the given dataset."""
+#     dataset[column_name] = network.get_node_ids(dataset[x_name].values, dataset[y_name].values)
    
 def reproject_to_wgs84(longitude, latitude, ESPG = "+init=EPSG:2926", conversion = 0.3048006096012192):
     '''
@@ -34,21 +36,21 @@ def reproject_to_wgs84(longitude, latitude, ESPG = "+init=EPSG:2926", conversion
 
     return x, y
 
-def process_net_attribute(network, attr, fun):
-    print("Processing %s" % attr)
-    newdf = None
-    for dist_index, dist in distances.items():        
-        res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
-        aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
-        if newdf is None:
-            newdf = pd.DataFrame({res_name: aggr, "node_ids": aggr.index.values})
-        else:
-            newdf[res_name] = aggr
-    return newdf
+# def process_net_attribute(network, attr, fun):
+#     print("Processing %s" % attr)
+#     newdf = None
+#     for dist_index, dist in distances.items():        
+#         res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
+#         aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
+#         if newdf is None:
+#             newdf = pd.DataFrame({res_name: aggr, "node_ids": aggr.index.values})
+#         else:
+#             newdf[res_name] = aggr
+#     return newdf
 
 def process_dist_attribute(parcels, network, name, x, y):
     network.set_pois(name, x, y)
-    res = network.nearest_pois(max_dist, name, num_pois=1, max_distance=999)
+    res = network.nearest_pois(access_config.max_dist, name, num_pois=1, max_distance=999.0)
     res[res != 999] = (res[res != 999]/5280.).astype(res.dtypes) # convert to miles
     res_name = "dist_%s" % name
     parcels[res_name] = res.loc[parcels.node_ids].values
@@ -62,24 +64,24 @@ def process_parcels(parcels, transit_df, net, intersections_df):
 
     # Start processing attributes
     newdf = None
-    for fun, attrs in parcel_attributes.items():    
+    for fun, attrs in access_config.parcel_attributes.items():    
         for attr in attrs:
             net.set(parcels.node_ids, variable=parcels[attr], name=attr)    
-            res = process_net_attribute(net, attr, fun)
+            res = data_wrangling.process_net_attribute(net, attr, fun)
             if newdf is None:
                 newdf = res
             else:
                 newdf = pd.merge(newdf, res, on="node_ids", copy=False)
 
     # sum of bus stops in buffer
-    for name in transit_attributes:    
+    for name in access_config.transit_attributes:    
         net.set(transit_df['node_ids'].values, transit_df[name], name=name)
-        newdf = pd.merge(newdf, process_net_attribute(net, name, "sum"), on="node_ids", copy=False)
+        newdf = pd.merge(newdf, data_wrangling.process_net_attribute(net, name, "sum"), on="node_ids", copy=False)
     
     # sum of intersections in buffer
-    for name in intersections:
+    for name in access_config.intersections:
         net.set(intersections_df['node_ids'].values, intersections_df[name],  name=name)
-        newdf = pd.merge(newdf, process_net_attribute(net, name, "sum"), on="node_ids", copy=False)
+        newdf = pd.merge(newdf, data_wrangling.process_net_attribute(net, name, "sum"), on="node_ids", copy=False)
 
     # Parking prices are weighted average, weighted by the number of spaces in the buffer, divided by the total spaces
     newdf['PPRICDYP_1'] = newdf['daily_weighted_spaces_1']/newdf['PARKDY_P_1']
@@ -91,7 +93,7 @@ def process_parcels(parcels, transit_df, net, intersections_df):
     parcels = pd.merge(parcels, newdf, on="node_ids", copy=False)
 
     # set the number of pois on the network for the distance variables (transit + 1 for parks)
-    net.init_pois(len(transit_modes)+1, max_dist, 1)
+    net.init_pois(len(transit_modes)+1, access_config.max_dist, 1)
   
     # calc the distance from each parcel to nearest transit stop by type
     for new_name, attr in transit_modes.items():
@@ -101,7 +103,7 @@ def process_parcels(parcels, transit_df, net, intersections_df):
         if transit_type_df[attr].sum() > 0:
             parcels=process_dist_attribute(parcels, net, new_name, transit_type_df["x"], transit_type_df["y"])
         else:
-            parcels['dist_%s' % new_name] = 999 # use max dist if no stops exist for this submode
+            parcels['dist_%s' % new_name] = 999.0 # use max dist if no stops exist for this submode
         # some parcels share the same network node and therefore have 0 distance. Recode this to 0.01
         field_name = 'dist_%s' % new_name
         parcels.loc[parcels[field_name] == 0, field_name] = 0.01
@@ -139,7 +141,7 @@ def clean_up(parcels):
     print('updating the distance to local bus field to actually hold the minimum to any transit because that is how Daysim is currently reading the field')
     parcels['dist_lbus'] = parcels[['dist_lbus', 'dist_ebus', 'dist_crt', 'dist_fry', 'dist_lrt']].min(axis=1)
 
-    for col in col_order:
+    for col in access_config.col_order:
         parcels_final[col] = parcels[col]
     
     parcels_final[u'xcoord_p'] = parcels_final[u'xcoord_p'].astype(int)
@@ -147,13 +149,12 @@ def clean_up(parcels):
 
 def main():
     if run_update_parking and base_year != scenario_name:
-        input_parcels = "inputs\\accessibility\\" + parcels_file_name
+        input_parcels = "inputs\\accessibility\\" + access_config.parcels_file_name
         print('open file ' + input_parcels)
         parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
     else: 
         # read in data
-        parcels = pd.read_csv(os.path.join(parcels_file_folder, parcels_file_name), sep = " ", index_col = None )
-
+        parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name))
     #capitalize field names to avoid errors
     parcels.columns = [i.upper() for i in parcels.columns]
     #check for missing data!
@@ -168,36 +169,18 @@ def main():
     parcels['APARKS'] = 0
     parcels['NPARKS'] = 0
 
-    # nodes must be indexed by node_id column, which is the first column
-    nodes = pd.read_csv(nodes_file_name, index_col = 'node_id')
-    links = pd.read_csv(links_file_name, index_col = None )
-    # get rid of circular links
-    links = links.loc[(links.from_node_id != links.to_node_id)]
-    # assign impedance
-    imp = pd.DataFrame(links.Shape_Length)
-    imp = imp.rename(columns = {'Shape_Length':'distance'})
-
-    links['from_node_id'] = links['from_node_id'].astype('int')
-    links['to_node_id'] = links['to_node_id'].astype('int')
-
-    # create pandana network
-    net = pdna.network.Network(nodes.x, nodes.y, links.from_node_id, links.to_node_id, imp)
-    for dist in distances:
-        net.precompute(dist)
+    net, links, nodes = data_wrangling.build_pandana_network()
 
     # get transit stops
-    transit_df = pd.read_csv(os.path.join(main_inputs_folder, 'networks', transit_stops_name),  index_col = None)
+    transit_df = pd.read_csv(os.path.join(main_inputs_folder, 'networks', access_config.transit_stops_name),  index_col = None)
     transit_df['tstops'] = 1
 
     # intersections:
     # combine from and to columns
-    all_nodes = pd.DataFrame(net.edges_df['from'].append(net.edges_df.to), columns = ['node_id'])
-
+    all_nodes = pd.DataFrame(pd.concat([net.edges_df['from'], net.edges_df['to']], axis = 0), columns = ['node_ids'])
     # get the frequency of each node, which is the number of intersecting ways
-    intersections_df = pd.DataFrame(all_nodes.node_id.value_counts())
-    intersections_df = intersections_df.rename(columns = {'node_id' : 'edge_count'})
-    intersections_df.reset_index(0, inplace = True)
-    intersections_df = intersections_df.rename(columns = {'index' : 'node_ids'})
+    intersections_df = all_nodes['node_ids'].value_counts().reset_index()
+    intersections_df = intersections_df.rename(columns = {'count' : 'edge_count'})
 
     # add a column for each way count
     intersections_df['nodes1'] = np.where(intersections_df['edge_count']==1, 1, 0)
@@ -205,10 +188,10 @@ def main():
     intersections_df['nodes4'] = np.where(intersections_df['edge_count']>3, 1, 0)
 
     # assign network nodes to parcels, for buffer variables
-    assign_nodes_to_dataset(parcels, net, 'node_ids', 'XCOORD_P', 'YCOORD_P')
+    data_wrangling.assign_nodes_to_dataset(parcels, net, 'node_ids', 'XCOORD_P', 'YCOORD_P')
 
     # assign network nodes to transit stops, for buffer variable
-    assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
+    data_wrangling.assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
 
     # run all accibility measures
     parcels = process_parcels(parcels, transit_df, net, intersections_df)
@@ -223,7 +206,7 @@ def main():
     parcels.loc[parcels['dist_lrt'] <= 1, 'dist_lrt'] = parcels['dist_lrt'] * 0.5
     parcels.loc[parcels['dist_fry'] <= 2, 'dist_fry'] = parcels['dist_fry'] * 0.5
     parcels_done = clean_up(parcels)
-    parcels_done.to_csv(output_parcels, index = False, sep = ' ')
+    parcels_done.to_csv(access_config.output_parcels, index = False, sep = ' ')
 
 if __name__ == '__main__':
     main()

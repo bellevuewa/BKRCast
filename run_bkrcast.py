@@ -26,20 +26,12 @@
 import os
 import sys
 import datetime
-import re
 import subprocess
-import inro.emme.desktop.app as app
 import json
 from shutil import copy2 as shcopy
-from distutils import dir_util
-import re
-import logging
-
-from numpy import isin
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
-import inro.emme.database.emmebank as _eb
 import random
 import datetime
 import pandas as pd
@@ -59,14 +51,14 @@ def accessibility_calcs():
             print('Starting to update UrbanSim parcel data with 4k parking data file')
             returncode = subprocess.call([sys.executable,
                                       'scripts/utils/update_parking.py', base_inputs])
-            if returncode != 0:
+            if returncode != 0 and returncode != 3221225477:
                 print('Update Parking failed')
                 sys.exit(1)
             print('Finished updating parking data on parcel file')
 
     print('Beginning Accessibility Calculations')
     returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('Accessibility Calculations Failed For Some Reason :(')
         sys.exit(1)
     print('Done with accessibility calculations')
@@ -79,7 +71,7 @@ def build_seed_skims(max_iterations):
         'scripts/skimming/SkimsAndPaths.py', '-i',
         str(max_iterations),
         'build_free_flow_skims'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         sys.exit(1)
          
     time_skims = datetime.datetime.now()
@@ -89,10 +81,9 @@ def build_seed_skims(max_iterations):
 def modify_config(config_vals):
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0] #<-- absolute dir the script is in
-    config_template_path = "daysim_configuration_template.properties"
     config_path = "daysim/daysim_configuration.properties"
 
-    abs_config_path_template = os.path.join(script_dir, config_template_path)
+    abs_config_path_template = os.path.join(script_dir, daysim_configuration_template_file)
     abs_config_path_out =os.path.join(script_dir, config_path)
     
     config_template = open(abs_config_path_template,'r')
@@ -114,10 +105,25 @@ def modify_config(config_vals):
      print(' Error creating configuration template file')
      sys.exit(1)
     
+def read_attribute_from_daysim_config_template(attr_name, default=""):
+    """Extract RawParkAndRideNodePath from config file or fallback to default"""
+    try:
+        with open(daysim_configuration_template_file, 'r') as f:
+            for line in f:
+                if line.strip().startswith(attr_name):
+                    match = re.search(r"=\s*(.*)", line)
+                    if match:
+                        return match.group(1).strip().replace('\\', os.sep)
+    except Exception as e:
+        print(f"Warning: Could not read config file ({e}). Using default path.")
+    print(f"RawParkAndRideNodePath not found. Using default: {default}")
+    return default
+
+
 @timed
-def build_shadow_only(include_tnc_mode):
+def build_shadow_only(include_tnc_mode, include_wfh_mode):
      for shad_iter in range(0, len(shadow_work)):
-        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
+        daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
         if int(model_year) >= 2044:
             daysim_config_update.append(("$OP_COST", 0.36))
@@ -127,10 +133,10 @@ def build_shadow_only(include_tnc_mode):
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
 
-        if returncode != 0:
-            logger.info('Shadow pricing crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Shadow pricing crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
-        logger.info("End of %s iteration of work location for shadow prices", str(shad_iter))
+        logger.info(f"End of {shad_iter} iteration of work location for shadow prices")
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
         shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
@@ -153,60 +159,63 @@ def run_truck_supplemental(iteration):
         # Only run generation script once - does not change with feedback
         if iteration == 0:
             returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
-            if returncode != 0:
-                logger.info('Supplemental trip generation crashed unexpectedly. The return code is', str(returncode))
+            if returncode != 0 and returncode != 3221225477:
+                logger.info(f'Supplemental trip generation crashed unexpectedly. The return code is {returncode}')
                 sys.exit(1)
 
         #run distribution
         returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
-        if returncode != 0:
-            logger.info('Distribute_non_work_ixxi.py crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Distribute_non_work_ixxi.py crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
         returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
-        if returncode != 0:
-            logger.info('Airport model crashed unexpectedly. The return code is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Airport model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
         returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Truck model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
-        
+                           
 @timed
 def daysim_assignment(iteration):
 
      ### RUN DAYSIM ################################################################
      if run_daysim:
-         logger.info("Start of %s iteration of Daysim", str(iteration))
+         logger.info(f"Start of {iteration} iteration of Daysim")
 
          #run daysim
          returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-         if returncode != 0:
-             logger.info("daysim crashed unexpectedly. The return code is ", str(returncode))
+         if returncode != 0 and returncode != 3221225477:
+             logger.info(f"daysim crashed unexpectedly. The return code is {returncode}")
              sys.exit(1)
-         logger.info("End of %s iteration of Daysim", str(iteration))
+         logger.info(f"End of {iteration} iteration of Daysim")
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
      run_truck_supplemental(iteration)
     
      #### ASSIGNMENTS ##############################################################
      if run_skims_and_paths:
-         logger.info("Start of %s iteration of Skims and Paths", str(iteration))
-         returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
+        logger.info(f"Start of {iteration} iteration of Skims and Paths")
+        returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
          
-         if returncode != 0:
-            logger.info('Skims crashed unexpectedly. The return code from skims and paths is ', str(returncode))
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Skims crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
-         logger.info("End of %s iteration of Skims and Paths", str(iteration))
 
-         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
-         if returncode != 0:
-            logger.info('Bike model crashed unexpectedly. The return code from skims and paths is ', str(returncode))
+        # no need to run recreational bike here. It is run after the last iteration of skims and paths
+        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
+        if returncode != 0 and returncode != 3221225477:
+            logger.info(f'Bike model crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
+
+        logger.info(f"End of {iteration} iteration of Skims and Paths")        
 
 '''
 
@@ -251,7 +260,7 @@ def daysim_popsampler(option):
     zone_district[['zone_id','sample_rate']].to_csv(os.path.join(main_inputs_folder, taz_sample_rate_file), index = False, sep = '\t')
 
     #find sythetic population filename
-    config_template_path = "daysim_configuration_template.properties"
+    config_template_path = daysim_configuration_template_file
     
     #read daysim properties
     abs_config_template_path = os.path.join(os.getcwd(), config_template_path)
@@ -272,7 +281,7 @@ def daysim_popsampler(option):
     popsyn_out_file = 'hh_and_persons_sampled.h5'
     returncode = subprocess.call([sys.executable,'scripts/popsampler.py',taz_sample_rate_file, popsyn_in_file, popsyn_out_file])
         
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('ERROR: population sampler did not work')
         logger.info(("ERROR: population sampler did not work"))
         sys.exit(1)
@@ -311,29 +320,71 @@ def check_convergence(iteration, recipr_sample):
 def run_all_summaries():
 
    if run_bkrcast_summary:
-      subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary.py'])
+      if int(model_year) <= 2023:
+        subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'])
+      else:
+        subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2023.py'])
 
    #Create a daily network with volumes. Will add counts and summary emme project. 
    if run_create_daily_bank:
+      subprocess.call([sys.executable, 'scripts/summarize/standard/network_summary.py'])
       subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'])
 
    if run_landuse_summary:
-      subprocess.call([sys.executable, 'scripts/summarize/standard/summarize_land_use_inputs.py'])
+      subprocess.call([sys.executable, 'scripts/summarize/standard/landuse_summary.py'])
       
    if run_truck_summary:
        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
 
+   if run_vmt_summary:
+       subprocess.call([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'])
+    
+   if run_telecommute_summary:
+       subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'])
+
+   if run_modeshare_summary:
+       for district in ['BelDT', 'Bellevue']:
+          subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district])
+          subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district])
+
 def clean_output_folder():
-    folders_kept = ['landuse'] # subfolders inside outputs
+    folders_kept = ['landuse', 'bike'] # subfolders inside outputs
+    output_folder = os.path.join(project_folder, 'outputs')
+
+    if not os.path.exists(output_folder):
+        print(f"Output folder does not exist: {output_folder}")
+        return
+
     list_directory = os.listdir('outputs')
     for item in list_directory:
-        full_path = os.path.join(project_folder, 'outputs', item)
+        full_path = os.path.join(output_folder, item)
         if os.path.isfile(full_path):
             os.remove(full_path)
         elif os.path.isdir(full_path) and (not(item in folders_kept)):
             shutil.rmtree(full_path)
                 
-                                
+def run_recreational_bike():
+    logger.info('Running the recreational bike model')
+    print('Running the recreational bike as part of the supplemental module')
+    print('Calculating accessibility for recreational bike')
+    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'])
+    if returncode != 0 and returncode != 3221225477:    
+        print('bike_accessibility is was crashed.')
+        sys.exit(1)
+
+    print('Generating recreational bike trips')
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'])
+    if returncode != 0 and returncode != 3221225477:
+        print('recreational bike generation is crashed.')
+        sys.exit(1) 
+
+    print('Assignment recreational bike trips')
+    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-b'])
+    if returncode != 0 and returncode != 3221225477:
+        print('recreational bike assignment is crashed.')
+        sys.exit(1)
+
+    logger.info('Finished running the recreational bike model')                               
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
@@ -356,6 +407,11 @@ def main():
     else:
         include_tnc_mode = 'false'
     
+    if include_wfh and run_daysim:
+        include_wfh_mode = 'true'
+    else:
+        include_wfh_mode = 'false'
+
     # delete everything inside outputs/ folder, except accessibility outputs which resides in landuse subfolder.
     clean_output_folder()    
     build_output_dirs()
@@ -366,6 +422,10 @@ def main():
     if run_copy_input_files:
         copy_large_inputs()
     
+    # generate the master park and ride file
+    pnr_name = read_attribute_from_daysim_config_template('RawParkAndRideNodePath', 'inputs/pnr/p_r_nodes.csv')
+    generate_pr_node_file(master_PnR_file, pnr_name, int(model_year))
+
     if run_copy_daysim_code:
         copy_daysim_code()
 
@@ -383,7 +443,7 @@ def main():
         'scripts/network/network_importer.py', base_inputs])
         logger.info("End of network importer")
         time_network = datetime.datetime.now()
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
            sys.exit(1)
 
     print('adding military jobs to regular jobs')
@@ -391,7 +451,7 @@ def main():
     print('adjusting non-work externals')
     print('creating ixxi file for Daysim')
     returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
-    if returncode != 0:
+    if returncode != 0 and returncode != 3221225477:
         print('Military Job loading failed')
         sys.exit(1)
     print('military jobs loaded')
@@ -399,11 +459,21 @@ def main():
     if run_accessibility_calcs:
         accessibility_calcs()
 
+    if run_cumulative_slopes:
+        logger.info('Running culmulative slope calculation')
+        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']) 
+        if returncode != 0 and returncode != 3221225477:
+            print('Cumulative slope calculation failed')
+            sys.exit(1)
+            
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
+        logger.info('Running skim seed trips')
+        # run_truck_supplemental(0)
         build_seed_skims(10)
+        # no need to run rec bike assignment in seeding trips
         returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
-        if returncode != 0:
+        if returncode != 0 and returncode != 3221225477:
             sys.exit(1)
 
     # Check all inputs have been created or copied
@@ -436,7 +506,7 @@ def main():
                         sys.exit(1)
 
                 # Set up your Daysim Configration
-                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                 # use new operating cost 0.36 after 2044, otherwise use 0.2 
                 if int(model_year) >= 2044:
                     daysim_config_update.append(("$OP_COST", 0.36))
@@ -446,11 +516,11 @@ def main():
             else:
                 # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
                 # 3 daysim iterations
-                build_shadow_only(include_tnc_mode)
+                build_shadow_only(include_tnc_mode, include_wfh_mode)
 
                 # run daysim and assignment
                 if pop_sample[iteration-1] > 2:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
@@ -458,7 +528,7 @@ def main():
                         daysim_config_update.append(("$OP_COST", 0.20))
                     modify_config(daysim_config_update)
                 else:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
+                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
                     # use new operating cost 0.36 after 2044, otherwise use 0.2 
                     if int(model_year) >= 2044:
                         daysim_config_update.append(("$OP_COST", 0.36))
@@ -477,6 +547,9 @@ def main():
 
             print('The system is not yet converged. Daysim and Assignment will be re-run.')
 
+    if include_rec_bike:
+        run_recreational_bike()
+                    
 ### SUMMARIZE
 ### ##################################################################
     run_all_summaries()

@@ -1,7 +1,5 @@
 import inro.modeller as _modeller
-import inro.emme.database.emmebank as _eb
 import inro.emme.datatable as _dt
-import traceback as _traceback
 import numpy as np
 import pandas as pd
 import os

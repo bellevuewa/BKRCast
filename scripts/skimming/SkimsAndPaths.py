@@ -1,8 +1,6 @@
 
-from ssl import Purpose
 from typing import overload
 import inro.emme.desktop.app as app
-import inro.modeller as _m
 import inro.emme.matrix as ematrix
 import inro.emme.database.emmebank as _eb
 import json
@@ -13,7 +11,6 @@ import os,sys
 import h5py
 from multiprocessing import Pool
 from functools import partial
-from functools import reduce
 import logging
 import getopt
 import shutil
@@ -180,14 +177,16 @@ def define_matrices(my_project):
     my_project.create_matrix('tazacr', 'taz area', "ORIGIN")
     
     #origin terminal time:
-    my_project.create_matrix('prodtt', 'origin terminal times', "ORIGIN")
-   
+    my_project.create_matrix('prodtt', 'origin terminal times for auto', "ORIGIN")
+    my_project.create_matrix('bprodtt', 'origin terminal times for bike', "ORIGIN")  
     #Destination terminal time:
-    my_project.create_matrix('attrtt', 'destination terminal times', "DESTINATION")
-   
+    my_project.create_matrix('attrtt', 'destination terminal times for auto', "DESTINATION")
+    my_project.create_matrix('battrtt', 'destination terminal times for bike', "DESTINATION")
+
     #Combined O/D terminal times:
-    my_project.create_matrix('termti', 'combined terminal times', "FULL")
-  
+    my_project.create_matrix('termti', 'combined terminal times for auto', "FULL")
+    my_project.create_matrix('btermti', 'combined terminal times for bike', "FULL") 
+
     end_define_matrices = time.time()
 
     text = 'It took ' + str(round((end_define_matrices-start_define_matrices)/60,2)) + ' minutes to define all matrices in Emme.'
@@ -208,19 +207,20 @@ def populate_intrazonals(my_project):
     my_project.matrix_transaction(taz_area_file)
     
     #origin terminal times
-    print(origin_tt_file)
+    print('importing origin terminal time for auto and bike')
     my_project.matrix_transaction(origin_tt_file)
+    my_project.matrix_transaction(origin_tt_file_bike)
     
     #destination terminal times
-    print(destination_tt_file)
+    print('importing destination terminal time for auto and bike')
     my_project.matrix_transaction(destination_tt_file)
+    my_project.matrix_transaction(destination_tt_file_bike)
     
     taz_area_matrix = my_project.bank.matrix('tazacr').id
     distance_matrix = my_project.bank.matrix(intrazonal_dict['distance']).id
 
     #Hard coded for now, generalize later
-    for key, value in intrazonal_dict.items():
-        
+    for key, value in intrazonal_dict.items():        
         if key == 'distance':
             my_project.matrix_calculator(result = value, expression = "sqrt(" +taz_area_matrix + "/640) * 45/60*(p.eq.q)")
          
@@ -235,6 +235,7 @@ def populate_intrazonals(my_project):
             
     #calculate full matrix terminal times
     my_project.matrix_calculator(result = 'termti', expression = 'prodtt + attrtt' )
+    my_project.matrix_calculator(result = 'btermti', expression = 'bprodtt + battrtt' )
     
     logging.debug('finished populating intrazonals')
 
@@ -253,7 +254,7 @@ def intitial_extra_attributes(my_project):
                      
 
     # Create the link extra attributes to store the auto equivalent of bus vehicles
-    my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles",True)
+    # my_project.create_extra_attribute("LINK", "@trnv3", "Transit Vehicles in PCE",True)
  
     # Create the link extra attribute to store the arterial delay in
     #my_project.create_extra_attribute("LINK", "@rdly","Intersection Delay", True)
@@ -335,7 +336,7 @@ def transit_assignment(my_project, spec, keep_exisiting_volumes, class_name=None
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
     assignment_specification["waiting_time"]["perception_factor"] = transit_node_attributes['wait_time_perception']['name'] 
     assignment_specification["in_vehicle_time"]["perception_factor"] = transit_node_attributes['in_vehicle_time']['name']
-    assign_transit(assignment_specification,  add_volumes=keep_exisiting_volumes, class_name=class_name)
+    assign_transit(assignment_specification,  save_strategies = True, add_volumes=keep_exisiting_volumes, class_name=class_name)
 
     end_transit_assignment = time.time()
     print('It took ' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + 'minutes to run the transit assignment.')
@@ -539,7 +540,6 @@ def average_skims_to_hdf5_concurrent(my_project, average_skims):
     print(project)
     start_export_hdf5 = time.time()
     bike_walk_matrix_dict = json_to_dictionary("bike_walk_matrix_dict")
-    my_user_classes = json_to_dictionary("user_classes")
 
     #Create the HDF5 Container if needed and open it in read/write mode using "r+"
 
@@ -706,7 +706,7 @@ def remove_additional_HBO_trips_during_biz_hours(trips_df, tours_df, normal_biz_
         workers = workers_df.loc[workers_df['hhtaz'] == taz]
         if workers.shape[0] > 0:
             selected_workers = workers.sample(frac = percent_trips_to_remove, random_state = 1)
-            selected = selected.append(selected_workers)
+            selected = pd.concat([selected, selected_workers], ignore_index = True)
 
     text = f'WFH workers wouldnt make errand tours during core biz hours: {selected.shape[0]}'
     print(text)
@@ -874,7 +874,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
     # Load in supplemental trips
     # We're assuming all trips are only for income 2, toll classes
     for matrix_name in ['svtl2', 'trnst', 'bike', 'h2tl2', 'h3tl2', 'walk', 'ferry', 'passenger_ferry', 'litrat', 'commuter_rail']:
-        demand_matrix = load_supplemental_trips(my_project, matrix_name, zonesDim)
+        demand_matrix = my_project.load_supplemental_trips(matrix_name)
         demand_matrices.update({matrix_name : demand_matrix})
 
     # Create empty demand matrices for other modes without supplemental trips
@@ -900,7 +900,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                         myOtaz = dictZoneLookup[otaz[x]]
                         myDtaz = dictZoneLookup[dtaz[x]]
                         print(myOtaz, myDtaz) 
-                        trips = np.asscalar(np.float32(trexpfac[x]))
+                        trips = np.float32(trexpfac[x]).item()
                         trips = round(trips, 2)
                         print(trips)
 
@@ -925,7 +925,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))
+                    trips = np.float32(trexpfac[x]).item()
                     trips = round(trips, 2)
                     demand_matrices[mat_name][myOtaz, myDtaz] = demand_matrices[mat_name][myOtaz, myDtaz] + trips
             if mode[x] == 9:
@@ -935,7 +935,7 @@ def hdf5_trips_to_Emme(my_project, hdf_filename, adj_trips_df):
                     myOtaz = dictZoneLookup[otaz[x]]
                     myDtaz = dictZoneLookup[dtaz[x]]
                     #add the trip, if it's not in a special generator location
-                    trips = np.asscalar(np.float32(trexpfac[x]))*tnc_frac_assign.get(mat_name_tnc)
+                    trips = np.float32(trexpfac[x]).item()*tnc_frac_assign.get(mat_name_tnc)
                     trips = round(trips, 2)
                     text = 'TOD: {}, Mode Name: {}, Trips: {}'.format(my_project.tod, mat_name_tnc, trips)
                     print(text) #Debugging statement by aditya.gore@rsginc.com
@@ -987,31 +987,6 @@ def load_trucks(my_project, matrix_name, zonesDim):
 
     return demand_matrix
 
-
-def load_supplemental_trips(my_project, matrix_name, zonesDim):
-    ''' Load externals, special generator, and group quarters trips
-        from the supplemental trip model. Supplemental trips are assumed
-        only on Income Class 2, so only these income class modes are modified here. '''
-
-    tod = my_project.tod
-    # Create empty array to fill with trips
-    demand_matrix = np.zeros((zonesDim,zonesDim), np.float64)
-    hdf_file = h5py.File(supplemental_loc + tod + '.h5', "r")
-    # Call correct mode name by removing income class value when needed
-    if matrix_name in ['svtl2', 'h2tl2', 'h3tl2']:
-        mode_name = matrix_name[:-1]
-    else:
-        mode_name = matrix_name
-
-    # Open mode-specific array for this TOD and mode
-    hdf_array = hdf_file[mode_name]
-    
-    # Extract specified array size and store as NumPy array 
-    sub_demand_matrix = hdf_array[0:zonesDim, 0:zonesDim]
-    sub_demand_array = (np.asarray(sub_demand_matrix))
-    demand_matrix[0:len(sub_demand_array), 0:len(sub_demand_array)] = sub_demand_array
-
-    return demand_matrix
 
 def create_trip_tod_indices(tod, hdf5_file, adj_trips_df):
     #creates an index for those trips that belong to tod (time of day)
@@ -1076,77 +1051,30 @@ def start_pool(project_list, max_num_iterations, adjusted_trips_df, iteration, f
     print('inside pool: ' + str(max_num_iterations))
     print(hdf5_file_path)
     #Doing some testing on best approaches to con-currency
-    pool = Pool(processes=parallel_instances)
-    # wfh_adj_trips_df does not change during parallel processing.
-    run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration, free_flow_skims = free_flow_skims)
-    pool.map(run_assignments_parallel_x, project_list[0:parallel_instances])
-    pool.close()
-    pool.join()
-
-def start_delete_matrices_pool(project_list):
-    pool = Pool(processes=parallel_instances)
-    pool.map(delete_matrices_parallel, project_list[0:parallel_instances])
-    pool.close()
-    pool.join()
+    with Pool(processes=parallel_instances) as pool:
+        # wfh_adj_trips_df does not change during parallel processing.
+        run_assignments_parallel_x = partial(run_assignments_parallel, max_iteration = max_num_iterations, adj_trips_df = adjusted_trips_df, hdf5_file = hdf5_file_path, iteration = iteration, free_flow_skims = free_flow_skims)
+        pool.map(run_assignments_parallel_x, project_list)
 
 def start_transit_pool(project_list):
     #Transit assignments/skimming seem to do much better running sequentially (not con-currently). Still have to use pool to get by the one
     #instance of modeler issue. Will change code to be more generalized later.
-    pool = Pool(processes=4)
-    pool.map(run_transit,project_list[0:4])
-
-    pool.close()
+    with Pool(processes=parallel_instances) as pool:
+        pool.map(run_transit, project_list)
 
 def run_transit(project_name):
     start_of_run = time.time()
-
     my_project = EmmeProject(project_name)
-    create_node_attributes(transit_node_attributes, my_project)
-
-    print("starting transit assignment and skimming...")
-
-    count = 0
-    for submode, class_name in {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry',
-            'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}.items():
-        if count > 0:
-            add_volume = True
-        else:
-            add_volume = False
-
-        print('    for submode: ' + submode)
-        transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
-        transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
-        count += 1
-    
-    print("finished transit assignment and skimming")
-
-    #Calc Wait Times
-    app.App.refresh_data
-    matrix_calculator = json_to_dictionary("matrix_calculation")
-    matrix_calc = my_project.m.tool("inro.emme.matrix_calculation.matrix_calculator")
-
-    #Wait time for general teeansit 
-    total_wait_matrix = my_project.bank.matrix('twtwa').id
-    initial_wait_matrix = my_project.bank.matrix('iwtwa').id
-    transfer_wait_matrix = my_project.bank.matrix('xfrwa').id
-    mod_calc = matrix_calculator
-    mod_calc["result"] = transfer_wait_matrix
-    mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
-    matrix_calc(mod_calc)
-
-    #wait time for transit submodes
-    for submode in ['r','f','p','c']:
-        total_wait_matrix = my_project.bank.matrix('twtw' + submode).id
-        initial_wait_matrix = my_project.bank.matrix('iwtw' + submode).id
-        transfer_wait_matrix = my_project.bank.matrix('xfrw' + submode).id
-
-        mod_calc = matrix_calculator
-        mod_calc['result'] = transfer_wait_matrix
-        mod_calc['expression'] = total_wait_matrix + '-' + initial_wait_matrix
-        matrix_calc(mod_calc)
+    transit_assignment_skims(my_project)    
 
     my_project.closeDesktop()
-    print("finished run_transit")
+    end_of_run = time.time()
+    
+    print(f"finished run_transit {my_project.tod}")
+    text = 'It took ' + str(round((end_of_run-start_of_run)/60,2)) + ' minutes to execute transit processes for ' + my_project.tod
+    print(text)
+    logging.debug(text)
+    
 
 def export_to_hdf5_pool(project_list, survey_seed_trips, free_flow_skims ):
     pool = Pool(processes=parallel_instances)
@@ -1177,8 +1105,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
     assign_transit = my_project.m.tool("inro.emme.transit_assignment.standard_transit_assignment")
 
     #Load in the necessary Dictionaries
-
-
     assignment_specification = json_to_dictionary("bike_walk_assignment")
     #get demand matrix name from here:
     user_classes = json_to_dictionary("user_classes")
@@ -1188,7 +1114,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
     #Also fill in intrazonals
     
     #intrazonal_dict
-
     if my_project.tod in bike_walk_skim_tod:
         for key in bike_walk_matrix_dict.keys():
             #modify spec
@@ -1200,7 +1125,10 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
             #intrazonal
             matrix_name= bike_walk_matrix_dict[key]['intrazonal_time']
             matrix_id = my_bank.matrix(matrix_name).id
-            my_project.matrix_calculator(result = 'mf' + bike_walk_matrix_dict[key]['time'], expression = 'mf' + bike_walk_matrix_dict[key]['time'] + "+" + matrix_id)
+            inzone_terminal_time = my_project.bank.matrix('btermti').id
+            # add terminal time and intrazonal time to the skim
+            my_project.matrix_calculator(result = 'mf' + bike_walk_matrix_dict[key]['time'], expression = 'mf' + bike_walk_matrix_dict[key]['time'] + "+" + inzone_terminal_time + "+" + matrix_id)
+
             
     elif assign_for_all_tods == 'true':
         #Dont Skim
@@ -1208,62 +1136,6 @@ def bike_walk_assignment(my_project, assign_for_all_tods):
             mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
             mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
             assign_transit(mod_assign)
-
-
-    end_transit_assignment = time.time()
-    text = 'It took ' + str(round((end_transit_assignment-start_transit_assignment)/60,2)) + ' minutes to run the bike/walk assignment.'
-    print(text)
-    logging.debug(text)
-
-def bike_walk_assignment_NonConcurrent(project_name):
-    #One bank
-    #this runs the assignment and produces a time skim as well, which we need is all we need- converted
-    #to distance in Daysim.
-    #Assignment is run for all time periods (at least it should be for the final iteration). Only need to
-    #skim for one TOD. Skim is an optional output of the assignment.
-    tod_dict = text_to_dictionary('time_of_day')
-    uniqueTOD = set(tod_dict.values())
-    uniqueTOD = list(uniqueTOD)
-    bike_walk_matrix_dict = json_to_dictionary("bike_walk_matrix_dict")
-    #populate a dictionary of with key=bank name, value = emmebank object
-    data_explorer = project_name.desktop.data_explorer()
-    all_emmebanks = {}
-    for database in data_explorer.databases():
-        emmebank = database.core_emmebank
-        all_emmebanks.update({emmebank.title: emmebank})
-    start_transit_assignment = time.time()
-
-    #Define the Emme Tools used in this function
-
-    for tod in uniqueTOD:
-        my_bank = all_emmebanks[tod]
-        #need a scenario, get the first one
-        current_scenario = list(my_bank.scenarios())[0]
-        #Determine the Path and Scenario File
-
-        zones=current_scenario.zone_numbers
-        bank_name = my_bank.title
-
-        assign_transit = project_name.tool("inro.emme.transit_assignment.standard_transit_assignment")
-
-        #Load in the necessary Dictionaries
-        assignment_specification = json_to_dictionary("bike_walk_assignment")
-        #get demand matrix name from here:
-        user_classes = json_to_dictionary("user_classes")
-        mod_assign = assignment_specification
-        #only skim for time for certain tod
-        if tod in bike_walk_skim_tod:
-            for key in bike_walk_matrix_dict.keys():
-                mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
-                mod_assign['od_results']['transit_times'] = bike_walk_matrix_dict[key]['time']
-                mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
-                assign_transit(mod_assign)
-        else:
-            #Dont Skim
-            for key in bike_walk_matrix_dict.keys():
-                mod_assign['demand'] = bike_walk_matrix_dict[key]['demand']
-                mod_assign['modes'] = bike_walk_matrix_dict[key]['modes']
-                assign_transit(mod_assign)
 
 
     end_transit_assignment = time.time()
@@ -1280,88 +1152,78 @@ def feedback_check(emmebank_path_list):
         print(emmebank_path)
         my_bank =  _eb.Emmebank(emmebank_path)
         tod = my_bank.title
-        my_store=h5py.File('inputs/' + tod + '.h5', "r+")
-        #put current time skims in numpy:
-        skims_dict = {}
+        with h5py.File('inputs/' + tod + '.h5', "r+") as my_store:
+            #put current time skims in numpy:
+            skims_dict = {}
 
-        for y in range (0, len(matrix_dict["Highway"])):
-           #trips
-            matrix_name= matrix_dict["Highway"][y]["Name"]
-            if 'tnc_' not in matrix_name:
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
+            for y in range (0, len(matrix_dict["Highway"])):
+               #trips
+                matrix_name= matrix_dict["Highway"][y]["Name"]
+                if 'tnc_' not in matrix_name:
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 1)
                 
-                trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
-                print('trips')
-                print(trips[563,547])
+                    trips = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                    print('trips')
+                    print(trips[563,547])
                 
-                #new skims
-                matrix_name = matrix_name + 't'
-                matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
-                new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
+                    #new skims
+                    matrix_name = matrix_name + 't'
+                    matrix_value = emmeMatrix_to_numpyMatrix(matrix_name, my_bank, 'float32', 100)
+                    new_skim = np.where(matrix_value > np.iinfo('uint16').max, np.iinfo('uint16').max, matrix_value)
                 
-                print(matrix_name)
-                print('new_skim')
-                print(new_skim[563,547])
+                    print(matrix_name)
+                    print('new_skim')
+                    print(new_skim[563,547])
                 
-                #now old skims
-                old_skim = np.asmatrix(my_store['Skims'][matrix_name])
-                print('old_skim')
-                print(old_skim[563,547])
+                    #now old skims
+                    old_skim = np.asmatrix(my_store['Skims'][matrix_name])
+                    print('old_skim')
+                    print(old_skim[563,547])
               
     
-                change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
-                print('test value')
-                print(change_test)
-                text = tod + " " + str(change_test) + " " + matrix_name
-                logging.debug(text)
-                if change_test > STOP_THRESHOLD:
-                    passed = False
-                    break
+                    change_test=np.sum(np.multiply(np.absolute(new_skim-old_skim),trips))/np.sum(np.multiply(old_skim,trips))
+                    print('test value')
+                    print(change_test)
+                    text = tod + " " + str(change_test) + " " + matrix_name
+                    logging.debug(text)
+                    if change_test > STOP_THRESHOLD:
+                        passed = False
+                        break
 
-        my_bank.dispose()
+            my_bank.dispose()
      return passed
 
 def create_node_attributes(node_attribute_dict, my_project):
-        current_scenario = my_project.current_scenario
-        my_bank = my_project.bank
-        tod = my_project.tod
-        NAMESPACE = "inro.emme.data.extra_attribute.create_extra_attribute"
-        create_extra = my_project.m.tool(NAMESPACE)
-        print(tod)
+    tod = my_project.tod
+    print(tod)
+    try:        
         for key, value in node_attribute_dict.items():
             print(key, value)
-            new_att = create_extra(extra_attribute_type="NODE",
-                       extra_attribute_name=value['name'],
-                       extra_attribute_description=key,
-                       extra_attribute_default_value = value['init_value'],
-                       overwrite=True)
+            my_project.create_extra_attribute("NODE", value['name'], key, True, value['init_value'])
+    except Exception as e:
+        print(f'create node extra attribute crashed in {tod}. {key}: {value}')  
+        print(f'The following are error message')                                  
+        print(f'{e}') 
+        logging.debug(f'{e}')        
+        sys.exit(3)               
 
+    # network_calc = my_project.m.tool("inro.emme.network_calculation.network_calculator")  
+    # node_calculator_spec = json_to_dictionary("node_calculation")
+    transit_tod = transit_network_tod_dict[tod]
         
-        network_calc = my_project.m.tool("inro.emme.network_calculation.network_calculator")  
-        node_calculator_spec = json_to_dictionary("node_calculation")
-        transit_tod = transit_network_tod_dict[tod]
-        
-        if transit_tod in transit_node_constants.keys():
+    if transit_tod in transit_node_constants.keys():
+        try:            
             for line_id, attribute_dict in transit_node_constants[transit_tod].items():
-                
                 for attribute_name, value in attribute_dict.items():
                     print(line_id, attribute_name, value)
-                    
-                    #Load in the necessary Dictionarie
-                    mod_calc = node_calculator_spec
-                    mod_calc["result"] = attribute_name
-                    mod_calc["expression"] = value
-                    mod_calc["selections"]["node"] = "Line = " + line_id
-                    network_calc(mod_calc)
-        print('finished create node attributes for ' + tod)
-
-def delete_matrices_parallel(project_name):
-    my_project = EmmeProject(project_name)
-   
-    ##delete and create new demand and skim matrices:
-    delete_matrices(my_project, "FULL")
-    delete_matrices(my_project, "ORIGIN")
-    delete_matrices(my_project, "DESTINATION")
+                    my_project.network_calculator("node_calculation", result = attribute_name, expression = value, selections_by_node = "Line = " + line_id)                    
+        except Exception as e:
+            print(f'node calculatiom crashed in {transit_tod}. line: {line_id}, {attribute_name}: {value}')
+            print('The following are error messages')
+            print(f'{e}') 
+            logging.debug(f'{e}')        
+            sys.exit(4)                                                               
+    print('finished create node attributes for ' + tod)
 
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name, iteration, prefix=''):
@@ -1398,7 +1260,7 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
    
     ##delete and create new demand and skim matrices:
     for matrix_type in ['FULL', 'ORIGIN', 'DESTINATION']:
-        delete_matrices(my_project, matrix_type)
+        my_project.delete_matrices(matrix_type)
 
     define_matrices(my_project)
 
@@ -1422,8 +1284,10 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
 
     ##set up for assignments
     intitial_extra_attributes(my_project)
+    my_project.create_extra_attributes(extra_attributes_dict)
+    
     if my_project.tod in transit_tod:
-        calc_bus_pce(my_project)
+        my_project.calc_bus_pce()
 
     vdf_initial(my_project)
     
@@ -1449,8 +1313,12 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     store_assign_results(my_project, 'skim')
 
     # update @mveh, @hveh, @bveh and @tveh.   They will be updated again in bike_model.py
-    my_project.create_extra_attributes(extra_attributes_dict)
     my_project.calc_total_vehicles()
+
+    ################################################################
+    ## Below are for transit assignment, skims, and related calculation, originally implemented in run_transit().
+    # because it often runs into issues when trying to gain access to modeller tools, we decided to combine auto and transit together in one function.
+    transit_assignment_skims(my_project)
 
     ##dispose emmebank
     my_project.closeDesktop()
@@ -1460,12 +1328,52 @@ def run_assignments_parallel(project_name, max_iteration, adj_trips_df, hdf5_fil
     print(text)
     logging.debug(text)
 
+def transit_assignment_skims(my_project):
+    print(f'Starting transit assignment and skims..')
+    create_node_attributes(transit_node_attributes, my_project)
+    add_volume = False
+    for submode, class_name in transit_submode_class_lookup.items():
+        print(f'    for submode: {submode}')
+        transit_assignment(my_project, "extended_transit_assignment_" + submode, keep_exisiting_volumes = add_volume, class_name = class_name)
+        transit_skims(my_project, "transit_skim_setup_" + submode, class_name)
+        add_volume = True
+    
+    print("finished transit assignment and skimming")
+
+    #Calc Wait Times
+    app.App.refresh_data
+    matrix_calculator = json_to_dictionary("matrix_calculation")
+    matrix_calc = my_project.m.tool("inro.emme.matrix_calculation.matrix_calculator")
+
+    #Wait time for general teeansit 
+    total_wait_matrix = my_project.bank.matrix('twtwa').id
+    initial_wait_matrix = my_project.bank.matrix('iwtwa').id
+    transfer_wait_matrix = my_project.bank.matrix('xfrwa').id
+    mod_calc = matrix_calculator
+    mod_calc["result"] = transfer_wait_matrix
+    mod_calc["expression"] = total_wait_matrix + "-" + initial_wait_matrix
+    matrix_calc(mod_calc)
+
+    #wait time for transit submodes
+    for submode in ['r','f','p','c']:
+        total_wait_matrix = my_project.bank.matrix('twtw' + submode).id
+        initial_wait_matrix = my_project.bank.matrix('iwtw' + submode).id
+        transfer_wait_matrix = my_project.bank.matrix('xfrw' + submode).id
+
+        mod_calc = matrix_calculator
+        mod_calc['result'] = transfer_wait_matrix
+        mod_calc['expression'] = total_wait_matrix + '-' + initial_wait_matrix
+        matrix_calc(mod_calc)
+
+    print(f"finished run_transit {my_project.tod}")
+
 def help():
     print('Run skims and paths on EMME databanks.')
     print('')
-    print('SkimsAndPaths.py -h -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag')
+    print('SkimsAndPaths.py -h -t -i iteration_number -f <converted_worker_file_name> -s <time_start> -e <time_end> -p <percent> trip_table_flag')
     print('       iteration_number: nth iteration')
     print('      -h: help')
+    print('      -t: run transit assignment and skims only. No auto modes are included.')
     print('      -i: iteration_number')
     print('      -f: file_name for the converted workers')
     print('      -s: start time of the core business hours in minutes, starting from mid-night')
@@ -1493,9 +1401,10 @@ def main():
     global free_flow_skims
     global iteration
     global hdf5_file_path
+    run_transit_only_flag = False    
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hi:s:e:p:f:') 
+        opts, args = getopt.getopt(sys.argv[1:], 'hti:s:e:p:f:') 
     except getopt.GetoptError:
         help()
         sys.exit(2)
@@ -1504,6 +1413,8 @@ def main():
         if opt == '-h':
             help()
             sys.exit(0)
+        if opt == '-t':
+            run_transit_only_flag = True            
         elif opt == '-f':
             converted_workers_file_name = arg
         elif opt == '-s':
@@ -1583,25 +1494,44 @@ def main():
         text = '% of trips for adjustment made by workers working from home: ' + str(percent)
         logging.debug(text)
 
-    start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
+    if run_transit_only_flag:
+        start_transit_pool(project_list)
+    else:                
+        start_pool(project_list, max_num_iterations, wfh_adj_trips_df, iteration, free_flow_skims)
     #run_assignments_parallel(project_list[2])
-    start_transit_pool(project_list)
+    # transit operation is now merged into start_pool. start_transit_pool() is no longer needed.
+    # start_transit_pool(project_list)
    
+    import gc
+    gc.collect()    
     f = open('inputs/converge.txt', 'w')
-   
+    print('Check convergence...')
     #If using seed_trips, we are starting the first iteration and do not want to compare skims from another run. 
     if (survey_seed_trips == False and free_flow_skims == False):
-           #run feedback check 
-          if feedback_check(feedback_list) == False:
-              go = 'continue'
-              json.dump(go, f)
-          else:
-              go = 'stop'
-              json.dump(go, f)
+        #run feedback check 
+        try:
+            # if anything goes wrong with the convergence check, simply ignore the check and move on to the next run              
+            if feedback_check(feedback_list) == False:
+                go = 'continue'
+                json.dump(go, f)
+                print('Not converged yet.')                  
+            else:
+                go = 'stop'
+                json.dump(go, f)
+                print('Converged.')                  
+        except Exception as e:
+            print('feedback check error. Continue the feedback loop.')
+            print('below is the error messages.')
+            print(f'{e}')  
+            logging.debug(f'{e}')                                              
+            go = 'continue'
+            json.dump(go, f)
     else:
         go = 'continue'
         json.dump(go, f)
+        print('Not converged yet')        
 
+    print('Exporting...')
     #export skims even if skims converged
     for i in range (0, 4, parallel_instances):
         l = project_list[i:i+parallel_instances]

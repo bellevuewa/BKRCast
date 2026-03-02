@@ -85,7 +85,7 @@ def CalModeSharebyPurpose(purpose, tour_df):
     
     purpose_df['share'] = purpose_df['share'].map('{:.1%}'.format)
     sum_df['share'] = sum_df['share'].map('{:.1%}'.format)
-    purpose_df = purpose_df.append(sum_df, ignore_index = True)           
+    purpose_df = pd.concat([purpose_df, sum_df], ignore_index = True)           
 
     return purpose_df    
 

@@ -335,7 +335,7 @@ def main():
     zonesDim = len(zones)
 
     # BKRCastTAZ field in 7_balance_trip_ends.csv is not consecutive numbers, while zone system in emme requires consecutive numbers.
-    zones_df = pd.DataFrame(zones, columns = {'BKRCastTAZ'})
+    zones_df = pd.DataFrame(zones, columns = ['BKRCastTAZ'])
     balanced_prod_att = pd.merge(zones_df, balanced_prod_att, on = 'BKRCastTAZ', how = 'left')
     balanced_prod_att.fillna(0, inplace = True)
 

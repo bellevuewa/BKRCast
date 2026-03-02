@@ -1,0 +1,589 @@
+D2461A6A-1F51-4A2C-87AC-6C3C49AA9DF7 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 4 0
+# Emme worksheet generated on Wed Dec 13 09:57:00 2017
+# File: D:/SQFTtoJobsTest/BKRCast_V1-3LU_Test1/projects/1530to1830/Worksheets/Screenline_Scatterplot.emw
+#
+# String Name: name of worksheet (tr,subst)
+Name : PlotName
+Name = Screenline Scatterplot
+# Text Description: description of worksheet (tr,subst)
+Description : (0x800)
+Description = <h2>Link scatterplot</h2>\
+This worksheet can be used to display a <i>scatterplot</i>\
+which is related to <i>link</i> elements.\
+<ul>\
+<li>The linear regression can be computed and displayed\
+(layer <i>Regression</i>).\
+<li>The diagram title and the descriptions for the axes are generated\
+using the X and Y value expressions, but can be modified\
+(layer <i>Title, Descriptions and Symbols</i>).\
+<li>The diagram always fits the current view.\
+</ul>\
+<p>\
+<b>Using this worksheet</b>\
+<ul>\
+<li>Specify an expression in the <i>X value</i> and/or <i>Y value</i> field.\
+<li>Adjust the ranges if needed.\
+<li>The default symbol is <i>Plus</i>, but can be changed (<i>Title, Descriptions and Symbols</i> layer).\
+<li>A <b>scatterplot tip</b> displays, for each point,\
+the link identifier and its X/Y values.\
+</ul>\
+<p><small>Copyright &copy; 2016, INRO. All rights reserved.</small>\
+<p>
+# Flags Flags: worksheet configuration flags
+Flags = 0x18
+# String Caption: caption that appears on window bar (tr,subst)
+Caption : //PlotName
+Caption = %<Name>%
+# String Active: name of currently active layer
+Active = Link scatterplot
+# Float TransformationMatrix: coordinate transformation matrix
+TransformationMatrix : (0x200) /TransformationMatrix!/$WorksheetLoaded
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 1
+TransformationMatrix[] = 1
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+
+[Background]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Background color
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowBackColor
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowBackColor
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Style Style: style for filling background when no wallpaper is used
+Style : (0x200) /BackgroundColor!/$WorksheetLoaded
+Style = 0x00000000 0x01f4f4f4 0x00000000 0x00000000
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = X converter
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Title, Descriptions and Symbols Configurable Control\
+(_ALL_NET_SCAT)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : /XAngle
+IA = 0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = "x,"+IA
+# String SR: string result (nosave)
+SR : (0x80) XValueString/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = English symbol
+# Text Description: user definable layer description (tr,subst)
+Description = Send English name of chosen symbol (_ALL_SYMBOLS)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = ScattergramMapper
+TranslationContext[] = Mapper
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : (0x100) //SymbolIndex
+IA = 1
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = lookup(IA,"Circle","Sharp","Asterisk","Plus","Times","Larger","Square","Diamond","Triangle","Nabla","Delta","Line","Stair")
+# String SR: string result (nosave)
+SR : (0x80) DefaultSymbol/
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = TextPosition
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Title, Descriptions and Symbols Configurable Control\
+(_ALL_NET_SCAT)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : /AlongX
+IA = 0
+# String SA: string parameter SA (subst)
+SA : /Axes
+SA[] = screenline counts for 2014 pm peak hour
+SA[] = volau*0.35
+# Integer IB: integer parameter IB
+IB : /AlongY
+IB = 0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(IA,"",SA),if(IB,"",SA1),if(IA,SA,""),if(IB,SA1,"")
+# String SR: string result
+SR : XY/
+SR[] = screenline counts for 2014 pm peak hour
+SR[] = volau*0.35
+SR[] = 
+SR[] = 
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = AxesDescription
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Title, Descriptions and Symbols Configurable Control\
+(_ALL_NET_SCAT)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst)
+SA : /XValue
+SA = [screenline counts for 2014 pm peak hour] @slcnt_pm_2014
+# String SB: string parameter SB (subst)
+SB : /YValue
+SB = volau*0.35
+# String SC: string parameter SC (subst)
+SC : /XDescription
+SC = 
+# String SD: string parameter SD (subst)
+SD : /YDescription
+SD = 
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(SC!="",SC,if(length(comment(SA))>0,comment(SA),SA)),if(SD!="",SD,if(length(comment(SB))>0,comment(SB),SB))
+# String SR: string result
+SR : Axes/
+SR[] = screenline counts for 2014 pm peak hour
+SR[] = volau*0.35
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Title, Descriptions and Symbols
+# Text Description: user definable layer description (tr,subst)
+Description = Gives access to advanced parameters (_ALL_NET_SCAT)
+# String TranslationContext: context for translations of configuration texts (subst)
+TranslationContext[] = DiagramMapper
+TranslationContext[] = ScattergramMapper
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Bool0;Checkbox;Scale text automatically;scale text/symbol size relative to full view;0;0;0;0;;
+Layout[] = Bool1;Checkbox;X value lines;draw vertical lines at values on x-axis;1;1;0;0;;
+Layout[] = Bool2;Checkbox;Y value lines;draw horizontal lines at values on y-axis;2;2;0;0;;
+Layout[] = Bool3;Checkbox;Along X-axis;description along horizontal axis;3;3;0;0;;
+Layout[] = Bool4;Checkbox;Along Y-axis;description along vertical axis;4;4;0;0;;
+Layout[] = String0;String combo;Title:;diagram title;5;5;0;0;;
+Layout[] = String1;String;X description:;description on horizontal axis;6;6;0;0;;
+Layout[] = String2;String;Y description:;description on vertical axis;7;7;0;0;;
+Layout[] = String3;String combo;Symbol:;default symbol index;8;8;0;0;;
+Layout[] = Float0;Spinbox;Size:;default symbol size;9;9;0;0;0;500;
+Layout[] = Integer0;Spinbox;Text angle:;Text angle on horizontal axis;10;10;0;0;-90;90;
+# Bool DisplayScreenFlagIcon: display screen flag icon
+DisplayScreenFlagIcon = 0
+# Bool Bool0: scale text/symbol size relative to full view
+Bool0 : RelativeSizing
+Bool0 = 0
+# Bool Bool1: draw vertical lines at values on x-axis
+Bool1 : DrawVerticalLines
+Bool1 = 0
+# Bool Bool2: draw horizontal lines at values on y-axis
+Bool2 : DrawHorizontalLines
+Bool2 = 0
+# Bool Bool3: description along horizontal axis
+Bool3 : AlongX/
+Bool3 = 0
+# Bool Bool4: description along vertical axis
+Bool4 : AlongY/
+Bool4 = 0
+# Integer Integer0: Text angle on horizontal axis
+Integer0 : XAngle/
+Integer0 = 0
+# Float Float0: default symbol size
+Float0 : DefaultSize
+Float0 = 4
+# String String0: diagram title
+String0 : Title//PlotName
+String0[] =  %<ScenarioTitle>%\n%<Caption>%\n%<SR:RegressionValues>%
+String0[] = %<Caption>%
+String0[] = %<SR:RegressionValues>%
+String0[] = %<Caption>%\n%<SR:RegressionValues>%
+String0[] = %<YDescription>%  vs.  %<XDescription>%
+String0[] = %<YDescription>%  vs.  %<XAxisText>%
+String0[] = %<YAxisText>%  vs.  %<XDescription>%
+String0[] = %<YAxisText>%  vs.  %<XAxisText>%
+String0[] = 
+# String String1: description on horizontal axis
+String1 : (0x800) XDescription/
+String1 = 
+# String String2: description on vertical axis
+String2 : (0x800) YDescription/
+String2 = 
+# String String3: default symbol index
+String3 : (0x820) SymbolIndex
+String3[] = Circle
+String3[] = Circle
+String3[] = Sharp
+String3[] = Asterisk
+String3[] = Plus
+String3[] = Times
+String3[] = Larger
+String3[] = Square
+String3[] = Diamond
+String3[] = Triangle
+String3[] = Nabla
+String3[] = Delta
+String3[] = Line
+String3[] = Stair
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Regression
+# Text Description: user definable layer description (tr,subst)
+Description = Gives access to the regression parameters (_ALL_REGRESSION)
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Bool0;Checkbox;Compute linear regression;perform linear regression on scatterplot points;0;0;0;0;;
+Layout[] = Integer0;Value;N:;number of data points in linear regression y = A + Bx;1;1;0;0;;
+Layout[] = Float0;Float;confidence:;confidence interval(s) for linear regression y = A + Bx;2;2;0;0;;
+Layout[] = Float1;Value;A:;y-intercept (coefficient A of linear regression y = A + Bx);3;3;0;0;;
+Layout[] = Float2;Value;B:;slope (coefficient B of linear regression y = A + Bx);4;4;0;0;;
+Layout[] = Float3;Value;R2:;R-square value of linear regression y = A + Bx;5;5;0;0;;
+Layout[] = Float4;Value;RMSE:;root mean square error of linear regression y = A + Bx;6;6;0;0;;
+Layout[] = Style0;Style;Regression style:;style used to display linear regression (0: regression line, 1: confidence interval);7;7;0;0;;
+# Bool DisplayScreenFlagIcon: display screen flag icon
+DisplayScreenFlagIcon = 0
+# Bool Bool0: perform linear regression on scatterplot points
+Bool0 : LinearRegression
+Bool0 = 1
+# Integer Integer0: number of data points in linear regression y = A + Bx
+Integer0 : /RegressionN
+Integer0 = 619
+# Float Float0: confidence interval(s) for linear regression y = A + Bx
+Float0 : RegressionConfidence
+Float0 = 1
+# Float Float1: y-intercept (coefficient A of linear regression y = A + Bx)
+Float1 : /RegressionCoefficientA
+Float1 = 36.0343360900879
+# Float Float2: slope (coefficient B of linear regression y = A + Bx)
+Float2 : /RegressionCoefficientB
+Float2 = 1.09760570526123
+# Float Float3: R-square value of linear regression y = A + Bx
+Float3 : /RegressionRSquare
+Float3 = 0.93144029378891
+# Float Float4: root mean square error of linear regression y = A + Bx
+Float4 : /RegressionStandardDeviation
+Float4 = 343.697814941406
+# Style Style0: style used to display linear regression (0: regression line, 1: confidence interval)
+Style0 : (0x200) Regression!/Regression!/$WorksheetLoaded
+Style0[] = 0x20000000 0x00ffaa7f 0x00000000 0x00000000
+Style0[] = 0x20c6bb8e 0x01fff1b7 0x00000000 0x00000000
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Regression values
+# Text Description: user definable layer description (tr,subst)
+Description = Used by Regression Configurable control (_ALL_REGRESSION)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /RegressionCoefficientA
+FA = 36.0343360900879
+# Integer IA: integer parameter IA
+IA : /LinearRegression
+IA = 1
+# Float FB: floating point parameter FB
+FB : /RegressionCoefficientB
+FB = 1.09760570526123
+# Integer IB: integer parameter IB
+IB : /RegressionN
+IB = 619
+# Float FC: floating point parameter FC
+FC : /RegressionRSquare
+FC = 0.93144029378891
+# Float FD: floating point parameter FD
+FD : /RegressionStandardDeviation
+FD = 343.697814941406
+# Float FE: floating point parameter FE
+FE : /RegressionConfidence
+FE = 1
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(IA,"A= "+string(FA,3)+"   B= "+string(FB,3)+"   R2= "+string(FC,3)+"   RMSE= "+string(FD,3),"")
+# String SR: string result
+SR : RegressionValues
+SR = A= 36.034   B= 1.098   R2= 0.931   RMSE= 343.698
+
+[Link scatterplot]
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x9800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowChart
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowChart
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Float XPosition: X-coordinate of upper left corner (nosave)
+XPosition : (0x80)
+# Float YPosition: Y-coordinate of upper left corner (nosave)
+YPosition : (0x80)
+# Float Width: width of rectangle (nosave)
+Width : (0x80)
+# Float Height: height of rectangle (nosave)
+Height : (0x80)
+# Float AspectRatio: fixed aspect ratio of diagram
+AspectRatio = 1.15225338935852
+# Bool RelativeSizing: scale text/symbol size relative to full view
+RelativeSizing : RelativeSizing
+RelativeSizing = 0
+# Bool DrawHorizontalLines: draw horizontal lines at values on y-axis
+DrawHorizontalLines : DrawHorizontalLines
+DrawHorizontalLines = 0
+# Bool DrawVerticalLines: draw vertical lines at values on x-axis
+DrawVerticalLines : DrawVerticalLines
+DrawVerticalLines = 0
+# Style FrameStyle: style used to draw diagram frame (0:outer frame, 1:scales, 2:inner frame, 3:zero lines)
+FrameStyle : (0x200) /DiagFrame!/$WorksheetLoaded
+FrameStyle[] = 0x00bebebe 0x01ffffff 0x40000000 0x00000000
+FrameStyle[] = 0x20000000 0x00ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x00000000 0x00ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x20646464 0x00ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x20bebebe 0x00ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x20bebebe 0x00ffffff 0x00000000 0x00000000
+# Float XRange: horizontal value range
+XRange : //XValue
+XRange[] = 0
+XRange[] = 8000
+# Float YRange: vertical value range
+YRange : //YValue
+YRange[] = 0
+YRange[] = 8000
+# Float TextSize: text size used in diagram frame
+TextSize = 12
+# String Title: diagram title (tr,subst)
+Title : /Title
+Title[] =  %<ScenarioTitle>%\n%<Caption>%\n%<SR:RegressionValues>%
+Title[] = %<Caption>%
+Title[] = %<SR:RegressionValues>%
+Title[] = %<Caption>%\n%<SR:RegressionValues>%
+Title[] = %<YDescription>%  vs.  %<XDescription>%
+Title[] = %<YDescription>%  vs.  %<XAxisText>%
+Title[] = %<YAxisText>%  vs.  %<XDescription>%
+Title[] = %<YAxisText>%  vs.  %<XAxisText>%
+Title[] = 
+# String XDescription: description on horizontal axis (tr,subst)
+XDescription : //XY
+XDescription[] = %<SR[0]:XY>%
+XDescription[] = %<SR[0]:XY>%
+# String YDescription: description on vertical axis (tr,subst)
+YDescription : //XY
+YDescription[] = %<SR[1]:XY>%
+YDescription[] = %<SR[1]:XY>%
+# String XAxisText: text along horizontal axis (tr,subst)
+XAxisText : //XY
+XAxisText[] = %<SR[2]:XY>%
+XAxisText[] = %<SR[2]:XY>%
+# String YAxisText: text along vertical axis (tr,subst)
+YAxisText : //XY
+YAxisText[] = %<SR[3]:XY>%
+YAxisText[] = %<SR[3]:XY>%
+# Expression XValueString: expression that provides value strings on horizontal axis [, text angle] (tr,string,max. 2 values)
+XValueString : XValueString
+XValueString = x,0
+# Click AutoPos: position scatterplot automatically according to current view (nosave)
+AutoPos : (0x2) //%CurrentView
+# Bool LinearRegression: perform linear regression on scatterplot points
+LinearRegression : LinearRegression
+LinearRegression = 1
+# Float DefaultSize: default symbol size
+DefaultSize : DefaultSize
+DefaultSize = 4
+# String DefaultSymbol: default symbol index (nosave)
+DefaultSymbol : (0x80) /DefaultSymbol
+# Style SymbolStyle: style used to display scatterplot symbols
+SymbolStyle : (0x200) /MultiValue!/$WorksheetLoaded
+SymbolStyle[] = 0x20c82527 0x01ff2f32 0x00000000 0x00fe0001
+SymbolStyle[] = 0x20008000 0x0100b800 0x00000000 0x00fe0000
+SymbolStyle[] = 0x20003ab0 0x010055ff 0x00000000 0x00fe0000
+SymbolStyle[] = 0x20be7206 0x01ffa10a 0x00000000 0x00fe0001
+SymbolStyle[] = 0x207f27b5 0x01b337ff 0x00000000 0x00fe0000
+SymbolStyle[] = 0x20afa702 0x01e6ff05 0x00000000 0x00fe0000
+SymbolStyle[] = 0x20744a2a 0x019f673a 0x00000000 0x00fe0001
+SymbolStyle[] = 0x20cf78c9 0x01ff94f7 0x00000000 0x00fe0001
+SymbolStyle[] = 0x20009898 0x0100cccc 0x00000000 0x00fe0000
+SymbolStyle[] = 0x20b43c00 0x01ff5500 0x00000000 0x00fe0000
+SymbolStyle[] = 0x207bb800 0x01aaff00 0x00000000 0x00fe0000
+SymbolStyle[] = 0x206e7781 0x019daab9 0x00000000 0x00fe0000
+# Expression XValue: link expression for value on X-axis (tr,link)
+XValue : XValue/
+XValue = [screenline counts for 2014 pm peak hour] @slcnt_pm_2014
+# Expression YValue: link expression for value on Y-axis (tr,link)
+YValue : YValue/
+YValue = volau*0.35
+# Filter Filter: expression for link filtering (tr,link,string,max. 2 values)
+Filter = @slcnt_pm_2014>0
+# Expression StyleIndex: link expression for style index [,symbol index [,symbol size]] (tr,link,string,max. 3 values)
+StyleIndex[] = 
+StyleIndex[] = [inside, outside confidence interval] abs(y-(A+B*x))>confidence*STD
+# Float RegressionCoefficientA: coefficient A of linear regression y = A + Bx (ro,nosave)
+RegressionCoefficientA : RegressionCoefficientA
+# Float RegressionCoefficientB: coefficient B of linear regression y = A + Bx (ro,nosave)
+RegressionCoefficientB : RegressionCoefficientB
+# Float RegressionStandardDeviation: standard deviation of linear regression y = A + Bx (ro,nosave)
+RegressionStandardDeviation : RegressionStandardDeviation
+# Float RegressionRSquare: R-square value of linear regression y = A + Bx (ro,nosave)
+RegressionRSquare : RegressionRSquare
+# Integer RegressionN: number of data points in linear regression y = A + Bx (ro,nosave)
+RegressionN : RegressionN
+# Float RegressionConfidence: confidence interval(s) for linear regression y = A + Bx
+RegressionConfidence : RegressionConfidence
+RegressionConfidence = 1
+# Style RegressionStyle: style used to display linear regression
+RegressionStyle : (0x200) Regression!/Regression!/$WorksheetLoaded
+RegressionStyle[] = 0x20000000 0x00ffaa7f 0x00000000 0x00000000
+RegressionStyle[] = 0x20c6bb8e 0x01fff1b7 0x00000000 0x00000000
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Foreground layer(s)
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowFrontInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowFrontInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile : (0x200) /UserFront!/$WorksheetLoaded
+ConfigurationFile = 
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Other inclusion
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowOtherInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowOtherInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile : (0x200) /UserConf!/$WorksheetLoaded
+ConfigurationFile[] = 
+ConfigurationFile[] = 
+ConfigurationFile[] = %<$ProjectPath>%/Worksheets/prnlegend.eml
+ConfigurationFile[] = %<$EmmePath>%/common/transform.eml
+

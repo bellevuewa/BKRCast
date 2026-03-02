@@ -13,11 +13,11 @@
 #limitations under the License.
 
 import pandas as pd
+import os, sys
+sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import h5toDF
 import math
-import os, sys
-import os.path
-sys.path.append(os.getcwd())
 from input_configuration import *
 from accessibility.accessibility_configuration import *
 
@@ -32,16 +32,12 @@ def get_percent_rmse(urbansim_file, daysim_file, guide_file):
     workers_jobs_by_taz = pd.merge(jobs_by_taz, workers_by_taz, left_index = True, right_index = True) #Merge them
     workers_jobs_by_taz['DaySim'] = workers_jobs_by_taz['psexpfac'] #Rename columns...
     workers_jobs_by_taz['UrbanSim'] = workers_jobs_by_taz['emptot_p']
-    f = open("outputs/landuse/workers_jobs.csv", 'w')
-    workers_jobs_by_taz.to_csv(f)
-    f.close()
-    del workers_jobs_by_taz['emptot_p']
-    del workers_jobs_by_taz['psexpfac']
     workers_jobs_by_taz['Difference'] = workers_jobs_by_taz['DaySim'] - workers_jobs_by_taz['UrbanSim']
     workers_jobs_by_taz['Squared Difference'] = workers_jobs_by_taz['Difference']**2
     rms_error = math.sqrt(workers_jobs_by_taz['Squared Difference'].mean())
     percent_rmse = rms_error / workers_jobs_by_taz['DaySim'].mean() * 100
     print('%RMSE: ' + str(round(percent_rmse, 2)) + '%')
+    workers_jobs_by_taz.to_csv(os.path.join(report_lu_output_location, 'workers_jobs.csv'), sep = ',', index = True) #Save the results to a CSV file
     return percent_rmse
 
 def convergence_check(rmse_list, convergence_criterion, iteration): #Function not presently in use

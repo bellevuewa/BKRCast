@@ -1,11 +1,6 @@
-import sys
 import inro.modeller as _modeller
-import inro.emme.desktop.app as _app
-import inro.emme.core.exception as _exception
-import itertools as _itertools
 import datetime
 import os
-from shutil import copyfile
 import pandas as pd
 
 class BKRCastExportNetwork(_modeller.Tool()):
@@ -27,8 +22,11 @@ class BKRCastExportNetwork(_modeller.Tool()):
     1.3.2 export bus stop file.
     1.3.3 export vehicle file. 
     1.3.4 export zone partition
+    1.3.5 copy @tstart, @tend from master network to the network for horizon year.
+    1.3.6 allow update transit headways from master headway file.
+    1.4.0 add unfunded project selection, and BAT lane processing.
     '''
-    version = "1.3.4" # this is the version
+    version = "1.4.0" # this is the version
     default_path = ""
     tool_run_message = ""
     outputFolder = _modeller.Attribute(object)
@@ -37,6 +35,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
     new_scen_title = _modeller.Attribute(str)
     current_scen = _modeller.Attribute(object)
     overwrite_scen = _modeller.Attribute(bool)
+    master_headway_file = _modeller.Attribute(object)
+    include_unfunded = _modeller.Attribute(bool)
+    include_unfunded_type_3 = _modeller.Attribute(bool)
 
     def __init__(self):
         '''
@@ -54,8 +55,11 @@ class BKRCastExportNetwork(_modeller.Tool()):
         pb.add_select_scenario("current_scen", title="Scenario:")
         pb.add_text_box("new_scen_id", 5, title = "Enter the new scenario ID", note = "Number between 1 and 99999.")
         pb.add_checkbox('overwrite_scen', title = 'Overwrite existing scenario?')
+        pb.add_checkbox('include_unfunded_type_3', title = 'Include unfunded projects (type 3 only)?')
+        pb.add_checkbox('include_all_unfunded', title = 'Include all unfunded projects?')        
         pb.add_text_box("new_scen_title", 60, title = 'New scenario title', note = 'Maximum 60 characters.')
         pb.add_text_box("horizon_year", 4, title = "Enter the horizon year", note = "4-digit integer only")
+        pb.add_select_file('master_headway_file', 'file', '', self.default_path, title = 'Select the headway master file')
         self.horizon_year = ''
         self.new_scen_title = str(self.horizon_year) + ' network built from scen ' + self.current_scen.id
         if self.tool_run_message != "":
@@ -91,9 +95,9 @@ class BKRCastExportNetwork(_modeller.Tool()):
         tot_scn_spaces = self.current_emmebank.dimensions['scenarios']
         scens = self.current_emmebank.scenarios()
         _modeller.logbook_write("Version", self.version)
-        self.new_scen_title = str(self.horizon_year) + ' network built from scen ' + self.current_scen.id
+        self.new_scen_title = str(self.horizon_year) + self.new_scen_title
 
-        num_scns = 0;
+        num_scns = 0
         for scen in scens:
            num_scns = num_scns + 1
         print("Total allowed scenarios " + str(tot_scn_spaces))
@@ -106,6 +110,39 @@ class BKRCastExportNetwork(_modeller.Tool()):
         notes = 'Create network for horizon year ' + str(self.horizon_year)
         print(notes)
         with _modeller.logbook_trace(name = notes, value = ""):
+            # get network from the current master scenario network
+            network = self.current_scen.get_network()
+            master_headway_df = pd.read_csv(self.master_headway_file)
+            headway_list = []
+            if int(self.horizon_year) >= 2023:
+                headway_list = [f'hdwy_{tod}_{self.horizon_year}' for tod in ['am', 'md', 'pm', 'ni']]
+            else:
+                headway_list = [f'hdwy_{tod}' for tod in ['am', 'md', 'pm', 'ni']]
+
+            # make sure all tods are included in the master headway file.
+            if not all(elem in master_headway_df.columns for elem in headway_list):
+                self.tool_run_message += _modeller.PageBuilder.format_info(f"Some TOD are missing in the master headway file")
+                exit(1)
+
+            # make sure all transit lines in current scen are included in the master transit headway file
+            for line in network.transit_lines():
+                if int(line.id) not in master_headway_df['line'].values:
+                    print(f'transit line {line.id} is not in the master headway file')
+                    print(master_headway_df['line'].values)
+                    self.tool_run_message += _modeller.PageBuilder.format_info(f"transit line {line.id} is not in the master headway file")
+                    exit(1)
+
+            for index, line in master_headway_df.iterrows():
+                transit_line = network.transit_line(int(line['line']))
+                if transit_line != None:
+                    transit_line.data1 = line[headway_list[0]]    #am
+                    transit_line.data2 = line[headway_list[1]]    #md
+                    transit_line.data3 = line[headway_list[2]]    #pm
+                    transit_line['@nihdwy'] = line[headway_list[3]]  #ni
+
+            self.current_scen.publish_network(network)
+            _modeller.logbook_write('Headways', f'headways for {self.horizon_year} are updated in scen {self.current_scen.id}')
+
             # copy master scenario to horizon year and set the new network as primary
             horizon_scen = self.copyScenario(self.current_scen, self.new_scen_id, self.new_scen_title, True, True, self.overwrite_scen, True)
 
@@ -121,16 +158,32 @@ class BKRCastExportNetwork(_modeller.Tool()):
             self.copyAttribute('@exist_turn_factor', 'up2', horizon_scen)
 
             # copy improved networks for active projects
-            selection = {}
-            selection['link'] = '@project_year=0,' + str(self.horizon_year)
+            selection = {} # selection for auto
+            bike_selection = {} # selection for bike only links
+            hot_selection = {} # selection for HOT lanes
+
+            # @cip_tfp: 1 - CIP, 2 - TFP, 0 - unspecified
+            #           3 - unfunded, 99 - unfunded but are excluded when populating network
+            if self.include_unfunded: # include all unfunded projects
+                selection['link'] = f'@project_year=0,{self.horizon_year} or @cip_tfp=3,99' 
+                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} or @bike_cip_tfp=3,99'
+            elif self.include_unfunded_type_3:
+                selection['link'] = f'@project_year=0,{self.horizon_year} or @cip_tfp=3'
+                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} or @bike_cip_tfp=3'
+            else:
+                selection['link'] = f'@project_year=0,{self.horizon_year} and @cip_tfp=0,2' # @cip_tfp: 1 - CIP, 2 - TFP, 0 - unspecified
+                bike_selection['link'] = f'@bike_year=0,{self.horizon_year} and @bike_cip_tfp=0,2'
+ 
+           
             self.copyAttribute('@imp_lanes', 'lanes', horizon_scen, selection)
             self.copyAttribute('@imp_lanecap', 'ul1', horizon_scen, selection)
             self.copyAttribute('@imp_vdf', 'vdf', horizon_scen, selection)
             self.copyAttribute('@imp_speed', 'ul2', horizon_scen, selection)
-            selection['link'] = '@project_year=2000,' + str(self.horizon_year)
-            self.copyAttribute('@imp_hot', '@tolllane', horizon_scen, selection)
-            selection['link'] = '@bike_year = 0,' + str(self.horizon_year)
-            self.copyAttribute('@imp_biketype', '@biketype', horizon_scen, selection)
+
+            hot_selection['link'] = '@project_year=2000,' + str(self.horizon_year)
+            self.copyAttribute('@imp_hot', '@tolllane', horizon_scen, hot_selection)
+
+            self.copyAttribute('@imp_biketype', '@biketype', horizon_scen, bike_selection)
 
             expression = '(@turn_project_year > 2000 && @turn_project_year <= ' + str(self.horizon_year)+ ') * @imp_tpf + (@turn_project_year > ' + str(self.horizon_year)+ ') * @exist_tpf + (@turn_project_year < 2000) * @exist_tpf' 
             self.turnNetCalculator('tpf', expression) 
@@ -166,12 +219,14 @@ class BKRCastExportNetwork(_modeller.Tool()):
             # import active transit lines
             self.deleteTransitLines(horizon_scen, "all")
             self.loadTransitLines(horizon_scen, temptransitname, True)
-            NAMESPACE = "inro.emme.data.extra_attribute.import_extra_attributes"
-            import_attribute = _modeller.Modeller().tool(NAMESPACE)
-            tempname = 'extra_transit_lines_' + str(self.new_scen_id) + '.txt'
-            tempname = os.path.join(self.outputFolder, tempname)
-            import_attribute(file_path = tempname, scenario = horizon_scen, revert_on_error = False)
 
+            # copy extra transit line attributes from current_scen
+            transit_attr_list = ['@nihdwy', '@tstart', '@tend']
+            for attr in transit_attr_list:
+                self.copyAttribute(attr, attr, self.current_scen)
+
+            
+        # no easy way to close future bike/walk links with modes = "wk" and @biketype = 0. Need to remove them here.
         with _modeller.logbook_trace(name = 'Remove future non-motorized-only links', value = ""):
             self.removeExtraBikeLinks(horizon_scen)
 
@@ -223,6 +278,12 @@ class BKRCastExportNetwork(_modeller.Tool()):
             mdScen = self.copyScenario(horizon_scen, 225, "MDPK BKRCast " + today, True, True, True, False)
             pmScen = self.copyScenario(horizon_scen, 226, "PMPK BKRCast " + today, True, True, True, False)
             niScen = self.copyScenario(horizon_scen, 227, "NIPK BKRCast " + today, True, True, True, False)
+
+            # process BAT links if they are time dependent
+            self.BAT_link_processing(amScen, 'am')
+            self.BAT_link_processing(mdScen, 'md')
+            self.BAT_link_processing(pmScen, 'pm')
+            self.BAT_link_processing(niScen, 'ni')
 
             _modeller.Modeller().desktop.data_explorer().replace_primary_scenario(amScen)
             self.linkNetCalculator("ul1", "@revlane_cap", "@revlane = 1,4")
@@ -324,6 +385,86 @@ class BKRCastExportNetwork(_modeller.Tool()):
             export_partitions(partitions = p_list, partition_output_type="ZONES_BY_GROUP", export_file = path, append_to_file = False, field_separator = ' ', line_format = 'ONE_ENTRY_PER_LINE', export_default_group = True)
                
 
+    def BAT_link_processing(self, scen, tod):
+        # set scen to the primary scenario
+        _modeller.Modeller().desktop.data_explorer().replace_primary_scenario(scen)
+
+        # set filter for BAT on and off, only for time dependent BAT links
+        if tod == 'am':
+            bat_close = f'@bat_tod=2 or @bat_tod=3 or @bat_tod=6'
+            bat_on = f'@bat_tod=1 or @bat_tod=4 or @bat_tod=5 or @bat_tod=10'
+            #selection = f'type=70 and @bat_tod=2 or type=70 and @bat_tod=3 or type=70 and @bat_tod=6'
+            #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=1 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=5'
+        elif tod == 'md':
+            bat_close = f'@bat_tod=1 or @bat_tod=2 or @bat_tod=4'
+            bat_on = f'@bat_tod=3 or @bat_tod=5 or @bat_tod=6 or @bat_tod=10'
+            #selection = f'type=70 and @bat_tod=1 or type=70 and @bat_tod=2 or type=70 and @bat_tod=4'
+            #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=3 or @tod_bat_conversion=1 and @bat_tod=5 or @tod_bat_conversion=1 and @bat_tod=6'        
+        elif tod == 'pm':
+            bat_close = f'@bat_tod=1 or @bat_tod=3 or @bat_tod=5'
+            bat_on = f'@bat_tod=2 or @bat_tod=4 or @bat_tod=6 or @bat_tod=10'
+            #selection = f'type=70 and @bat_tod=1 or type=70 and @bat_tod=3 or type=70 and @bat_tod=5'
+            #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=2 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=6'
+        elif tod == 'ni':
+            bat_close = f'@bat_tod=7'
+            bat_on = f'@bat_tod=10'
+            #selection = f'type=70 and @bat_tod=10'
+            #gp_conversion_sel = f'@tod_bat_conversion=1 and @bat_tod=1 or @tod_bat_conversion=1 and @bat_tod=2 or @tod_bat_conversion=1 and @bat_tod=3 or @tod_bat_conversion=1 and @bat_tod=4 or @tod_bat_conversion=1 and @bat_tod=5 or @tod_bat_conversion=1 and @bat_tod=6'
+        NAMESPACE = "inro.emme.data.extra_attribute.create_extra_attribute"
+        create_attribute = _modeller.Modeller().tool(NAMESPACE)
+        create_attribute(scenario = scen, extra_attribute_name = '@temp1', extra_attribute_type = 'LINK')
+        
+        # EMME network calculator has limited functionality of selection.
+        # if a BAT link is in operation during a tod, set vdf=24 for all other time periods when BAT is not operating.
+        NAMESPACE = "inro.emme.network_calculation.network_calculator"
+        specs = {
+            "type": "NETWORK_CALCULATION",
+            "result": "@temp1",
+            "expression": "1",
+            "selections": {
+                "link": bat_close}                
+            }
+        netcalc = _modeller.Modeller().tool(NAMESPACE)   
+        report = netcalc(specs)
+
+        specs = {
+            "type": "NETWORK_CALCULATION",
+            "result": "vdf",
+            "expression": "24",
+            "selections": {
+                "link": "type=70 and @temp1=1"}
+            }
+        report = netcalc(specs)
+
+        # if a GP link has a BAT lane that is in operation, adjust the number of lanes based on 
+        # how the BAT lane ia converted (from a travel lane or from a shoulder/parking lane)
+        # reset temp1 to zero
+        specs = {
+            "type": "NETWORK_CALCULATION",
+            "result": "@temp1",
+            "expression": "0",
+            "selections": {
+                "link": "all"}                
+            }
+        report = netcalc(specs)
+
+        specs = {
+            "type": "NETWORK_CALCULATION",
+            "result": "@temp1",
+            "expression": "1",
+            "selections": {
+                "link": bat_on}                
+            }
+        report = netcalc(specs)
+
+        specs = {
+            "type": "NETWORK_CALCULATION",
+            "result": "lanes",
+            "expression": "lanes - 1",
+            "selections": {
+                "link": "@tod_bat_conversion=1 and @temp1=1"}
+            }
+        report = netcalc(specs)
 
     def exportTransit(self, tempFileName, scen, selection):
         NAMESPACE = "inro.emme.data.network.transit.export_transit_lines"

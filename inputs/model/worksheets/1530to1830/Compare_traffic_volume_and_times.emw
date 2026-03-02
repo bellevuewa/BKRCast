@@ -1,0 +1,1103 @@
+D2461A6A-1F51-4A2C-87AC-6C3C49AA9DF7 07B0F5AD-A2A7-4B4E-B4A9-06EB441586D6 2 4 0
+# Emme worksheet generated on Mon Sep 11 10:14:51 2017
+# File: D:/BKRCast_Calibration/BKRCast_v1-2_Calibration/BKRCast_Run21-S42-neg_coef6-nopopsampler/projects/1530to1830/Worksheets/Compare_traffic_volume_and_times.emw
+#
+# String Name: name of worksheet (tr,subst)
+Name : PlotName
+Name = BKRCast PM Peak hour Comparison
+# Text Description: description of worksheet (tr,subst)
+Description = <h2>Compare traffic volume and times</h2>\
+This worksheet can be used to compare traffic volume or times on links\
+for the first two scenarios in the <i>Active Scenarios</i> list.\
+Predefined choices are provided.\
+<ul>\
+<li>The values in the second scenario are subtracted from the corresponding values in the first scenario.\
+Positive differences are displayed in red, and negative values in green.\
+<li>Links are displayed in green if they are in the first scenario only,\
+in yellow if they are only in the second, and in grey if they are in both.\
+</ul>\
+<p>\
+<b>Using this worksheet</b>\
+<ul>\
+<li><b>Full view</b> gives the window that contains all the filtered links.\
+<li>Double-click on a link on the map to position the associated table at the corresponding row.\
+</ul>\
+<p>Note that the scale is adjusted automatically each time a worksheet is loaded.\
+<p><small>Copyright &copy; 2016, INRO. All rights reserved.</small>\
+<p>
+# Flags Flags: worksheet configuration flags
+Flags = 0x8
+# String Caption: caption that appears on window bar (tr,subst)
+Caption = %<Name>% [Scen. %<$ScenarioNumber1>% - %<$ScenarioNumber2>%]
+# String Active: name of currently active layer
+Active = Legend
+# Bool AllowReordering: Layers reordering of this configuration is permitted
+AllowReordering = 0
+# Expression Condition: indicates that the worksheet is valid only if the condition is met (tr)
+Condition =  hasAutoAssignment
+# Integer IA: Integer-valued startup parameter IA (nosave)
+IA : ValueIndex
+# Float TransformationMatrix: coordinate transformation matrix
+TransformationMatrix : (0x200) /TransformationMatrix!/$WorksheetLoaded
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 1
+TransformationMatrix[] = 1
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+TransformationMatrix[] = 0
+
+[Background]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Background color
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowBackColor
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowBackColor
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Style Style: style for filling background when no wallpaper is used
+Style : (0x200) /BackgroundColor!/$WorksheetLoaded
+Style = 0x00000000 0x01f4f4f4 0x00000000 0x00000000
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Background layer(s)
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowBackInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowBackInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile : (0x200) /UserBack!/$WorksheetLoaded
+ConfigurationFile = 
+
+[Link value]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Value %<$ScenarioNumber2>%
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Displays the value for the links that are in scenario 2 only.\
+Since the computation is made as 'scenario 1 - scenario 2', the negative value is used.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbf00000
+# Integer NetworkIndex: index of network accessed by this layer
+NetworkIndex = 2
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinks
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLinks
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# String LegendAnchorPoint: reference point of the legend
+LegendAnchorPoint[] = top-left
+LegendAnchorPoint[] = top-left
+LegendAnchorPoint[] = bottom-left
+# Style LegendTextStyle2: text style of legend 2 (0: title, 1: other text)
+LegendTextStyle2[] = 0x00000000 0x00000000 0x28000000 0x00000000
+LegendTextStyle2[] = 0x00000000 0x00000000 0x00000000 0x00000000
+# Bool DrawLinkBars: draw link bars with proportional width
+DrawLinkBars : DrawLinkBars
+DrawLinkBars = 1
+# Bool NumericalValues: display link values numerically on links
+NumericalValues : NumericalValues
+NumericalValues = 1
+# Bool ValuesOnTop: put total value outside bar, instead of value(s) within bar
+ValuesOnTop : ValuesOnTop
+ValuesOnTop = 1
+# Integer Decimals: number of decimals in numeric values
+Decimals : Decimals
+Decimals = 0
+# Float Offset: link offset (pixels)
+Offset : Offset
+Offset = 0
+# Float Scale: value scale for proportional bars (units/pixel)
+Scale : (0x4000) BarScale
+Scale = 75
+# Style Style: style for link value outline, fill and text properties
+Style : /CompBars!
+Style[] = 0x20007f00 0x01b0e63b 0x00000000 0x00980005
+Style[] = 0x20b12d16 0x01f03c1e 0x00000000 0x00980005
+# Float TextSize: text size for link values
+TextSize : TextSize
+TextSize = 9
+# Expression LinkValue: expression for link value (tr,link,max. 12 values)
+LinkValue : (0x800) DiffV2
+LinkValue = -([auto volume] volau*0.35)
+# Filter LinkFilter: expression for link filtering [,link iterator] (tr,link,string,max. 2 values)
+LinkFilter : /LinksV2
+LinkFilter = (([road network no connectors] isAuto && not(isConnector))&& not(isPce))&&((-([auto volume] volau*0.35)>20)||(-([auto volume] volau*0.35)<=-20))
+# Expression StyleIndex: expression for link style index (tr,link,string)
+StyleIndex : (0x800)
+StyleIndex = 
+
+[Link value]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Value %<$ScenarioNumber1>%
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Displays the result of the computed difference for all the links that are in scenario 1.\
+Style index is equal to that difference (negative: index 0, positive: index 1).
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbe00000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinks
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLinks
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag : /ShowLinks
+LFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool LegendVisibility: control if legend is rendered or not
+LegendVisibility[] = 0
+LegendVisibility[] = 0
+LegendVisibility[] = 1
+# String LegendAnchorPoint: reference point of the legend
+LegendAnchorPoint[] = top-left
+LegendAnchorPoint[] = top-left
+LegendAnchorPoint[] = bottom-left
+# Bool DrawLinkBars: draw link bars with proportional width
+DrawLinkBars : DrawLinkBars
+DrawLinkBars = 1
+# Bool NumericalValues: display link values numerically on links
+NumericalValues : NumericalValues
+NumericalValues = 1
+# Bool ValuesOnTop: put total value outside bar, instead of value(s) within bar
+ValuesOnTop : ValuesOnTop
+ValuesOnTop = 1
+# Integer Decimals: number of decimals in numeric values
+Decimals : Decimals
+Decimals = 0
+# Float Offset: link offset (pixels)
+Offset : Offset
+Offset = 0
+# Float Scale: value scale for proportional bars (units/pixel)
+Scale : (0x4000) BarScale
+Scale = 75
+# Style Style: style for link value outline, fill and text properties
+Style : /CompBars!
+Style[] = 0x20007f00 0x01b0e63b 0x00000000 0x00980005
+Style[] = 0x20b12d16 0x01f03c1e 0x00000000 0x00980005
+# Float TextSize: text size for link values
+TextSize : TextSize
+TextSize = 9
+# Expression LinkValue: expression for link value (tr,link,max. 12 values)
+LinkValue : (0x800) /DiffV1
+LinkValue = [auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)
+# Filter LinkFilter: expression for link filtering [,link iterator] (tr,link,string,max. 2 values)
+LinkFilter : LinksV1
+LinkFilter = (([road network no connectors] isAuto && not(isConnector)))&&(([auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)>20)||([auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)<=-20))
+# Expression StyleIndex: expression for link style index (tr,link,string)
+StyleIndex : (0x800) /DiffV1
+StyleIndex = [auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)
+
+[Link base]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Link base - Scenario 2 only
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Displays the links that are in scenario 2 only.\
+Links are displayed using style index 2.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0x9f00000
+# Integer NetworkIndex: index of network accessed by this layer
+NetworkIndex = 2
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinks
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLinks
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Bool SendMarkingSignals: send out signals when links are marked
+SendMarkingSignals = 1
+# Bool ReceiveMarkingSignals: mark links when external marking signals received
+ReceiveMarkingSignals = 1
+# Bool ShowStatusMessage: show identifier of focused link on status bar
+ShowStatusMessage = 1
+# Float Offset: link thickness (pixels)
+Offset : Offset
+Offset = 0
+# Filter LinkFilter: expression for link filtering [,link iterator] (tr,link,string,max. 2 values)
+LinkFilter : LinksB2
+LinkFilter = ([road network no connectors] isAuto && not(isConnector))&& not(isPce)
+# Bool DrawLinkBase: draw I-J base line of links
+DrawLinkBase : DrawLinkBase
+DrawLinkBase = 1
+# Bool DrawINode: draw a circle at the I-node of each selected link
+DrawINode : DrawINode
+DrawINode = 1
+# Bool DrawJNode: draw a circle at the J-node of each selected link
+DrawJNode : DrawJNode
+DrawJNode = 1
+# Bool FillingOnTop: draw link outline before link filling
+FillingOnTop : FillingOnTop
+FillingOnTop = 0
+# Integer HighligthedVertex: highlight vertex (-1 == none)
+HighligthedVertex : HighligthedVertex
+HighligthedVertex = 0
+# Style Style: style for link outline and fill properties
+Style : /BaseStyle
+Style[] = 0x209fa389 0x01e5e2c5 0x00000000 0x00000000
+Style[] = 0x2032623d 0x017fde40 0x00000000 0x00000000
+Style[] = 0x2075602e 0x01ffff08 0x00000000 0x00000000
+Style[] = 0x209c4d3d 0x01ff6b4c 0x00000000 0x00000000
+Style[] = 0x209c6e3d 0x01ffa94c 0x00000000 0x00000000
+Style[] = 0x20646464 0x01969696 0x00000000 0x00000000
+# Expression StyleIndex: expression for link style index (tr,link,string)
+StyleIndex = 2
+
+[Link base]
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Displays all the links that are in scenario 1.\
+Links that are in scenario 1 only are displayed using style index 1,\
+others are displayed using style index 0.\
+Mapper is in input mode to allow sending marking signals to lists.
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xc300000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : ShowLinks
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLinks
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 0
+# Bool IFlag: allow interactive input
+IFlag = 1
+# Bool XFlag: intercept all graphic input
+XFlag = 1
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 1
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Bool SendMarkingSignals: send out signals when links are marked
+SendMarkingSignals = 1
+# Bool ReceiveMarkingSignals: mark links when external marking signals received
+ReceiveMarkingSignals = 1
+# Bool ShowStatusMessage: show identifier of focused link on status bar
+ShowStatusMessage = 1
+# Float Offset: link thickness (pixels)
+Offset : Offset
+Offset = 0
+# Filter LinkFilter: expression for link filtering [,link iterator] (tr,link,string,max. 2 values)
+LinkFilter : LinksB1
+LinkFilter = ([road network no connectors] isAuto && not(isConnector))
+# Expression TipExpression: link value(s) for network tips (tr,link,string,max. 6 values)
+TipExpression = tr("Link")+" "+id,tr("Traffic volume")+": "+string(volau,0)+"/"+string(Pce->volau,0),tr("Addl. traffic volume")+": "+string(volad,0)+"/"+string(Pce->volad,0),tr("Traffic times")+": "+string(max(timau,0),2)+"/"+string(Pce->(max(timau,0)),2),tr("Traffic speed")+": "+string(speedau,2)+"/"+string(Pce->speedau,2)
+# Integer ArrowWidth: width of the arrows (in pixels)
+ArrowWidth : ArrowWidth
+ArrowWidth = 4
+# Integer ArrowHeight: height of the arrows (in pixels)
+ArrowHeight : ArrowHeight
+ArrowHeight = 8
+# Bool DrawLinkBase: draw I-J base line of links
+DrawLinkBase : DrawLinkBase
+DrawLinkBase = 1
+# Bool DrawINode: draw a circle at the I-node of each selected link
+DrawINode : DrawINode
+DrawINode = 1
+# Bool DrawJNode: draw a circle at the J-node of each selected link
+DrawJNode : DrawJNode
+DrawJNode = 1
+# Bool FillingOnTop: draw link outline before link filling
+FillingOnTop : FillingOnTop
+FillingOnTop = 0
+# Bool LinkArrows: draw an arrow showing the direction of the link
+LinkArrows : LinkArrows
+LinkArrows = 0
+# Integer HighligthedVertex: highlight vertex (-1 == none)
+HighligthedVertex : HighligthedVertex
+HighligthedVertex = 0
+# Style Style: style for link outline and fill properties
+Style : /BaseStyle
+Style[] = 0x209fa389 0x01e5e2c5 0x00000000 0x00000000
+Style[] = 0x2032623d 0x017fde40 0x00000000 0x00000000
+Style[] = 0x2075602e 0x01ffff08 0x00000000 0x00000000
+Style[] = 0x209c4d3d 0x01ff6b4c 0x00000000 0x00000000
+Style[] = 0x209c6e3d 0x01ffa94c 0x00000000 0x00000000
+Style[] = 0x20646464 0x01969696 0x00000000 0x00000000
+# Expression StyleIndex: expression for link style index (tr,link,string)
+StyleIndex = not(hasPce)
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = ArrowWidth
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : Offset
+FA = 0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = if(FA<2,4,FA+2)
+# Float FR: floating point result
+FR = 4
+# Integer IR: integer result
+IR : ArrowWidth/
+IR = 4
+# String SR: string result
+SR = 4.000000000000000
+# Box BR: box result
+BR = 4;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = ArrowHeight
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Integer IA: integer parameter IA
+IA : ArrowWidth
+IA = 4
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = IA*2
+# Float FR: floating point result
+FR = 8
+# Integer IR: integer result
+IR : ArrowHeight/
+IR = 8
+# String SR: string result
+SR = 8.000000000000000
+# Box BR: box result
+BR = 8;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Uncommented link value expression
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = 
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : MaximumDifference
+FA = 1000
+# String SA: string parameter SA (subst)
+SA : LinkValue
+SA[] = [auto volume] volau*0.35
+SA[] = [auto volume] volau
+SA[] = [additional volume] volad
+SA[] = [total volume] volau+volad
+SA[] = [auto times] max(timau,0)
+SA[] = [auto speed] speedau
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x900) //TypeComparison
+Expression = uncomment(SA)
+# String SR: string result
+SR : UncommentedLinkValue/
+SR =  volau*0.35
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Comparison expression
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Computes the value to be displayed for scenario 1 \
+(value in scenario 1 - value in scenario 2).
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Style LegendDefaultFrameStyle: default frame style of legend
+LegendDefaultFrameStyle = 0x20000000 0x01ffffff 0x00000000 0x00fe0500
+# Style LegendDefaultTextStyle: default text frame of legend
+LegendDefaultTextStyle[] = 0x00000000 0x00000000 0x28000000 0x00000000
+LegendDefaultTextStyle[] = 0x00000000 0x00000000 0x00000000 0x00000000
+# Style LegendFrameStyle0: frame and background style of legend 0
+LegendFrameStyle0 = 0x20000000 0x01ffffff 0x00000000 0x00fe0500
+# Style LegendFrameStyle1: frame and background style of legend 1
+LegendFrameStyle1 = 0x20000000 0x01ffffff 0x00000000 0x00fe0500
+# Style LegendFrameStyle2: frame and background style of legend 2
+LegendFrameStyle2 = 0x20000000 0x01ffffff 0x00000000 0x00fe0500
+# Style LegendTextStyle0: text style of legend 0 (0: title, 1: other text)
+LegendTextStyle0[] = 0x00000000 0x00000000 0x28000000 0x00000000
+LegendTextStyle0[] = 0x00000000 0x00000000 0x00000000 0x00000000
+# Style LegendTextStyle1: text style of legend 1 (0: title, 1: other text)
+LegendTextStyle1[] = 0x00000000 0x00000000 0x28000000 0x00000000
+LegendTextStyle1[] = 0x00000000 0x00000000 0x00000000 0x00000000
+# Style LegendTextStyle2: text style of legend 2 (0: title, 1: other text)
+LegendTextStyle2[] = 0x00000000 0x00000000 0x28000000 0x00000000
+LegendTextStyle2[] = 0x00000000 0x00000000 0x00000000 0x00000000
+# Float FA: floating point parameter FA
+FA : MaximumDifference
+FA = 1000
+# String SA: string parameter SA (subst)
+SA : LinkValue
+SA[] = [auto volume] volau*0.35
+SA[] = [auto volume] volau
+SA[] = [additional volume] volad
+SA[] = [total volume] volau+volad
+SA[] = [auto times] max(timau,0)
+SA[] = [auto speed] speedau
+# Box BA: box parameter BA
+BA = 0;0;0;0
+# String SB: string parameter SB (subst)
+SB : /UncommentedLinkValue
+SB =  volau*0.35
+# Box BB: box parameter BB
+BB = 0;0;0;0
+# Box BC: box parameter BC
+BC = 0;0;0;0
+# Box BD: box parameter BD
+BD = 0;0;0;0
+# Box BE: box parameter BE
+BE = 0;0;0;0
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x900) //TypeComparison
+Expression[] = "["+comment(SA)+"]  ("+SB+")-hasPce*Pce->("+SB+")"
+Expression[] = "["+comment(SA)+"]  ("+SB+")-hasPce*Pce->("+SB+")"
+Expression[] = "["+comment(SA)+": in % relative to larger value] if(("+SB+")==0&&Pce->("+SB+")==0,0,(max(min(("+"("+SB+")-Pce->("+SB+"))/max(("+SB+"),Pce->("+SB+"))*100,"+string(FA)+"),-"+string(FA)+")))"
+Expression[] = "["+comment(SA)+": in % relative to current scenario] if(("+SB+")==0&&Pce->("+SB+")==0,0,(max(min((("+SB+")-Pce->("+SB+"))/ ("+SB+")*100,"+string(FA)+"),-"+string(FA)+")))"
+Expression[] = "["+comment(SA)+": in % relative to other scenario] if(("+SB+")==0&&Pce->("+SB+")==0,0,(if(hasPce,min(("+"("+SB+")-Pce->("+SB+"))/Pce->("+SB+")*100,"+string(FA)+"),"+string(FA)+")))"
+# String SR: string result
+SR : DiffV1/
+SR = [auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)
+# Box BR: box result
+BR = 0;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Alternate comp. expression
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Computes the value to be displayed for scenario 2 \
+(equal to -value since the link does not exist in scenario 1).
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : MaximumDifference
+FA = 1000
+# String SA: string parameter SA (subst)
+SA : LinkValue
+SA[] = [auto volume] volau*0.35
+SA[] = [auto volume] volau
+SA[] = [additional volume] volad
+SA[] = [total volume] volau+volad
+SA[] = [auto times] max(timau,0)
+SA[] = [auto speed] speedau
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x900) //TypeComparison
+Expression[] = "-("+SA+")"
+Expression[] = "-("+SA+")"
+Expression[] = -100
+Expression[] = "-"+string(FA)
+Expression[] = -100
+# String SR: string result
+SR : DiffV2/
+SR = -([auto volume] volau*0.35)
+# Box BR: box result
+BR = -100;0;0;0
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Filter B1
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Receives group LinkFilter\
+Sends group LinksB1
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst)
+SA : /LinkFilter
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [road network] isAuto
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [auto connectors] isAuto &&isConnector
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x800)
+Expression = "("+if(SA!="",SA,"1")+")"
+# String SR: string result
+SR : LinksB1/
+SR = ([road network no connectors] isAuto && not(isConnector))
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Filter B2
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Receives group LinkFilter\
+Sends group LinksB2
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst)
+SA : /LinkFilter
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [road network] isAuto
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [auto connectors] isAuto &&isConnector
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x800)
+Expression = "("+if(SA!="",SA,"1")+")&& not(isPce)"
+# String SR: string result
+SR : LinksB2/
+SR = ([road network no connectors] isAuto && not(isConnector))&& not(isPce)
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Filter V1
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Receives groups  Threshold, LinksB1 and DiffV1\
+Sends group LinksV1
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Threshold
+FA[] = 20
+FA[] = -20
+# String SA: string parameter SA (subst)
+SA : /LinksB1
+SA = ([road network no connectors] isAuto && not(isConnector))
+# String SB: string parameter SB (subst)
+SB : /DiffV1
+SB = [auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x800)
+Expression = "("+SA+")"+if(FA==0&&FA1==0,"",if(FA<FA1,"&&("+SB+">"+FA+")&&("+SB+"<="+FA1+")","&&(("+SB+">"+FA+")||("+SB+"<="+FA1+"))"))
+# String SR: string result
+SR : LinksV1/
+SR = (([road network no connectors] isAuto && not(isConnector)))&&(([auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)>20)||([auto volume]  ( volau*0.35)-hasPce*Pce->( volau*0.35)<=-20))
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Filter V2
+# Text Description: user definable layer description (tr,subst)
+Description : (0x800)
+Description = Receives groups  Threshold, LinksB2 and DiffV2\
+Sends group LinksV2
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Float FA: floating point parameter FA
+FA : /Threshold
+FA[] = 20
+FA[] = -20
+# String SA: string parameter SA (subst)
+SA : /LinksB2
+SA = ([road network no connectors] isAuto && not(isConnector))&& not(isPce)
+# Box BA: box parameter BA
+BA = 0;0;0;0
+# String SB: string parameter SB (subst)
+SB : /DiffV2
+SB = -([auto volume] volau*0.35)
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression : (0x800)
+Expression = "("+SA+")"+if(FA==0&&FA1==0,"",if(FA<FA1,"&&("+SB+">"+FA+")&&("+SB+"<="+FA1+")","&&(("+SB+">"+FA+")||("+SB+"<="+FA1+"))"))
+# String SR: string result
+SR : LinksV2/
+SR = (([road network no connectors] isAuto && not(isConnector))&& not(isPce))&&((-([auto volume] volau*0.35)>20)||(-([auto volume] volau*0.35)<=-20))
+
+[Configurable control]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Link comparison Scen. %<$ScenarioNumber1>% - %<$ScenarioNumber2>%
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbd00000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowLinks
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowLinks
+MFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# String Layout: layout parameters (tr)
+Layout[] = Expression0;Expression;Value:;link value to be compared;0;0;0;0;links;1;0
+Layout[] = Float3;Scale;Scale:;scale for differences (units/pixel);1;1;0;0;;;1
+Layout[] = Expression1;Expression;Difference:;type of comparison;2;2;0;0;constants;1;0
+Layout[] = Float4;Scale;Max rel diff:;maximum relative difference displayed (in %);3;3;0;0;;;0
+Layout[] = Float2;Multi-float;Threshold:;lower, upper threshold (values within the interval are included);4;4;0;0;;
+Layout[] = Bool0;Checkbox;Link bars;draw link bars with proportional width;5;5;0;0;;
+Layout[] = Style0;Style;Bars:;0: values in primary scenario are lower, 1: values in primary scenario are higher;6;6;0;0;;
+Layout[] = Bool1;Checkbox;Numeric values;display differences numerically;7;7;0;0;;
+Layout[] = Bool2;Checkbox;Value on top of bar;value on top of bar, not within bar;8;8;0;0;;
+Layout[] = Integer0;Spinbox;Decimals:;number of decimals in numeric values;9;9;0;0;-7;7;
+Layout[] = Float1;Spinbox;Text size:;text size for link values;10;10;0;0;0;100;
+Layout[] = Float0;Spinbox;Offset:;link offset (pixels);11;11;0;0;-100;100;
+Layout[] = Filter0;Filter;Filter:;expression for link filter (no iterator!);12;12;0;0;links;
+Layout[] = Style1;Style;Links:;style used for link base (0:in both scenarios, 1: in scenario 1, 2: in scenario 2);13;13;0;0;;
+Layout[] = Bool3;Checkbox;Link arrows;Link arrows;14;14;0;0;;
+# Bool Bool0: draw link bars with proportional width
+Bool0 : DrawLinkBars
+Bool0 = 1
+# Bool Bool1: display differences numerically
+Bool1 : NumericalValues
+Bool1 = 1
+# Bool Bool2: value on top of bar, not within bar
+Bool2 : ValuesOnTop
+Bool2 = 1
+# Bool Bool3: Link arrows
+Bool3 : LinkArrows
+Bool3 = 0
+# Integer Integer0: number of decimals in numeric values
+Integer0 : Decimals
+Integer0 = 0
+# Float Float0: link offset (pixels)
+Float0 : Offset
+Float0 = 0
+# Float Float1: text size for link values
+Float1 : TextSize
+Float1 = 9
+# Float Float2: lower, upper threshold (values within the interval are included)
+Float2 : Threshold
+Float2[] = 20
+Float2[] = -20
+# Float Float3: scale for differences (units/pixel)
+Float3 : (0x4000) BarScale
+Float3 = 75
+# Float Float4: maximum relative difference displayed (in %)
+Float4 : MaximumDifference
+Float4 = 1000
+# Expression Expression0: link value to be compared (tr,link)
+Expression0 : (0x140) LinkValue/LinkValue/ValueIndex
+Expression0[] = [auto volume] volau*0.35
+Expression0[] = [auto volume] volau
+Expression0[] = [additional volume] volad
+Expression0[] = [total volume] volau+volad
+Expression0[] = [auto times] max(timau,0)
+Expression0[] = [auto speed] speedau
+# Expression Expression1: type of comparison (tr)
+Expression1 : (0x70) TypeComparison/
+Expression1[] = [actual] 1
+Expression1[] = [actual] 1
+Expression1[] = [in % relative to larger value] 2
+Expression1[] = [in % relative to current scenario] 3
+Expression1[] = [in % relative to other scenario] 4
+# Filter Filter0: expression for link filter (no iterator!) (tr,link,string,max. 2 values)
+Filter0 : (0x60) LinkFilter
+Filter0[] = [road network no connectors] isAuto && not(isConnector)
+Filter0[] = [road network] isAuto
+Filter0[] = [road network no connectors] isAuto && not(isConnector)
+Filter0[] = [auto connectors] isAuto &&isConnector
+# Style Style0: 0: values in primary scenario are lower, 1: values in primary scenario are higher
+Style0 : (0x200) CompBars!/CompBars!/$WorksheetLoaded
+Style0[] = 0x20007f00 0x01b0e63b 0x00000000 0x00980005
+Style0[] = 0x20b12d16 0x01f03c1e 0x00000000 0x00980005
+# Style Style1: style used for link base (0:in both scenarios, 1: in scenario 1, 2: in scenario 2)
+Style1 : (0x200) BaseStyle/CompLinks!/$WorksheetLoaded
+Style1[] = 0x209fa389 0x01e5e2c5 0x00000000 0x00000000
+Style1[] = 0x2032623d 0x017fde40 0x00000000 0x00000000
+Style1[] = 0x2075602e 0x01ffff08 0x00000000 0x00000000
+Style1[] = 0x209c4d3d 0x01ff6b4c 0x00000000 0x00000000
+Style1[] = 0x209c6e3d 0x01ffa94c 0x00000000 0x00000000
+Style1[] = 0x20646464 0x01969696 0x00000000 0x00000000
+
+[Node box]
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbcb0000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowNodeBoxes
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowNodeBoxes
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag : /ShowNodeBoxes
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool SendMarkingSignals: send out signals when nodes are marked
+SendMarkingSignals = 1
+# Bool ReceiveMarkingSignals: mark nodes upon receiving external marking signals
+ReceiveMarkingSignals = 1
+# Bool ShowStatusMessage: show identifier of focused node on status bar
+ShowStatusMessage = 1
+# Float NodeBoxWidth: width of node box in pixels
+NodeBoxWidth = -0.01
+# Float NodeBoxHeight: height of node box in pixels
+NodeBoxHeight = -0.01
+# Filter NodeFilter: expression for node filtering [,node iterator] (tr,node,string,max. 2 values)
+NodeFilter : (0x40)
+NodeFilter[] = [active nodes] isActive
+NodeFilter[] = [active nodes] isActive
+# Style Style: style for node box outline, fill and text properties
+Style : (0x200) /Nodes!/$WorksheetLoaded
+Style[] = 0x2088896d 0x01fffddb 0x00000000 0x00000000
+Style[] = 0x20ff5c0a 0x01ffe4d7 0x00000000 0x00000000
+Style[] = 0x2000665f 0x01bef9be 0x00000000 0x00000000
+Style[] = 0x2000647f 0x01afdbdc 0x00000000 0x00000000
+Style[] = 0x207e5f08 0x01b5a57c 0x00000000 0x00000000
+# Expression StyleIndex: node expression for style index (tr,node,string)
+StyleIndex = isZone + 2*isIntersection
+
+[Parameter conversion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Associated table link filter
+# Text Description: user definable layer description (tr,subst)
+Description = generates filter to synchronize with associated table (compare.emt)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbfb0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 0
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# String SA: string parameter SA (subst)
+SA : LinkFilter
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [road network] isAuto
+SA[] = [road network no connectors] isAuto && not(isConnector)
+SA[] = [auto connectors] isAuto &&isConnector
+# Expression Expression: expression for parameter conversion (tr,string,max. 12 values)
+Expression = "["+comment(SA)+" in both scenarios] "+uncomment(SA)+"&&hasPce"
+# String SR: string result
+SR : >CompareFilter/
+SR = [road network no connectors in both scenarios]  isAuto && not(isConnector)&&hasPce
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Associated table
+# Text Description: user definable layer description (tr,subst)
+Description = Traffic volume and times comparison
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xbea0000
+# Bool CFlag: display layer controls
+CFlag = 0
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 0
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 0
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile = %<$EmmePath>%/common/compare.emt
+
+[Legend]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Network legend
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : NetworkLegend
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : NetworkLegend
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag : NetworkLegend
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 1
+# Bool XFlag: intercept all graphic input
+XFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Float TextSize: text size for scales and symbols
+TextSize = 10
+# Float TextXPos: horizontal position of text anchor
+TextXPos = 0
+# Float TextYPos: vertical position of text anchor
+TextYPos = 0
+# Float GraphicStyleIncrement: style index increment used for graphic part of item
+GraphicStyleIncrement = 1
+# Integer TextLayout: layout definition
+TextLayout = 332151
+# String SymbolType: symbol type (for symbol scale item only)
+SymbolType = Rectangle
+# Text TextString: text that appears in item (tr,subst)
+TextString = Links in both scenario\
+Links in scenario %<$ScenarioNumber1>% only\
+Links in scenario %<$ScenarioNumber2>% only
+# Style FrameStyle: style used for text and frame of items
+FrameStyle : (0x200) LegendFrameStyle!/LegendFrameStyle!/$WorksheetLoaded
+FrameStyle[] = 0x00000000 0x01ffffff 0x00000000 0x00000000
+FrameStyle[] = 0x20000000 0x01ffffff 0x08000000 0x00000000
+FrameStyle[] = 0x20000000 0x01ffffff 0x03000000 0x00000000
+FrameStyle[] = 0x20ff0000 0x01ffffff 0x08ff0000 0x00000000
+# Style SymbolStyle: style used for graphic part of items
+SymbolStyle : /BaseStyle
+SymbolStyle[] = 0x209fa389 0x01e5e2c5 0x00000000 0x00000000
+SymbolStyle[] = 0x2032623d 0x017fde40 0x00000000 0x00000000
+SymbolStyle[] = 0x2075602e 0x01ffff08 0x00000000 0x00000000
+SymbolStyle[] = 0x209c4d3d 0x01ff6b4c 0x00000000 0x00000000
+SymbolStyle[] = 0x209c6e3d 0x01ffa94c 0x00000000 0x00000000
+SymbolStyle[] = 0x20646464 0x01969696 0x00000000 0x00000000
+# Float SymbolSize: relative symbol size for symbols in symbol items
+SymbolSize = 3
+# Float SymbolShapeValue: default shape value for symbols
+SymbolShapeValue = 10
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Foreground layer(s)
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowFrontInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowFrontInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile : (0x200) /UserFront!/$WorksheetLoaded
+ConfigurationFile = 
+
+[Inclusion]
+# String Name: layer name that appears on layer control tab (tr,subst)
+Name = Other inclusion
+# Text Description: user definable layer description (tr,subst)
+Description = Includes user defined layers (in application mode,\
+control shown only if a file is specified and control is substituted)
+# Flags Flags: bit pattern containing layer flags
+Flags = 0xb800000
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : ShowOtherInclusion
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /ShowOtherInclusion
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 0
+# Bool TFlag: provide tips
+TFlag = 1
+# Bool AFlag: set active flag of filtered elements
+AFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 0
+# Bool EnableObjects: enable included objects
+EnableObjects = 1
+# Bool SubstituteControl: display control of first visible included layer instead of inclusion layer's control
+SubstituteControl = 1
+# Bool AutoHideControl: hide unsubstituted layer control
+AutoHideControl = 1
+# String ConfigurationFile: file containing configuration to include (subst)
+ConfigurationFile : (0x200) /UserConf!/$WorksheetLoaded
+ConfigurationFile[] = 
+ConfigurationFile[] = 
+ConfigurationFile[] = %<$ProjectPath>%/Worksheets/prnlegend.eml
+ConfigurationFile[] = %<$EmmePath>%/common/transform.eml
+
+[Legend]
+# Bool CFlag: display layer controls
+CFlag = 1
+# Bool SFlag: display layer on screen
+SFlag : SFlag/
+SFlag = 1
+# Bool MFlag: display layer under the magnifier
+MFlag : /SFlag
+MFlag = 1
+# Bool LFlag: include layer in the legend window
+LFlag = 1
+# Bool IFlag: allow interactive input
+IFlag = 1
+# Bool XFlag: intercept all graphic input
+XFlag = 0
+# Bool BFlag: include bounding box in full view
+BFlag = 1
+# Float TextSize: text size for scales and symbols
+TextSize[] = 10
+TextSize[] = 10
+# Float TextXPos: horizontal position of text anchor
+TextXPos[] = 0
+TextXPos[] = 0
+# Float TextYPos: vertical position of text anchor
+TextYPos[] = -5
+TextYPos[] = -15
+# Float StyleIndex: style index used for frame and text of item
+StyleIndex[] = 0
+StyleIndex[] = 0
+# Float GraphicStyleIndex: style index used for graphic part of item
+GraphicStyleIndex[] = 0
+GraphicStyleIndex[] = 0
+# Float GraphicStyleIncrement: style index increment used for graphic part of item
+GraphicStyleIncrement[] = 0
+GraphicStyleIncrement[] = 0
+# Float ImageSizeFactor: size factor for scaling images
+ImageSizeFactor[] = 1
+ImageSizeFactor[] = 1
+# Integer TextLayout: layout definition
+TextLayout[] = 332176
+TextLayout[] = 304
+# Text TextString: text that appears in item (tr,subst)
+TextString[] = %<$DatabaseTitle>%\
+Scenario  %<$ScenarioNumber1>%: %<$ScenarioTitle1>%\
+Scenario  %<$ScenarioNumber2>%: %<$ScenarioTitle2>%\
+%<$Date>% %<$Hour>%:%<$Minute>% (%<$User>%)\
+Transportation Department\
+Modeling and Analysis Group\
+%<$ProjectPath>%
+TextString[] = %<Caption>%
+# Float Scale: scale used for scale items
+Scale = 200
+

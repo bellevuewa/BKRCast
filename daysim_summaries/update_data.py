@@ -14,7 +14,7 @@ from openpyxl.chart import (
 from openpyxl.styles import Color
 
 #data folder
-wd = r"D:\P3Test\2020baseyear-BKR\BKR1-20\daysim_summaries"
+wd = r"F:/projects/2024baseyear/BKR3-24-v5_30pctWFH/daysim_summaries"
 
 
 infile_names = ["DayPattern.xlsm",

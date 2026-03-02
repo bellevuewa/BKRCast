@@ -11,7 +11,6 @@ distances = { # in meters;
              2: 5280 # 1 mile
              }
 
-
 parcels_file_name = 'parcels_urbansim.txt'
 buffered_parcels = 'buffered_parcels.txt'
 land_use_output_folder = 'outputs/landuse/'
@@ -21,6 +20,8 @@ nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
 daily_parking_cost = "inputs\\accessibility\\daily_parking_costs.csv"
 hourly_parking_cost = "inputs\\accessibility\\hourly_parking_costs.csv"
+park_file = "inputs\\accessibility\\King_Sno_County_Parks.csv"
+
 
 
 # These will be disaggregated from the parcel data to the network.
@@ -56,4 +57,18 @@ col_order =[u'parcelid', u'xcoord_p', u'ycoord_p', u'sqft_p', u'taz_p', u'lutype
 # Values correspond the names in the add-on dataset.
 transit_attributes = ["tstops"]
 intersections = ["nodes1", "nodes3", "nodes4"]
+recbike_accessibility = ['biketype']
 
+# @biketype:width_in_feet
+# @biketype == 1: separated bike lane @biketype == 10: trail, @biketype == 2: stripped bike lane
+# for trail, bike width is half of the trail width, because the trail is shared by both directions. The total width is 10 feet.
+bike_lane_width = {1: 4, 2: 4, 10: 5}
+# @biketype:bike_lane_weight_in_accessibility
+# @biketype == 1: separated bike lane @biketype == 10: trail, @biketype == 2: stripped bike lane
+bike_lane_weight = {1: 2, 2: 1, 10: 5}
+park_size_weight = 0.0
+
+## park file for recreational bike accessibility
+park_file_for_recbike = "inputs/accessibility/King_Sno_County_Parks.csv"
+excluded_park_list_for_recbike = r'inputs/supplemental/parks_excluded_from_rec_bike_generation.csv'
+additional_attractions_for_recbike = r'inputs/supplemental/additional_attractions_for_rec_bike.csv'

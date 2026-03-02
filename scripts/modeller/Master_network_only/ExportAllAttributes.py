@@ -1,9 +1,4 @@
-import sys
 import inro.modeller as _modeller
-import inro.emme.desktop.app as _app
-import inro.emme.core.exception as _exception
-import itertools as _itertools
-import datetime
 import os
 from shutil import copyfile
 
@@ -15,7 +10,7 @@ class BKRCastExportAllAttributes(_modeller.Tool()):
         export @nihdwy for all @nihdwy < 999. It can be directly loaded into the model.
         export @rdly to four time periods. No need to mannually copy and rename to different time periods.
     1.03:
-        export @biketype and @slope to emme_attr.in
+        export @biketype and @slope to emme_attr.in. Reomve @slope from the master network. 5/22/2025
     1.1.0: upgrade to python 3.7, compatible with EMME 4.5.1
     1.1.1: export attribute definition
     '''

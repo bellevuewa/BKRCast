@@ -1,10 +1,5 @@
 ﻿import inro.modeller as _modeller
-import inro.emme.database.emmebank as _eb
-import traceback as _traceback
-import pml as _html
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
 import os
 from datetime import datetime
 import pandas as pd
@@ -99,7 +94,8 @@ class BKRCastExportTripTables(_modeller.Tool()):
         else: 
             matrix_table_columns = ['Matrix ID', 'Matrix Name', 'Description']
         matrix_list_df = pd.DataFrame(columns = matrix_table_columns)
-                       
+        
+        matrix_list = []
         for mfid in matrices:
             matrix = cur_bank.matrix(mfid)
             if matrix != None:            
@@ -113,15 +109,15 @@ class BKRCastExportTripTables(_modeller.Tool()):
                     newrow = {'Matrix ID': matrix.id, 'Matrix Name':matrix.name, 'Description':matrix.description, 'Total Tripends':total_tripends, 'Total Trips': total_trips, 'Intrazonal Trips': intrazonal_trips}                
                 else:
                     newrow = {'Matrix ID': matrix.id, 'Matrix Name':matrix.name, 'Description':matrix.description}                
-                                        
-                matrix_list_df = matrix_list_df.append(newrow, ignore_index = True)  
-                              
+                 
+                matrix_list.append(newrow)
+                             
                 matrix_data_indices = matrix.get_data().indices                    
                 df = pd.DataFrame(matrix_data_numpy, columns = matrix_data_indices[1]) 
                 index_series = pd.Series(matrix_data_indices[0], name='BKRCastTAZ')
                 df.set_index(index_series, inplace = True)                
                 df.to_excel(writer, sheet_name = f'{matrix.id}', index = True, startrow = 0)     
-                                    
+        matrix_list_df = pd.DataFrame(matrix_list)                            
         matrix_list_df.to_excel(writer, sheet_name = 'readme', index = False, startrow = 4, startcol = 0, columns = matrix_table_columns)
         wksheet = writer.sheets['readme']
         wksheet.write(0, 0, str(datetime.now()))

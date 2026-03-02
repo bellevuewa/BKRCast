@@ -12,31 +12,27 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import os,sys,datetime,re
+import os,sys
 import subprocess
 import inro.emme.desktop.app as app
 import json
-from shutil import copy2 as shcopy
-from distutils import dir_util
 import re
+from shutil import copy2 as shcopy
 import inro.emme.database.emmebank as _eb
-import random
 import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"inputs", "skim_params"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+sys.path.append(os.path.join(os.getcwd(),"scripts", 'accessibility'))
+import accessibility_configuration as access_config
 from input_configuration import *
 from logcontroller import *
 from emme_configuration import *
-from accessibility.accessibility_configuration import *
-import skim_templates as emme_specs
-import input_configuration
-import emme_configuration
 import pandas as pd
+
 import numpy as np
 import h5py
-
-import glob
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -53,7 +49,7 @@ def copy_daysim_code():
     if not os.path.exists(os.path.join(os.getcwd(), 'daysim')):
        os.makedirs(os.path.join(os.getcwd(), 'daysim'))
     try:
-        dir_util.copy_tree(daysim_code, 'daysim')
+        shutil.copytree(daysim_code, 'daysim', dirs_exist_ok=True)
     except Exception as ex:
         template = "An exception of type {0} occured. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
@@ -120,6 +116,7 @@ def setup_emme_bank_folders():
         emmebank.title = period
         emmebank.unit_of_length = unit_of_length
         emmebank.coord_unit_length = coord_unit_length  
+        emmebank.use_engineering_notation = False   # do not use engr notation     
         scenario = emmebank.create_scenario(1002)
         network = scenario.get_network()
         #need to have at least one mode defined in scenario. Real modes are imported in network_importer.py
@@ -180,40 +177,28 @@ def copyfiles(sourceFolder, destFolder):
 def copy_large_inputs():
     print('Copying large inputs...')
     print('  network files..')
-    dir_util.copy_tree(base_inputs+'/networks','inputs/networks')
+    shutil.copytree(base_inputs+'/networks','inputs/networks', dirs_exist_ok=True)
     print('  counts..')
-    dir_util.copy_tree(base_inputs+'/observed','inputs/observed')
+    shutil.copytree(base_inputs+'/observed','inputs/observed', dirs_exist_ok=True)
     print('  extra attributes..')
-    dir_util.copy_tree(base_inputs+'/extra_attributes','inputs/extra_attributes')
+    shutil.copytree(base_inputs+'/extra_attributes','inputs/extra_attributes', dirs_exist_ok=True)
     print('  tolls..')
-    dir_util.copy_tree(base_inputs+'/tolls','inputs/tolls')
+    shutil.copytree(base_inputs+'/tolls','inputs/tolls', dirs_exist_ok=True)
     print('  vdfs..')
-    dir_util.copy_tree(base_inputs+'/vdfs','inputs/vdfs')
+    shutil.copytree(base_inputs+'/vdfs','inputs/vdfs', dirs_exist_ok=True)
     print('  intraZonals..')
-    dir_util.copy_tree(base_inputs+'/IntraZonals','inputs/IntraZonals')
+    shutil.copytree(base_inputs+'/IntraZonals','inputs/IntraZonals', dirs_exist_ok=True)
     print('  fare..')
-    dir_util.copy_tree(base_inputs+'/Fares','inputs/Fares')
+    shutil.copytree(base_inputs+'/Fares','inputs/Fares', dirs_exist_ok=True)
     print('  trucks..')
-    dir_util.copy_tree(base_inputs+'/trucks','inputs/trucks')
+    shutil.copytree(base_inputs+'/trucks','inputs/trucks', dirs_exist_ok=True)
     print('  accessibility..')
-    dir_util.copy_tree(base_inputs+'/accessibility','inputs/accessibility')  
-    print('  bikes..')
-    dir_util.copy_tree(base_inputs+'/bikes','inputs/bikes')
+    shutil.copytree(base_inputs+'/accessibility','inputs/accessibility', dirs_exist_ok=True)  
     #print('  supplemental..')
-    #dir_util.copy_tree(base_inputs+'/supplemental','inputs/supplemental')
+    #dir_util.copytree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
-    dir_util.copy_tree(base_inputs+'/landuse','inputs/landuse')
-    dir_util.copy_tree(base_inputs+'/popsim','inputs/popsim')
-    print('  park and ride capacity..')
-    dir_util.copy_tree(base_inputs+'/pnr','inputs/pnr')
-
-@timed
-def rename_network_outs(iter):
-    for summary_name in network_summary_files:
-        csv_output = os.path.join(os.getcwd(), 'outputs',summary_name+'.csv')
-        if os.path.isfile(csv_output):
-            shcopy(csv_output, os.path.join(os.getcwd(), 'outputs',summary_name+str(iter)+'.csv'))
-            os.remove(csv_output)
+    shutil.copytree(base_inputs+'/landuse','inputs/landuse', dirs_exist_ok=True)
+    shutil.copytree(base_inputs+'/popsim','inputs/popsim', dirs_exist_ok=True)
 
 
 @timed          
@@ -224,7 +209,7 @@ def clean_up():
                    'working\\zone.pk']
 
     if (delete_parcel_data):
-        delete_files.extend(['inputs\\accessibility\\'+parcels_file_name, output_parcels, buffered_parcels_csv])
+        delete_files.extend(['inputs\\accessibility\\'+ access_config.parcels_file_name, access_config.output_parcels])
     
     for file in delete_files: 
         if (os.path.isfile(file)):
@@ -262,6 +247,7 @@ def check_inputs():
             logger.info('- ' + file)
             print(file)
 
+@timed
 def update_skim_parameters():
     """
     Generate skim parameter spec files from templates.
@@ -276,6 +262,9 @@ def update_skim_parameters():
     #    keywords.append('av_')
     if not include_tnc:  ##########################################################################################
         keywords.append('tnc_')
+
+    if not include_rec_bike:
+        keywords.append('recb')                
     # delivery truck not included (Light truck)
     #if not include_delivery:
     #    keywords.append('delivery_')
@@ -298,6 +287,13 @@ def update_skim_parameters():
 
     # instead of deleting what we do not need, update the list with what we need
     user_class['Highway'] = [row for idx, row in enumerate(user_class['Highway']) if idx not in rows_to_be_removed]
+    rows_to_be_removed = []
+    for idx, row in enumerate(user_class['Bike']):
+        for keyword in keywords:
+            if keyword in row['Name']:
+                rows_to_be_removed.append(idx)
+    user_class['Bike'] = [row for idx, row in enumerate(user_class['Bike']) if idx not in rows_to_be_removed]
+
 
     with open(os.path.join(root_path, 'user_classes.json'), 'w') as file:
         file.write(json.dumps(user_class, indent = 4))
@@ -307,7 +303,7 @@ def update_skim_parameters():
     # So we decide to run the TNC assignment combined with regular auto mode. 
     # therefore, origional json files for skimming still work for this purpose.
 
-
+@timed
 def update_daysim_modes():
     """
     Apply settings in input_configuration to daysim_configuration and roster files:
@@ -455,4 +451,142 @@ def update_taz_accessibility_file(horizon_year):
         df.loc[df['Jurisdiction'] == 'BELLEVUE', 'Dest_eligible'] = 1
         df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)   
     
-    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')                                             
+    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')      
+
+def balance_trips(df, home_based, trip_purposes, balanced_to):
+    """ Balance trips to productions or attractions."""
+    # home_based = 'hb' or 'nhb'
+    if balanced_to == 'pro':
+        to_balance = 'att'
+        
+    else:
+        to_balance = 'pro'
+        
+    for purposes in trip_purposes:
+        total_to_match = sum(df[home_based + purposes + balanced_to])
+        total_to_balance = sum(df[home_based+ purposes + to_balance])
+        ratio = total_to_match / total_to_balance
+        df[home_based + purposes + to_balance] = df[home_based + purposes + to_balance] * ratio
+    
+    return df
+
+def load_skims(skim_file_loc, mode_name, divide_by_100=False):
+    ''' Loads H5 skim matrix for specified mode. '''
+    with h5py.File(skim_file_loc, "r") as f:
+        skim_file = f['Skims'][mode_name][:]
+    # Divide by 100 since decimals were removed in H5 source file through multiplication
+    if divide_by_100:
+        return skim_file.astype(float)/100
+    else:
+        return skim_file
+
+def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
+    """Adds an attribute node_ids to the given dataset."""
+    dataset[column_name] = network.get_node_ids(dataset[x_name].values, dataset[y_name].values)
+
+def process_net_attribute(network, attr, fun):
+    print("Processing %s" % attr)
+    newdf = None
+    for dist_index, dist in access_config.distances.items():        
+        res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
+        aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
+        if newdf is None:
+            newdf = pd.DataFrame({res_name: aggr, "node_ids": aggr.index.values})
+        else:
+            newdf[res_name] = aggr
+    return newdf
+
+def load_parcel_data(parcel_path):
+    parcels = pd.read_csv(parcel_path, sep = " ", index_col = None )
+    #capitalize field names to avoid errors
+    parcels.columns = [i.upper() for i in parcels.columns]
+    #check for missing data!
+    for col_name in parcels.columns:
+        # daysim does not use EMPRSC_P
+        if col_name != 'EMPRSC_P':
+            if parcels[col_name].sum() == 0:
+                print(col_name + ' column sum is zero! Exiting program.')
+                sys.exit(1)
+
+    # # not using. causes bug in daysim (copied from soundcast)
+    # parcels['APARKS'] = 0
+    # parcels['NPARKS'] = 0
+    return parcels    
+
+def load_parcel_data_without_JBLM_jobs(parcel_path):
+    """
+    return a parcel file without JBLM jobs, in data frame.
+    """
+    parcels_df = pd.read_csv(parcel_path, sep = " ", index_col = None )
+    parcels_df.columns = [i.upper() for i in parcels_df.columns]
+    #check for missing data!
+    for col_name in parcels_df.columns:
+        # daysim does not use EMPRSC_P
+        if col_name != 'EMPRSC_P':
+            if parcels_df[col_name].sum() == 0:
+                print(col_name + ' column sum is zero! Exiting program.')
+                sys.exit(1)   
+
+    df_psrc = pd.read_csv(os.path.join(input_folder_for_supplemental, 'BKR_zones.csv'))
+    jblm_tazs = df_psrc.loc[df_psrc['jblm'] == 1, 'BKRCastTAZ'].unique().tolist()
+
+    # remove JBLM parcels
+    job_columns = [col for col in parcels_df.columns if col.startswith('EMP')]
+    parcels_df.loc[parcels_df['TAZ_P'].isin(jblm_tazs), job_columns] = 0
+    return parcels_df
+
+def build_pandana_network():
+    import pandana as pdna    
+    # nodes must be indexed by node_id column, which is the first column
+    all_street_nodes = pd.read_csv(access_config.nodes_file_name, index_col = 'node_id')
+    all_street_links = pd.read_csv(access_config.links_file_name, index_col = None )
+    # get rid of circular links
+    all_street_links = all_street_links.loc[(all_street_links.from_node_id != all_street_links.to_node_id)]
+    # assign impedance
+    imp = pd.DataFrame(all_street_links.Shape_Length)
+    imp = imp.rename(columns = {'Shape_Length':'distance'})
+
+    all_street_links['from_node_id'] = all_street_links['from_node_id'].astype('int')
+    all_street_links['to_node_id'] = all_street_links['to_node_id'].astype('int')
+
+    # create pandana network
+    net = pdna.network.Network(all_street_nodes.x, all_street_nodes.y, all_street_links.from_node_id, all_street_links.to_node_id, imp)
+    for dist in access_config.distances:
+        net.precompute(dist)
+
+    return net, all_street_links, all_street_nodes        
+
+@timed
+def generate_pr_node_file(input_csv, output_csv, year):
+    # Load input CSV
+    df = pd.read_csv(input_csv)
+
+    # Check required columns exist
+    required_columns = ['Project_Year', 'Imp_Capacity', '2023_Capacity']
+    for col in required_columns:
+        if col not in df.columns:
+            raise ValueError(f"Missing expected column from the master pnr file: {col}")
+
+    # Apply the capacity rule
+    df['Capacity'] = df.apply(
+        lambda row: row['Imp_Capacity'] if year >= row['Project_Year'] else row['2023_Capacity'],
+        axis=1
+    )
+    df['Cost'] = 0
+
+    # Drop unwanted columns
+    columns_to_drop = ['2023_Capacity', 'Project_Year', 'New_Spaces', 'Imp_Capacity', 'Source']
+    df.drop(columns=[col for col in columns_to_drop if col in df.columns], inplace=True)
+
+    """Ensure that the output path is inside a 'pnr' folder"""
+    output_csv = output_csv.lstrip(".\\/")
+    output_path = os.path.dirname(output_csv)
+    if output_path:
+        os.makedirs(output_path, exist_ok=True)
+
+    # Save output CSV
+    # the column order is important for daysim. Last two columns are not used in daysim
+    # the order is: NodeID, ZoneID, XCoord, YCoord, Capacity, Cost, Description, EMME_Description
+    df[['NodeID', 'ZoneID', 'XCoord', 'YCoord', 'Capacity', 'Cost', 'Description', 'EMME_Description']].to_csv(output_csv, index=False)
+    print(f"PnR file for {year} is {output_csv}")
+

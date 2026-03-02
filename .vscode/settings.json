@@ -1,0 +1,46 @@
+{
+    "python.analysis.extraPaths": [
+        "./scripts"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        ".vs": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "Banks": true,
+        "daysim": true,
+        "daysim_2016": true,
+        "daysim_2019": true,
+        "daysim_2024": true,
+        "daysim_2025": true,
+        "outputs": true,
+        "release": true,
+        "working": true,
+        "inputs/2019":true,
+        "inputs/2023":true,
+        "inputs/2024":true,
+        "inputs/accessibility":true,
+        "inputs/bikes":true,
+        "inputs/extra_attributes":true,
+        "inputs/landuse":true,
+        "inputs/Fares":true,
+        "inputs/IntraZonals":true,
+        "inputs/networks":true,
+        "inputs/popsim":true,
+        "inputs/observed":true,
+        "inputs/pnr":true,
+        "inputs/tolls":true,
+        "inputs/trucks":true,
+        "inputs/vdfs":true,
+        "inputs/6to9.h5":true,
+        "inputs/9to1530.h5": true,
+        "inputs/1530to1830.h5": true,
+        "inputs/1830to6.h5": true,
+        "**/*.pyc": true,
+        "**/*.mtbx": true
+
+    }
+}

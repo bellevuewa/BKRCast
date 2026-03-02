@@ -5,7 +5,8 @@
             "l",
             "q"
         ],        
-	"actual_aux_transit_times": "mfbkat"
+	"actual_aux_transit_times": "mfbkat",
+    "distance": "mfbdist"    
     },
     "type": "EXTENDED_TRANSIT_MATRIX_RESULTS"
 }

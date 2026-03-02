@@ -12,9 +12,8 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import pandas as pd
 import numpy as np
-import math
+import pandas as pd
 import sys
 import os
 sys.path.append(os.getcwd())
@@ -32,25 +31,60 @@ def weighted_average(df_in, col, weights, grouper = None): #Computes the weighte
     df = df_in.copy()
     if grouper == None:
         df[col + '_sp'] = df[col].multiply(df[weights])
-        n_out = df[col + '_sp'].sum() / df[weights].sum()
+        if len(df) == 0:
+            n_out = 0
+        else:
+            n_out = df[col + '_sp'].sum() / df[weights].sum()
         return(n_out)
     else:
         if grouper == 'pptyp':
             df.loc[df['pptyp'] == 'N\\A', 'pptyp'] = 'Non-Working Adult Age <65' 
         df[col + '_sp'] = df[col].multiply(df[weights])
-        df_out = df.groupby(grouper).sum()
+        df_out = df.groupby(grouper)[df.select_dtypes(include = 'number').columns].sum()
         df_out[col + '_wa'] = df_out[col + '_sp'].divide(df_out[weights])
         return(df_out[col + '_wa'])
 
+
+def get_differences_wt_fullsurvey(df_in, colname1, colname2, colname3, roundto, need_diff_percent=False): #Computes the difference and percent difference for two specified columns in a data frame
+    df = df_in.copy()
+    df[f'Difference ({colname1} - {colname2})'] = df[colname1] - df[colname2]
+    df[f'Difference ({colname1} - {colname3})'] = df[colname1] - df[colname3]
+    if need_diff_percent:
+        df[f'% Difference ({colname1} - {colname2})'] = (df[f'Difference ({colname1} - {colname2})'] / df[colname2] * 100).astype('float').round(2)
+        df[f'% Difference ({colname1} - {colname3})'] = (df[f'Difference ({colname1} - {colname3})'] / df[colname3] * 100).astype('float').round(2)
+    if isinstance(roundto, list):
+        for i in range(len(df)):
+            col1_index = df.columns.get_loc(colname1)
+            df.iloc[i, col1_index] = round(df.iloc[i, col1_index], roundto[i])
+            col2_index = df.columns.get_loc(colname1)
+            df.iloc[i, col2_index] = round(df.iloc[i, col2_index], roundto[i])
+            col3_index = df.columns.get_loc(f'Difference ({colname1} - {colname2})')
+            df.iloc[i, col3_index] = round(df.iloc[i, col3_index], roundto[i])
+            col4_index = df.columns.get_loc(f'Difference ({colname1} - {colname3})')
+            df.iloc[i, col4_index] = round(df.iloc[i, col4_index], roundto[i])
+    else:
+        df[colname1] = df[colname1].round(roundto)
+        df[colname2] = df[colname2].round(roundto)
+        df[f'Difference ({colname1} - {colname2})'] = df[f'Difference ({colname1} - {colname2})'].round(roundto)
+        df[f'Difference ({colname1} - {colname3})'] = df[f'Difference ({colname1} - {colname3})'].round(roundto)
+    return(df)
+
+
 def get_differences(df_in, colname1, colname2, roundto): #Computes the difference and percent difference for two specified columns in a data frame
     df = df_in.copy()
+    if colname2 not in df:
+        colname2 = df.columns[1]
     df['Difference'] = df[colname1] - df[colname2]
     df['% Difference'] = (df['Difference'] / df[colname2] * 100).astype('float').round(2)
-    if type(roundto) == list:
+    df.loc[df['% Difference']==np.inf, '% Difference'] = np.nan
+    if isinstance(roundto, list):
         for i in range(len(df['Difference'])):
-            df[colname1][i] = round(df[colname1][i], roundto[i])
-            df[colname2][i] = round(df[colname2][i], roundto[i])
-            df['Difference'][i] = round(df['Difference'][i], roundto[i])
+            col1_index = df.columns.get_loc(colname1)
+            df.iloc[i, col1_index] = round(df.iloc[i, col1_index], roundto[i])
+            col2_index = df.columns.get_loc(colname1)
+            df.iloc[i, col2_index] = round(df.iloc[i, col2_index], roundto[i])
+            col3_index = df.columns.get_loc('Difference')
+            df.iloc[i, col3_index] = round(df.iloc[i, col3_index], roundto[i])
     else:
         df[colname1] = df[colname1].round(roundto)
         df[colname2] = df[colname2].round(roundto)

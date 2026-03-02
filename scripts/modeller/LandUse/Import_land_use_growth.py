@@ -1,8 +1,5 @@
 import inro.modeller as _modeller
-import inro.emme.database.emmebank as _eb
 import inro.emme.datatable as _dt
-import traceback as _traceback
-import numpy as np
 import pandas as pd
 import os
 from datetime import datetime
@@ -151,7 +148,7 @@ class BKRCastLandUseGrowth(_modeller.Tool()):
         ## modify the color scheme to show negative growht in different color ramp
         # create break using natural break (jenks) 
         npdata = mo.get_data().to_numpy()
-        jenks_break = jenkspy.jenks_breaks(npdata, nb_class = 13)
+        jenks_break = jenkspy.jenks_breaks(npdata, n_classes = 13)
         for i in range(len(jenks_break) - 1):
             if jenks_break[i] < 0 and jenks_break[i + 1] > 0:
                 jenks_break.insert(i + 1, -0.1)

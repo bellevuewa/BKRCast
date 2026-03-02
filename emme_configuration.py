@@ -73,7 +73,6 @@ extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', '
                     {'type':'LINK', 'name': '@revlane', 'description': 'reversible lane tag', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane.txt'},
                     {'type':'LINK', 'name': '@revlane_cap', 'description': 'full capacity for reversible lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@revlane_cap.txt'},
                     {'type':'LINK', 'name': '@slid', 'description': 'Screen line ID', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slid.txt'},
-                    {'type':'LINK', 'name': '@slope', 'description': 'splope (calculated in GIS from KC 5ft)', 'overwrite': True, 'file_name':'inputs/extra_attributes/@slope.txt'},
                     {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
                     {'type':'LINK', 'name': '@kirkland_slid', 'description': 'Screenlines for Kirkland only', 'overwrite': True, 'file_name':'inputs/extra_attributes/@kirkland_slid.txt'},
                     {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'},
@@ -129,6 +128,7 @@ gc_skims = {'light_trucks' : 'lttrk', 'medium_trucks' : 'metrk', 'heavy_trucks' 
 
 # Bike/Walk Skims
 bike_walk_skim_tod = ['6to9']
+bike_mode_class_lookup = {'bike':'bike', 'recb':'recbike'}
 
 # Transit Inputs:
 transit_skim_tod = load_transit_tod
@@ -136,16 +136,44 @@ transit_submodes = ['b', 'c', 'f', 'p', 'r']
 transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
                            'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
                            'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
-transit_node_constants = {'am':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}},
-                          'pm':{'4943':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4944':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4945':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}, 
-                          '4952':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'},
-                          '4961':{'@hdwfr': '.1', '@wait' : '1', '@invt' : '.70'}}}
+transit_node_constants = {'am':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'md':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'pm':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}},
+                        'ni':{
+                          '4457':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4459':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}, 
+                          '4317':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4318':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4327':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '4328':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},                          
+                          '7029':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'},
+                          '7030':{'@hdwfr': '.5', '@wait' : '3', '@invt' : '2'}}                          
+
+                          }
 
 transit_network_tod_dict = sound_cast_net_dict                
 
@@ -153,7 +181,8 @@ transit_tod = {'6to9' : {'4k_tp' : 'am', 'num_of_hours' : 3},
                '9to1530' : {'4k_tp' : 'md', 'num_of_hours' : 6.5}, 
                '1530to1830' : {'4k_tp' : 'pm', 'num_of_hours' : 3},
                '1830to6' : {'4k_tp' : 'ni', 'num_of_hours' : 3.5}} #2 hours of service in PSRC - trying 3.5 hours in BKR, assuming service till 10pm
-                
+
+transit_submode_class_lookup = {'bus': 'trnst', 'light_rail':'litrat','ferry':'ferry', 'passenger_ferry':'passenger_ferry','commuter_rail':'commuter_rail'}                
 # Transit Fare:
 zone_file = 'inputs/Fares/transit_fare_zones.grt'
 peak_fare_box = 'inputs/Fares/am_fares_farebox.in'
@@ -167,6 +196,8 @@ intrazonal_dict = {'distance' : 'izdist', 'time auto' : 'izatim', 'time bike' : 
 taz_area_file = 'inputs/intrazonals/taz_acres.in'
 origin_tt_file = 'inputs/intrazonals/origin_tt.in'
 destination_tt_file = 'inputs/intrazonals/destination_tt.in'
+origin_tt_file_bike = 'inputs/intrazonals/origin_tt_bike.in'
+destination_tt_file_bike = 'inputs/intrazonals/destination_tt_bike.in'
 
 # SUPPLEMENTAL#######################################################
 #Trip-Based Matrices for External, Trucks, and Special Generator Inputs
@@ -179,6 +210,8 @@ trip_table_loc = 'outputs/supplemental/7_balance_trip_ends.csv'
 supplemental_output_dir = 'outputs/supplemental/'
 supplemental_non_work_file = 'outputs/supplemental/external_non_work.h5'
 supplemental_project = 'projects/supplementals/supplementals.emp'
+pm_project = 'projects/1530to1830/1530to1830.emp'
+
 # Iterations for fratar process in trip distribution
 bal_iters = 5
 # Define gravity model coefficients
@@ -192,3 +225,9 @@ toll_modes_dict = {'asehdimjvutbpfl' : 'aedmvutbpfl', 'asehdimjvutbpwl' :	'aedmv
 total_delivery_trips = 1 
 
 pkhrfac_dict = {'pm': 0.35, 'am': 0.38, 'md': 0.154}
+
+#####Interested Transit lines
+# Transit Line OD Table list 
+transit_line_dict = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
+special_route_lookup = {6025:'Eastlink EB', 6026:'Eastlink WB', 6039:'ST3_to_issaquah_WB', 6040:'ST3_to_issaquah_EB', 7040:'ST560 NB', 7041:'ST560 SB', 4019:'B Line EB', 4020:'B Line WB'}
+

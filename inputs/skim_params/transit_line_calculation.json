@@ -2,9 +2,8 @@
     "expression": "board",
     "type": "NETWORK_CALCULATION",
     "result": "@board",
-    "aggregation": "+",
+    "aggregation": null,
     "selections": {
-        "link": "all",
         "transit_line": "all"
     }
 }

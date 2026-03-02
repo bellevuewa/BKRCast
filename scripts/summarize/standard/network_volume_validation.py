@@ -6,6 +6,8 @@ import datetime
 from scipy import stats
 from EmmeProject import *
 from functools import reduce
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import io
@@ -56,7 +58,8 @@ def create_scatter_plot_image(x, xlabel, y, ylabel, attr, fid, image_to_file = F
     plt.grid(True, which = 'both', axis = 'both')
     ax = plt.gca()
     size = max(ax.get_xlim()[1], ax.get_ylim()[1])
-    plt.axis([0, size, 0, size], 'square')
+    plt.axis([0, size, 0, size])
+    plt.axis('square')
 
     plt.legend()
     plt.title('Scatter Plot by ' + attr)
@@ -192,7 +195,7 @@ def main():
         final_sl_summary['total_model_vol'] = final_sl_summary[columns_to_add].sum(axis = 1)
         columns_to_add = final_sl_summary.filter(like='pkhr').columns   
         final_sl_summary['total_pkhr_model_vol'] = final_sl_summary[columns_to_add].sum(axis = 1)
-        columns_to_add = final_sl_summary.filter(like = '@slcnt').columns
+        columns_to_add = final_sl_summary.filter(like = 'cnt').columns
         final_sl_summary['total_pkhr_counts'] = final_sl_summary[columns_to_add].sum(axis = 1)
         imgdata = create_scatter_plot_image(final_sl_summary['total_pkhr_counts'], 'total_pkhr_counts', final_sl_summary['total_pkhr_model_vol'], 'total_pkhr_model_vol', attr, fid)
         fid += 1    
@@ -209,7 +212,7 @@ def main():
         wksheet.write(1, 0, 'Auto Volume Validation by ' + attr)
         wksheet.insert_image(0, final_sl_summary.shape[1], '', options = {'image_data': imgdata} )
 
-    writer.save()
+    writer.close()
     my_project.closeDesktop()
     print('done')
 

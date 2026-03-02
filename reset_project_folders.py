@@ -5,9 +5,6 @@
     created on 9/15/2022
 '''
 
-import inro.emme.database.emmebank as _emmebank
-import inro.emme.desktop.app as app
-import inro.modeller as _m
 import os, sys
 import getopt
 sys.path.append(os.getcwd())

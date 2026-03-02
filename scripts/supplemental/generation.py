@@ -32,7 +32,7 @@ def calc_heavy_truck_restrictions():
     '''Restrict truck trips by land use type.'''
 
     #  Load land use type from parcels and a lookup for landuse type codes
-    parcels = pd.read_csv(access_config.output_parcels, delim_whitespace=True)
+    parcels = pd.read_csv(access_config.output_parcels, sep = r'\s+')
     df = parcels.merge(pd.read_csv(r'inputs/landuse/lu_type.csv'),left_on='lutype_p',right_on='land_use_type_id')
 
     # The following list of land use types are allowed to be accessed by heavy trucks
@@ -252,16 +252,17 @@ def main():
     i5_revised_productions = i5_ext_productions - jblm_ext_productions
     i5_revised_attractions = i5_ext_attractions - jblm_ext_attractions
 
-    revised_external_taz = external_taz
+    revised_external_taz = external_taz.copy()
     for purposes in trip_productions:
     
         ratio = revised_external_taz[purposes][i5_station] / i5_ext_productions
-        revised_external_taz[purposes][i5_station] = i5_revised_productions * ratio
+        # revised_external_taz is indexed by BKRCastTAZ
+        revised_external_taz.loc[i5_station, purpose] = i5_revised_productions * ratio
 
     for purposes in trip_attractions:
     
         ratio = revised_external_taz[purposes][i5_station] / i5_ext_attractions
-        revised_external_taz[purposes][i5_station] = i5_revised_attractions * ratio
+        revised_external_taz.loc[i5_station, purpose] = i5_revised_attractions * ratio
 
     ###########################################################
     # Heavy Truck Productions, grown from ATRI data
@@ -351,7 +352,7 @@ def main():
     person_df = h5_to_df(hh_people, 'Person')
     person_df = person_df[person_variables]
 
-    parcels = pd.read_csv(parcel_file, sep = ' ')
+    parcels = load_parcel_data_without_JBLM_jobs(parcel_file)
     parcels.columns = parcels.columns.str.lower()
     parcels = parcels.loc[:,original_parcel_columns]
     parcels.columns = updated_parcel_columns
@@ -559,7 +560,7 @@ def main():
     balanced_df = balance_trips(df_taz, balance_to_productions, 'pro')
     balanced_df = balance_trips(df_taz, balance_to_attractions, 'att')
     balanced_df.to_csv(supplemental_loc+'/7_balance_trip_ends.csv',index=True)
-
+    print('Finished generating supplemental trips.')
 
 if __name__ == "__main__":
     main()
