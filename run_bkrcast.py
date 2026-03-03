@@ -32,10 +32,11 @@ from shutil import copy2 as shcopy
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import logcontroller
-import random
+import random, getopt
 import datetime
 import pandas as pd
-import shutil 
+import shutil
+from pathlib import Path
 from input_configuration import *
 from emme_configuration import *
 from data_wrangling import *
@@ -77,6 +78,94 @@ def build_seed_skims(max_iterations):
     time_skims = datetime.datetime.now()
     print('###### Finished skimbuilding:', str(time_skims - time_copy))
  
+@timed
+def import_synthetic_population_from_outside(outside_folder_path: str):
+    # This function imports synthetic population data from an outside folder path
+    # copy the files from outside_folder_path to inputs/synthetic_population_outside, make the file structure 
+    # compatible with the expected input for daysim, and update the daysim template to point to the new paths for synthetic population data. 
+    # It also creates a metadata.txt file in the synthetic_population_outside folder to document the source of the data and when it was imported.
+    logger.info(f"Synthetic population data from outside folder: {outside_folder_path} is being used. ")
+    input_path = Path("inputs/synthetic_population_outside")
+    files_to_copy = ['_household.tsv', '_person.tsv']
+    for file_name in files_to_copy:
+        source_path = Path(outside_folder_path) / file_name
+        destination_path = input_path / file_name
+        if source_path.exists():
+            destination_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(source_path, destination_path)
+            print(f"Copied {file_name} to synthetic_population_outside.")
+        else:
+            print(f"File {file_name} not found in {outside_folder_path}.")
+
+    # process _household.tsv and _person.tsv to create _household_reordered.tsv and _person_reordered.tsv
+    hhs_df = pd.read_csv(input_path / "_household.tsv", sep='\t')
+    parcelid = hhs_df.pop('hhparcel')
+    hhs_df.pop('zone_id')
+    hhs_df.pop('fraction_with_jobs_outside')
+    hhs_df.insert(15, 'hhparcel', parcelid) # very important. this column is hard coded in daysim.
+    hhs_df.to_csv(input_path / "_household_reordered.tsv", sep = '\t', index = False) 
+
+    persons_df = pd.read_csv(input_path / "_person.tsv", sep='\t')
+    first_cols = ['hhno', 'pno']
+    persons_df.pop('id')
+    rest_cols = [col for col in persons_df.columns if col not in first_cols]
+    persons_df[first_cols + rest_cols].to_csv(input_path / "_person_reordered.tsv", sep = '\t', index = False)   
+
+    with open(input_path / "metadata.txt", "w") as metadata_file:
+        metadata_file.write(datetime.datetime.now().strftime("Date: %Y-%m-%d %H:%M:%S\n"))
+        metadata_file.write(f"Source: {outside_folder_path}\n")
+        metadata_file.write("This folder contains synthetic population data imported from an outside source.\n")   
+        metadata_file.write("Files:\n")
+        metadata_file.write("- _household_reordered.tsv: Reordered household data for Daysim input.\n")
+        metadata_file.write("- _person_reordered.tsv: Reordered person data for Daysim input.\n") 
+
+    # Lines to insert
+    household_lines = [
+        "RawHouseholdPath =  ..\\inputs\\synthetic_population_outside\\_household_reordered.tsv\n",
+        "InputHouseholdPath = ..\\outputs\\daysim\\_household_new_input.tsv\n",
+        "InputHouseholdDelimiter = 9\n",
+        "RawHouseholdDelimiter = 9\n",
+    ]
+
+    person_lines = [
+        "RawPersonPath = ..\\inputs\\synthetic_population_outside\\_person_reordered.tsv\n",
+        "InputPersonPath= ..\\outputs\\daysim\\_person_new_input.tsv\n",
+        "InputPersonDelimiter = 9\n",
+        "RawPersonDelimiter = 9\n",
+    ]
+
+    master_template_path = Path('inputs/model/templates') / "master_daysim_configuration_template.properties"
+    template_path = Path('daysim_configuration_template.properties')
+    # Read file
+    lines = master_template_path.read_text().splitlines(keepends=True)
+    
+    # update the daysim template with the new paths for synthetic population data
+    attr_dict = {
+        "ReadHDF5": "false",
+        "ShouldRunHouseholdModels": "false",
+        "ShouldRunPersonModels": "false"
+    }
+
+    new_lines = []
+    for line in lines:
+        for attr, value in attr_dict.items():
+            if line.startswith(attr):
+                line = f"{attr} = {value}\n"
+                break
+
+        if "ImportHouseholds" in line:
+            new_lines.extend(household_lines)
+
+        if "ImportPersons" in line:
+            new_lines.extend(person_lines)
+
+        new_lines.append(line)
+
+    with open(template_path, "w") as template_file:
+        template_file.write("".join(new_lines))
+
+    logger.info(f"Synthetic population data are saved in {input_path} and daysim template is updated accordingly.")
+
 @timed   
 def modify_config(config_vals):
     script_path = os.path.abspath(__file__)
@@ -317,9 +406,39 @@ def precheck():
             print(f"Error: Emme lock file found in {folder} databank. Please remove the lock file before running the model.")
             exit(-1)
 
+def help():
+    print('This is the BKRcast model runner script. It will run the entire BKRcast model from start to finish, including accessibility calculations, Daysim runs, skim building, and summaries.')
+    print("")
+    print('Usage: run_bkrcast.py -s <path_to_synthetic_population_folder>')
+    print("")
+    print('Options:')
+    print('-h: Show this help message and exit')
+    print('-s: Specify the path to the synthetic population folder that contains _household.tsv and _person.tsv files. ')
+    print('    These files will be processed and used as input for Daysim.')
+    print('    This option should be used if you want to skip long term models like auto ownership, transit pass ownership, work and school locations')
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hs:")
+    except getopt.GetoptError as err:
+        print(str(err))
+        sys.exit(2)
+
+    synthetic_population_folder = ""
+
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            print('Usage: run_bkrcast.py -s <path_to_synthetic_population_folder>')
+            sys.exit()
+        elif opt == '-s':
+            synthetic_population_folder = arg
+            print(f"Importing synthetic population from: {synthetic_population_folder}")
+
+        else:
+            print('Unknown option. Use -h for help.')
+            sys.exit(2)
 
     precheck()
 ## SET UP INPUTS ##########################################################
@@ -338,8 +457,18 @@ def main():
         include_wfh_mode = 'false'
 
     # delete everything inside outputs/ folder, except accessibility outputs which resides in landuse subfolder.
-    # clean_output_folder()    
+    clean_output_folder()    
     build_output_dirs()
+    if synthetic_population_folder != "":
+        import_synthetic_population_from_outside(synthetic_population_folder) 
+    else:
+        # copy master daysim template to the project root folder
+        shutil.copy(Path('inputs/model/templates') / "master_daysim_configuration_template.properties", "daysim_configuration_template.properties")   
+        # remove the inputs/synthetic_population_outside folder if it exists.
+        synthetic_population_outside_folder = Path("inputs/synthetic_population_outside")
+        if synthetic_population_outside_folder.exists() and synthetic_population_outside_folder.is_dir():
+            shutil.rmtree(synthetic_population_outside_folder)
+            
     update_daysim_modes()
     update_skim_parameters()
     update_taz_accessibility_file(model_year)    
