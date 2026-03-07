@@ -1205,25 +1205,27 @@ def create_node_attributes(node_attribute_dict, my_project):
         print(f'The following are error message')                                  
         print(f'{e}') 
         logging.debug(f'{e}')        
-        sys.exit(3)               
+        sys.exit(3)
 
-    # network_calc = my_project.m.tool("inro.emme.network_calculation.network_calculator")  
-    # node_calculator_spec = json_to_dictionary("node_calculation")
     transit_tod = transit_network_tod_dict[tod]
         
     if transit_tod in transit_node_constants.keys():
         try:            
-            for line_id, attribute_dict in transit_node_constants[transit_tod].items():
-                for attribute_name, value in attribute_dict.items():
-                    print(line_id, attribute_name, value)
-                    my_project.network_calculator("node_calculation", result = attribute_name, expression = value, selections_by_node = "Line = " + line_id)                    
+            for route, attribute_dict in transit_node_constants[transit_tod].items():
+                # need to find out all lines with this route Id
+                line_ids = my_project.get_line_ids_by_route(route)
+                for line_id in line_ids:
+                    for attribute_name, value in attribute_dict.items():
+                        print(f'route: {route}, line_id: {line_id}, attribute_name: {attribute_name}, value: {value}')
+                        my_project.network_calculator("node_calculation", result = attribute_name, expression = value, selections_by_node = "Line = " + line_id)                    
         except Exception as e:
             print(f'node calculatiom crashed in {transit_tod}. line: {line_id}, {attribute_name}: {value}')
             print('The following are error messages')
             print(f'{e}') 
             logging.debug(f'{e}')        
             sys.exit(4)                                                               
-    print('finished create node attributes for ' + tod)
+    print('finished create node attributes for ' + tod)        
+
 
 #save highway assignment results for sensitivity tests
 def store_assign_results(project_name, iteration, prefix=''):
