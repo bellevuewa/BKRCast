@@ -211,7 +211,7 @@ def help():
     print('network_summary.py -h -t emme_extra_attribute_for_study_area -s scenario_id')  
     print('  -h: help')
     print('  -t: an EMME node extra attribute defining the study area. default is @ndmma')
-    print('  -s: id of a scenario on which you want to run the summary')       
+    print('  -s: id of a scenario on which you want to run the summary, otherwise the current scenario will be used')       
     print('')           
     print('This script will generates the following results:')
     print('  outputs/network:')
@@ -220,8 +220,8 @@ def help():
     print('      iz_vol.csv: intrazonal trips') 
     print('  outputs/transit:')       
     print('      OD tables for selected transit lines')
+    print('      transit_boarding_for_BKR_cities.xlsx: daily and TOD boardings by routes and by jurisdiction for Bellevue, Kirkland and Redmond')
     print('      boardings_by_stop.csv: transit boardings by stop')        
-    print('      daily_boardings_special_routes.csv: daily transit boardings on selected routes')    
     print('      jobs_by_transit_access.xlsx: jobs/hhs accessible within 1/4 mile radius of transit stops')    
     print('      light_rail_boardings.csv: LRT daily boardings')    
     print('      total_transit_trips.csv: total transit trips by submode')    
@@ -441,12 +441,6 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
         print('cannot open daily bank. summrize_transit_detail() is terminated.') 
         return           
     
-    # Boardings for special routes
-    df_special = df_transit_line[df_transit_line['route_code'].isin({int(k) for k in emme_config.special_route_lookup.keys()})].groupby('route_code').sum()[['boardings']].sort_values('boardings', ascending=False)
-    df_special = df_special.reset_index()
-    df_special['description'] = df_special['route_code'].map({int(k):v for k,v in emme_config.special_route_lookup.items()})
-    df_special[['route_code','description','boardings']].to_csv(input_config.special_routes_path, index=False)
-
     # Daily Boardings by Stop
     node_df = df_transit_node[['node_id', 'node_subarea']].drop_duplicates(subset = 'node_id')
     df_transit_segment = pd.read_csv(input_config.transit_segment_path)
@@ -705,27 +699,29 @@ def main():
             # Calculate transit line OD table for select lines
             print('  create OD table for selected transit lines')            
             if tod_hour in transit_line_od_period_list: 
-                for line_id, name in emme_config.transit_line_dict.items():
-                    # Calculate results for all path types
-                    for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
-                        for matrix in my_project.bank.matrices():
-                            if matrix.name == 'eline':
-                                my_project.delete_matrix(matrix)
-                                my_project.delete_extra_attribute('@eline')
-                        my_project.create_extra_attribute('TRANSIT_LINE', '@eline', name, True)
-                        my_project.create_matrix('eline', 'Demand from select transit line', "FULL")
+                for route_name in emme_config.transit_line_for_od_list:
+                    line_ids = my_project.get_line_ids_by_route(route_name)
+                    for line_id, name in line_ids.items():
+                        # Calculate results for all path types
+                        for class_name in ['trnst','commuter_rail','ferry','litrat','passenger_ferry']:
+                            for matrix in my_project.bank.matrices():
+                                if matrix.name == 'eline':
+                                    my_project.delete_matrix(matrix)
+                                    my_project.delete_extra_attribute('@eline')
+                            my_project.create_extra_attribute('TRANSIT_LINE', '@eline', name, True)
+                            my_project.create_matrix('eline', 'Demand from select transit line', "FULL")
 
-                        # Add an identifier to the chosen line
-                        my_project.network_calculator("link_calculation", result='@eline', expression='1',
-                                                      selections={'transit_line': str(line_id)})
+                            # Add an identifier to the chosen line
+                            my_project.network_calculator("link_calculation", result='@eline', expression='1',
+                                                        selections={'transit_line': str(line_id)})
 
-                        # Transit path analysis
-                        transit_path_analysis = my_project.m.tool('inro.emme.transit_assignment.extended.path_based_analysis')
-                        _spec = data_wrangling.json_to_dictionary("transit_path_analysis")
-                        transit_path_analysis(_spec, class_name=class_name)
-                        
-                        # Write this path OD table to sparse CSV
-                        my_project.export_matrix('mfeline', 'outputs/transit/line_od/' + str(line_id) + '_'+ class_name + "_" + tod_hour + '.csv')
+                            # Transit path analysis
+                            transit_path_analysis = my_project.m.tool('inro.emme.transit_assignment.extended.path_based_analysis')
+                            _spec = data_wrangling.json_to_dictionary("transit_path_analysis")
+                            transit_path_analysis(_spec, class_name=class_name)
+                            
+                            # Write this path OD table to sparse CSV
+                            my_project.export_matrix('mfeline', 'outputs/transit/line_od/' + str(line_id) + '_'+ class_name + "_" + tod_hour + '.csv')
 
         # Add total vehicle sum for each link (@tveh)
         print('  calculate total vehicles.')    

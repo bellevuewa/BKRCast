@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\bike_improvement_2025\BKR4-24-v20'
+project_folder = r'F:\projects\BKRCast_develop\BKR4-24-v21'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
 base_year = '2024'  # BKRCast base year
 model_year = '2024'
@@ -41,7 +41,7 @@ run_cumulative_slopes = True # run cumulative slopes for bike model. This can be
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = False
+run_skims_and_paths_seed_trips = True
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True
@@ -191,9 +191,6 @@ slope_dict = {'slope_wt': {1: .371,     # between 2-4% grade
 slope_bins = [-1,0.02,0.04,0.06,1]
 slope_labels = [0,1,2,3]                
 
-avg_bike_speed = 10 # miles per hour
-avg_walk_speed = 3 # miles per hour
-
 # the current elevation raster is from UW Geology. It is 30ft resolution.
 # The raster is in GeoMapNWFeb2010 geodatabase. The raster is named usgs_dem_30ft
 # The raster is in NAD83(HARN) / Washington North (ftUS) CRS
@@ -201,9 +198,6 @@ elevation_raster_database = r'inputs/model/GeoMapNWFeb2010/usgs_dem_30ft'
 
 # Outputs directory
 bike_link_vol = 'outputs/bikes/bike_volumes.csv'
-
-# Multiplier for storing skim results
-bike_skim_mult = 100    # divide by 100 to store as int
 
 extra_attributes_dict = {'@tveh' : 'total vehicles', 
                          '@mveh' : 'medium trucks', 
@@ -321,7 +315,6 @@ transit_line_path = 'outputs/transit/transit_line_results.csv'
 transit_node_path = 'outputs/transit/transit_node_results.csv'
 transit_segment_path = 'outputs/transit/transit_segment_results.csv'
 boardings_by_agency_path = 'outputs/transit/daily_boardings_by_agency.csv'
-special_routes_path = 'outputs/transit/daily_boardings_special_routes.csv'
 boardings_by_tod_agency_path = 'outputs/transit/boardings_by_tod_agency.csv'
 boardings_by_stop_path = 'outputs/transit/boardings_by_stop.xlsx'
 light_rail_boardings_path = 'outputs/transit/light_rail_boardings.csv'

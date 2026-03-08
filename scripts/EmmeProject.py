@@ -707,13 +707,13 @@ class EmmeProject:
         spec = json_to_dictionary('signal_delay_for_bike')
         network_calc(spec)
 
-    def get_line_ids_by_route(self, route):
+    def get_line_ids_by_route(self, route) -> dict:
         # given a route Id, find all line Ids with this route Id. For example, if route = 'M271', then find all line Ids for lines with 'M271' in their description. 
         # This is because in BKRCast, line description contains route information.
-        line_ids = []
+        line_ids = {}
         for line in self.current_scenario.get_network().transit_lines():
             if route in line.description:
-                line_ids.append(line.id)
+                line_ids[line.id] = line.description
         return line_ids
                                             
 def json_to_dictionary(dict_name):
