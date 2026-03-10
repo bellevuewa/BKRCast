@@ -310,12 +310,11 @@ report_transit_location = 'outputs/transit'
 
 ## Summary files ##
 network_results_path = 'outputs/network/network_results.csv'
+transit_demand_path = 'outputs/transit/transit_demand.xlsx'
 iz_vol_path = 'outputs/network/iz_vol.csv'
 transit_line_path = 'outputs/transit/transit_line_results.csv'
 transit_node_path = 'outputs/transit/transit_node_results.csv'
 transit_segment_path = 'outputs/transit/transit_segment_results.csv'
-boardings_by_agency_path = 'outputs/transit/daily_boardings_by_agency.csv'
-boardings_by_tod_agency_path = 'outputs/transit/boardings_by_tod_agency.csv'
 boardings_by_stop_path = 'outputs/transit/boardings_by_stop.xlsx'
 light_rail_boardings_path = 'outputs/transit/light_rail_boardings.csv'
 job_access_by_transit_file = 'outputs/transit/jobs_by_transit_access.xlsx'

@@ -636,3 +636,48 @@ def calculate_daysim_WFH_constant(wfh_percent):
     # round to 1 decimal places to be consistent with Daysim models we have done.
     # but should be revised to three decimal places in the next round of model update.
     return float(round(constant, 1))
+
+
+def od_list_to_matrix_numpy(file_path, skip_headerlines = 5, n_zones=None):
+    ''' Convert an OD list in a text file to a matrix. The text file should have three columns: origin, destination, and volume.
+    skip_headerlines: number of lines to skip at the beginning of the file. Default is 5.
+    n_zones: number of zones in the matrix. If None, it will be determined by the maximum zone number in the origin and destination columns.
+    return:
+    matrix: a numpy array of shape (n_zones, n_zones) with the OD volumes.
+    df: a pandas dataframe with the same data as the matrix, with zone numbers as index and columns. The index and column names start from 1 to n_zones.
+    '''
+
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    if len(lines) <= skip_headerlines:
+        # print(f"No data found in {file_path} after skipping {skip_headerlines} header lines.")
+        return None, None
+    
+    data = np.loadtxt(file_path, skiprows=skip_headerlines)
+
+    origins = data[:, 0].astype(int)
+    dests = data[:, 1].astype(int)
+    vols = data[:, 2]
+
+    # skip zero volumes
+    mask = vols != 0
+    origins = origins[mask]
+    dests = dests[mask]
+    vols = vols[mask]
+
+    # determine matrix size
+    if n_zones is None:
+        n_zones = int(max(origins.max(), dests.max()))
+
+    # create matrix
+    matrix = np.zeros((n_zones, n_zones))
+
+    # fill matrix
+    matrix[origins - 1, dests - 1] = vols
+
+    unique_origins = np.unique(origins)
+    unique_dests = np.unique(dests)
+    filtered_matrix = matrix[np.ix_(unique_origins - 1, unique_dests - 1)]
+    df = pd.DataFrame(filtered_matrix, index = unique_origins, columns = unique_dests)
+    return matrix, df
