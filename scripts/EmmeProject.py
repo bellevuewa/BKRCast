@@ -533,6 +533,7 @@ class EmmeProject:
         for line in network.transit_lines():
             transit_line_data.append({'line_id': int(line.id), 
                                       'route_code': line.id, # line name
+                                      'route_name': line.description.split('-')[0].strip(), # route name, which is the first part of line description
                                       'mode': str(line.mode),
                                       'description': line.description,
                                       'boardings': line['@board'], 
