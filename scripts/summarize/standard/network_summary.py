@@ -671,9 +671,6 @@ def main():
             print('processing network summary for time period: ' + str(tod_hour))
             my_project.change_active_database(tod_hour)
             my_project.set_primary_scenario(scenario_id)        
-            print('  create link extra attributes')        
-            for name, description in input_config.extra_attributes_dict.items():
-                my_project.create_extra_attribute('LINK', name, description, True)
 
             # if @bkrlink and @facility_moves are not defined, create them and import values
             emission_attributes_dict = json.load(open('inputs/skim_params/emission_calc_attrs.json', "r"))      

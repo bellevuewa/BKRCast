@@ -444,6 +444,10 @@ class EmmeProject:
          # so str_base includes tnc volumes if the tnc mode is on.
          self.network_calculator("link_calculation", result = '@tveh', expression = str_expression)
 
+         # calculate vmt and vht
+         self.network_calculator("link_calculation", result = '@vmt', expression = '@tveh * length')
+         self.network_calculator("link_calculation", result = '@vht', expression = '@tveh * timau / 60')
+         
     def calculate_transit_alighting_by_segment(self, spec = None):
         for name, desc in input_config.transit_segment_extra_attributes_dict.items():
             self.create_extra_attribute('TRANSIT_SEGMENT', name, desc, True)    
