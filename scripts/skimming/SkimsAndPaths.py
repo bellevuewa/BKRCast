@@ -336,6 +336,7 @@ def transit_assignment(my_project, spec, keep_exisiting_volumes, class_name=None
     assignment_specification["waiting_time"]["headway_fraction"] = transit_node_attributes['headway_fraction']['name'] 
     assignment_specification["waiting_time"]["perception_factor"] = transit_node_attributes['wait_time_perception']['name'] 
     assignment_specification["in_vehicle_time"]["perception_factor"] = transit_node_attributes['in_vehicle_time']['name']
+    assignment_specification['boarding_cost']['at_nodes']['penalty'] = transit_node_attributes['additional_fare']['name']
     assign_transit(assignment_specification,  save_strategies = True, add_volumes=keep_exisiting_volumes, class_name=class_name)
 
     end_transit_assignment = time.time()

@@ -135,28 +135,33 @@ transit_skim_tod = load_transit_tod
 transit_submodes = ['b', 'c', 'f', 'p', 'r']
 transit_node_attributes = {'headway_fraction' : {'name' : '@hdwfr', 'init_value': .5}, 
                            'wait_time_perception' :  {'name' : '@wait', 'init_value': 2},
-                           'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1}}
+                           'in_vehicle_time' :  {'name' : '@invt', 'init_value': 1},
+                           'additional_fare': {'name': '@addfare', 'init_value': 0}}
 
 transit_node_constants = {'am': {
-                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'}},
+                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'Link_Line_2': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0.25'}},
                         'md': {
-                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'}},
+                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'Link_Line_2': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0.25'}},
                         'pm': {
-                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'}},
+                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'Link_Line_2': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0.25'}},
                         'ni': {
-                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'},
-                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3'}}
+                          'M271': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M250': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
+                          'Link_Line_2': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0.25'}}
                         }
 
 transit_network_tod_dict = sound_cast_net_dict                

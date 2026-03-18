@@ -652,9 +652,15 @@ def od_list_to_matrix_numpy(file_path, skip_headerlines = 5, n_zones=None):
 
     if len(lines) <= skip_headerlines:
         # print(f"No data found in {file_path} after skipping {skip_headerlines} header lines.")
-        return None, None
+        return None, pd.DataFrame()
     
     data = np.loadtxt(file_path, skiprows=skip_headerlines)
+
+    if data.size == 0:
+        return None, pd.DataFrame()
+
+    if data.ndim == 1:
+        data = data.reshape(1, -1)
 
     origins = data[:, 0].astype(int)
     dests = data[:, 1].astype(int)

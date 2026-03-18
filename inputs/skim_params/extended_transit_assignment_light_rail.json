@@ -23,8 +23,8 @@
     },
     "boarding_cost": {
         "at_nodes": {
-            "penalty": 0,
-            "perception_factor": 1
+            "penalty": "@addfare",
+            "perception_factor": 2
         },
         "on_lines": null
     },
@@ -33,7 +33,7 @@
     },
     "in_vehicle_cost": null,
     "aux_transit_time": {
-        "perception_factor": 2.0
+        "perception_factor": "@wait"
     },
     "aux_transit_cost": null,
     "flow_distribution_at_origins": {
