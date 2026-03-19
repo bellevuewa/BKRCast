@@ -1438,8 +1438,11 @@ def main():
         max_num_iterations = iteration
     else:
         #feedback loop
-        max_num_iterations = max_iterations_list[int(iteration)]
-    print('max_num_iterations = ' + str(max_num_iterations))
+        if iteration == 0:
+            #first iteration, build seed skims
+             max_num_iterations = int(max_num_iterations / 2)
+        else:
+            max_num_iterations = max_num_iterations
 
     for arg in args:
         # When we start a model run, we want to start with seed trips to assign.  Usually this will be

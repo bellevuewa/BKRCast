@@ -30,18 +30,18 @@ modeller_initial = "hd"
     
 # For Overriding the simple configuration, when you want to run things in more detail:
 run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True 
+run_accessibility_calcs = False 
 run_copy_daysim_code = False
-run_copy_input_files = True
+run_copy_input_files = False
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_import_networks = True
-run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
+run_import_networks = False
+run_cumulative_slopes = False # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = True
+run_skims_and_paths_seed_trips = False
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True
@@ -85,12 +85,8 @@ run_landuse_summary = True
 #delete parcel files from the project directory
 delete_parcel_data = False
 
-# DaySim - household sampling rate input
-pop_sample = [1, 1, 1]
-    
 # Assignment Iterations:
 max_iterations_list = [50, 100, 100]
-min_pop_sample_convergence_test = 10
     
 # start building shadow prices - only run work locations
 shadow_work = [1, 1, 1]
@@ -205,7 +201,6 @@ extra_attributes_dict = {'@tveh' : 'total vehicles',
                          '@vmt' : 'vmt',\
                          '@vht' : 'vht', 
                          '@trnv3' : 'transit vehicles in PCE',
-                         '@ovol' : 'observed volume', 
                          '@bveh' : 'number of buses'}
 transit_extra_attributes_dict = {'@board' : 'total boardings', '@timtr' : 'transit line time'}
 transit_segment_extra_attributes_dict = {'@talight':'total segment alighting', '@finalight': 'final alighting', '@transalight':'transfer alighting', 

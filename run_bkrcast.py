@@ -308,12 +308,11 @@ def daysim_assignment(iteration):
         logger.info(f"End of {iteration} iteration of Skims and Paths")        
 
 @timed
-def check_convergence(iteration, recipr_sample):
+def check_convergence(iteration):
     converge = "not yet"
-    if iteration > 0 and recipr_sample <= min_pop_sample_convergence_test:
-            con_file = open('inputs/converge.txt', 'r')
-            converge = json.load(con_file)   
-            con_file.close()
+    if iteration > 0:
+        with open('inputs/converge.txt', 'r') as  con_file:
+             converge = json.load(con_file)
     return converge
 
 @timed
@@ -409,23 +408,25 @@ def precheck():
 def help():
     print('This is the BKRcast model runner script. It will run the entire BKRcast model from start to finish, including accessibility calculations, Daysim runs, skim building, and summaries.')
     print("")
-    print('Usage: run_bkrcast.py -s <path_to_synthetic_population_folder>')
+    print('Usage: run_bkrcast.py -s <path_to_synthetic_population_folder> -h -i <number_of_iterations>')
     print("")
     print('Options:')
     print('-h: Show this help message and exit')
     print('-s: Specify the path to the synthetic population folder that contains _household.tsv and _person.tsv files. ')
     print('    These files will be processed and used as input for Daysim.')
     print('    This option should be used if you want to skip long term models like auto ownership, transit pass ownership, work and school locations')
+    print('-i: number of iterations to run. Default is 3.')
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hs:")
+        opts, args = getopt.getopt(sys.argv[1:], "hi:s:")
     except getopt.GetoptError as err:
         print(str(err))
         sys.exit(2)
 
     synthetic_population_folder = ""
+    number_of_iterations = 3
 
     for opt, arg in opts:
         if opt == '-h':
@@ -435,7 +436,12 @@ def main():
         elif opt == '-s':
             synthetic_population_folder = arg
             print(f"Importing synthetic population from: {synthetic_population_folder}")
-
+            
+        elif opt == '-i':
+            if not arg.isdigit() or int(arg) <= 0:
+                print("Error: Number of iterations must be a positive integer.")
+                sys.exit(2)
+            number_of_iterations = int(arg)
         else:
             print('Unknown option. Use -h for help.')
             sys.exit(2)
@@ -538,60 +544,29 @@ def main():
     
     if(run_daysim or run_skims_and_paths or run_skims_and_paths_seed_trips):
         wfh_constant = calculate_daysim_WFH_constant(WFH_Percent)        
-        for iteration in range(len(pop_sample)):
+        for iteration in range(number_of_iterations):
             print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))
             time_start = datetime.datetime.now()
             logger.info("starting run %s" % str((time_start)))
 
-            # Copy shadow pricing?
-            if not should_build_shadow_price:
-                if iteration == 0 or pop_sample[iteration-1] > 2:
-                    try:                                
-                        if not os.path.exists('working'):
-                            os.makedirs('working')
-                        shcopy(base_inputs+'/shadow_pricing/shadow_prices.txt','working/shadow_prices.txt')
-                        print("copying shadow prices" )
-                    except:
-                        print(' error copying shadow pricing file from shadow_pricing at ' + base_inputs+'/shadow_pricing/shadow_prices.txt')
-                        sys.exit(1)
+            # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
+            # 3 daysim iterations
+            build_shadow_only(include_tnc_mode, include_wfh_mode)
 
-                # Set up your Daysim Configration 
-                daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
-                # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                if int(model_year) >= 2044:
-                    daysim_config_update.append(("$OP_COST", 0.36))
-                else:
-                    daysim_config_update.append(("$OP_COST", 0.20))
-                modify_config(daysim_config_update)
+            daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE", 1), ("$RUN_ALL", "true")]
+            # use new operating cost 0.36 after 2044, otherwise use 0.2 
+            if int(model_year) >= 2044:
+                daysim_config_update.append(("$OP_COST", 0.36))
             else:
-                # IF BUILDING SHADOW PRICES, UPDATING WORK AND SCHOOL SHADOW PRICES
-                # 3 daysim iterations
-                build_shadow_only(include_tnc_mode, include_wfh_mode)
+                daysim_config_update.append(("$OP_COST", 0.20))
 
-                # run daysim and assignment
-                if pop_sample[iteration-1] > 2:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"false"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
-                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                    if int(model_year) >= 2044:
-                        daysim_config_update.append(("$OP_COST", 0.36))
-                    else:
-                        daysim_config_update.append(("$OP_COST", 0.20))
-                    modify_config(daysim_config_update)
-                else:
-                    daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE",pop_sample[iteration]), ("$RUN_ALL", "true")]
-                    # use new operating cost 0.36 after 2044, otherwise use 0.2 
-                    if int(model_year) >= 2044:
-                        daysim_config_update.append(("$OP_COST", 0.36))
-                    else:
-                        daysim_config_update.append(("$OP_COST", 0.20))
-
-                    modify_config(daysim_config_update)
+            modify_config(daysim_config_update)
             
             ## Run Skimming and/or Daysim
             daysim_assignment(iteration)
            
-            converge=check_convergence(iteration, pop_sample[iteration])
+            converge=check_convergence(iteration)
             if converge == 'stop':
                 print("System converged!")
                 break
