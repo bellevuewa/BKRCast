@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QLabel, QListWidget, QListWidgetItem, QDialog, QTableWidget, QTableWidgetItem,
     QLineEdit, QHBoxLayout, QComboBox, QSplitter, QSizePolicy, QDialogButtonBox,
     QTabWidget, QMessageBox, QCheckBox, QGroupBox, QButtonGroup, QFormLayout, QMenu,
-    QScrollArea
+    QScrollArea, QAbstractItemView
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction, QBrush, QColor
@@ -104,6 +104,7 @@ class CSVAnalyzer(QMainWindow):
         self.tabs = QTabWidget()
         self.result_table = QTableWidget()
         self.result_table.setSortingEnabled(True)
+        self.result_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.result_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)  # Enable custom context menu
         self.result_table.customContextMenuRequested.connect(lambda pos: self.show_table_context_menu(self.result_table, pos))
          # connected like this in __init__
@@ -112,9 +113,15 @@ class CSVAnalyzer(QMainWindow):
         self.tabs.addTab(self.result_table, "Aggregation Result")
 
         self.raw_table = QTableWidget()
+        self.raw_table.setSortingEnabled(True)
+        self.raw_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+
         self.tabs.addTab(self.raw_table, "Raw Data")
 
         self.valid_table = QTableWidget()
+        self.valid_table.setSortingEnabled(True)
+        self.valid_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+
         self.valid_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu) # Enable custom context menu
         self.valid_table.customContextMenuRequested.connect(lambda pos: self.show_table_context_menu(self.valid_table, pos))
         self.tabs.addTab(self.valid_table, "Validation")
@@ -170,24 +177,31 @@ class CSVAnalyzer(QMainWindow):
             return
 
         self.valid_table.setRowCount(len(self.filtered_df.columns))
-        header = ["Column", "Data Type", "Unique Values", "Missing Values", "Min", "Max", "Mean"]
+        header = ["Column", "Data Type", "Unique Values", "Missing Values", "Duplicated Values", "Min", "Max", "Sum", "Mean"]
         self.valid_table.setColumnCount(len(header))
         self.valid_table.setHorizontalHeaderLabels(header)
 
         for row_idx, col in enumerate(self.filtered_df.columns):
+            series = self.filtered_df[col]
+            missing = series.isna().sum()
+            unique = series.nunique()
+            duplicated = len(series) - unique - missing
             self.valid_table.setItem(row_idx, 0, QTableWidgetItem(col))
             self.valid_table.setItem(row_idx, 1, QTableWidgetItem(str(self.filtered_df[col].dtype)))
-            self.valid_table.setItem(row_idx, 2, QTableWidgetItem(str(self.filtered_df[col].nunique())))
-            self.valid_table.setItem(row_idx, 3, QTableWidgetItem(str(self.filtered_df[col].isnull().sum())))
+            self.valid_table.setItem(row_idx, 2, QTableWidgetItem(str(unique)))
+            self.valid_table.setItem(row_idx, 3, QTableWidgetItem(str(missing)))
+            self.valid_table.setItem(row_idx, 4, QTableWidgetItem(str(duplicated)))
 
             if pd.api.types.is_numeric_dtype(self.filtered_df[col]):
-                self.valid_table.setItem(row_idx, 4, QTableWidgetItem(str(self.filtered_df[col].min())))
-                self.valid_table.setItem(row_idx, 5, QTableWidgetItem(str(self.filtered_df[col].max())))
-                self.valid_table.setItem(row_idx, 6, QTableWidgetItem(str(self.filtered_df[col].mean())))
+                self.valid_table.setItem(row_idx, 5, QTableWidgetItem(str(self.filtered_df[col].min())))
+                self.valid_table.setItem(row_idx, 6, QTableWidgetItem(str(self.filtered_df[col].max())))
+                self.valid_table.setItem(row_idx, 7, QTableWidgetItem(str(self.filtered_df[col].sum())))
+                self.valid_table.setItem(row_idx, 8, QTableWidgetItem(str(self.filtered_df[col].mean())))
             else:
-                self.valid_table.setItem(row_idx, 4, QTableWidgetItem("N/A"))
                 self.valid_table.setItem(row_idx, 5, QTableWidgetItem("N/A"))
                 self.valid_table.setItem(row_idx, 6, QTableWidgetItem("N/A"))
+                self.valid_table.setItem(row_idx, 7, QTableWidgetItem("N/A"))
+                self.valid_table.setItem(row_idx, 8, QTableWidgetItem("N/A"))
 
         self.valid_table.resizeColumnsToContents()
 
