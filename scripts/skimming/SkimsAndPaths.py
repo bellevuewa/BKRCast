@@ -1441,9 +1441,9 @@ def main():
         #feedback loop
         if iteration == 0:
             #first iteration, build seed skims
-             max_num_iterations = int(max_num_iterations / 2)
+             max_num_iterations = int(max_num_iteration_for_emme_assignment / 2)
         else:
-            max_num_iterations = max_num_iterations
+            max_num_iterations = max_num_iteration_for_emme_assignment
 
     for arg in args:
         # When we start a model run, we want to start with seed trips to assign.  Usually this will be
