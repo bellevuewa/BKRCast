@@ -441,19 +441,37 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
     except:
         print('cannot open daily bank. summrize_transit_detail() is terminated.') 
         return           
-    
+
+    transit_seg_op = {
+        'segment_boarding': 'sum',
+        'segment_initial_boarding': 'sum',
+        'segment_transfer_boarding': 'sum',
+        'segment_alighting': 'sum',
+        'segment_transfer_alighting': 'sum',
+        'segment_final_alighting': 'sum',
+        '@bkrnode_I': 'first',
+        'bus_vehicles': 'sum',
+        'isHidden': 'first',
+        'boarding_ok': 'first',
+        'alighting_ok': 'first',
+        'stop': 'first'
+    } 
+    node_cols_to_keep = list(transit_seg_op.keys())
+    node_cols_to_keep.append('i_node')  
     # Daily Boardings by Stop
     node_df = df_transit_node[['node_id', 'node_subarea']].drop_duplicates(subset = 'node_id')
     df_transit_segment = pd.read_csv(input_config.transit_segment_path)
-    df_transit_stops_daily = df_transit_segment.groupby('i_node').sum().reset_index()
+    df_transit_stops_daily = df_transit_segment[node_cols_to_keep].groupby('i_node').agg(transit_seg_op).reset_index()
     df_transit_stops_daily = node_df.merge(df_transit_stops_daily, left_on = 'node_id', right_on = 'i_node', how = 'right')        
-    df_transit_stops_daily.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok', 'tod'], inplace = True)  
+    df_transit_stops_daily.drop(columns = ['i_node'], inplace = True) 
+    df_transit_stops_daily.rename(columns = {'@bkrnode_I':'bkrnode'}, inplace = True) 
 
     with pd.ExcelWriter(input_config.boardings_by_stop_path,  engine='xlsxwriter') as writer:    
         wksheet = writer.book.add_worksheet('readme')
         wksheet.write(0, 0, str(datetime.datetime.now()))
         wksheet.write(1, 0, 'model folder')
         wksheet.write(1, 1, input_config.project_folder)
+        wksheet.write(5, 0, 'transit hubs are defined below.')
         
         bold_format = writer.book.add_format({'bold': True})
         df_transit_stops_daily.to_excel(writer, sheet_name = 'Daily', index = False, startrow = 1)
@@ -461,13 +479,28 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
         daily_sheet.write(0, 0, 'Daily Boarding/Alighting', bold_format) 
 
         for tod in emme_config.load_transit_tod:
-            df_transit_stops_tod = df_transit_segment.loc[df_transit_segment['tod'] == tod].groupby('i_node').sum().reset_index()
-
+            df_transit_stops_tod = df_transit_segment.loc[df_transit_segment['tod'] == tod, node_cols_to_keep].groupby('i_node').agg(transit_seg_op).reset_index()
             df_transit_stops_tod = node_df.merge(df_transit_stops_tod, left_on = 'node_id', right_on = 'i_node', how = 'right')                   
-            df_transit_stops_tod.drop(columns = ['i_node', 'j_node', 'line_id', 'i_node_subarea', 'boarding_ok', 'alighting_ok'], inplace = True)     
+            df_transit_stops_tod.drop(columns = ['i_node'], inplace = True)    
+            df_transit_stops_tod.rename(columns = {'@bkrnode_I':'bkrnode'}, inplace = True) 
             df_transit_stops_tod.to_excel(writer, sheet_name = tod, index = False, startrow = 1) 
             tod_sheet = writer.sheets[tod]
             tod_sheet.write(0, 0, f'Boarding/Alighting in {tod}', bold_format)                                                   
+
+        # read in transit_hub_lookup file
+        transit_hub_lookup_dict = data_wrangling.json_to_dictionary("transit_hub_lookup")
+        row = 6
+        col = 0
+        for location, node_list in transit_hub_lookup_dict.items():
+            wksheet.write(row, col, location)
+            wksheet.write(row, col + 1, str(node_list))
+            row += 1
+
+        transit_hubs_df = pd.DataFrame(list(transit_hub_lookup_dict.items()), columns = ['transit_hubs', 'node_id'])
+        transit_hubs_df = transit_hubs_df.explode('node_id').reset_index(drop = True)
+        transit_hub_summary_df = df_transit_stops_daily.merge(transit_hubs_df, left_on = 'node_id', right_on = 'node_id', how = 'right')
+        transit_hub_summary_df = transit_hub_summary_df[['transit_hubs', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_transfer_alighting', 'segment_final_alighting']].groupby('transit_hubs').sum().reset_index()
+        transit_hub_summary_df.to_excel(writer, sheet_name = 'transit_hub_summary', index = False, startrow = 1)
 
 def count_and_sum_landuse_data(node, tree, radius, attributes_df):
     captured_pts = tree.query_ball_point((node.geometry.x, node.geometry.y), radius)
@@ -813,7 +846,7 @@ def main():
             table.to_excel(writer, sheet_name = f'{tod}', index = False)
 
         cols = ['total_boarding', 'initial_boarding', 'transfer_boarding', 'total_alighting', 'final_alighting', 'transfer_alighting']
-        daily = df_transit_node.groupby('node_id').agg({'node_subarea': 'first', 'tod': 'first'} | {col: 'sum' for col in cols}).reset_index()
+        daily = df_transit_node.groupby('node_id').agg({'node_subarea': 'first'} | {col: 'sum' for col in cols}).reset_index()
 
         daily.to_excel(writer, sheet_name = 'daily_summary', index = False)
 
