@@ -139,9 +139,21 @@ END
  307  tnc-dist65con  T  0.00  0.000000
  308  tnc-BKRcon  T  0.00  0.000000
  309  dt-BKRcon  T  0.00  0.000000
-
-
- 
+ 310  da-dist66con  T  0.00  0.000000 
+ 311  sr2-dist66con  T  0.00  0.000000
+ 312  sr3-dist66con  T  0.00  0.000000 
+ 313  tr-dist66con  T  0.00  0.000000 
+ 314  bi-dist66con  T  0.00  0.000000 
+ 315  wk-dist66con  T  0.00  0.000000  
+ 316  tnc-dist66con  T  0.00  0.000000 
+ 317  lrt-dist60con  T  0.00  0.000000 
+ 318  lrt-dist61con  T  0.00  0.000000 
+ 319  lrt-dist62con  T  0.00  0.000000 
+ 320  lrt-dist63con  T  0.00  0.000000
+ 321  lrt-dist64con  T  0.00  0.000000  
+ 322  lrt-dist65con  T  0.00  0.000000 
+ 323  lrt-BKRcon  T  0.00  0.000000 
+ 324  lrt-dist66con  T  0.00  0.000000  
  
  99 modenest F 0.735811270946 .601948497263E-01
   -1
