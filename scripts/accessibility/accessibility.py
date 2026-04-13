@@ -148,13 +148,8 @@ def clean_up(parcels):
     return parcels_final
 
 def main():
-    if run_update_parking and base_year != scenario_name:
-        input_parcels = "inputs\\accessibility\\" + access_config.parcels_file_name
-        print('open file ' + input_parcels)
-        parcels = pd.read_csv(input_parcels, sep = " ", index_col = None )
-    else: 
-        # read in data
-        parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name))
+    # read in data
+    parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name))
     #capitalize field names to avoid errors
     parcels.columns = [i.upper() for i in parcels.columns]
     #check for missing data!

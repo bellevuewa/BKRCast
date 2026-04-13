@@ -61,14 +61,6 @@ def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
         os.makedirs('inputs/accessibility')
     
-    print('Copying Hourly and Daily Parking Files')
-    if run_update_parking: 
-        try:
-            shcopy(base_inputs+'/landuse/hourly_parking_costs.csv','inputs/accessibility')
-            shcopy(base_inputs+'/landuse/daily_parking_costs.csv','inputs/accessibility')
-        except:
-            print('error copying parking file at' + base_inputs+'/landuse/' + ' either hourly or daily parking costs')
-            sys.exit(1)
 
 def text_to_dictionary(dict_name):
 

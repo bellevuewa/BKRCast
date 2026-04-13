@@ -45,18 +45,6 @@ from data_wrangling import *
 def accessibility_calcs():
     copy_accessibility_files()
 
-    if run_update_parking:
-        if base_year == model_year:
-            print("----- This is a base-year analysis. Parking parcels are NOT being updated! Input for 'run_update_parking' is over-ridden. -----")
-        else:
-            print('Starting to update UrbanSim parcel data with 4k parking data file')
-            returncode = subprocess.call([sys.executable,
-                                      'scripts/utils/update_parking.py', base_inputs])
-            if returncode != 0 and returncode != 3221225477:
-                print('Update Parking failed')
-                sys.exit(1)
-            print('Finished updating parking data on parcel file')
-
     print('Beginning Accessibility Calculations')
     returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'])
     if returncode != 0 and returncode != 3221225477:
