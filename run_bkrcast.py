@@ -401,8 +401,9 @@ def help():
     print('Options:')
     print('-h: Show this help message and exit')
     print('-s: Specify the path to the synthetic population folder that contains _household.tsv and _person.tsv files. ')
-    print('    These files will be processed and used as input for Daysim.')
+    print('    The script util/create_synpop_from_daysim_output.py should be run first to process these files and create new files that are compatible with the expected input for daysim. ')
     print('    This option should be used if you want to skip long term models like auto ownership, transit pass ownership, work and school locations')
+    print('    and directly use the synthetic population generated from a previous run of DaySim. If this option is not used, the model will run with the default synthetic population generation process, which includes running the long term models.')
     print('-i: number of iterations to run. Default is 3.')
 ##################################################################################################### ###################################################################################################### 
 # Main Script:
