@@ -777,37 +777,35 @@ def main():
                                 else:
                                     zero_demand_list.append(str(line_id) + '_'+ class_name + "_" + tod_hour)
 
+            # Add total vehicle sum for each link (@tveh)
+            print('  calculate total vehicles.')    
+            my_project.calc_bus_pce()                            
+            my_project.calc_total_vehicles()
+
+            # Calculate intrazonal volume and distance
+            print('  calculate intrazonal volume and distance')        
+            _df_iz_vol = pd.DataFrame(my_project.bank.matrix('izdist').get_numpy_data().diagonal(),columns=['izdist'])
+            _df_iz_vol['BKRCastTAZ'] = dictZoneLookup.values()
+            _df_iz_vol = get_intrazonal_vol(my_project, _df_iz_vol)
+            if 'izdist' in df_iz_vol.columns:
+                _df_iz_vol = _df_iz_vol.drop('izdist', axis=1)
+            df_iz_vol = df_iz_vol.merge(_df_iz_vol, on='BKRCastTAZ', how='left')
+
+            # create datafrane of all links with multiple attributes
+            print('  create dataframe of links')
+            network = my_project.current_scenario.get_network()
+            _network_df = export_network_attributes(network, node_attr_study_area)
+            _network_df['tod'] = my_project.tod
+            network_df = pd.concat([network_df, _network_df], ignore_index = True)
+
         readmesheet.write(readmesheet_row+1, 0, 'Lines with zero demand (no transit trips on any segment of the line) in any time period:')
         readmesheet_row += 3
         for i, line in enumerate(zero_demand_list):
             readmesheet.write(readmesheet_row + i, 0, line)
             
-
-        # Add total vehicle sum for each link (@tveh)
-        print('  calculate total vehicles.')    
-        my_project.calc_bus_pce()                            
-        my_project.calc_total_vehicles()
-
-        # Calculate intrazonal volume and distance
-        print('  calculate intrazonal volume and distance')        
-        _df_iz_vol = pd.DataFrame(my_project.bank.matrix('izdist').get_numpy_data().diagonal(),columns=['izdist'])
-        _df_iz_vol['BKRCastTAZ'] = dictZoneLookup.values()
-        _df_iz_vol = get_intrazonal_vol(my_project, _df_iz_vol)
-        if 'izdist' in df_iz_vol.columns:
-            _df_iz_vol = _df_iz_vol.drop('izdist', axis=1)
-        df_iz_vol = df_iz_vol.merge(_df_iz_vol, on='BKRCastTAZ', how='left')
-
-        # create datafrane of all links with multiple attributes
-        print('  create dataframe of links')
-        network = my_project.current_scenario.get_network()
-        _network_df = export_network_attributes(network, node_attr_study_area)
-        _network_df['tod'] = my_project.tod
-        network_df = pd.concat([network_df, _network_df], ignore_index = True)
-
     my_project.change_active_database('1530to1830')
     emme_nodes_df = my_project.emme_nodes_to_df()
-    my_project.closeDesktop()
-    
+    my_project.closeDesktop()   
     ######################################## TO DO #########################
     # it would be nice to export results to xlsx file instead of csv. We could add additional analysis data to xlsx later.    
 
