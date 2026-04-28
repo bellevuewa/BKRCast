@@ -301,7 +301,6 @@ def summarize_network(df, node_attr_study_area):
         startrow = 2
         sheet_name = 'BKR metric by FC'            
         _df = pd.pivot_table(kc_df, values=['VMT','VHT','VHD'], index=['@bkrlink', 'tod','period'],columns='facility_type', aggfunc='sum').reset_index()
-        _df = sort_df(df=_df, sort_list=emme_config.tods , sort_column_list = ['@bkrlink', 'period'])
         _df['Jurisdiction'] = _df['@bkrlink'].map(input_config.bkrlink_dict)        
         _df.to_excel(writer, sheet_name = sheet_name, startrow = startrow)
         wksheet = writer.sheets[sheet_name]
