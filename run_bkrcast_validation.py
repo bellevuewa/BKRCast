@@ -8,7 +8,7 @@ from input_configuration import project_folder, run_bkrcast_summary
 def run_ipynb(sheet_name, nb_path):
     start_time = time.time()
     print("creating " + sheet_name + " page")
-    with open(os.path.join(project_folder, nb_path, sheet_name + ".ipynb")) as f:
+    with open(os.path.join(project_folder, nb_path, sheet_name + ".ipynb"), "r", encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
         if sys.version_info > (3, 0):
             py_version = "python3"
@@ -16,7 +16,7 @@ def run_ipynb(sheet_name, nb_path):
             py_version = "python2"
         ep = ExecutePreprocessor(timeout=1500, kernel_name=py_version)
         ep.preprocess(nb, {"metadata": {"path": nb_path}})
-        with open(os.path.join(project_folder, nb_path, sheet_name + ".ipynb"), "wt") as f:
+        with open(os.path.join(project_folder, nb_path, sheet_name + ".ipynb"), "wt", encoding="utf-8") as f:
             nbformat.write(nb, f)
     end_time = time.time()
     print(f"Time taken to create {sheet_name} page: {end_time - start_time:.1f} seconds")
