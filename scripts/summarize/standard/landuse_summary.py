@@ -21,12 +21,14 @@ def parcel_file_summary(writer, Output_Field, taz_subarea, parcels):
 
     summary_by_taz = parcels.groupby('TAZ_P')[Output_Field].sum()
     summary_by_taz.to_excel(writer, sheet_name = 'LU_sum_TAZ')
+    summary_by_taz.to_csv(os.path.join(prj.report_summary_output_location, 'parcel_summary_by_taz.csv'), header = True)
 
     summary_by_subarea = parcels[parcels['Subarea'] > 0].groupby('Subarea')[Output_Field].sum()
     taz_subarea = parcels[['Subarea', 'SubareaName']].drop_duplicates()
     taz_subarea.set_index('Subarea', inplace = True)
     summary_by_subarea = pd.merge(summary_by_subarea, taz_subarea[['SubareaName']], left_index = True, right_index = True, how = 'left')
     summary_by_subarea.to_excel(writer, sheet_name = 'LU_sum_subarea')
+
 
 def synthetic_population_summary(writer, taz_subarea, lookup_parcels_df, export_parcel_level_dataset = False):
     print('Summarizing synthetic population file...')   
@@ -35,33 +37,46 @@ def synthetic_population_summary(writer, taz_subarea, lookup_parcels_df, export_
     hh_df = utility.h5_to_df(hdf_file, 'Household')
     hdf_file.close()
 
+    workers_df = person_df[['hhno', 'pwtyp', 'psexpfac']].copy()
+    workers_df['ft_w'] = 0
+    workers_df['pt_w'] = 0
+    workers_df.loc[workers_df['pwtyp'] == 1, 'ft_w'] = 1
+    workers_df.loc[workers_df['pwtyp'] == 2, 'pt_w'] = 1
+    workers_by_hhs_df = workers_df.groupby('hhno').sum().reset_index()    
+
+    hh_df = hh_df.merge(workers_by_hhs_df, how = 'left', left_on = 'hhno', right_on = 'hhno')
     hh_taz = hh_df.merge(taz_subarea, left_on = 'hhtaz', right_on = 'BKRCastTAZ', how = 'left')
     hh_taz['total_persons'] = hh_taz['hhexpfac'] * hh_taz['hhsize']
     hh_taz['total_hhs'] = hh_taz['hhexpfac']
 
-    summary_by_jurisdiction = hh_taz.groupby('Jurisdiction')[['total_hhs', 'total_persons']].sum()   
-    summary_by_mma = hh_taz.groupby('Subarea')[['total_hhs', 'total_persons']].sum()
-    summary_by_parcels = hh_taz.groupby('hhparcel')[['total_hhs', 'total_persons']].sum()
+    summary_by_jurisdiction = hh_taz.groupby('Jurisdiction')[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()   
+    summary_by_mma = hh_taz.groupby('Subarea')[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()
+    summary_by_parcels = hh_taz.groupby('hhparcel')[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()
 
     taz_subarea.reset_index()
     subarea_def = taz_subarea[['Subarea', 'SubareaName']]
     subarea_def = subarea_def.drop_duplicates(keep = 'first')
     subarea_def.set_index('Subarea', inplace = True)
     summary_by_mma = summary_by_mma.join(subarea_def)
-    summary_by_taz = hh_taz.groupby('hhtaz')[['total_hhs', 'total_persons']].sum()
-
+    summary_by_taz = hh_taz.groupby('hhtaz')[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()
 
     summary_by_jurisdiction.to_excel(writer, sheet_name = 'popsim_sum_juris')
     summary_by_mma.to_excel(writer, sheet_name = 'popsim_sum_mma')
     summary_by_taz.to_excel(writer, sheet_name = 'popsim_sum_taz')
     
-    hh_taz = hh_taz.merge(lookup_parcels_df, how = 'left', left_on = 'hhparcel', right_on = 'PSRC_ID')
-    summary_by_geoid10 = hh_taz.groupby('GEOID10')[['total_hhs', 'total_persons']].sum()
+    hh_taz = hh_taz.merge(lookup_parcels_df[['PSRC_ID', 'GEOID10']], how = 'left', left_on = 'hhparcel', right_on = 'PSRC_ID')
+    summary_by_geoid10 = hh_taz.groupby('GEOID10')[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()
     summary_by_geoid10.to_excel(writer, sheet_name = 'popsim_sum_geoid10')
 
     print('exporting summary by parcel...')   # too big for xlsx file
     summary_by_parcels.to_csv(os.path.join(prj.report_summary_output_location, 'hh_summary_by_parcel.csv'), header = True)
-    
+
+    # summary by income level
+    income_bins = [0, 25000, 50000, 75000, 100000, 150000, np.inf]
+    income_labels = ['0-25k', '25k-50k', '50k-75k', '75k-100k', '100k-150k', '150k+']
+    hh_taz['income_bin'] = pd.cut(hh_taz['hhincome'], bins = income_bins, labels = income_labels, right = False)
+    summary_by_income_bin = hh_taz.groupby(["Jurisdiction", "income_bin"])[['total_hhs', 'total_persons', 'ft_w', 'pt_w']].sum()
+    summary_by_income_bin.to_excel(writer, sheet_name = 'popsim_sum_income')
 
     if export_parcel_level_dataset == True:
         print('exporting households and persons by parcel...')
