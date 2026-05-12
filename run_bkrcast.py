@@ -579,12 +579,15 @@ if __name__ == "__main__":
     logger = logcontroller.setup_custom_logger('main_logger')
     logger.info('------------------------NEW RUN STARTING----------------------------------------------')
     start_time = datetime.datetime.now()
+    computer_name = get_current_computer_name()
     branch = get_current_branch()
     commit_hash = get_current_commit_hash()
+    computer_info = f'BKRCast is running on computer: {computer_name}'
     commit_info = f'BKRCast commit: {commit_hash}'
     branch_info = f'BKRCast Branch: {branch}'
     logger.info(branch_info)
     logger.info(commit_info)
+    logger.info(computer_info)
 
     main()
 
