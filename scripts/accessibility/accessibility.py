@@ -182,10 +182,10 @@ def main():
     intersections_df['nodes3'] = np.where(intersections_df['edge_count']==3, 1, 0)
     intersections_df['nodes4'] = np.where(intersections_df['edge_count']>3, 1, 0)
 
-    # assign network nodes to parcels, for buffer variables
+    # assign network (pandana network) nodes to parcels, for buffer variables
     data_wrangling.assign_nodes_to_dataset(parcels, net, 'node_ids', 'XCOORD_P', 'YCOORD_P')
 
-    # assign network nodes to transit stops, for buffer variable
+    # assign network (pandana network)nodes to transit stops, for buffer variable
     data_wrangling.assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
 
     # run all accibility measures
@@ -200,6 +200,14 @@ def main():
     # reduce perceived walk distance for light rail and ferry. This is used to calibrate to 2014 boarding and transfer rates
     parcels.loc[parcels['dist_lrt'] <= 1, 'dist_lrt'] = parcels['dist_lrt'] * 0.5
     parcels.loc[parcels['dist_fry'] <= 2, 'dist_fry'] = parcels['dist_fry'] * 0.5
+
+    subarea_df = pd.read_csv(os.path.join(main_inputs_folder, 'subarea_definition', 'TAZ_subarea.csv'), low_memory=False)
+    parcels = parcels.merge(subarea_df[['BKRCastTAZ', 'Subarea']], left_on='TAZ_P', right_on='BKRCastTAZ', how='left')
+
+    # apply additional distance penalties for LRT stations for certain subareas to calibrate to boarding/transfer rates
+    for station, config in access_config.LRT_Station_Accessibility.items():
+        parcels.loc[(parcels['dist_lrt'] <= 2) & (parcels['Subarea'].isin(config['impacted_subareas'])), 'dist_lrt'] = parcels['dist_lrt'] * config['multiplier']
+    parcels.drop(columns=['BKRCastTAZ', 'Subarea'], inplace=True)
     parcels_done = clean_up(parcels)
     parcels_done.to_csv(access_config.output_parcels, index = False, sep = ' ')
 

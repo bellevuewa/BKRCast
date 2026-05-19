@@ -70,3 +70,11 @@ park_size_weight = 0.0
 park_file_for_recbike = "inputs/accessibility/King_Sno_County_Parks.csv"
 excluded_park_list_for_recbike = r'inputs/supplemental/parks_excluded_from_rec_bike_generation.csv'
 additional_attractions_for_recbike = r'inputs/supplemental/additional_attractions_for_rec_bike.csv'
+
+## These are the variables that will be used in the accessibility calculations.
+LRT_Station_Accessibility = {
+    'Redmond_DT': {
+        "impacted_subareas": [32, 34, 35, 36, 37, 38],
+        "multiplier": 0.1
+    }
+}
