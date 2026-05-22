@@ -205,8 +205,11 @@ def main():
     parcels = parcels.merge(subarea_df[['BKRCastTAZ', 'Subarea']], left_on='TAZ_P', right_on='BKRCastTAZ', how='left')
 
     # apply additional distance penalties for LRT stations for certain subareas to calibrate to boarding/transfer rates
-    for station, config in access_config.LRT_Station_Accessibility.items():
-        parcels.loc[(parcels['dist_lrt'] <= 2) & (parcels['Subarea'].isin(config['impacted_subareas'])), 'dist_lrt'] = parcels['dist_lrt'] * config['multiplier']
+    if not access_config.LRT_Station_Accessibility:
+        for station, config in access_config.LRT_Station_Accessibility.items():
+            if not config:
+                parcels.loc[(parcels['dist_lrt'] <= 2) & (parcels['Subarea'].isin(config['impacted_subareas'])), 'dist_lrt'] = parcels['dist_lrt'] * config['multiplier']
+    
     parcels.drop(columns=['BKRCastTAZ', 'Subarea'], inplace=True)
     parcels_done = clean_up(parcels)
     parcels_done.to_csv(access_config.output_parcels, index = False, sep = ' ')
