@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\BKRCast_develop\BKR4-24-v21'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2024baseyear'
-base_year = '2024'  # BKRCast base year
-model_year = '2024'
+project_folder = r'F:\projects\2025baseyear\BKR4-25-v40'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear'
+base_year = '2025'  # BKRCast base year
+model_year = '2025'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2024' #name of the folder with scenario data
+scenario_name = '2025' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2026' 
@@ -29,13 +29,14 @@ modeller_initial = "hd"
 
     
 # For Overriding the simple configuration, when you want to run things in more detail:
-run_accessibility_calcs = False 
+run_update_parking = False #Only update parking for future-year analysis!
+run_accessibility_calcs = True 
 run_copy_daysim_code = True
-run_copy_input_files = False
+run_copy_input_files = True
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
 run_import_networks = False
-run_cumulative_slopes = True # run cumulative slopes for bike model. 
+run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
