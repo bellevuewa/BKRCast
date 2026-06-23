@@ -462,7 +462,7 @@ def build_output_dirs():
 
 def get_current_branch():  
     try:
-        branch_match = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', 'HEAD']).decode().strip()
+        branch_match = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr = subprocess.DEVNULL).decode().strip()
     except:
         branch_match = 'no git is found.'  
   
@@ -470,6 +470,10 @@ def get_current_branch():
             return None
     else:
         return os.path.basename(branch_match) 
+    
+def get_current_computer_name():
+    import socket
+    return socket.gethostname()
 
 def update_taz_accessibility_file(horizon_year):
     df = pd.read_csv(r'inputs/model/templates/TAZIndex_template.txt', sep ='\t')
