@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2025baseyear\BKR4-25-v40'
+project_folder = r'C:\Users\HDong\source\repos\BKRCastTestBed\BKR4-24-v21'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear'
 base_year = '2025'  # BKRCast base year
 model_year = '2025'
