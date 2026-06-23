@@ -214,18 +214,19 @@ def build_shadow_only(include_tnc_mode, include_wfh_mode):
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Shadow pricing crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
-        logger.info(f"End of {shad_iter} iteration of work location for shadow prices")
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
         shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
         rmse_list = shadow_con_file.readlines()
         iteration_number = len(rmse_list)
-
         current_rmse = float(rmse_list[iteration_number - 1].rstrip("\n"))
+        logger.info(f"End of {shad_iter} iteration of work location for shadow prices. RMSE is {current_rmse}.")
+
         if current_rmse < shadow_con:
             print("done with shadow prices")
             shadow_con_file.close()
             return
+        
 
 @timed
 def run_truck_supplemental(iteration):
