@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandana as pdna
 import os, sys
 import shutil
@@ -266,4 +268,15 @@ def main():
     print('Recreational bike accessibility is finished')
 
 if __name__ == '__main__':
-    main()    
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = data_wrangling.open_main_logger(meta_data, 'Accessibility')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
+    main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

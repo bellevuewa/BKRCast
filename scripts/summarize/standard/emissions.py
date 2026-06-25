@@ -11,6 +11,7 @@ import input_configuration as input_config
 import emme_configuration as emme_config
 import datetime
 import getopt
+from data_wrangling import open_main_logger
 
 # 3/12/2024
 # incorporated into BKRCast. Originally from Soundcast.
@@ -409,4 +410,15 @@ def main():
     print('Done')    
 
 if __name__ == '__main__':
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

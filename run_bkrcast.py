@@ -46,7 +46,9 @@ def accessibility_calcs():
     copy_accessibility_files()
 
     print('Beginning Accessibility Calculations')
-    returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'])
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
+    returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'], env=env)
     if returncode != 0 and returncode != 3221225477:
         print('Accessibility Calculations Failed For Some Reason :(')
         sys.exit(1)
@@ -56,10 +58,12 @@ def accessibility_calcs():
 def build_seed_skims(max_iterations):
     print("Processing skims and paths.")
     time_copy = datetime.datetime.now()
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
     returncode = subprocess.call([sys.executable,
         'scripts/skimming/SkimsAndPaths.py', '-i',
         str(max_iterations),
-        'build_free_flow_skims'])
+        'build_free_flow_skims'], env=env)
     if returncode != 0 and returncode != 3221225477:
         sys.exit(1)
          
@@ -234,21 +238,23 @@ def run_truck_supplemental(iteration):
     ### RUN Supplemental Trips
     ##########################################################
     ### Adds external, special generator, and group quarters trips to DaySim
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
     if run_supplemental_trips:
         # Only run generation script once - does not change with feedback
         if iteration == 0:
-            returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'])
+            returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'], env=env)
             if returncode != 0 and returncode != 3221225477:
                 logger.info(f'Supplemental trip generation crashed unexpectedly. The return code is {returncode}')
                 sys.exit(1)
 
         #run distribution
-        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'])
+        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Distribute_non_work_ixxi.py crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
 
-        returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'])
+        returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Airport model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
@@ -256,7 +262,7 @@ def run_truck_supplemental(iteration):
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
-        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'])
+        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Truck model crashed unexpectedly. The return code is {returncode}')
             sys.exit(1)
@@ -282,14 +288,16 @@ def daysim_assignment(iteration):
      #### ASSIGNMENTS ##############################################################
      if run_skims_and_paths:
         logger.info(f"Start of {iteration} iteration of Skims and Paths")
-        returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)])
+        env = os.environ.copy()
+        env['RUN_CONTEXT'] = 'chained'
+        returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)], env=env)
          
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Skims crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
 
         # no need to run recreational bike here. It is run after the last iteration of skims and paths
-        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
+        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             logger.info(f'Bike model crashed unexpectedly. The return code from skims and paths is {returncode}')
             sys.exit(1)
@@ -306,34 +314,36 @@ def check_convergence(iteration):
 
 @timed
 def run_all_summaries():
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
 
-   if run_bkrcast_summary:
-      if int(model_year) <= 2023:
-        subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'])
-      else:
-        subprocess.call([sys.executable, 'run_bkrcast_validation.py'])
+    if run_bkrcast_summary:
+        if int(model_year) <= 2023:
+            subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'], env=env)
+        else:
+            subprocess.call([sys.executable, 'run_bkrcast_validation.py'], env=env)
 
-   #Create a daily network with volumes. Will add counts and summary emme project. 
-   if run_create_daily_bank:
-      subprocess.call([sys.executable, 'scripts/summarize/standard/network_summary.py'])
-      subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'])
+    #Create a daily network with volumes. Will add counts and summary emme project. 
+    if run_create_daily_bank:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/network_summary.py'], env=env)
+        subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'], env=env)
 
-   if run_landuse_summary:
-      subprocess.call([sys.executable, 'scripts/summarize/standard/landuse_summary.py'])
-      
-   if run_truck_summary:
-       subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'])
+    if run_landuse_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/landuse_summary.py'], env=env)
+        
+    if run_truck_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'], env=env)
 
-   if run_vmt_summary:
-       subprocess.call([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'])
-    
-   if run_telecommute_summary:
-       subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'])
+    if run_vmt_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'], env=env)
+        
+    if run_telecommute_summary:
+        subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'], env=env)
 
-   if run_modeshare_summary:
-       for district in ['BelDT', 'Bellevue', 'Kirkland', 'Redmond']:
-          subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district])
-          subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district])
+    if run_modeshare_summary:
+        for district in ['BelDT', 'Bellevue', 'Kirkland', 'Redmond']:
+            subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district], env=env)
+            subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district], env=env)
 
 def clean_output_folder():
     folders_kept = ['landuse', 'bike'] # subfolders inside outputs
@@ -355,19 +365,21 @@ def run_recreational_bike():
     logger.info('Running the recreational bike model')
     print('Running the recreational bike as part of the supplemental module')
     print('Calculating accessibility for recreational bike')
-    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'])
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
+    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'], env=env)
     if returncode != 0 and returncode != 3221225477:    
         print('bike_accessibility is was crashed.')
         sys.exit(1)
 
     print('Generating recreational bike trips')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'])
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'], env=env)
     if returncode != 0 and returncode != 3221225477:
         print('recreational bike generation is crashed.')
         sys.exit(1) 
 
     print('Assignment recreational bike trips')
-    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-b'])
+    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-b'], env=env)
     if returncode != 0 and returncode != 3221225477:
         print('recreational bike assignment is crashed.')
         sys.exit(1)
@@ -486,11 +498,13 @@ def main():
         setup_emme_project_folders()
 
 ### IMPORT NETWORKS ###############################################################
+    env = os.environ.copy()
+    env['RUN_CONTEXT'] = 'chained'
     if run_import_networks:
         time_copy = datetime.datetime.now()
         logger.info("Start of network importer")
         returncode = subprocess.call([sys.executable,
-        'scripts/network/network_importer.py', base_inputs])
+        'scripts/network/network_importer.py', base_inputs], env=env)
         logger.info("End of network importer")
         time_network = datetime.datetime.now()
         if returncode != 0 and returncode != 3221225477:
@@ -500,7 +514,7 @@ def main():
     print('adding JBLM workers to external workers')
     print('adjusting non-work externals')
     print('creating ixxi file for Daysim')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'])
+    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'], env=env)
     if returncode != 0 and returncode != 3221225477:
         print('Military Job loading failed')
         sys.exit(1)
@@ -511,7 +525,7 @@ def main():
 
     if run_cumulative_slopes:
         logger.info('Running culmulative slope calculation')
-        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']) 
+        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             print('Cumulative slope calculation failed')
             sys.exit(1)
@@ -522,7 +536,7 @@ def main():
         # run_truck_supplemental(0)
         build_seed_skims(10)
         # no need to run rec bike assignment in seeding trips
-        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'])
+        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'], env=env)
         if returncode != 0 and returncode != 3221225477:
             sys.exit(1)
 

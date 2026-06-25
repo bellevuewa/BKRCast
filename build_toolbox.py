@@ -53,7 +53,7 @@
 # with minimum edits, create BKRCast toolbox.
 
 from __future__ import print_function
-import os
+import os, sys
 import base64
 from datetime import datetime
 import pickle
@@ -61,10 +61,12 @@ import py_compile
 import sqlite3.dbapi2 as sqllib
 import subprocess
 import shutil
-
+sys.path.append(os.path.join(os.getcwd(),"inputs"))
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import inro.director.util.ucs as ucslib
 import emme_configuration as emme_config
 import input_configuration as input_config
+from data_wrangling import open_main_logger
 
 CONJUNCTIONS = {'and', 'for', 'or', 'the', 'in', 'at', 'as', 'by', 'so', 'that'}
 
@@ -487,6 +489,7 @@ def explore_source_folder(root_folder_path, parent_node, consolidate):
 if __name__ == "__main__":
 
     import argparse
+    logger, start_time = open_main_logger(True,'Data Processing')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', help="Output file path. Default is 'BKRCast_Toolbox.mtbs' in the working folder.")
@@ -498,6 +501,8 @@ if __name__ == "__main__":
                         action='store_true')
 
     args = parser.parse_args()
+
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", ", ".join(f"{k}={v}" for k, v in vars(args).items()))
 
     current_folder = os.path.dirname(os.path.abspath(__file__))
     src_folder = os.path.join(current_folder, 'scripts/modeller') if args.src is None else args.src
@@ -515,3 +520,4 @@ if __name__ == "__main__":
             shutil.copy(toolbox_fp, dest_path)
         else:
             print(f'{dest_path} does not exist. MTBX file is not copied.')
+

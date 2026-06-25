@@ -683,3 +683,21 @@ def od_list_to_matrix_numpy(file_path, skip_headerlines = 5, n_zones=None):
     filtered_matrix = matrix[np.ix_(unique_origins - 1, unique_dests - 1)]
     df = pd.DataFrame(filtered_matrix, index = unique_origins, columns = unique_dests)
     return matrix, df
+
+def open_main_logger(meta_data = True, info=''):
+    import logcontroller
+    logger = logcontroller.setup_custom_logger('main_logger')
+    if meta_data:
+        logger.info(f'------------------------{info}----------------------------------------------')
+        computer_name = get_current_computer_name()
+        branch = get_current_branch()
+        commit_hash = get_current_commit_hash()
+        computer_info = f'BKRCast is running on computer: {computer_name}'
+        commit_info = f'BKRCast commit: {commit_hash}'
+        branch_info = f'BKRCast Branch: {branch}'
+        logger.info(branch_info)
+        logger.info(commit_info)
+        logger.info(computer_info)
+        
+    start_time = datetime.datetime.now()
+    return logger, start_time

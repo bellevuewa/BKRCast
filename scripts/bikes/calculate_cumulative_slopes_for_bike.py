@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 import geopandas as gpd
 import rasterio
@@ -10,7 +12,7 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import input_configuration as bkr_config
 import emme_configuration as emme_config
-
+from data_wrangling import open_main_logger
 from EmmeProject import *
 
 # this script is to replace old cumulative slope calculation scripts bkr_slope.py and bkr_slope_step2.py.
@@ -154,4 +156,15 @@ def query_chunk(indexed_geoms):
     return list(zip(idxs, elevations))
 
 if __name__ == '__main__':
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')
