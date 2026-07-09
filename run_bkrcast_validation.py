@@ -1,9 +1,12 @@
+import datetime
 import os, sys, time
 import nbformat
 import yaml
 import shutil
 from nbconvert.preprocessors import ExecutePreprocessor
 from input_configuration import project_folder, run_bkrcast_summary
+sys.path.append(os.path.join(os.getcwd(),"scripts"))
+from data_wrangling import open_main_logger
 
 def run_ipynb(sheet_name, nb_path):
     start_time = time.time()
@@ -73,4 +76,15 @@ def main():
                                output_folder = qcfg['project']['output-dir']) 
 
 if __name__ == "__main__":
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

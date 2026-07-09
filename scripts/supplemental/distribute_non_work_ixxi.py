@@ -1,4 +1,5 @@
 ﻿import array as _array
+import datetime
 import os
 import pandas as pd
 import h5py
@@ -11,6 +12,7 @@ sys.path.append(os.getcwd())
 import  emme_configuration as emme_config
 import input_configuration as bkr_config
 from EmmeProject import *
+from data_wrangling import open_main_logger
 
 def load_skims(skim_file_loc, mode_name, divide_by_100=False):
     ''' Loads H5 skim matrix for specified mode. '''
@@ -200,4 +202,15 @@ def main():
     my_project.closeDesktop()
 
 if __name__ == "__main__":
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Supplemental')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

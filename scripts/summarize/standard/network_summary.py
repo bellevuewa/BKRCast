@@ -501,6 +501,17 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
         transit_hub_summary_df = transit_hub_summary_df[['transit_hubs', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_transfer_alighting', 'segment_final_alighting']].groupby('transit_hubs').sum().reset_index()
         transit_hub_summary_df.to_excel(writer, sheet_name = 'transit_hub_summary', index = False, startrow = 1)
 
+        # read in 2LRT_stations.json
+        lrt_station_lookup_dict = data_wrangling.json_to_dictionary("2LRT_stations")
+        lrt_stations_df = pd.DataFrame(list(lrt_station_lookup_dict.items()), columns = ['2Line_stations', 'node_id'])
+        lrt_stations_names = lrt_stations_df[['2Line_stations']].copy()
+        lrt_stations_df = lrt_stations_df.explode('node_id').reset_index(drop = True)
+        lrt_stations_summary_df = df_transit_stops_daily.merge(lrt_stations_df, left_on = 'node_id', right_on = 'node_id', how = 'right')
+        lrt_stations_summary_df = lrt_stations_summary_df[['2Line_stations', 'segment_boarding', 'segment_initial_boarding', 'segment_transfer_boarding', 'segment_alighting', 'segment_transfer_alighting', 'segment_final_alighting']].groupby('2Line_stations').sum().reset_index()
+        lrt_stations_summary_df = lrt_stations_summary_df.merge(lrt_stations_names, left_on = '2Line_stations', right_on = '2Line_stations', how = 'right')
+        lrt_stations_summary_df.to_excel(writer, sheet_name = '2Line_summary', index = False, startrow = 1)
+
+
 def count_and_sum_landuse_data(node, tree, radius, attributes_df):
     captured_pts = tree.query_ball_point((node.geometry.x, node.geometry.y), radius)
     captured_attributes = attributes_df.iloc[captured_pts]
@@ -1000,4 +1011,15 @@ def calculate_boarding_for_partner_cities(df_transit_line, df_transit_segment):
  
                         
 if __name__ == "__main__":
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = data_wrangling.open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

@@ -267,7 +267,9 @@ def main():
             daily_scenario.delete_extra_attribute('@mveh' + tod)
         if daily_scenario.extra_attribute('@hveh' + tod):
             daily_scenario.delete_extra_attribute('@hveh' + tod)
-
+        if daily_scenario.extra_attribute('@volax' + tod):
+            daily_scenario.delete_extra_attribute('@volax' + tod)
+        
 
         # copy auto volume in each tod to daily bank
         attr = daily_scenario.create_extra_attribute('LINK', '@v' + tod)
@@ -291,6 +293,11 @@ def main():
         attr = daily_scenario.create_extra_attribute('LINK', '@hveh' + tod)
         attr.description = 'heavy vehicle volume ' + tod
         values = scenario.get_attribute_values('LINK', ['@hveh'])
+        daily_scenario.set_attribute_values('LINK', [attr], values)
+
+        attr = daily_scenario.create_extra_attribute('LINK', '@volax' + tod)
+        attr.description = 'transit walk access volume ' + tod
+        values = scenario.get_attribute_values('LINK', ['aux_transit_volume']) #volax
         daily_scenario.set_attribute_values('LINK', [attr], values)
 
         # copy transit volume (on link) in each tod to daily bank
@@ -424,6 +431,9 @@ def main():
     attr = daily_scenario.create_extra_attribute('LINK', '@hveh_daily')
     attr.description = 'daily heavy truck vehicle volume'
 
+    attr = daily_scenario.create_extra_attribute('LINK', '@volax_daily')
+    attr.description = 'daily transit walk access volume'
+
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_boarding')
     attr.description = 'daily total boarding at stop'
     attr = daily_scenario.create_extra_attribute('NODE', '@daily_iboarding')
@@ -462,6 +472,7 @@ def main():
     attr_list.extend(['@bveh' + x for x in tods])
     attr_list.extend(['@mveh' + x for x in tods])
     attr_list.extend(['@hveh' + x for x in tods])
+    attr_list.extend(['@volax' + x for x in tods])
 
     if input_config.include_rec_bike:    
         attr_list.extend(['@recbvol' + x for x in tods])
@@ -475,6 +486,7 @@ def main():
                 link['@bveh_daily'] = link['@bveh_daily'] + link['@bveh' + item]
                 link['@mveh_daily'] = link['@mveh_daily'] + link['@mveh' + item]
                 link['@hveh_daily'] = link['@hveh_daily'] + link['@hveh' + item]
+                link['@volax_daily'] = link['@volax_daily'] + link['@volax' + item]
     else: 
         for link in daily_network.links():
             for item in tods:
@@ -484,6 +496,7 @@ def main():
                 link['@bveh_daily'] = link['@bveh_daily'] + link['@bveh' + item]
                 link['@mveh_daily'] = link['@mveh_daily'] + link['@mveh' + item]
                 link['@hveh_daily'] = link['@hveh_daily'] + link['@hveh' + item]
+                link['@volax_daily'] = link['@volax_daily'] + link['@volax' + item]
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
@@ -573,4 +586,15 @@ def create_daily_project_folder():
     print('daily project folder is created.')
 
 if __name__ == '__main__':
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

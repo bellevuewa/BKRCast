@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 import numpy as np
 import os, sys
@@ -7,7 +9,7 @@ from colorama import init, Fore
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 from EmmeProject import *
-import data_wrangling
+from data_wrangling import open_main_logger
 import input_configuration as input_config
 import emme_configuration as emme_config
 
@@ -435,4 +437,15 @@ def main():
     my_project.closeDesktop()
     
 if __name__ == "__main__":
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Bike Model')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

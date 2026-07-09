@@ -98,4 +98,9 @@ def main():
 
 
 if __name__ == '__main__':
+    logger, start_time = utility.open_main_logger('Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')

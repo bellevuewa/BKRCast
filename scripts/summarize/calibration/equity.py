@@ -9,6 +9,7 @@ from h5toDF import *
 import getopt
 import input_configuration as prj
 from summary_functions import *
+from data_wrangling import open_main_logger
 
 def aggregate_by_attribute(df, select_attr_name, group_attr_name, aggregate_attr_name, show_percent = True):
     select_attr_name_values = np.sort(df[select_attr_name].unique())
@@ -348,4 +349,15 @@ def main():
     print('equity report is generated.')
 
 if __name__ == '__main__':
+    run_context = os.getenv('RUN_CONTEXT') # chained if this script is called from another script, otherwise it is standalone
+    if run_context == 'chained':
+        meta_data = False
+    else:
+        meta_data = True
+
+    logger, start_time = open_main_logger(meta_data, 'Data Processing')
+    logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    end_time = datetime.datetime.now()
+    elapsed_total = end_time - start_time
+    logger.info(f'Total run time: {elapsed_total}')
