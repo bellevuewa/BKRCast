@@ -10,8 +10,8 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2025baseyear\BKR4-25-v40'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear'
+project_folder = r'F:\projects\2025baseyear\BKR4-25-v51'
+parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear_spring_district_adjustment_GIX'
 base_year = '2025'  # BKRCast base year
 model_year = '2025'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
@@ -41,7 +41,7 @@ run_cumulative_slopes = True # run cumulative slopes for bike model. This can be
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = False
+run_skims_and_paths_seed_trips = True
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True

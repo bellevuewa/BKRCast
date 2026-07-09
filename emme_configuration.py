@@ -144,7 +144,7 @@ transit_node_constants = {'am': {
                           'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'Link_Line_2': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0.25'},
-                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '.8', '@addfare' : '0'},
+                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0'},
                           'M240': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'}
                           },
                         'md': {
@@ -153,7 +153,7 @@ transit_node_constants = {'am': {
                           'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'Link_Line_2': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0.25'},
-                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '.8', '@addfare' : '0'},
+                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0'},
                           'M240': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'}
                           },
                         'pm': {
@@ -162,7 +162,7 @@ transit_node_constants = {'am': {
                           'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'Link_Line_2': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0.25'},
-                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '.8', '@addfare' : '0'},
+                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0'},
                           'M240': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'}
                           },
                         'ni': {
@@ -171,7 +171,7 @@ transit_node_constants = {'am': {
                           'M255': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'S550': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'},
                           'Link_Line_2': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0.25'},
-                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '.8', '@addfare' : '0'},
+                          'M00B': {'@hdwfr': '.5', '@wait' : '2', '@invt' : '1', '@addfare' : '0'},
                           'M240': {'@hdwfr': '.5', '@wait' : '4', '@invt' : '3', '@addfare' : '0'}
                           }
                         }
