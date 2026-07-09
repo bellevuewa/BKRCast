@@ -261,12 +261,12 @@ def balance_matrices(my_project):
                                 constraint_by_zone_origins = '1-' + str(truck_config.HIGH_STATION))
 
     # Balance Delivery Trucks
-    my_project.matrix_balancing(results_od_balanced_values = 'mfdeldis', 
-                                od_values_to_balance = 'mfdelimp', 
-                                origin_totals = 'modtpro', 
-                                destination_totals = 'mddtatt', 
-                                constraint_by_zone_destinations = '1-' + str(truck_config.HIGH_STATION), 
-                                constraint_by_zone_origins = '1-' + str(truck_config.HIGH_STATION))
+    # my_project.matrix_balancing(results_od_balanced_values = 'mfdeldis', 
+    #                            od_values_to_balance = 'mfdelimp', 
+    #                            origin_totals = 'modtpro', 
+    #                            destination_totals = 'mddtatt', 
+    #                           constraint_by_zone_destinations = '1-' + str(truck_config.HIGH_STATION), 
+    #                           constraint_by_zone_origins = '1-' + str(truck_config.HIGH_STATION))
 
 def calculate_daily_trips(my_project):
     #Calculate Daily OD trips:
