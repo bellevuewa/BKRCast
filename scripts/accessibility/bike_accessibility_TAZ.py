@@ -277,6 +277,6 @@ if __name__ == '__main__':
     logger, start_time = data_wrangling.open_main_logger(meta_data, 'Accessibility')
     logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
-    end_time = datetime.datetime.now()
+    end_time = datetime.now()
     elapsed_total = end_time - start_time
     logger.info(f'Total run time: {elapsed_total}')
