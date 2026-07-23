@@ -720,7 +720,32 @@ class EmmeProject:
             if route in line.description:
                 line_ids[line.id] = line.description
         return line_ids
-                                            
+    
+    def find_transit_travel_time_by_route_and_node_pair(self, route, start_node, end_node) -> tuple:
+        # given a start node and end node, find the line Id for the transit line that connects these two nodes. If there are multiple lines connecting these two nodes, return the first one. 
+        # If no line connects these two nodes, return None.
+        for line in self.current_scenario.get_network().transit_lines():
+            if route in line['description']:
+                travel_time = 0
+                start_found = False
+                end_found = False
+                line_id = line.id
+                for segment in line.segments():
+                    if segment.i_node.number == start_node:
+                        start_found = True
+                        end_found = False
+
+                    if segment.j_node.number == end_node:
+                        end_found = True
+
+                    if start_found == True:
+                        travel_time += segment.transit_time
+
+                    if start_found == True and end_found == True:
+                        return line_id, travel_time
+                    
+        return None, None
+                                           
 def json_to_dictionary(dict_name):
 
     #Determine the Path to the input files and load them

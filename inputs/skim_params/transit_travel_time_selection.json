@@ -1,0 +1,37 @@
+{
+    "metadata": {
+        "horizon_year": 2045
+    },
+    "M240": [
+        {"start_id": 5030, "end_id": 123241},
+        {"start_id": 123241, "end_id": 5030},
+        {"start_id": 5030, "end_id": 6960},
+        {"start_id": 6401, "end_id": 5030}
+    ],
+    "Link_Line_2":[
+        {"start_id": 9948, "end_id": 9621},
+        {"start_id": 9621, "end_id": 9948},
+        {"start_id": 9305, "end_id": 9948},
+        {"start_id": 9948, "end_id": 9305}
+    ],
+    "M00B": [
+        {"start_id": 5030, "end_id": 1818},
+        {"start_id": 1818, "end_id": 5030}
+    ],
+    "M226": [
+        {"start_id": 5793, "end_id": 5026},
+        {"start_id": 5026, "end_id": 5793}
+    ],
+    "M223": [
+        {"start_id": 6401, "end_id": 6019},
+        {"start_id": 6019, "end_id": 6401}
+    ],
+    "M245": [
+        {"start_id": 6960, "end_id": 5098},
+        {"start_id": 5098, "end_id": 6960}
+    ],
+    "M250": [
+        {"start_id": 5026, "end_id": 7644},
+        {"start_id": 7644, "end_id": 5026}
+    ]
+}
