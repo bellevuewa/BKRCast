@@ -5,7 +5,7 @@ import pandas as pd
 
 
 survey_year = 2014
-if base_year in ['2023', '2024']:
+if int(base_year) >= 2023:
     survey_year = '2023'
 
 def copy_to_clipboard(df):
