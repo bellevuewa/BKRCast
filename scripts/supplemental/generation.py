@@ -10,9 +10,9 @@ sys.path.append(os.getcwd())
 from emme_configuration import *
 import input_configuration as bkr_config
 import accessibility.accessibility_configuration as access_config
-from data_wrangling import *
+import data_wrangling
 
-def balance_trips(df, trip_purposes, balanced_to):
+def balance_supplemental_trips(df, trip_purposes, balanced_to):
     """ Balance trips to productions or attractions."""
     if balanced_to == 'pro':
         to_balance = 'att'
@@ -347,12 +347,12 @@ def main():
 
     hh_person = bkr_config.households_persons_file
     hh_people = h5py.File(hh_person,'r') 
-    hh_df = h5_to_df(hh_people, 'Household')
+    hh_df = data_wrangling.h5_to_df(hh_people, 'Household')
     hh_df = hh_df[hh_variables]
-    person_df = h5_to_df(hh_people, 'Person')
+    person_df = data_wrangling.h5_to_df(hh_people, 'Person')
     person_df = person_df[person_variables]
 
-    parcels = load_parcel_data_without_JBLM_jobs(parcel_file)
+    parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(parcel_file)
     parcels.columns = parcels.columns.str.lower()
     parcels = parcels.loc[:,original_parcel_columns]
     parcels.columns = updated_parcel_columns
@@ -557,8 +557,8 @@ def main():
     df_taz.to_csv(supplemental_loc+'/6_adjust_trip_ends.csv',index=True)
 
     # Balance the taz dataframe
-    balanced_df = balance_trips(df_taz, balance_to_productions, 'pro')
-    balanced_df = balance_trips(df_taz, balance_to_attractions, 'att')
+    balanced_df = balance_supplemental_trips(df_taz, balance_to_productions, 'pro')
+    balanced_df = balance_supplemental_trips(df_taz, balance_to_attractions, 'att')
     balanced_df.to_csv(supplemental_loc+'/7_balance_trip_ends.csv',index=True)
     print('Finished generating supplemental trips.')
 
@@ -569,9 +569,10 @@ if __name__ == "__main__":
     else:
         meta_data = True
 
-    logger, start_time = open_main_logger(meta_data, 'Supplemental')
+    logger, start_time = data_wrangling.open_main_logger(meta_data, 'Supplemental')
     logger.info(f"Running script: {os.path.basename(__file__)} %s", " ".join(sys.argv[1:]))
     main()
+    import datetime
     end_time = datetime.datetime.now()
     elapsed_total = end_time - start_time
     logger.info(f'Total run time: {elapsed_total}')
