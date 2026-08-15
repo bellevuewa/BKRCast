@@ -293,6 +293,9 @@ else:
         acs_data = 'inputs/model/survey/ACS_2023.xlsx'
     else:
         acs_data = 'inputs/model/survey/ACS_2023_BKR.xlsx'
+    TOUR_FACTOR_PSRC_2023 = 1.133089 # DO NOT CHANGE! because in year 2023, many records got dropped after converting into tours.
+    TOUR_FACTOR_BKR_2023 = 1.584138  # DO NOT CHANGE! we use this scale to recover back the tour weights
+    # trip weights in the PSRC region before converting into tours is 1.133089 times (1.584138 for the BKR area) of the trip weights after conversion.     
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
