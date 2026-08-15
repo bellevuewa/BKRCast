@@ -8,7 +8,9 @@ bellevue_color = ['#00C0C0', '#006598', '#FFA500']
 
 # psrc template
 pio.templates["bellevue_color"] = go.layout.Template(
-    layout_colorway=bellevue_color, layout_font=dict(size=12, family="Poppins")
+    layout_colorway=bellevue_color, 
+    layout_font=dict(size=12, family="Poppins"),
+    layout_width=1050,
 )
 
 pio.renderers.default = "plotly_mimetype+notebook_connected"

@@ -32,6 +32,7 @@ format:
     code-tools: true
     toc: true
     toc-location: left
+    fig-align: center
     # smooth-scroll: true
     # number-sections: true
     # html-math-method: katex
