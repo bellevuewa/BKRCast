@@ -16,7 +16,7 @@
     ],
     "M00B": [
         {"start_id": 5030, "end_id": 1818},
-        {"start_id": 1818, "end_id": 5030}
+        {"start_id": 1818, "end_id": 5026}
     ],
     "M226": [
         {"start_id": 5793, "end_id": 5026},
@@ -33,5 +33,9 @@
     "M250": [
         {"start_id": 5026, "end_id": 7644},
         {"start_id": 7644, "end_id": 5026}
+    ],
+    "M271": [
+        {"start_id": 5030, "end_id": 6401},
+        {"start_id": 6401, "end_id": 5030}
     ]
 }
