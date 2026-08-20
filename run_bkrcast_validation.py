@@ -3,6 +3,10 @@ import os, sys, time
 import nbformat
 import yaml
 import shutil
+import asyncio
+from asyncio import WindowsSelectorEventLoopPolicy
+asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+
 from nbconvert.preprocessors import ExecutePreprocessor
 from input_configuration import project_folder, run_bkrcast_summary
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
