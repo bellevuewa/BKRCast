@@ -10,7 +10,7 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'F:\projects\2025baseyear\BKR4-25-v51'
+project_folder = r'D:\Ming\BKRCast\2025baseyear\BKR4-25-v54'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear_spring_district_adjustment_GIX'
 base_year = '2025'  # BKRCast base year
 model_year = '2025'
@@ -35,7 +35,7 @@ run_copy_daysim_code = True
 run_copy_input_files = True
 run_setup_emme_project_folders = False
 run_setup_emme_bank_folders = False
-run_import_networks = False
+run_import_networks = True
 run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
@@ -68,7 +68,7 @@ include_rec_bike = True # inplemented as part of supplemental
 
 # include work from home
 include_wfh = True
-WFH_Percent = 0.3 # this is the WFH percentage assumption for the model year.  This will be used to calculate the WFH constant in daysim.
+WFH_Percent = 0.32 # this is the WFH percentage assumption for the model year.  This will be used to calculate the WFH constant in daysim.
 
 include_delivery = False
 
@@ -295,7 +295,7 @@ else:
         acs_data = 'inputs/model/survey/ACS_2023_BKR.xlsx'
     TOUR_FACTOR_PSRC_2023 = 1.133089 # DO NOT CHANGE! because in year 2023, many records got dropped after converting into tours.
     TOUR_FACTOR_BKR_2023 = 1.584138  # DO NOT CHANGE! we use this scale to recover back the tour weights
-    # trip weights in the PSRC region before converting into tours is 1.133089 times (1.584138 for the BKR area) of the trip weights after conversion.     
+    # trip weights in the PSRC region before converting into tours is 1.133089 times (1.584138 for the BKR area) of the trip weights after conversion.        
 
 network_validation_output_filename = scenario_name + '_network_validation.xlsx'
 
