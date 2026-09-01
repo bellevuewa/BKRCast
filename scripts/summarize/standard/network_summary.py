@@ -215,7 +215,7 @@ def help():
     print('')           
     print('This script will generates the following results:')
     print('  outputs/network:')
-    print('      network_summary.xlsx: lane miles/VMT/VHT/VHD by facility type and jurisdiction, and by user class and jurisdiction')
+    print('      network_summary.xlsx: lane miles/VMT/VHT/VHD by functional class and jurisdiction, and by user class and jurisdiction')
     print('      network_results.csv: links with all attributes')
     print('      iz_vol.csv: intrazonal trips') 
     print('  outputs/transit:')       
@@ -248,8 +248,9 @@ def summarize_network(df, node_attr_study_area):
     # Define facility type
     kc_df.loc[kc_df['@class'].isin([1]), 'facility_type'] = 'freeway'
     kc_df.loc[kc_df['@class'].isin([10,20]), 'facility_type'] = 'arterial'
-    kc_df.loc[kc_df['@class'].isin([30]), 'facility_type'] = 'connector'
+    kc_df.loc[kc_df['@class'].isin([30]), 'facility_type'] = 'collector'
     kc_df.loc[kc_df['@class'].isin([40]), 'facility_type'] = 'local'
+    kc_df.loc[kc_df['@class'].isin([50]), 'facility_type'] = 'centroid connector'
 
     # Calculate delay
     # Select links from overnight time of day
@@ -281,11 +282,11 @@ def summarize_network(df, node_attr_study_area):
         df.to_csv(input_config.network_results_path)
         lane_miles = kc_df[kc_df['tod']=='6to9'].copy()
         lane_miles = pd.pivot_table(lane_miles, values='lane_miles', index='@bkrlink',columns='facility_type', aggfunc='sum').reset_index()
-        lane_miles.rename(columns = {col:col+'_lane_miles' for col in lane_miles.columns if col in ['freeway', 'arterial', 'connector', 'local']}, inplace = True)
+        lane_miles.rename(columns = {col:col+'_lane_miles' for col in lane_miles.columns if col in ['freeway', 'arterial', 'collector', 'local', 'centroid connector']}, inplace = True)
     
         for metric in ['VMT', 'VHT', 'VHD']:
             city_sum = pd.pivot_table(kc_df, values = metric, index = ['@bkrlink'], columns = 'facility_type', aggfunc = 'sum').reset_index()
-            city_sum.rename(columns = {col:col + "_" + metric.lower() for col in city_sum.columns if col in ['freeway', 'arterial', 'connector', 'local']}, inplace = True) 
+            city_sum.rename(columns = {col:col + "_" + metric.lower() for col in city_sum.columns if col in ['freeway', 'arterial', 'collector', 'local', 'centroid connector']}, inplace = True) 
             lane_miles = lane_miles.merge(city_sum, how = 'left', on = '@bkrlink')            
 
         lane_miles = lane_miles.replace(input_config.bkrlink_dict)
@@ -295,7 +296,8 @@ def summarize_network(df, node_attr_study_area):
         wksheet.write(1, 0, 'Lane Miles and VMT/VHT/VHD by @bkrlink')    
         foot_note_start = 2 + lane_miles.shape[0] + 2
         wksheet.write(foot_note_start, 0, 'Notes')
-        wksheet.write(foot_note_start + 1, 0, 'VMT/VHT/VHD: daily, including centroid connector')                              
+        wksheet.write(foot_note_start + 1, 0, 'VMT/VHT/VHD: daily, including centroid connector')  
+        wksheet.write(foot_note_start + 2, 0, '@tveh is used to calculate VMT, VHT and VHD')                            
         
         # Totals by functional classification
         startrow = 2

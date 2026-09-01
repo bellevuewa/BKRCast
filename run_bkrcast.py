@@ -207,10 +207,11 @@ def build_shadow_only(include_tnc_mode, include_wfh_mode):
      for shad_iter in range(0, len(shadow_work)):
         daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
+        # Test 27 cents before 2044 08/12/2026
         if int(model_year) >= 2044:
-            daysim_config_update.append(("$OP_COST", 0.36))
+            daysim_config_update.append(("$OP_COST", 0.44))
         else:
-            daysim_config_update.append(("$OP_COST", 0.20))
+            daysim_config_update.append(("$OP_COST", 0.27))
         modify_config(daysim_config_update)
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
@@ -559,11 +560,12 @@ def main():
             build_shadow_only(include_tnc_mode, include_wfh_mode)
 
             daysim_config_update = [("$SHADOW_PRICE" ,"true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE", 1), ("$RUN_ALL", "true")]
-            # use new operating cost 0.36 after 2044, otherwise use 0.2 
+            # use new operating cost 0.36 after 2044, otherwise use 0.2
+            # Test 27 cents before 2044 08/12/2026 
             if int(model_year) >= 2044:
-                daysim_config_update.append(("$OP_COST", 0.36))
+                daysim_config_update.append(("$OP_COST", 0.44))
             else:
-                daysim_config_update.append(("$OP_COST", 0.20))
+                daysim_config_update.append(("$OP_COST", 0.27))
 
             modify_config(daysim_config_update)
             

@@ -24,9 +24,9 @@ from data_wrangling import *
 outputfilename = 'system_metrics.txt'
 
 def calculate_system_metrics(links_df, tod, groupby):
-    links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
-    links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
-    links_df[tod+'_VHD'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
+    links_df[tod+'_VMT'] = links_df['length'] * links_df['@tveh']
+    links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['@tveh']
+    links_df[tod+'_VHD'] = links_df['@tveh'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
 
     ret = links_df[[groupby, tod+'_VMT', tod+'_VHT', tod+'_VHD']].groupby(groupby).sum()
 
@@ -35,9 +35,9 @@ def calculate_system_metrics(links_df, tod, groupby):
 def calculate_for_GHG(links_df, tod, attr):
     links_df['speedau'] = links_df['length'] / (links_df['auto_time'] / 60.0)
     links_df['speed_bins'] = pd.cut(links_df['speedau'], bins = prj.auto_speed_bins)
-    links_df[tod+'_VMT'] = links_df['length'] * links_df['auto_volume']
-    links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['auto_volume']
-    links_df[tod+'_VHD'] = links_df['auto_volume'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
+    links_df[tod+'_VMT'] = links_df['length'] * links_df['@tveh']
+    links_df[tod+'_VHT'] = (links_df['auto_time'] / 60) * links_df['@tveh']
+    links_df[tod+'_VHD'] = links_df['@tveh'] * (links_df['auto_time'] / 60 - links_df['length'] / links_df['data2'])
     ret = links_df[['speed_bins', attr, tod+'_VMT',tod+'_VHT', tod+'_VHD']].groupby([attr, 'speed_bins'], observed= True).sum()
     return ret
     
@@ -46,6 +46,7 @@ def calculate_for_GHG(links_df, tod, attr):
 def help():
     print(' This script is used to calculate VMT, VHT and VHD in different time of day and then aggregated to daily metrics.')
     print(' The metrics are aggregated to subareas flagged by an extra link attribute. The default attribute is @bkrlink.')
+    print(' @tveh is used to calculate VMT, VHT and VHD.')
     print(' User can define own attribute to tag links. ')
     print(' In addition, VMT, VHT and VHD are also aggregated by link speed in 5mph interval, to match emission factors from Move.')
     print(' The output file is saved in outputs/network/system_metrics.txt.')
@@ -140,11 +141,12 @@ def main():
 
         f.write('%s\n\n' % ghg_metric.to_string())
         f.write('Notes\n')
+        f.write('1. @tveh is used to calculate VMT, VHT and VHD.\n')
         if centroid_connectors_included:
-            f.write('1. Auto mode only. Centroid connectors are included.\n')
+            f.write('2. Auto mode only. Centroid connectors are included.\n')
         else:
-            f.write('1. Auto mode only. Centroid connectors are not included.\n')
-        f.write(f'2. {attr}: {groupby_description}')
+            f.write('2. Auto mode only. Centroid connectors are not included.\n')
+        f.write(f'3. {attr}: {groupby_description}')
 
 
     print('Done')

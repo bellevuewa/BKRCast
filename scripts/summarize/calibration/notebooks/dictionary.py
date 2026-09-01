@@ -17,6 +17,15 @@ ptype_cat = {1: 'Full-Time Worker',
              7: 'Child Age 5-15', 
              8: 'Child Age 0-4'}
 
+pdpurp_cat_trip = {0: "Home",
+                   1: "Work",
+                   2: "School",
+                   3: "Escort",
+                   4: "Personal Business",
+                   5: "Shop",
+                   6: "Meal",
+                   7: "Social"}
+
 pdpurp_cat = {1: "Work",
               2: "School",
               3: "Escort",
