@@ -203,7 +203,13 @@ def read_attribute_from_daysim_config_template(attr_name, default=""):
 
 @timed
 def build_shadow_only(include_tnc_mode, include_wfh_mode):
-     wfh_constant = calculate_daysim_WFH_constant(WFH_Percent)
+     WFH_assumed = WFH_Percent.get(str(model_year))
+     if WFH_assumed is None:
+         logger.error(f"WFH_Percent not defined for model year {model_year}. Please check the configuration.")
+         sys.exit(1)
+         
+     logger.info(f"WFH_Percent for model year {model_year} is {WFH_assumed}.")
+     wfh_constant = calculate_daysim_WFH_constant(WFH_assumed)
      for shad_iter in range(0, len(shadow_work)):
         daysim_config_update = [("$SHADOW_PRICE", "true"), ("$INCLUDE_TNC", str(include_tnc_mode)), ("$INCLUDE_WFH", str(include_wfh_mode)), ("$WFH_CONSTANT", str(wfh_constant)), ("$SAMPLE", shadow_work[shad_iter]), ("$RUN_ALL", "false")]
         #use operating cost 0.36 after 2044, otherwise 0.20.
@@ -548,7 +554,12 @@ def main():
 ### RUN DAYSIM AND ASSIGNMENT TO CONVERGENCE-- MAIN LOOP ##########################################
     
     if(run_daysim or run_skims_and_paths or run_skims_and_paths_seed_trips):
-        wfh_constant = calculate_daysim_WFH_constant(WFH_Percent)        
+        WFH_assumed = WFH_Percent.get(str(model_year))
+        if WFH_assumed is None:
+            logger.error(f"WFH_Percent not defined for model year {model_year}. Please check the configuration.")
+            sys.exit(1)
+        logger.info(f"WFH_Percent for model year {model_year} is {WFH_assumed}.")
+        wfh_constant = calculate_daysim_WFH_constant(WFH_assumed)
         for iteration in range(number_of_iterations):
             print("We're on iteration %d" % (iteration))
             logger.info(("We're on iteration %d\r\n" % (iteration)))

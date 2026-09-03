@@ -10,12 +10,12 @@
 #################################### PRIMARY SETTINGS  ####################################
 
 #for a new setup, update the four settings below
-project_folder = r'D:\Ming\BKRCast\2025baseyear\BKR4-25-v54'
+project_folder = r'F:\projects\2025baseyear\BKR4-25-v54_2026network'
 parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear_spring_district_adjustment_GIX'
-base_year = '2025'  # BKRCast base year
-model_year = '2025'
+base_year = '2026'  # BKRCast base year
+model_year = '2026'
 supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2025' #name of the folder with scenario data
+scenario_name = '2026' #name of the folder with scenario data
 
 #settings automatically assigned
 daysim_code = project_folder + '/daysim_2026' 
@@ -41,7 +41,7 @@ run_cumulative_slopes = True # run cumulative slopes for bike model. This can be
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
 create_no_toll_network = True
-run_skims_and_paths_seed_trips = True
+run_skims_and_paths_seed_trips = False
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
 should_build_shadow_price = True
@@ -68,7 +68,16 @@ include_rec_bike = True # inplemented as part of supplemental
 
 # include work from home
 include_wfh = True
-WFH_Percent = 0.32 # this is the WFH percentage assumption for the model year.  This will be used to calculate the WFH constant in daysim.
+
+# WFH percentage assumption for the model year.  It is used to calculate the WFH constant for daysim configuration.
+# "horizon_year": WFH_Percent assumed
+WFH_Percent = {
+    "2024": 0.30,
+    "2025": 0.32,
+    "2026": 0.32,
+    "2044": 0.28
+}
+
 
 include_delivery = False
 
