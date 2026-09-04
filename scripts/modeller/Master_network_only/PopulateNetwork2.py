@@ -234,7 +234,7 @@ class BKRCastExportNetwork(_modeller.Tool()):
         with _modeller.logbook_trace(name = 'Remove future motorized links', value = ""):
             NAMESPACE = "inro.emme.data.network.base.delete_links"
             delete_links = _modeller.Modeller().tool(NAMESPACE)
-            delete_links(scenario = horizon_scen, selection = 'modes=w and vdf=24', condition = 'cascade')    
+            delete_links(scenario = horizon_scen, selection = 'modes=w and vdf=24', condition = 'ignore')    
 
         am_net_name = os.path.join(self.outputFolder, "am_roadway.in")
         md_net_name = os.path.join(self.outputFolder, "md_roadway.in")
