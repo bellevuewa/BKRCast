@@ -35,7 +35,10 @@
     "aux_transit_time": {
         "perception_factor": "@wait"
     },
-    "aux_transit_cost": null,
+    "aux_transit_cost": {
+       "penalty": "@aux_trans_cost",
+       "perception_factor": 3		
+	},
     "flow_distribution_at_origins": {
         "choices_at_origins": "OPTIMAL_STRATEGY",
         "fixed_proportions_on_connectors": null

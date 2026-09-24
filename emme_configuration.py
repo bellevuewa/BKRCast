@@ -76,7 +76,8 @@ extra_attributes = [{'type':'LINK', 'name': '@count', 'description': 'counts', '
                     {'type':'LINK', 'name': '@subarea', 'description': 'BKR Subarea', 'overwrite': True, 'file_name':'inputs/extra_attributes/@subarea.txt'},
                     {'type':'LINK', 'name': '@kirkland_slid', 'description': 'Screenlines for Kirkland only', 'overwrite': True, 'file_name':'inputs/extra_attributes/@kirkland_slid.txt'},
                     {'type':'LINK', 'name': '@belcbd', 'description': 'Flag for Bellevue CBD', 'overwrite': True, 'file_name':'inputs/extra_attributes/@belcbd.txt'},
-                    {'type':'LINK', 'name': '@tolllane', 'description': 'Flag for toll lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@tolllane.txt'}]
+                    {'type':'LINK', 'name': '@tolllane', 'description': 'Flag for toll lane', 'overwrite': True, 'file_name':'inputs/extra_attributes/@tolllane.txt'},
+                    {'type':'LINK', 'name': '@aux_trans_cost', 'description': 'auxiliary transit cost', 'overwrite': True, 'file_name':'inputs/extra_attributes/@aux_trans_cost.txt'},]
 AM_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_am_2014', 'description': 'Local counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_am_2014.txt'},
                        {'type':'LINK', 'name': '@slcnt_am_2014', 'description': 'Screenline counts AMPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@slcnt_am_2014.txt'}]
 MD_extra_attributes = [{'type':'LINK', 'name': '@local_cnts_md_2014', 'description': 'Local counts MDPK 2014', 'overwrite': True, 'file_name':'inputs/observed/@local_cnts_md_2014.txt'},

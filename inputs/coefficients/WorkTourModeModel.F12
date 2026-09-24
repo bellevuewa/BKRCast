@@ -151,9 +151,9 @@ END
  319  lrt-dist62con  T  -3.00  0.000000 
  320  lrt-dist63con  T  0.00  0.000000
  321  lrt-dist64con  T  0.00  0.000000  
- 322  lrt-dist65con  T  0.00  0.000000 
+ 322  lrt-dist65con  T  0.0  0.000000 
  323  lrt-BKRcon  T  0.00  0.000000 
- 324  lrt-dist66con  T  2.400  0.000000  
+ 324  lrt-dist66con  T  3.40  0.000000  
  
  99 modenest F 0.735811270946 .601948497263E-01
   -1
