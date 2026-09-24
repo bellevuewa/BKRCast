@@ -23,7 +23,13 @@ def balance_supplemental_trips(df, trip_purposes, balanced_to):
     for purposes in trip_purposes:
         total_to_match = sum(df[purposes+balanced_to])
         total_to_balance = sum(df[purposes+to_balance])
-        ratio = total_to_match / total_to_balance
+        print(f"Balancing {purposes} trips to {balanced_to}. Total to match: {total_to_match}, total to balance: {total_to_balance}")
+        if total_to_match == 0:
+            ratio = 0
+        elif total_to_balance == 0:
+            ratio = 1
+        else:
+            ratio = total_to_match / total_to_balance
         df[purposes+to_balance] = df[purposes+to_balance] * ratio
     
     return df
