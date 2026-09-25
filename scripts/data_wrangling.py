@@ -567,11 +567,18 @@ def load_parcel_data_without_JBLM_jobs(parcel_path):
     parcels_df.loc[parcels_df['TAZ_P'].isin(jblm_tazs), job_columns] = 0
     return parcels_df
 
-def build_pandana_network():
+def build_pandana_network(node_file, link_file):
     import pandana as pdna    
     # nodes must be indexed by node_id column, which is the first column
-    all_street_nodes = pd.read_csv(access_config.nodes_file_name, index_col = 'node_id')
-    all_street_links = pd.read_csv(access_config.links_file_name, index_col = None )
+    all_street_nodes = pd.read_csv(node_file, index_col = 'node_id')
+    all_street_links = pd.read_csv(link_file, index_col = None )
+
+    # add x, y coordinates to links
+    all_street_links = all_street_links.merge(all_street_nodes[['x','y']], left_on = 'from_node_id', right_index = True, how = 'left')
+    all_street_links = all_street_links.rename(columns = {'x':'from_x', 'y':'from_y'})
+    all_street_links = all_street_links.merge(all_street_nodes[['x','y']], left_on = 'to_node_id', right_index = True, how = 'left')
+    all_street_links = all_street_links.rename(columns = {'x':'to_x', 'y':'to_y'})
+
     # get rid of circular links
     all_street_links = all_street_links.loc[(all_street_links.from_node_id != all_street_links.to_node_id)]
     # assign impedance

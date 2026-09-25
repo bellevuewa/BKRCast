@@ -1,5 +1,5 @@
 import datetime
-
+import getopt
 import pandana as pdna
 import os, sys
 sys.path.append(os.getcwd())
@@ -149,7 +149,94 @@ def clean_up(parcels):
     parcels_final[u'xcoord_p'] = parcels_final[u'xcoord_p'].astype(int)
     return parcels_final
 
+def transit_walk_access_to_jobs_hhs(parcels, transit_df, net, walk_time = access_config.transit_stop_walk_time, parcel_polygon_path = None):
+    '''
+    This function calculates the number of jobs and households that are accessible within a given walk time to transit stops.
+    The walk time is in minutes and it is the walk time along the network.
+    parcels includes an all streeet network node id column called node_ids, which is assigned to a parcel as the nearest network node to the parcel centroid. 
+    The transit_df includes a node_ids column that is assigned to each transit stop as the nearest network node to the transit stop.
+    '''
+    walk_distance_ft = walk_time * access_config.ped_walk_speed * 5280 / 60 # convert to feet
+    not_reachable = 999999
+
+    net.init_pois(len(transit_df), walk_distance_ft, 1) # initialize the network with the number of transit stops and the walk distance
+    # register bus stop as POIs
+    net.set_pois('bus_stops', transit_df['x'], transit_df['y'])
+    # distance from every all street node to the nearest transit stop
+    dist_to_stops = net.nearest_pois(walk_distance_ft, 'bus_stops', num_pois=1, max_distance=not_reachable).iloc[:, 0]
+    accessible_node_ids = dist_to_stops.loc[dist_to_stops <= walk_distance_ft].index
+
+    accessible_nodes_df = net.nodes_df.loc[net.nodes_df.index.isin(accessible_node_ids)].copy()
+    import geopandas as gpd
+    from shapely.geometry import Point
+    accessible_nodes_df['geometry'] = [Point(row.x, row.y) for row in accessible_nodes_df.itertuples()]
+    nodes_gdf = gpd.GeoDataFrame(accessible_nodes_df, geometry='geometry', crs = input_config.gis_projection)
+    from pathlib import Path
+    output_path = Path(input_config.report_net_output_location) / Path('all_street_network') / (Path(f'{walk_time}_minutes_walk_accessible_nodes').stem + '.shp')  
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    nodes_gdf.to_file(output_path, index=False)
+
+    # export transit stops to a shape file for use in GIS. Save the shape files in ouputs/network/all_street_network folder
+    transit_df['geometry'] = [Point(row.x, row.y) for row in transit_df.itertuples()]
+    transit_gdf = gpd.GeoDataFrame(transit_df, geometry='geometry', crs = input_config.gis_projection)
+    transit_gdf.to_file(Path(input_config.report_net_output_location) / Path('all_street_network') / (Path(access_config.transit_stops_name).stem + '.shp'), index=False)
+
+    # get the parcels that are within the walk distance to transit stops
+    # if a parcel includes any of the accessible nodes, then it is considered accessible to transit
+    lookup_parcels_df = pd.read_csv(os.path.join(input_config.main_inputs_folder, 'model', 'parcel_TAZ_2014_lookup.csv'), low_memory = False)
+    accessible_parcels =parcels.loc[parcels['node_ids'].isin(accessible_node_ids)]
+
+    # create 50 ft buffer around accessible_nodes and check which parcels intersect with the buffer. 
+    # union this with the parcels that are already accessible to transit based on the node_ids. 
+    accessible_parcel_ids = set(parcels.loc[parcels['node_ids'].isin(accessible_node_ids), 'PARCELID'])
+    if parcel_polygon_path is not None:
+        parcel_polygons_gdf = gpd.read_file(parcel_polygon_path)
+        parcel_polygons_gdf = parcel_polygons_gdf.to_crs(input_config.gis_projection)
+        parcel_polygons_gdf['PSRC_ID'] = parcel_polygons_gdf['PSRC_ID'].astype(int)
+        accessible_node_buffer = nodes_gdf[['geometry']].copy()
+        accessible_node_buffer['geometry'] = accessible_node_buffer.geometry.buffer(50) # 50 ft
+        intersecting = gpd.sjoin(parcel_polygons_gdf[['geometry', 'PSRC_ID']], accessible_node_buffer, how='inner', predicate='intersects')
+        intersecting_parcel_ids = set(intersecting['PSRC_ID'].unique())
+        accessible_parcel_ids.update(intersecting_parcel_ids)
+        accessible_parcels = parcels.loc[parcels['PARCELID'].isin(accessible_parcel_ids)].copy()
+        accessible_parcels = accessible_parcels.merge(lookup_parcels_df[['PSRC_ID', 'Jurisdiction', 'BKRCastTAZ']], left_on='PARCELID', right_on='PSRC_ID', how='left')
+        accessible_parcels.to_csv(os.path.join(input_config.report_net_output_location, 'all_street_network',f'parcels_within_{walk_time}_minutes_walk_to_transit.csv'), index=False)
+        accessible_parcels[['Jurisdiction', 'EMPTOT_P', 'HH_P']].groupby('Jurisdiction').sum().to_csv(os.path.join(input_config.report_net_output_location, 'all_street_network',f'jobs_hhs_within_{walk_time}_minutes_walk_to_transit_by_jurisdiction.csv'))
+
+        # export the accessible parcels to a shapefile for GIS use
+        accessible_parcels_gdf = parcel_polygons_gdf.loc[parcel_polygons_gdf['PSRC_ID'].isin(accessible_parcel_ids)].copy()
+        accessible_parcels_gdf = accessible_parcels_gdf.merge(lookup_parcels_df[['PSRC_ID', 'Jurisdiction', 'BKRCastTAZ']], left_on='PSRC_ID', right_on='PSRC_ID', how='left')
+        accessible_parcels_gdf.to_file(os.path.join(input_config.report_net_output_location, 'all_street_network',f'parcels_within_{walk_time}_minutes_walk_to_transit.shp'), index=False)
+
+def help():
+    # a short description of what this script does and how to use it. explain where the output files are saved and what they are called.
+    print('This script calculates accessibility measures for parcels based on the all street network and transit stops.')
+    print('It calculates the number of jobs and households that are accessible within a given walk time to transit stops.')
+    print('It also calculates the distance from each parcel to the nearest transit stop by type (local bus, express bus, commuter rail, ferry, light rail).')
+    print('The output files are saved in the outputs/landuse folder and outputs/network/all_street_network folder.')
+    print('The output shapefiles are saved in the outputs/network/all_street_network folder and are called parcels_within_<walk_time>_minutes_walk_to_transit.shp and ' \
+    'parcels_within_<walk_time>_minutes_walk_to_transit_by_jurisdiction.csv.')
+    print('By default, this script does not require any command line arguments. However, you can specify a parcel polygon shapefile for spatial analysis using the -p option followed by the path to the shapefile.')
+    
+    print('Usage: python accessibility.py -p <parcel_polygon_path>')
+    print('Options:')
+    print('  -p <parcel_polygon_path> : Path to the parcel polygon shapefile for spatial analysis (optional).')
+    print('Example:')
+    print('  python accessibility.py -p "path/to/parcel_polygons.shp"')
+ 
 def main():
+    parcel_polygon_path = None
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "p:")
+    except getopt.GetoptError:
+        help()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-p':
+            parcel_polygon_path = arg
+
     # read in data
     parcels = data_wrangling.load_parcel_data_without_JBLM_jobs(os.path.join(input_config.parcels_file_folder, access_config.parcels_file_name))
     #capitalize field names to avoid errors
@@ -166,7 +253,24 @@ def main():
     parcels['APARKS'] = 0
     parcels['NPARKS'] = 0
 
-    net, links, nodes = data_wrangling.build_pandana_network()
+    net, links, nodes = data_wrangling.build_pandana_network(access_config.nodes_file_name, access_config.links_file_name)
+    net_for_access, _, _ = data_wrangling.build_pandana_network(access_config.nodes_file_name, access_config.links_file_name)
+
+    # export all street network to shape files for use in GIS. Save the shape files in ouputs/network/all_street_network folder
+    import geopandas as gpd
+    from shapely.geometry import LineString, Point
+    valid_links = links.dropna(subset=['from_x', 'from_y', 'to_x', 'to_y']).copy()
+    valid_links['geometry'] = [LineString([(row.from_x, row.from_y), (row.to_x, row.to_y)]) for row in valid_links.itertuples()]
+    links_gdf = gpd.GeoDataFrame(valid_links, geometry='geometry', crs = input_config.gis_projection)
+    links_gdf.rename(columns = {'from_node_id':'from_node', 'to_node_id':'to_node', 'Shape_Length': 'shp_length'}, inplace = True)
+    from pathlib import Path
+    output_path = Path(input_config.report_net_output_location) / Path('all_street_network') / (Path(access_config.links_file_name).stem + '.shp')
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    links_gdf.to_file(output_path, index=False)
+    nodes['geometry'] = [Point(row.x, row.y) for row in nodes.itertuples()]
+    nodes_gdf = gpd.GeoDataFrame(nodes, geometry='geometry', crs = input_config.gis_projection)
+    nodes_gdf.to_file(Path(input_config.report_net_output_location) / Path('all_street_network') / (Path(access_config.nodes_file_name).stem + '.shp'), index=True)
+
 
     # get transit stops
     transit_df = pd.read_csv(os.path.join(main_inputs_folder, 'networks', access_config.transit_stops_name),  index_col = None)
@@ -190,6 +294,10 @@ def main():
     # assign network (pandana network)nodes to transit stops, for buffer variable
     data_wrangling.assign_nodes_to_dataset(transit_df, net, 'node_ids', 'x', 'y')
 
+    parcels_for_access = parcels[['PARCELID', 'node_ids', 'XCOORD_P', 'YCOORD_P', 'HH_P', 'EMPTOT_P']].copy()
+    parcels[['PARCELID', 'node_ids', 'XCOORD_P', 'YCOORD_P']].to_csv(os.path.join(input_config.report_net_output_location, 'all_street_network', 'parcels_with_node_ids.csv'), index=False)
+    transit_walk_access_to_jobs_hhs(parcels_for_access, transit_df, net_for_access, walk_time = access_config.transit_stop_walk_time, parcel_polygon_path = parcel_polygon_path)
+    
     # run all accibility measures
     parcels = process_parcels(parcels, transit_df, net, intersections_df)
 

@@ -20,7 +20,8 @@ nodes_file_name = 'inputs/accessibility/all_streets_nodes_2014.csv'
 links_file_name = 'inputs/accessibility/all_streets_links_2014.csv'
 park_file = "inputs\\accessibility\\King_Sno_County_Parks.csv"
 
-
+transit_stop_walk_time = 5 # minutes to walk to transit stop
+ped_walk_speed = 3 # 3 miles per hour
 
 # These will be disaggregated from the parcel data to the network.
 # Keys are the functions applied when aggregating over buffers.
