@@ -480,31 +480,32 @@ class BKRCastExportNetwork(_modeller.Tool()):
         busstops_err = []
         segments  = []
         for seg in transit_segments:
-            mode = seg.line.mode.id
-            i_node = seg.i_node.id
-            i_node_x = seg.i_node.x
-            i_node_y = seg.i_node.y
-            if mode == 'b':
-                dict = {'bus':1, 'stop': i_node}
-                busstops.append(dict)
-            elif mode == 'c':
-                dict = {'commuter_rail':1, 'stop': i_node}
-                busstops.append(dict)
-            elif mode == 'r':
-                dict = {'light_rail':1, 'stop': i_node}
-                busstops.append(dict)
-            elif mode == 'n':
-                dict = {'brt':1, 'stop': i_node}
-                busstops.append(dict)
-            elif mode == 'f':
-                dict = {'ferry':1, 'stop': i_node}
-                busstops.append(dict)
-            elif mode == 'p':
-                dict = {'express':1, 'stop': i_node}
-                busstops.append(dict)
-            else:
-                dict = {mode: 1, 'stop': i_node}
-                busstops_err.append(dict)
+            if seg.allow_alightings == True or seg.allow_boardings == True:
+                mode = seg.line.mode.id
+                i_node = seg.i_node.id
+                i_node_x = seg.i_node.x
+                i_node_y = seg.i_node.y
+                if mode == 'b':
+                    dict = {'bus':1, 'stop': i_node}
+                    busstops.append(dict)
+                elif mode == 'c':
+                    dict = {'commuter_rail':1, 'stop': i_node}
+                    busstops.append(dict)
+                elif mode == 'r':
+                    dict = {'light_rail':1, 'stop': i_node}
+                    busstops.append(dict)
+                elif mode == 'n':
+                    dict = {'brt':1, 'stop': i_node}
+                    busstops.append(dict)
+                elif mode == 'f':
+                    dict = {'ferry':1, 'stop': i_node}
+                    busstops.append(dict)
+                elif mode == 'p':
+                    dict = {'express':1, 'stop': i_node}
+                    busstops.append(dict)
+                else:
+                    dict = {mode: 1, 'stop': i_node}
+                    busstops_err.append(dict)
             segments.append({'i':seg.i_node, 'j':seg.j_node, 'line':seg.line.id, 'mode': seg.line.mode.id})
 
         busstops_df = pd.DataFrame(busstops)
