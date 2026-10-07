@@ -3,6 +3,7 @@ import os, sys, time
 import nbformat
 import yaml
 import shutil
+import subprocess
 import asyncio
 from asyncio import WindowsSelectorEventLoopPolicy
 asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
@@ -36,8 +37,7 @@ def create_quarto_notebook(notebook_name, summary_list, scripts_dir, output_fold
     print(f'Rendering {notebook_name} tables...')
 
     # render quarto book
-    text = "quarto render " + scripts_dir
-    os.system(text)
+    subprocess.run(['quarto', 'render', scripts_dir], check=True)
 
     # remove existing data first
     output_dir = os.path.join(project_folder, 'outputs', 'summary', output_folder)

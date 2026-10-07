@@ -18,6 +18,8 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import h5toDF
 import math
+import argparse
+import tempfile
 from input_configuration import *
 from accessibility.accessibility_configuration import *
 
@@ -50,13 +52,35 @@ def convergence_check(rmse_list, convergence_criterion, iteration): #Function no
         convergence = False
     return convergence
 
+def write_rmse(output_path, value, append=False):
+    """Publish a complete RMSE file without exposing a partial write."""
+    if not math.isfinite(value) or value < 0:
+        raise ValueError('RMSE must be finite and nonnegative')
+    history = ''
+    if append and os.path.isfile(output_path):
+        with open(output_path, 'r') as existing:
+            history = existing.read()
+        if history and not history.endswith('\n'):
+            history += '\n'
+    temporary_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', dir=os.path.dirname(os.path.abspath(output_path)),
+                                         delete=False) as result:
+            temporary_path = result.name
+            result.write(history + str(value) + '\n')
+        os.replace(temporary_path, output_path)
+    finally:
+        if temporary_path is not None and os.path.exists(temporary_path):
+            os.remove(temporary_path)
+
+
 def main():
-    if not os.path.isfile('inputs/shadow_rmse.txt'):
-        open('inputs/shadow_rmse.txt', 'a').close()
+    parser = argparse.ArgumentParser(description='Calculate shadow-pricing RMSE')
+    parser.add_argument('--output', help='Write the current RMSE to this file')
+    args = parser.parse_args()
     current_percent_rmse = get_percent_rmse(output_parcels, h5_results_file, guidefile)
-    shadow_rmse = open('inputs/shadow_rmse.txt', 'a')
-    shadow_rmse.writelines(str(current_percent_rmse) + '\n')
-    shadow_rmse.close()
+    write_rmse(args.output or 'inputs/shadow_rmse.txt', current_percent_rmse,
+               append=args.output is None)
 
 if __name__ == "__main__":
     main()

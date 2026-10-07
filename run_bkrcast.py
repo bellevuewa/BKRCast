@@ -27,6 +27,8 @@ import os
 import sys
 import datetime
 import subprocess
+import math
+import tempfile
 import json
 from shutil import copy2 as shcopy
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
@@ -49,11 +51,7 @@ def accessibility_calcs():
     env = os.environ.copy()
     env['RUN_CONTEXT'] = 'chained'
     command = [sys.executable, 'scripts/accessibility/accessibility.py']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
     print('Done with accessibility calculations')
 
 @timed    
@@ -66,11 +64,7 @@ def build_seed_skims(max_iterations):
             'scripts/skimming/SkimsAndPaths.py', '-i',
             str(max_iterations),
             'build_free_flow_skims']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
          
     time_skims = datetime.datetime.now()
     print('###### Finished skimbuilding:', str(time_skims - time_copy))
@@ -226,23 +220,13 @@ def build_shadow_only(include_tnc_mode, include_wfh_mode):
         modify_config(daysim_config_update)
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
         command = ['daysim/Daysim.exe', '-c', 'daysim/daysim_configuration.properties']
-        try:
-            subprocess.run(command, check=True)
+        run_subprocess(command)
 
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
-
-        returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
-        shadow_con_file = open('inputs/shadow_rmse.txt', 'r')
-        rmse_list = shadow_con_file.readlines()
-        iteration_number = len(rmse_list)
-        current_rmse = float(rmse_list[iteration_number - 1].rstrip("\n"))
+        current_rmse = check_shadow_rmse()
         logger.info(f"End of {shad_iter} iteration of work location for shadow prices. RMSE is {current_rmse}.")
 
         if current_rmse < shadow_con:
             print("done with shadow prices")
-            shadow_con_file.close()
             return
         
 
@@ -258,36 +242,20 @@ def run_truck_supplemental(iteration):
         # Only run generation script once - does not change with feedback
         if iteration == 0:
             command = [sys.executable,'scripts/supplemental/generation.py']
-            try:
-                subprocess.run(command, env=env, check=True)
-            except (subprocess.CalledProcessError, OSError) as error:
-                logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-                sys.exit(1)
+            run_subprocess(command, env=env)
 
         #run distribution
         command = [sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
         command = [sys.executable, 'scripts/supplemental/create_airport_trips.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
         command = [sys.executable,'scripts/trucks/truck_model.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
                            
 @timed
@@ -299,11 +267,7 @@ def daysim_assignment(iteration):
 
          #run daysim
          command = ['daysim/Daysim.exe', '-c', 'daysim/daysim_configuration.properties']
-         try:
-             subprocess.run(command, check=True)
-         except (subprocess.CalledProcessError, OSError) as error:
-             logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-             sys.exit(1)
+         run_subprocess(command)
          logger.info(f"End of {iteration} iteration of Daysim")
     
      ### ADD SUPPLEMENTAL TRIPS ####################################################
@@ -315,20 +279,11 @@ def daysim_assignment(iteration):
         env = os.environ.copy()
         env['RUN_CONTEXT'] = 'chained'
         command = [sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)]
-        try:
-            subprocess.run(command, env=env, check=True)
-         
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
         # no need to run recreational bike here. It is run after the last iteration of skims and paths
         command = [sys.executable,'scripts/bikes/bike_model.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
         logger.info(f"End of {iteration} iteration of Skims and Paths")        
 
@@ -340,6 +295,34 @@ def check_convergence(iteration):
              converge = json.load(con_file)
     return converge
 
+def check_shadow_rmse():
+    """Read only the result produced by this checker invocation."""
+    with tempfile.TemporaryDirectory(prefix='bkrcast_shadow_') as result_dir:
+        result_path = os.path.join(result_dir, 'rmse.txt')
+        run_subprocess([sys.executable, 'scripts/utils/shadow_pricing_check.py',
+                        '--output', result_path])
+        try:
+            with open(result_path, 'r') as result_file:
+                values = result_file.read().splitlines()
+            if len(values) != 1:
+                raise ValueError('Expected exactly one RMSE value')
+            rmse = float(values[0])
+            if not math.isfinite(rmse) or rmse < 0:
+                raise ValueError('RMSE must be finite and nonnegative')
+        except (OSError, ValueError) as error:
+            logger.exception('Invalid shadow-pricing result: %s. Error: %s', result_path, error)
+            sys.exit(1)
+        return rmse
+
+
+def run_subprocess(command, env=None):
+    """Run a command and stop the workflow if it fails."""
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Subprocess failed. Command: %s. Error: %s', command, error)
+        sys.exit(1)
+
 @timed
 def run_all_summaries():
     env = os.environ.copy()
@@ -347,31 +330,31 @@ def run_all_summaries():
 
     if run_bkrcast_summary:
         if int(model_year) <= 2023:
-            subprocess.call([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'], env=env)
+            run_subprocess([sys.executable, 'scripts/summarize/calibration/SCsummary_2013.py'], env=env)
         else:
-            subprocess.call([sys.executable, 'run_bkrcast_validation.py'], env=env)
+            run_subprocess([sys.executable, 'run_bkrcast_validation.py'], env=env)
 
     #Create a daily network with volumes. Will add counts and summary emme project. 
     if run_create_daily_bank:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/network_summary.py'], env=env)
-        subprocess.call([sys.executable, 'scripts/summarize/standard/daily_bank.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/network_summary.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/daily_bank.py'], env=env)
 
     if run_landuse_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/landuse_summary.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/landuse_summary.py'], env=env)
         
     if run_truck_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/truck_vols.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/truck_vols.py'], env=env)
 
     if run_vmt_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/calculate_daily_VMT.py'], env=env)
         
     if run_telecommute_summary:
-        subprocess.call([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'], env=env)
+        run_subprocess([sys.executable, 'scripts/summarize/standard/telecommute_analysis.py'], env=env)
 
     if run_modeshare_summary:
         for district in ['BelDT', 'Bellevue', 'Kirkland', 'Redmond']:
-            subprocess.call([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district], env=env)
-            subprocess.call([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district], env=env)
+            run_subprocess([sys.executable, 'scripts/summarize/standard/tour_mode_share_calculator.py', district], env=env)
+            run_subprocess([sys.executable, 'scripts/summarize/standard/trip_mode_share_calculator.py', district], env=env)
 
 def clean_output_folder():
     folders_kept = ['landuse', 'bike'] # subfolders inside outputs
@@ -396,27 +379,15 @@ def run_recreational_bike():
     env = os.environ.copy()
     env['RUN_CONTEXT'] = 'chained'
     command = [sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
 
     print('Generating recreational bike trips')
     command = [sys.executable, 'scripts/supplemental/recreational_bike.py']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
 
     print('Assignment recreational bike trips')
     command = [sys.executable, 'scripts/bikes/bike_model.py', '-b']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
 
     logger.info('Finished running the recreational bike model')      
 
@@ -539,24 +510,16 @@ def main():
         logger.info("Start of network importer")
         command = [sys.executable,
             'scripts/network/network_importer.py', base_inputs]
-        try:
-            subprocess.run(command, env=env, check=True)
-            logger.info("End of network importer")
-            time_network = datetime.datetime.now()
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
+        logger.info("End of network importer")
+        time_network = datetime.datetime.now()
 
     print('adding military jobs to regular jobs')
     print('adding JBLM workers to external workers')
     print('adjusting non-work externals')
     print('creating ixxi file for Daysim')
     command = [sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py']
-    try:
-        subprocess.run(command, env=env, check=True)
-    except (subprocess.CalledProcessError, OSError) as error:
-        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-        sys.exit(1)
+    run_subprocess(command, env=env)
     print('military jobs loaded')
 
     if run_accessibility_calcs:
@@ -565,11 +528,7 @@ def main():
     if run_cumulative_slopes:
         logger.info('Running culmulative slope calculation')
         command = [sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
             
 ### BUILD OR COPY SKIMS ###############################################################
     if run_skims_and_paths_seed_trips:
@@ -578,11 +537,7 @@ def main():
         build_seed_skims(10)
         # no need to run rec bike assignment in seeding trips
         command = [sys.executable,'scripts/bikes/bike_model.py']
-        try:
-            subprocess.run(command, env=env, check=True)
-        except (subprocess.CalledProcessError, OSError) as error:
-            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
-            sys.exit(1)
+        run_subprocess(command, env=env)
 
     # Check all inputs have been created or copied
     check_inputs()
