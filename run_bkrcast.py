@@ -48,9 +48,11 @@ def accessibility_calcs():
     print('Beginning Accessibility Calculations')
     env = os.environ.copy()
     env['RUN_CONTEXT'] = 'chained'
-    returncode = subprocess.call([sys.executable, 'scripts/accessibility/accessibility.py'], env=env)
-    if returncode != 0 and returncode != 3221225477:
-        print('Accessibility Calculations Failed For Some Reason :(')
+    command = [sys.executable, 'scripts/accessibility/accessibility.py']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
         sys.exit(1)
     print('Done with accessibility calculations')
 
@@ -60,11 +62,14 @@ def build_seed_skims(max_iterations):
     time_copy = datetime.datetime.now()
     env = os.environ.copy()
     env['RUN_CONTEXT'] = 'chained'
-    returncode = subprocess.call([sys.executable,
-        'scripts/skimming/SkimsAndPaths.py', '-i',
-        str(max_iterations),
-        'build_free_flow_skims'], env=env)
-    if returncode != 0 and returncode != 3221225477:
+    command = [sys.executable,
+            'scripts/skimming/SkimsAndPaths.py', '-i',
+            str(max_iterations),
+            'build_free_flow_skims']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
         sys.exit(1)
          
     time_skims = datetime.datetime.now()
@@ -220,10 +225,12 @@ def build_shadow_only(include_tnc_mode, include_wfh_mode):
             daysim_config_update.append(("$OP_COST", 0.27))
         modify_config(daysim_config_update)
         logger.info("Start of%s iteration of work location for shadow prices", str(shad_iter))
-        returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
+        command = ['daysim/Daysim.exe', '-c', 'daysim/daysim_configuration.properties']
+        try:
+            subprocess.run(command, check=True)
 
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Shadow pricing crashed unexpectedly. The return code is {returncode}')
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
         returncode = subprocess.call([sys.executable, 'scripts/utils/shadow_pricing_check.py'])
@@ -250,28 +257,36 @@ def run_truck_supplemental(iteration):
     if run_supplemental_trips:
         # Only run generation script once - does not change with feedback
         if iteration == 0:
-            returncode = subprocess.call([sys.executable,'scripts/supplemental/generation.py'], env=env)
-            if returncode != 0 and returncode != 3221225477:
-                logger.info(f'Supplemental trip generation crashed unexpectedly. The return code is {returncode}')
+            command = [sys.executable,'scripts/supplemental/generation.py']
+            try:
+                subprocess.run(command, env=env, check=True)
+            except (subprocess.CalledProcessError, OSError) as error:
+                logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
                 sys.exit(1)
 
         #run distribution
-        returncode = subprocess.call([sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Distribute_non_work_ixxi.py crashed unexpectedly. The return code is {returncode}')
+        command = [sys.executable,'scripts/supplemental/distribute_non_work_ixxi.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
-        returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_airport_trips.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Airport model crashed unexpectedly. The return code is {returncode}')
+        command = [sys.executable, 'scripts/supplemental/create_airport_trips.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
 
     ### RUN Truck Model ################################################################
     if run_truck_model:
-        returncode = subprocess.call([sys.executable,'scripts/trucks/truck_model.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Truck model crashed unexpectedly. The return code is {returncode}')
+        command = [sys.executable,'scripts/trucks/truck_model.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
                            
@@ -283,9 +298,11 @@ def daysim_assignment(iteration):
          logger.info(f"Start of {iteration} iteration of Daysim")
 
          #run daysim
-         returncode = subprocess.call('daysim/Daysim.exe -c daysim/daysim_configuration.properties')
-         if returncode != 0 and returncode != 3221225477:
-             logger.info(f"daysim crashed unexpectedly. The return code is {returncode}")
+         command = ['daysim/Daysim.exe', '-c', 'daysim/daysim_configuration.properties']
+         try:
+             subprocess.run(command, check=True)
+         except (subprocess.CalledProcessError, OSError) as error:
+             logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
              sys.exit(1)
          logger.info(f"End of {iteration} iteration of Daysim")
     
@@ -297,16 +314,20 @@ def daysim_assignment(iteration):
         logger.info(f"Start of {iteration} iteration of Skims and Paths")
         env = os.environ.copy()
         env['RUN_CONTEXT'] = 'chained'
-        returncode = subprocess.call([sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)], env=env)
+        command = [sys.executable, 'scripts/skimming/SkimsAndPaths.py', '-i', str(iteration)]
+        try:
+            subprocess.run(command, env=env, check=True)
          
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Skims crashed unexpectedly. The return code from skims and paths is {returncode}')
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
         # no need to run recreational bike here. It is run after the last iteration of skims and paths
-        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
-            logger.info(f'Bike model crashed unexpectedly. The return code from skims and paths is {returncode}')
+        command = [sys.executable,'scripts/bikes/bike_model.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
         logger.info(f"End of {iteration} iteration of Skims and Paths")        
@@ -374,21 +395,27 @@ def run_recreational_bike():
     print('Calculating accessibility for recreational bike')
     env = os.environ.copy()
     env['RUN_CONTEXT'] = 'chained'
-    returncode = subprocess.call([sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py'], env=env)
-    if returncode != 0 and returncode != 3221225477:    
-        print('bike_accessibility is was crashed.')
+    command = [sys.executable, 'scripts/accessibility/bike_accessibility_TAZ.py']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
         sys.exit(1)
 
     print('Generating recreational bike trips')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/recreational_bike.py'], env=env)
-    if returncode != 0 and returncode != 3221225477:
-        print('recreational bike generation is crashed.')
-        sys.exit(1) 
+    command = [sys.executable, 'scripts/supplemental/recreational_bike.py']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
+        sys.exit(1)
 
     print('Assignment recreational bike trips')
-    returncode = subprocess.call([sys.executable, 'scripts/bikes/bike_model.py', '-b'], env=env)
-    if returncode != 0 and returncode != 3221225477:
-        print('recreational bike assignment is crashed.')
+    command = [sys.executable, 'scripts/bikes/bike_model.py', '-b']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
         sys.exit(1)
 
     logger.info('Finished running the recreational bike model')      
@@ -510,20 +537,25 @@ def main():
     if run_import_networks:
         time_copy = datetime.datetime.now()
         logger.info("Start of network importer")
-        returncode = subprocess.call([sys.executable,
-        'scripts/network/network_importer.py', base_inputs], env=env)
-        logger.info("End of network importer")
-        time_network = datetime.datetime.now()
-        if returncode != 0 and returncode != 3221225477:
-           sys.exit(1)
+        command = [sys.executable,
+            'scripts/network/network_importer.py', base_inputs]
+        try:
+            subprocess.run(command, env=env, check=True)
+            logger.info("End of network importer")
+            time_network = datetime.datetime.now()
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
+            sys.exit(1)
 
     print('adding military jobs to regular jobs')
     print('adding JBLM workers to external workers')
     print('adjusting non-work externals')
     print('creating ixxi file for Daysim')
-    returncode = subprocess.call([sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py'], env=env)
-    if returncode != 0 and returncode != 3221225477:
-        print('Military Job loading failed')
+    command = [sys.executable, 'scripts/supplemental/create_ixxi_work_trips.py']
+    try:
+        subprocess.run(command, env=env, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
         sys.exit(1)
     print('military jobs loaded')
 
@@ -532,9 +564,11 @@ def main():
 
     if run_cumulative_slopes:
         logger.info('Running culmulative slope calculation')
-        returncode = subprocess.call([sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
-            print('Cumulative slope calculation failed')
+        command = [sys.executable, 'scripts/bikes/calculate_cumulative_slopes_for_bike.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
             
 ### BUILD OR COPY SKIMS ###############################################################
@@ -543,8 +577,11 @@ def main():
         # run_truck_supplemental(0)
         build_seed_skims(10)
         # no need to run rec bike assignment in seeding trips
-        returncode = subprocess.call([sys.executable,'scripts/bikes/bike_model.py'], env=env)
-        if returncode != 0 and returncode != 3221225477:
+        command = [sys.executable,'scripts/bikes/bike_model.py']
+        try:
+            subprocess.run(command, env=env, check=True)
+        except (subprocess.CalledProcessError, OSError) as error:
+            logger.exception('Model subprocess failed. Command: %s. Error: %s', command, error)
             sys.exit(1)
 
     # Check all inputs have been created or copied
