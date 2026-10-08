@@ -8,7 +8,7 @@ import numpy as np
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"inputs"))
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))
+sys.path.append(os.path.join(os.getcwd(),"scripts", "summarize"))
 import datetime
 from input_configuration import *
 import h5toDF

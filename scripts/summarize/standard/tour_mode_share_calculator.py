@@ -264,14 +264,14 @@ def main():
         time_period = str(start_time) + '-' + str(end_time)
 
     if tours_file == '':
-        tours_file = os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv')                
+        tours_file = os.path.join(prj.project_folder, 'outputs', 'daysim', '_tour.tsv')
 
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_tour_mode_share.xlsx')
     print('Output file: ' + Output_file)
     print('subarea definition file: ' + subarea_taz_file)
 
-    hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
+    hhs_file = os.path.join(prj.project_folder, 'outputs', 'daysim', '_household.tsv')
     total_tours_df = pd.read_csv(tours_file, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
     subarea_taz_df.reset_index(inplace = True)

@@ -320,7 +320,7 @@ def main():
         time_period = str(start_time) + '-' + str(end_time)
 
     if trips_file == '':
-        trips_file = os.path.join(prj.project_folder, 'outputs\daysim', '_trip.tsv')
+        trips_file = os.path.join(prj.project_folder, 'outputs/daysim', '_trip.tsv')
 
     if Output_file == '':
         Output_file = os.path.join(prj.project_folder, 'outputs/summary', prj.scenario_name + '_' + subarea_code + '_'+ time_period + '_trip_mode_share.xlsx')
@@ -331,12 +331,12 @@ def main():
     print('Output trip distance file: ' + Output_file_trip_dist)
     print('subarea definition file: ' + subarea_taz_file)
 
-    hhs_file = os.path.join(prj.project_folder, 'outputs\daysim', '_household.tsv')
+    hhs_file = os.path.join(prj.project_folder, 'outputs/daysim', '_household.tsv')
     total_trips_df = pd.read_csv(trips_file, low_memory = True, sep = '\t')
     subarea_taz_df = pd.read_csv(subarea_taz_file)
     subarea_taz_df.reset_index(inplace = True)
     trips_df = select_trips_by_time(total_trips_df, start_time, end_time)
-    tours_df = pd.read_csv(os.path.join(prj.project_folder, 'outputs\daysim', '_tour.tsv'), low_memory = True, sep = '\t')
+    tours_df = pd.read_csv(os.path.join(prj.project_folder, 'outputs/daysim', '_tour.tsv'), low_memory = True, sep = '\t')
     tours_df.rename(columns = {'id':'tour_id'}, inplace = True)    
     trips_df = trips_df.merge(tours_df[['tour_id','parent']], left_on = 'tour_id', right_on = 'tour_id', how = 'left')           
     hhs_df = pd.read_csv(hhs_file, sep = '\t' )

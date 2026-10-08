@@ -37,9 +37,9 @@ third_round = False         # tests of global iteration strategies
 working_directory = r'E:\Projects\Clients\bkr\tasks\sensitivity_tests'
 taz_districts = r'E:\Projects\Clients\bkr\model\bkrcast_tod_new\inputs\trucks\districts19_ga.ens'
 
-dir_daysim = os.path.join(working_directory, 'daysim_run\daysim')
-dir_input = os.path.join(working_directory, 'daysim_run\inputs')
-dir_output = os.path.join(working_directory, 'daysim_run\outputs')
+dir_daysim = os.path.join(working_directory, 'daysim_run', 'daysim')
+dir_input = os.path.join(working_directory, 'daysim_run', 'inputs')
+dir_output = os.path.join(working_directory, 'daysim_run', 'outputs')
 dir_store = os.path.join(working_directory, 'saved_outputs')
 
 config_template_path = "daysim_configuration_template.properties"
@@ -286,7 +286,7 @@ def get_regions_districts():
     #ga<=6 are BKR
 
     # read psrc zone group file
-    zoneGroups = pd.read_table(taz_districts, sep='\s+', names = ["t","group","taz"], comment = "c", skiprows = 5)
+    zoneGroups = pd.read_table(taz_districts, sep=r'\s+', names = ["t","group","taz"], comment = "c", skiprows = 5)
     zoneGroups = zoneGroups[zoneGroups['group']!='gb:'] #remove a line that is not useful
     zoneGroups['taz'] = zoneGroups['taz'].astype(np.int)
 

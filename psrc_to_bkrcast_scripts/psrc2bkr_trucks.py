@@ -275,7 +275,7 @@ def runEmpPSRCToBKRZones():
         headers[file] = pd.read_table(file_path, delimiter = "#", header = None, nrows = header_rows[i])
              
         # skip first few rows, as they contain general information - also ignore rows starting with 'c' (comment lines)
-        truck_emp_psrc = pd.read_table(file_path, sep='\s+', names = ["o","d",file], comment = "c", skiprows = header_rows[i])
+        truck_emp_psrc = pd.read_table(file_path, sep=r'\s+', names = ["o","d",file], comment = "c", skiprows = header_rows[i])
 
         # merge psrc to bkr correspondence with percent
         tazGroups = pd.merge(truck_emp_psrc, tazShares, left_on = "o", right_on = "psrc_zone_id", how = 'left')

@@ -16,7 +16,7 @@ import os
 import sys
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-sys.path.append(os.path.join(os.getcwd(),"scripts\summarize"))
+sys.path.append(os.path.join(os.getcwd(),"scripts", "summarize"))
 import numpy as np
 import pandas as pd
 import time
