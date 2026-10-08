@@ -23,6 +23,10 @@
 # 10/25/2021
 # modified to be compatible with python 3
 
+# 10/7/2026
+# Use project_folder from input_configuration and set the working directory
+# to that folder before starting model stages. The -s option requires an absolute path.
+
 import os
 import sys
 import datetime
@@ -31,15 +35,15 @@ import math
 import tempfile
 import json
 from shutil import copy2 as shcopy
-sys.path.append(os.path.join(os.getcwd(),"inputs"))
-sys.path.append(os.path.join(os.getcwd(),"scripts"))
+from pathlib import Path
+from input_configuration import *
+sys.path.append(os.path.join(project_folder, "inputs"))
+sys.path.append(os.path.join(project_folder, "scripts"))
 import logcontroller
 import random, getopt
 import datetime
 import pandas as pd
 import shutil
-from pathlib import Path
-from input_configuration import *
 from emme_configuration import *
 from data_wrangling import *
 
@@ -392,16 +396,6 @@ def run_recreational_bike():
     logger.info('Finished running the recreational bike model')      
 
 def precheck():
-    # Check if project_folder is pointing to the current directory
-    norm_proj_dir = os.path.normcase(project_folder)
-    cur_dir = os.getcwd()
-    if norm_proj_dir != os.path.normcase(cur_dir):
-        print('***Warning***')
-        print('The project_folder is ' + project_folder)
-        print('The current directory is ' + cur_dir)
-        print('They do not match. Please reconcile the difference first.')
-        exit(-1)
-
     # make sure emme lock file is not present in emme databank folder
     databank_folders = tods.copy()
     databank_folders.extend(['Suplementals', 'TruckModel'])
@@ -418,7 +412,7 @@ def help():
     print("")
     print('Options:')
     print('-h: Show this help message and exit')
-    print('-s: Specify the path to the synthetic population folder that contains _household.tsv and _person.tsv files. ')
+    print('-s: Specify an absolute path to the synthetic population folder that contains _household.tsv and _person.tsv files. ')
     print('    The script util/create_synpop_from_daysim_output.py should be run first to process these files and create new files that are compatible with the expected input for daysim. ')
     print('    This option should be used if you want to skip long term models like auto ownership, transit pass ownership, work and school locations')
     print('    and directly use the synthetic population generated from a previous run of DaySim. If this option is not used, the model will run with the default synthetic population generation process, which includes running the long term models.')
@@ -441,6 +435,9 @@ def main():
             print('Usage: run_bkrcast.py -s <path_to_synthetic_population_folder>')
             sys.exit()
         elif opt == '-s':
+            if not os.path.isabs(arg):
+                print('Error: -s requires an absolute path to the synthetic population folder.')
+                sys.exit(2)
             synthetic_population_folder = arg
             print(f"Importing synthetic population from: {synthetic_population_folder}")
             
@@ -596,6 +593,8 @@ def main():
     print('###### OH HAPPY DAY!  ALL DONE. GO GET A ' + random.choice(good_thing))
 
 if __name__ == "__main__":
+    # Legacy model steps use relative paths and inherit this directory.
+    os.chdir(project_folder)
     logger = logcontroller.setup_custom_logger('main_logger')
     logger.info('------------------------NEW RUN STARTING----------------------------------------------')
     start_time = datetime.datetime.now()

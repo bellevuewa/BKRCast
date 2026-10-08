@@ -22,8 +22,11 @@ import pandas as pd
 import json
 import numpy as np
 import h5py
-sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(),"inputs"))
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+from input_configuration import project_folder
+
+sys.path.append(os.path.join(project_folder,"inputs"))
 import input_configuration as input_config
 import emme_configuration as emme_config
 

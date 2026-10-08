@@ -20,11 +20,14 @@ import re
 from shutil import copy2 as shcopy
 import inro.emme.database.emmebank as _eb
 import shutil
-sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(),"inputs"))
-sys.path.append(os.path.join(os.getcwd(),"inputs", "skim_params"))
-sys.path.append(os.path.join(os.getcwd(),"scripts"))
-sys.path.append(os.path.join(os.getcwd(),"scripts", 'accessibility'))
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+from input_configuration import project_folder
+
+sys.path.append(os.path.join(project_folder,"inputs"))
+sys.path.append(os.path.join(project_folder,"inputs", "skim_params"))
+sys.path.append(os.path.join(project_folder,"scripts"))
+sys.path.append(os.path.join(project_folder,"scripts", 'accessibility'))
 import accessibility_configuration as access_config
 from input_configuration import *
 from logcontroller import *
@@ -46,8 +49,8 @@ def multipleReplace(text, wordDict):
 @timed
 def copy_daysim_code():
     print('Copying Daysim executables...')
-    if not os.path.exists(os.path.join(os.getcwd(), 'daysim')):
-       os.makedirs(os.path.join(os.getcwd(), 'daysim'))
+    if not os.path.exists(os.path.join(project_folder, 'daysim')):
+       os.makedirs(os.path.join(project_folder, 'daysim'))
     try:
         shutil.copytree(daysim_code, 'daysim', dirs_exist_ok=True)
     except Exception as ex:
@@ -297,7 +300,7 @@ def update_skim_parameters():
     #if not include_delivery:
     #    keywords.append('delivery_')
 
-    root_path = os.path.join(os.getcwd(),r'inputs/skim_params')
+    root_path = os.path.join(project_folder,r'inputs/skim_params')
 
     # Remove unused modes from demand_matrix_dictionary
     with open(os.path.join(root_path, 'templates/demand_matrix_dictionary_template.json')) as template_file, open(os.path.join(root_path, 'demand_matrix_dictionary.json'), 'w') as newfile: 
@@ -361,8 +364,8 @@ def update_daysim_modes():
     #    mode_config_dict[setting] = globals()[setting]
   
     ## Copy temp file to use 
-    #daysim_config_path = os.path.join(os.getcwd(),'daysim_configuration_template.properties')
-    #new_file_path = os.path.join(os.getcwd(),'daysim_configuration_template_tmp.properties')
+    #daysim_config_path = os.path.join(project_folder,'daysim_configuration_template.properties')
+    #new_file_path = os.path.join(project_folder,'daysim_configuration_template_tmp.properties')
 
     #with open(daysim_config_path) as template_file, open(new_file_path, 'w') as newfile:
     #    for line in template_file:

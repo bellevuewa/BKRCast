@@ -9,65 +9,85 @@
 
 #################################### PRIMARY SETTINGS  ####################################
 
-#for a new setup, update the four settings below
-project_folder = r'F:\projects\2025baseyear\BKR4-25-v54_2026network'
-parcels_file_folder = r'Z:\Modeling Group\BKRCast\LandUse\2025_baseyear_spring_district_adjustment_GIX'
-base_year = '2026'  # BKRCast base year
-model_year = '2026'
-supplemental_module_base_year = '2018'   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
-scenario_name = '2026' #name of the folder with scenario data
+from configparser import ConfigParser
+from pathlib import Path
 
-#settings automatically assigned
-daysim_code = project_folder + '/daysim_2026' 
+# The runner and configuration share this checkout directory.
+project_folder = str(Path(__file__).resolve().parent)
+_local_config = ConfigParser(interpolation=None)
+_local_config_path = Path(project_folder) / 'local_configuration.ini'
+try:
+    with open(_local_config_path, 'r', encoding='utf-8') as _config_file:
+        _local_config.read_file(_config_file)
+except FileNotFoundError as error:
+    raise FileNotFoundError(
+        'Copy local_configuration_template.ini to local_configuration.ini and configure the paths, scenario, and flags.'
+    ) from error
+
+def _required_setting(section, name):
+    value = _local_config.get(section, name).strip()
+    if not value:
+        raise ValueError(f'Set {section}.{name} in local_configuration.ini')
+    return value
+
+
+parcels_file_folder = _required_setting('paths', 'parcels_file_folder')
+base_year = _required_setting('scenario', 'base_year')  # BKRCast base year
+model_year = _required_setting('scenario', 'model_year')
+supplemental_module_base_year = _required_setting('scenario', 'supplemental_module_base_year')   # this is the base year used only by supplemental module, which comes from SC. SC latest base year is 2018
+scenario_name = _required_setting('scenario', 'scenario_name') #name of the folder with scenario data
+
+# Executable source is configured locally; input paths are derived below.
+daysim_code = str((Path(project_folder) / _required_setting('paths', 'daysim_code')).resolve()) 
 main_inputs_folder =  project_folder + '/inputs/'
 base_inputs = main_inputs_folder + scenario_name
 
 # modeller name will be updated in the EMME databank
-modeller_initial = "hd"
+modeller_initial = _required_setting('scenario', 'modeller_initial')
 
 #################################### SUB-PROCESS FLAGS  ####################################
 
     
 # For Overriding the simple configuration, when you want to run things in more detail:
-run_update_parking = False #Only update parking for future-year analysis!
-run_accessibility_calcs = True 
-run_copy_daysim_code = True
-run_copy_input_files = True
-run_setup_emme_project_folders = False
-run_setup_emme_bank_folders = False
-run_import_networks = True
-run_cumulative_slopes = True # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
+run_update_parking = _local_config.getboolean('flags', 'run_update_parking') #Only update parking for future-year analysis!
+run_accessibility_calcs = _local_config.getboolean('flags', 'run_accessibility_calcs') 
+run_copy_daysim_code = _local_config.getboolean('flags', 'run_copy_daysim_code')
+run_copy_input_files = _local_config.getboolean('flags', 'run_copy_input_files')
+run_setup_emme_project_folders = _local_config.getboolean('flags', 'run_setup_emme_project_folders')
+run_setup_emme_bank_folders = _local_config.getboolean('flags', 'run_setup_emme_bank_folders')
+run_import_networks = _local_config.getboolean('flags', 'run_import_networks')
+run_cumulative_slopes = _local_config.getboolean('flags', 'run_cumulative_slopes') # run cumulative slopes for bike model. This can be a one-time run unless the network changes.
 
 # if run copy seed skims is tru (intentional typo for find and replace), you don't need to run skims and paths seed trips
 # the model run will start with daysim
-create_no_toll_network = True
-run_skims_and_paths_seed_trips = False
+create_no_toll_network = _local_config.getboolean('flags', 'create_no_toll_network')
+run_skims_and_paths_seed_trips = _local_config.getboolean('flags', 'run_skims_and_paths_seed_trips')
 
 ##### Shadow prices now copied and are always used. Only Run this if building shadow prices from scratch!
-should_build_shadow_price = True
-run_skims_and_paths = True
-run_truck_model = True
-run_supplemental_trips = True
-run_daysim = True
-run_bkrcast_summary =  True
-run_create_daily_bank = True
-run_truck_summary = False
-run_vmt_summary = True
-run_telecommute_summary = True
-run_modeshare_summary = True
+should_build_shadow_price = _local_config.getboolean('flags', 'should_build_shadow_price')
+run_skims_and_paths = _local_config.getboolean('flags', 'run_skims_and_paths')
+run_truck_model = _local_config.getboolean('flags', 'run_truck_model')
+run_supplemental_trips = _local_config.getboolean('flags', 'run_supplemental_trips')
+run_daysim = _local_config.getboolean('flags', 'run_daysim')
+run_bkrcast_summary = _local_config.getboolean('flags', 'run_bkrcast_summary')
+run_create_daily_bank = _local_config.getboolean('flags', 'run_create_daily_bank')
+run_truck_summary = _local_config.getboolean('flags', 'run_truck_summary')
+run_vmt_summary = _local_config.getboolean('flags', 'run_vmt_summary')
+run_telecommute_summary = _local_config.getboolean('flags', 'run_telecommute_summary')
+run_modeshare_summary = _local_config.getboolean('flags', 'run_modeshare_summary')
 
 ##############################
 # Modes and Path Types
 ##############################
 # In daysim, TNC mode is called PRS, paid ride share. We use TNC to be consistent with Soundcast.
-include_tnc = False
-include_tnc_to_transit = False # AV to transit path type allowed #not implemented yet
+include_tnc = _local_config.getboolean('flags', 'include_tnc')
+include_tnc_to_transit = _local_config.getboolean('flags', 'include_tnc_to_transit') # AV to transit path type allowed #not implemented yet
 
 ## Recreational bike
-include_rec_bike = True # inplemented as part of supplemental
+include_rec_bike = _local_config.getboolean('flags', 'include_rec_bike') # inplemented as part of supplemental
 
 # include work from home
-include_wfh = True
+include_wfh = _local_config.getboolean('flags', 'include_wfh')
 
 # WFH percentage assumption for the model year.  It is used to calculate the WFH constant for daysim configuration.
 # "horizon_year": WFH_Percent assumed
@@ -80,20 +100,20 @@ WFH_Percent = {
 }
 
 
-include_delivery = False
+include_delivery = _local_config.getboolean('flags', 'include_delivery')
 
 # Specific reports to run
-run_daysim_report = True
-run_day_pattern_report = True
-run_mode_choice_report = True
-run_dest_choice_report = True
-run_long_term_report = True
-run_time_choice_report = True
-run_district_summary_report = False  # only True for 2013/2014 survey
-run_landuse_summary = True
+run_daysim_report = _local_config.getboolean('flags', 'run_daysim_report')
+run_day_pattern_report = _local_config.getboolean('flags', 'run_day_pattern_report')
+run_mode_choice_report = _local_config.getboolean('flags', 'run_mode_choice_report')
+run_dest_choice_report = _local_config.getboolean('flags', 'run_dest_choice_report')
+run_long_term_report = _local_config.getboolean('flags', 'run_long_term_report')
+run_time_choice_report = _local_config.getboolean('flags', 'run_time_choice_report')
+run_district_summary_report = _local_config.getboolean('flags', 'run_district_summary_report')  # only True for 2013/2014 survey
+run_landuse_summary = _local_config.getboolean('flags', 'run_landuse_summary')
     
 #delete parcel files from the project directory
-delete_parcel_data = False
+delete_parcel_data = _local_config.getboolean('flags', 'delete_parcel_data')
 
 # Assignment Iterations:
 max_iterations_list = [50, 100, 100]
@@ -278,7 +298,7 @@ h5_results_file = 'outputs/daysim/daysim_outputs.h5'
 h5_results_name = 'DaysimOutputs'
 
 # summary for regionwide or BKR area only. True for regionwide, otherwise BKR only.
-regionwide = True
+regionwide = _local_config.getboolean('flags', 'regionwide')
 
 if int(model_year) <= 2023:
     # survey in hdf5 format
