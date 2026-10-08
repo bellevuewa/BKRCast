@@ -46,6 +46,8 @@ import pandas as pd
 import shutil
 from emme_configuration import *
 from data_wrangling import *
+from utils.synthetic_population import (
+    load_population, validate_population, HOUSEHOLD_COLUMNS, PERSON_COLUMNS)
 
 @timed
 def accessibility_calcs():
@@ -80,31 +82,18 @@ def import_synthetic_population_from_outside(outside_folder_path: str):
     # compatible with the expected input for daysim, and update the daysim template to point to the new paths for synthetic population data. 
     # It also creates a metadata.txt file in the synthetic_population_outside folder to document the source of the data and when it was imported.
     logger.info(f"Synthetic population data from outside folder: {outside_folder_path} is being used. ")
+    frames, errors = load_population(outside_folder_path)
+    errors.extend(validate_population(frames))
+    if errors:
+        raise ValueError('Invalid external synthetic population:\n- ' + '\n- '.join(errors))
+    hhs_df = frames['_household.tsv'].loc[:, HOUSEHOLD_COLUMNS]
+    persons_df = frames['_person.tsv'].loc[:, PERSON_COLUMNS]
     input_path = Path("inputs/synthetic_population_outside")
-    files_to_copy = ['_household.tsv', '_person.tsv']
-    for file_name in files_to_copy:
-        source_path = Path(outside_folder_path) / file_name
-        destination_path = input_path / file_name
-        if source_path.exists():
-            destination_path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy(source_path, destination_path)
-            print(f"Copied {file_name} to synthetic_population_outside.")
-        else:
-            print(f"File {file_name} not found in {outside_folder_path}.")
-
-    # process _household.tsv and _person.tsv to create _household_reordered.tsv and _person_reordered.tsv
-    hhs_df = pd.read_csv(input_path / "_household.tsv", sep='\t')
-    parcelid = hhs_df.pop('hhparcel')
-    hhs_df.pop('zone_id')
-    hhs_df.pop('fraction_with_jobs_outside')
-    hhs_df.insert(15, 'hhparcel', parcelid) # very important. this column is hard coded in daysim.
-    hhs_df.to_csv(input_path / "_household_reordered.tsv", sep = '\t', index = False) 
-
-    persons_df = pd.read_csv(input_path / "_person.tsv", sep='\t')
-    first_cols = ['hhno', 'pno']
-    persons_df.pop('id')
-    rest_cols = [col for col in persons_df.columns if col not in first_cols]
-    persons_df[first_cols + rest_cols].to_csv(input_path / "_person_reordered.tsv", sep = '\t', index = False)   
+    input_path.mkdir(parents=True, exist_ok=True)
+    for file_name in ('_household.tsv', '_person.tsv'):
+        shutil.copy(Path(outside_folder_path) / file_name, input_path / file_name)
+    hhs_df.to_csv(input_path / "_household_reordered.tsv", sep='\t', index=False)
+    persons_df.to_csv(input_path / "_person_reordered.tsv", sep='\t', index=False)
 
     with open(input_path / "metadata.txt", "w") as metadata_file:
         metadata_file.write(datetime.datetime.now().strftime("Date: %Y-%m-%d %H:%M:%S\n"))
