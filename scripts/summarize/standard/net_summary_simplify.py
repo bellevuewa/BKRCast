@@ -25,7 +25,7 @@ import xlrd
 import time
 from collections import OrderedDict
 import summary_functions as scf
-from input_configuration import *
+from input_configuration import report_output_location
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 
 # 10/25/2021

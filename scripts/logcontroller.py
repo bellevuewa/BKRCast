@@ -15,7 +15,7 @@
 import logging
 import os, sys
 sys.path.append(os.getcwd())
-from input_configuration import *
+from input_configuration import main_log_file
 from functools import wraps
 from time import time
 import datetime

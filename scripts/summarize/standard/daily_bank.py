@@ -1,3 +1,4 @@
+import datetime
 import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as app
 import os, sys
@@ -8,10 +9,15 @@ import json
 import shutil
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-from input_configuration import *
+
 import emme_configuration as emme_config
-from EmmeProject import *
-from data_wrangling import *
+from EmmeProject import EmmeProject
+import input_configuration as input_config
+from input_configuration import modeller_initial, project_folder
+from data_wrangling import (
+    copyfiles,
+    open_main_logger,
+    update_skim_parameters)
 
 # 10/25/2021
 # modified to be compatible with python 3
@@ -208,7 +214,7 @@ def main():
     time_period_list = []
 
 
-    for tod, time_period in sound_cast_net_dict.items():
+    for tod, time_period in emme_config.sound_cast_net_dict.items():
         path = os.path.join('Banks', tod, 'emmebank')
         print(path)
         bank = _emmebank.Emmebank(path)
@@ -248,7 +254,7 @@ def main():
 
     segments = []
     templates = []
-    for tod, time_period in sound_cast_net_dict.items():
+    for tod, time_period in emme_config.sound_cast_net_dict.items():
         path = os.path.join('Banks', tod, 'emmebank')
         print(path)
         bank = _emmebank.Emmebank(path)
@@ -411,7 +417,7 @@ def main():
     
     transit_line_df = assembled_segment_df.groupby('line').sum()
     transit_line_df['daily_boarding'] = 0
-    for tod in load_transit_tod:
+    for tod in emme_config.load_transit_tod:
         transit_line_df['daily_boarding'] += transit_line_df['board_' + tod]
         transit_line_df['board_' + tod] = transit_line_df['board_' + tod].astype(int)
 
@@ -466,19 +472,19 @@ def main():
 
     daily_network = daily_scenario.get_network()
 
-    attr_list = ['@v' + x for x in tods]
-    attr_list.extend(['@bvol' + x for x in tods])
-    attr_list.extend(['@tv' + x for x in tods])
-    attr_list.extend(['@bveh' + x for x in tods])
-    attr_list.extend(['@mveh' + x for x in tods])
-    attr_list.extend(['@hveh' + x for x in tods])
-    attr_list.extend(['@volax' + x for x in tods])
+    attr_list = ['@v' + x for x in emme_config.tods]
+    attr_list.extend(['@bvol' + x for x in emme_config.tods])
+    attr_list.extend(['@tv' + x for x in emme_config.tods])
+    attr_list.extend(['@bveh' + x for x in emme_config.tods])
+    attr_list.extend(['@mveh' + x for x in emme_config.tods])
+    attr_list.extend(['@hveh' + x for x in emme_config.tods])
+    attr_list.extend(['@volax' + x for x in emme_config.tods])
 
     if input_config.include_rec_bike:    
-        attr_list.extend(['@recbvol' + x for x in tods])
+        attr_list.extend(['@recbvol' + x for x in emme_config.tods])
         # calculate daily volumes: auto, bike, and transit
         for link in daily_network.links():
-            for item in tods:
+            for item in emme_config.tods:
                 link['@tveh'] = link['@tveh'] + link['@v' + item]
                 link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
                 link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
@@ -489,7 +495,7 @@ def main():
                 link['@volax_daily'] = link['@volax_daily'] + link['@volax' + item]
     else: 
         for link in daily_network.links():
-            for item in tods:
+            for item in emme_config.tods:
                 link['@tveh'] = link['@tveh'] + link['@v' + item]
                 link['@bvoldaily'] = link['@bvoldaily'] + link['@bvol' + item]
                 link['@voltransit_daily'] = link['@voltransit_daily'] + link['@tv' + item]
@@ -500,7 +506,7 @@ def main():
 
     # calculate daily boarding and alightings at transit stops
     for node in daily_network.nodes():
-        for tod in sound_cast_net_dict.values():
+        for tod in emme_config.sound_cast_net_dict.values():
             node['@daily_boarding'] += node['@tboard_' + tod]
             node['@daily_iboarding'] += node['@tiboard_' + tod]
             node['@daily_trsboarding'] += node['@trsboard_' + tod]
@@ -509,7 +515,7 @@ def main():
             node['@daily_trsalighting'] += node['@trsalight_' + tod]
 
     for segment in daily_network.transit_segments():
-        for tod in sound_cast_net_dict.values():
+        for tod in emme_config.sound_cast_net_dict.values():
             segment['@daily_seg_board'] += segment['@tboard_seg_' + tod]
             segment['@daily_seg_iboard'] += segment['@iboard_seg_' + tod]
             segment['@daily_seg_trsboard'] += segment['@trsboard_seg_' + tod]

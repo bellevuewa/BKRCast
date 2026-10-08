@@ -37,3 +37,14 @@ class ExceptionHandlingTests(unittest.TestCase):
                                 subprocess=subprocess_mock, logging=logging)
         ns['get_current_commit_hash']()
         logging.getLogger.return_value.warning.assert_called_once()
+
+
+class ExplicitImportTests(unittest.TestCase):
+    def test_core_modules_have_no_wildcard_imports(self):
+        root = Path(__file__).resolve().parents[2]
+        for filename in ('run_bkrcast.py', 'scripts/data_wrangling.py', 'scripts/logcontroller.py'):
+            with self.subTest(filename=filename):
+                tree = ast.parse((root / filename).read_text())
+                self.assertFalse(any(isinstance(node, ast.ImportFrom) and
+                                     any(alias.name == '*' for alias in node.names)
+                                     for node in ast.walk(tree)))

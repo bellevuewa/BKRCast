@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
 import datetime
 from scipy import stats
-from EmmeProject import *
+from EmmeProject import EmmeProject
 from functools import reduce
 import matplotlib
 matplotlib.use('TkAgg')
@@ -15,7 +15,7 @@ import getopt
 import json
 import input_configuration as prj
 import emme_configuration as emme_config
-from data_wrangling import *
+from data_wrangling import open_main_logger
 
 basic_link_attr_list = ['i_node', 'j_node', 'length', 'type', 'num_lanes', 'volume_delay_func', '@bkrlink', 'data1', 'data2', 'auto_volume']
 def create_columns_dict(base_column_list, screenline_dict):

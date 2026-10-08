@@ -5,10 +5,12 @@ import datetime
 import getopt
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(),"scripts"))
-from EmmeProject import *
+from EmmeProject import EmmeProject
 import input_configuration as prj
-from emme_configuration import *
-from data_wrangling import *
+from emme_configuration import (
+    network_summary_project,
+    sound_cast_net_dict)
+from data_wrangling import open_main_logger
 
 # 10/25/2021
 # modified to be compatible with python 3
