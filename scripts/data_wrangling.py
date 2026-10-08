@@ -76,7 +76,7 @@ def copy_daysim_code():
 def copy_accessibility_files():
     if not os.path.exists('inputs/accessibility'):
         os.makedirs('inputs/accessibility')
-    
+
 
 def text_to_dictionary(dict_name):
 
@@ -98,12 +98,12 @@ def json_to_dictionary(dict_name, subdir = ''):
     my_dictionary = json.load(open(input_filename))
 
     return(my_dictionary)
-    
-@timed    
+
+@timed
 def setup_emme_bank_folders():
     tod_dict = text_to_dictionary('time_of_day')
     emmebank_dimensions_dict = json_to_dictionary('emme_bank_dimensions')
-    
+
     if not os.path.exists('Banks'):
         os.makedirs('Banks')
     else:
@@ -121,16 +121,18 @@ def setup_emme_bank_folders():
         os.makedirs(os.path.join('Banks', period))
         path = os.path.join('Banks', period, 'emmebank')
         emmebank = _eb.create(path, emmebank_dimensions_dict)
-        emmebank.title = period
-        emmebank.unit_of_length = unit_of_length
-        emmebank.coord_unit_length = coord_unit_length  
-        emmebank.use_engineering_notation = False   # do not use engr notation     
-        scenario = emmebank.create_scenario(1002)
-        network = scenario.get_network()
-        #need to have at least one mode defined in scenario. Real modes are imported in network_importer.py
-        network.create_mode('AUTO', 'a')
-        scenario.publish_network(network)
-        emmebank.dispose()
+        try:
+            emmebank.title = period
+            emmebank.unit_of_length = unit_of_length
+            emmebank.coord_unit_length = coord_unit_length
+            emmebank.use_engineering_notation = False   # do not use engr notation
+            scenario = emmebank.create_scenario(1002)
+            network = scenario.get_network()
+            #need to have at least one mode defined in scenario. Real modes are imported in network_importer.py
+            network.create_mode('AUTO', 'a')
+            scenario.publish_network(network)
+        finally:
+            emmebank.dispose()
 
 @timed
 def setup_emme_project_folders():
@@ -145,16 +147,18 @@ def setup_emme_project_folders():
     # Create master project, associate with all tod emmebanks
     emmeproject = app.create_project('projects', master_project)
     desktop = app.start_dedicated(False, modeller_initial, emmeproject)
-    data_explorer = desktop.data_explorer()
-    todpath = []
-    for tod in tod_list:        
-        relative_emme_path = 'Banks/' + tod + '/emmebank'
-        todpath.append(relative_emme_path)
-        database = data_explorer.add_database(relative_emme_path)
-    #open the last database added so that there is an active one
-    database.open()
-    desktop.project.save()
-    desktop.close()
+    try:
+        data_explorer = desktop.data_explorer()
+        todpath = []
+        for tod in tod_list:
+            relative_emme_path = 'Banks/' + tod + '/emmebank'
+            todpath.append(relative_emme_path)
+            database = data_explorer.add_database(relative_emme_path)
+        #open the last database added so that there is an active one
+        database.open()
+        desktop.project.save()
+    finally:
+        desktop.close()
 
     # change absolute emmebank path to relative path
     print(f'apply relative path in {emmeproject}')
@@ -169,10 +173,10 @@ def setup_emme_project_folders():
         contents = contents.replace(old_emme_path.as_posix(), relative_mbank)
     with open(emmeproject, 'w') as f:
         f.write(contents)
-          
+
 
     # Create time of day projects, associate with emmebank
-    tod_list.append('TruckModel') 
+    tod_list.append('TruckModel')
     tod_list.append('Supplementals')
     # if daily databank folder exists, add 'Daily to tod_list
     if os.path.exists('Banks/Daily'):
@@ -182,13 +186,15 @@ def setup_emme_project_folders():
     for tod in tod_list:
         emmeproject = app.create_project('projects', tod)
         desktop = app.start_dedicated(False, modeller_initial, emmeproject)
-        data_explorer = desktop.data_explorer()
-        relative_emme_path = 'Banks/' + tod + '/emmebank'
-        database = data_explorer.add_database(relative_emme_path)
-        database.open()
-        desktop.project.save()
-        # print(emmeproject)
-        desktop.close()
+        try:
+            data_explorer = desktop.data_explorer()
+            relative_emme_path = 'Banks/' + tod + '/emmebank'
+            database = data_explorer.add_database(relative_emme_path)
+            database.open()
+            desktop.project.save()
+            # print(emmeproject)
+        finally:
+            desktop.close()
 
         print(f'apply relative path in {emmeproject}')
         # change absolute emmebank path to relative path
@@ -200,7 +206,7 @@ def setup_emme_project_folders():
         contents = contents.replace(old_emme_path.as_posix(), relative_mbank)
         with open(emmeproject, 'w') as f:
             f.write(contents)
-        
+
         #copy worksheets
         wspath = os.path.join('inputs/model/worksheets/', tod)
         destpath = os.path.join('projects/', tod, 'Worksheets')
@@ -209,7 +215,7 @@ def setup_emme_project_folders():
         destpath = os.path.join('projects/', tod, 'Media')
         copyfiles('inputs/model/Media/', destpath)
 
-        
+
 def copyfiles(sourceFolder, destFolder):
     for filename in os.listdir(sourceFolder):
         src = os.path.join(sourceFolder, filename)
@@ -217,7 +223,7 @@ def copyfiles(sourceFolder, destFolder):
         if (os.path.isfile(src)):
             shutil.copyfile(src, dest)
 
-@timed    
+@timed
 def copy_large_inputs():
     print('Copying large inputs...')
     print('  network files..')
@@ -237,7 +243,7 @@ def copy_large_inputs():
     print('  trucks..')
     shutil.copytree(base_inputs+'/trucks','inputs/trucks', dirs_exist_ok=True)
     print('  accessibility..')
-    shutil.copytree(base_inputs+'/accessibility','inputs/accessibility', dirs_exist_ok=True)  
+    shutil.copytree(base_inputs+'/accessibility','inputs/accessibility', dirs_exist_ok=True)
     #print('  supplemental..')
     #dir_util.copytree(base_inputs+'/supplemental','inputs/supplemental')
     print('  land use..')
@@ -245,7 +251,7 @@ def copy_large_inputs():
     shutil.copytree(base_inputs+'/popsim','inputs/popsim', dirs_exist_ok=True)
 
 
-@timed          
+@timed
 def clean_up():
     delete_files = ['working\\household.bin', 'working\\household.pk', 'working\\parcel.bin',
                    'working\\parcel.pk', 'working\\parcel_node.bin', 'working\\parcel_node.pk', 'working\\park_and_ride.bin',
@@ -254,8 +260,8 @@ def clean_up():
 
     if (delete_parcel_data):
         delete_files.extend(['inputs\\accessibility\\'+ access_config.parcels_file_name, access_config.output_parcels])
-    
-    for file in delete_files: 
+
+    for file in delete_files:
         if (os.path.isfile(file)):
             os.remove(file)
         else:
@@ -308,7 +314,7 @@ def update_skim_parameters():
         keywords.append('tnc_')
 
     if not include_rec_bike:
-        keywords.append('recb')                
+        keywords.append('recb')
     # delivery truck not included (Light truck)
     #if not include_delivery:
     #    keywords.append('delivery_')
@@ -316,7 +322,7 @@ def update_skim_parameters():
     root_path = os.path.join(project_folder,r'inputs/skim_params')
 
     # Remove unused modes from demand_matrix_dictionary
-    with open(os.path.join(root_path, 'templates/demand_matrix_dictionary_template.json')) as template_file, open(os.path.join(root_path, 'demand_matrix_dictionary.json'), 'w') as newfile: 
+    with open(os.path.join(root_path, 'templates/demand_matrix_dictionary_template.json')) as template_file, open(os.path.join(root_path, 'demand_matrix_dictionary.json'), 'w') as newfile:
         for line in template_file:
             if not any(keyword in line for keyword in keywords):
                 newfile.write(line)
@@ -343,8 +349,8 @@ def update_skim_parameters():
         file.write(json.dumps(user_class, indent = 4))
 
     ## SC will create a few json files for skimming, because SC will run TNC trip tables explicitly on network and save TNC
-    #  link volumes in extra attributes. At this moment, we do not see the need for such detailed information. 
-    # So we decide to run the TNC assignment combined with regular auto mode. 
+    #  link volumes in extra attributes. At this moment, we do not see the need for such detailed information.
+    # So we decide to run the TNC assignment combined with regular auto mode.
     # therefore, origional json files for skimming still work for this purpose.
 
 @timed
@@ -354,7 +360,7 @@ def update_daysim_modes():
 
     include_tnc: PaidRideShareModeIsAvailable,
     include_av: AV_IncludeAutoTypeChoice,
-    tnc_av: AV_PaidRideShareModeUsesAVs 
+    tnc_av: AV_PaidRideShareModeUsesAVs
     """
 
     # Store values from input_configuration in a dictionary:
@@ -363,7 +369,7 @@ def update_daysim_modes():
 
     #daysim_dict = {
     #    'AV_IncludeAutoTypeChoice': 'include_av',
-    #    'AV_UseSeparateAVSkimMatricesByOccupancy': 'include_av',    # Must be updated or causes issues with roster 
+    #    'AV_UseSeparateAVSkimMatricesByOccupancy': 'include_av',    # Must be updated or causes issues with roster
     #    'PaidRideShareModeIsAvailable':'include_tnc',
     #    'AV_PaidRideShareModeUsesAVs': 'tnc_av',
     #}
@@ -372,11 +378,11 @@ def update_daysim_modes():
     #    'PaidRideShareModeIsAvailable':'include_tnc'
     #}
 
-    #mode_config_dict = {}    
+    #mode_config_dict = {}
     #for setting in av_settings:
     #    mode_config_dict[setting] = globals()[setting]
-  
-    ## Copy temp file to use 
+
+    ## Copy temp file to use
     #daysim_config_path = os.path.join(project_folder,'daysim_configuration_template.properties')
     #new_file_path = os.path.join(project_folder,'daysim_configuration_template_tmp.properties')
 
@@ -427,7 +433,7 @@ def update_daysim_modes():
 
 def h5_to_df(h5_file, group_name):
     """
-    Converts the arrays in a H5 store to a Pandas DataFrame. 
+    Converts the arrays in a H5 store to a Pandas DataFrame.
     """
     col_dict = {}
     h5_set = h5_file[group_name]
@@ -439,9 +445,9 @@ def h5_to_df(h5_file, group_name):
 
 def df_to_h5(df, h5_store, group_name):
     """
-    Stores DataFrame series as indivdual to arrays in an h5 container. 
+    Stores DataFrame series as indivdual to arrays in an h5 container.
     """
-    # delete store store if exists   
+    # delete store store if exists
     if group_name in h5_store:
         del h5_store[group_name]
         my_group = h5_store.create_group(group_name)
@@ -459,9 +465,9 @@ def backupScripts(source, dest):
     shutil.copyfile(source, dest)
 
 def get_hhs_df_from_synpop():
-    poph5 = h5py.File(os.path.join(project_folder, households_persons_file), 'r')
-    hhs = h5_to_df(poph5, 'Household')
-    persons = h5_to_df(poph5, 'Person')
+    with h5py.File(os.path.join(project_folder, households_persons_file), 'r') as poph5:
+        hhs = h5_to_df(poph5, 'Household')
+        persons = h5_to_df(poph5, 'Person')
     return hhs, persons
 
 def get_current_commit_hash():
@@ -477,18 +483,18 @@ def build_output_dirs():
         if not os.path.exists(path):
             os.makedirs(path)
 
-def get_current_branch():  
+def get_current_branch():
     try:
         branch_match = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr = subprocess.DEVNULL).decode().strip()
     except (subprocess.CalledProcessError, OSError):
         logging.getLogger('main_logger').warning('Git branch metadata unavailable', exc_info=True)
         branch_match = 'unavailable'
-  
+
     if branch_match == "HEAD":
             return None
     else:
-        return os.path.basename(branch_match) 
-    
+        return os.path.basename(branch_match)
+
 def get_current_computer_name():
     import socket
     return socket.gethostname()
@@ -499,25 +505,25 @@ def update_taz_accessibility_file(horizon_year):
         taz_subarea_df = pd.read_csv(r'inputs/subarea_definition/TAZ_subarea.csv')
         df = df.merge(taz_subarea_df[['BKRCastTAZ', 'Jurisdiction']], left_on = 'Zone_id', right_on = 'BKRCastTAZ', how = 'left')
         df.loc[df['Jurisdiction'] == 'BELLEVUE', 'Dest_eligible'] = 1
-        df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)   
-    
-    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')      
+        df.drop(columns = ['BKRCastTAZ', 'Jurisdiction'], inplace = True)
+
+    df.to_csv(r'inputs/model/TAZIndex.txt', index = False, sep = '\t')
 
 def balance_trips(df, home_based, trip_purposes, balanced_to):
     """ Balance trips to productions or attractions."""
     # home_based = 'hb' or 'nhb'
     if balanced_to == 'pro':
         to_balance = 'att'
-        
+
     else:
         to_balance = 'pro'
-        
+
     for purposes in trip_purposes:
         total_to_match = sum(df[home_based + purposes + balanced_to])
         total_to_balance = sum(df[home_based+ purposes + to_balance])
         ratio = total_to_match / total_to_balance
         df[home_based + purposes + to_balance] = df[home_based + purposes + to_balance] * ratio
-    
+
     return df
 
 def load_skims(skim_file_loc, mode_name, divide_by_100=False):
@@ -537,7 +543,7 @@ def assign_nodes_to_dataset(dataset, network, column_name, x_name, y_name):
 def process_net_attribute(network, attr, fun):
     print("Processing %s" % attr)
     newdf = None
-    for dist_index, dist in access_config.distances.items():        
+    for dist_index, dist in access_config.distances.items():
         res_name = "%s_%s" % (re.sub("_?p$", "", attr), dist_index) # remove '_p' if present
         aggr = network.aggregate(dist, type=fun, decay="exp", name=attr)
         if newdf is None:
@@ -561,7 +567,7 @@ def load_parcel_data(parcel_path):
     # # not using. causes bug in daysim (copied from soundcast)
     # parcels['APARKS'] = 0
     # parcels['NPARKS'] = 0
-    return parcels    
+    return parcels
 
 def load_parcel_data_without_JBLM_jobs(parcel_path):
     """
@@ -575,7 +581,7 @@ def load_parcel_data_without_JBLM_jobs(parcel_path):
         if col_name != 'EMPRSC_P':
             if parcels_df[col_name].sum() == 0:
                 print(col_name + ' column sum is zero! Exiting program.')
-                sys.exit(1)   
+                sys.exit(1)
 
     df_psrc = pd.read_csv(os.path.join(input_folder_for_supplemental, 'BKR_zones.csv'))
     jblm_tazs = df_psrc.loc[df_psrc['jblm'] == 1, 'BKRCastTAZ'].unique().tolist()
@@ -586,7 +592,7 @@ def load_parcel_data_without_JBLM_jobs(parcel_path):
     return parcels_df
 
 def build_pandana_network(node_file, link_file):
-    import pandana as pdna    
+    import pandana as pdna
     # nodes must be indexed by node_id column, which is the first column
     all_street_nodes = pd.read_csv(node_file, index_col = 'node_id')
     all_street_links = pd.read_csv(link_file, index_col = None )
@@ -611,7 +617,7 @@ def build_pandana_network(node_file, link_file):
     for dist in access_config.distances:
         net.precompute(dist)
 
-    return net, all_street_links, all_street_nodes        
+    return net, all_street_links, all_street_nodes
 
 @timed
 def generate_pr_node_file(input_csv, output_csv, year):
@@ -674,7 +680,7 @@ def od_list_to_matrix_numpy(file_path, skip_headerlines = 5, n_zones=None):
     if len(lines) <= skip_headerlines:
         # print(f"No data found in {file_path} after skipping {skip_headerlines} header lines.")
         return None, pd.DataFrame()
-    
+
     data = np.loadtxt(file_path, skiprows=skip_headerlines)
 
     if data.size == 0:
@@ -723,6 +729,6 @@ def open_main_logger(meta_data = True, info=''):
         logger.info(branch_info)
         logger.info(commit_info)
         logger.info(computer_info)
-        
+
     start_time = datetime.datetime.now()
     return logger, start_time

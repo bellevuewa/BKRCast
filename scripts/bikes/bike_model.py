@@ -244,21 +244,17 @@ def rec_bike_assignment(my_project, tod):
 def export_skims(my_project, matrix_name, tod):
     '''Write skim matrix to h5 container'''
 
-    my_store = h5py.File(r'inputs/' + tod + '.h5', "r+")
-
-    matrix_value = my_project.emmeMatrix_to_numpyMatrix(matrix_name, 'uint16', 100)
-
-    if matrix_name in my_store['Skims'].keys():
-        my_store["Skims"][matrix_name][:] = matrix_value
-    else:
+    with h5py.File('inputs/' + tod + '.h5', 'r+') as my_store:
+        matrix_value = my_project.emmeMatrix_to_numpyMatrix(matrix_name, 'uint16', 100)
         try:
-            my_store["Skims"].create_dataset(name=matrix_name, data=matrix_value, compression='gzip', dtype='uint16')
+            if matrix_name in my_store['Skims'].keys():
+                my_store['Skims'][matrix_name][:] = matrix_value
+            else:
+                my_store['Skims'].create_dataset(name=matrix_name, data=matrix_value,
+                                                 compression='gzip', dtype='uint16')
         except (OSError, ValueError, TypeError):
-            my_store.close()
             logger.exception('Failed to export bike skim %s for %s', matrix_name, tod)
             raise
-
-    my_store.close()
 
 
 def calc_total_vehicles(my_project):
