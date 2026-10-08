@@ -17,6 +17,7 @@ import subprocess
 import inro.emme.desktop.app as app
 import json
 import re
+import logging
 from shutil import copy2 as shcopy
 import inro.emme.database.emmebank as _eb
 import shutil
@@ -53,11 +54,9 @@ def copy_daysim_code():
        os.makedirs(os.path.join(project_folder, 'daysim'))
     try:
         shutil.copytree(daysim_code, 'daysim', dirs_exist_ok=True)
-    except Exception as ex:
-        template = "An exception of type {0} occured. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-        print(message)
-        sys.exit(1)
+    except (OSError, shutil.Error):
+        logging.getLogger('main_logger').exception('Failed to copy Daysim executables from %s', daysim_code)
+        raise
 
 @timed
 def copy_accessibility_files():
@@ -454,8 +453,9 @@ def get_hhs_df_from_synpop():
 def get_current_commit_hash():
     try:
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
-    except:
-        commit = '0000000'
+    except (subprocess.CalledProcessError, OSError):
+        logging.getLogger('main_logger').warning('Git commit metadata unavailable', exc_info=True)
+        commit = 'unavailable'
     return commit
 
 def build_output_dirs():
@@ -466,8 +466,9 @@ def build_output_dirs():
 def get_current_branch():  
     try:
         branch_match = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr = subprocess.DEVNULL).decode().strip()
-    except:
-        branch_match = 'no git is found.'  
+    except (subprocess.CalledProcessError, OSError):
+        logging.getLogger('main_logger').warning('Git branch metadata unavailable', exc_info=True)
+        branch_match = 'unavailable'
   
     if branch_match == "HEAD":
             return None

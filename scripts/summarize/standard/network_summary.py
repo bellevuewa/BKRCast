@@ -126,9 +126,11 @@ def freeflow_skims(my_project, dictZoneLookup):
         del daysim['Trip']['sov_ff_time']
     try:
         daysim['Trip'].create_dataset("sov_ff_time", data=df['ff_travtime'].values, compression='gzip')
-    except:
-        print('could not write freeflow skim to h5')
-    daysim.close()
+    except (OSError, ValueError, TypeError):
+        logger.exception('Failed to write Trip/sov_ff_time to Daysim HDF5')
+        raise
+    finally:
+        daysim.close()
 
     # Write to TSV files
     trip_df = pd.read_csv(r'outputs/daysim/_trip.tsv', delim_whitespace=True)
@@ -158,8 +160,10 @@ def export_network_attributes(network, node_attr_study_area):
             if colname != 'modes':
                 try:
                     network_data[colname].append(link[colname])  
-                except:
-                    network_data[colname].append(0)
+                except (KeyError, AttributeError, RuntimeError):
+                    logger.exception('Failed to read link attribute %s on link %s -> %s',
+                                     colname, link.i_node.id, link.j_node.id)
+                    raise
         i_node_list.append(link.i_node.id)
         j_node_list.append(link.j_node.id)
         network_data['modes'].append(link.modes)
@@ -432,16 +436,18 @@ def summarize_transit_detail(df_transit_line, df_transit_node, df_transit_segmen
                    
             ## This is total transit trips in the region. 
             ## we also need to have transit trips from BKR, to BKR, and within BKR.    
-            for mode in ['commuter_rail','litrat','ferry', 'passenger_ferry', 'trnst']:
-                df.loc[mode,f'{tod_segment}_total_trips'] = bank.matrix(mode).get_numpy_data().sum()
-            colname.append(f'{tod_segment}_total_trips')
-            bank.dispose()
+            try:
+                for mode in ['commuter_rail','litrat','ferry', 'passenger_ferry', 'trnst']:
+                    df.loc[mode,f'{tod_segment}_total_trips'] = bank.matrix(mode).get_numpy_data().sum()
+                colname.append(f'{tod_segment}_total_trips')
+            finally:
+                bank.dispose()
 
         df['total_trips'] = df[colname].sum(axis = 1)
         df.to_csv(r'outputs\transit\total_transit_trips.csv')
-    except:
-        print('cannot open daily bank. summrize_transit_detail() is terminated.') 
-        return           
+    except (OSError, KeyError, AttributeError, RuntimeError, ValueError):
+        logger.exception('Failed to summarize transit trip totals')
+        raise
 
     transit_seg_op = {
         'segment_boarding': 'sum',

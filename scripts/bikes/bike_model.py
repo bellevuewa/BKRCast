@@ -253,8 +253,10 @@ def export_skims(my_project, matrix_name, tod):
     else:
         try:
             my_store["Skims"].create_dataset(name=matrix_name, data=matrix_value, compression='gzip', dtype='uint16')
-        except:
-            'unable to export skim: ' + str(matrix_name)
+        except (OSError, ValueError, TypeError):
+            my_store.close()
+            logger.exception('Failed to export bike skim %s for %s', matrix_name, tod)
+            raise
 
     my_store.close()
 
@@ -378,8 +380,11 @@ def main():
     if os.path.exists(input_config.bike_link_vol):
         try:
             os.remove(input_config.bike_link_vol)
-        except OSError:
+        except FileNotFoundError:
             pass
+        except OSError:
+            logger.exception('Failed to remove previous bike results %s', input_config.bike_link_vol)
+            raise
 
     print('running bike model')
     filepath = f'projects/{emme_config.master_project}/{emme_config.master_project}.emp'

@@ -159,25 +159,18 @@ def modify_config(config_vals):
     abs_config_path_template = os.path.join(script_dir, daysim_configuration_template_file)
     abs_config_path_out =os.path.join(script_dir, config_path)
     
-    config_template = open(abs_config_path_template,'r')
-    config = open(abs_config_path_out,'w')
-  
     try:
-        for line in config_template:
-            for config_temp, config_update in config_vals:
-                if config_temp in line:
-                    line = line.replace(config_temp, str(config_update))
-            config.write(line)
-               
-        config_template.close()
-        config.close()
+        with open(abs_config_path_template, 'r') as config_template, open(abs_config_path_out, 'w') as config:
+            for line in config_template:
+                for config_temp, config_update in config_vals:
+                    if config_temp in line:
+                        line = line.replace(config_temp, str(config_update))
+                config.write(line)
+    except OSError:
+        logger.exception('Failed to create Daysim configuration %s from %s',
+                         abs_config_path_out, abs_config_path_template)
+        raise
 
-    except:
-     config_template.close()
-     config.close()
-     print(' Error creating configuration template file')
-     sys.exit(1)
-    
 def read_attribute_from_daysim_config_template(attr_name, default=""):
     """Extract RawParkAndRideNodePath from config file or fallback to default"""
     try:
@@ -187,8 +180,8 @@ def read_attribute_from_daysim_config_template(attr_name, default=""):
                     match = re.search(r"=\s*(.*)", line)
                     if match:
                         return match.group(1).strip().replace('\\', os.sep)
-    except Exception as e:
-        print(f"Warning: Could not read config file ({e}). Using default path.")
+    except FileNotFoundError:
+        logger.warning("Daysim template is missing; using default %s", default, exc_info=True)
     print(f"RawParkAndRideNodePath not found. Using default: {default}")
     return default
 

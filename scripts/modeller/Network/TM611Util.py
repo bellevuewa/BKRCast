@@ -103,7 +103,7 @@ class TM611kUtility(_modeller.Tool()):
         try:
             errFp = open("turns_not_in_turn_vols.dat", "w")
             errFp.write("The following intersections have turns that are not in the EMME turn volume file. Please check.")
-        except:
+        except OSError:
             self.tool_run_msg += _modeller.PageBuilder.format_info("turns_not_in_turn_vols.dat cannot be opened")
             exit(2)
 
@@ -132,8 +132,9 @@ class TM611kUtility(_modeller.Tool()):
 
         try:
             fp = open(self.outputFilename, "w")
-        except:
+        except OSError:
             self.tool_run_msg += _modeller.PageBuilder.format_info("Output file " + self.outputFilename + " cannot be opened")
+            raise
 
         outputfile.output(fp)
         fp.close()
@@ -242,7 +243,7 @@ class EMMELinkFile:
                 intersection.output()
                 self.intersections.append(intersection)
         except IOError:
-            print(filename + "is not a valid file")
+            raise
         except IndexError:
             raise IndexError
         finally:
@@ -323,7 +324,7 @@ class EMMETMFile:
                 tm = EMMETMVol(items[0], items[1], items[2], items[4])
                 self.tmVols.append(tm)
         except IOError:
-            print(filename + "is not a valid file")
+            raise
         except IndexError:
             raise IndexError
         finally:
@@ -417,8 +418,8 @@ class TMVolFile:
                 line = "%5s %5s %5s %5s %5s %5s %5s %5s %5s %5s %5s %5s %5s\n" % (tm.intid, tm.NBL, tm.NBT, tm.NBR, tm.SBL, tm.SBT, tm.SBR, tm.EBL, tm.EBT, tm.EBR, tm.WBL, tm.WBT, tm.WBR)
                 fp.write(line)
 
-        except:
-            print("Turning movement volumes cannot be written to file")
+        except OSError:
+            raise
 
 
 
