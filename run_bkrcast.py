@@ -38,7 +38,7 @@ import json
 from pathlib import Path
 from input_configuration import (
     WFH_Percent,
-    base_inputs,
+    main_inputs_folder,
     daysim_configuration_template_file,
     good_thing,
     include_rec_bike,
@@ -534,7 +534,7 @@ def main():
         time_copy = datetime.datetime.now()
         logger.info("Start of network importer")
         command = [sys.executable,
-            'scripts/network/network_importer.py', base_inputs]
+            'scripts/network/network_importer.py', main_inputs_folder]
         run_subprocess(command, env=env)
         logger.info("End of network importer")
         time_network = datetime.datetime.now()
