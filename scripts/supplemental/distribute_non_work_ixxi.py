@@ -164,7 +164,8 @@ def main():
     
     # BKRCastTAZ field in trip_table is not consecutive number. Must reformat it to be compatible with EMME matrix
     zones_df = pd.DataFrame(my_project.current_scenario.zone_numbers, columns = ['BKRCastTAZ'])         
-    trip_table = pd.merge(zones_df, trip_table, on = 'BKRCastTAZ', how = 'left') 
+    trip_table = pd.merge(zones_df, trip_table, on = 'BKRCastTAZ', how = 'left', validate='one_to_one')
+    trip_table.set_index('BKRCastTAZ', inplace=True)
     trip_table.fillna(0, inplace = True)
     
     # Load skim data
